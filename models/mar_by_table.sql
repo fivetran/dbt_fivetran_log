@@ -8,7 +8,7 @@ with ordered_mar as (
         monthly_active_rows,
         row_number() over(partition by table_name, connector_id, destination_id order by measured_at desc) as n
 
-    from fivetran_log.active_volume
+    from {{ var('active_volume') }}
 
     where schema_name != 'fivetran_log' -- or whatever the variable is in dbt_project
 

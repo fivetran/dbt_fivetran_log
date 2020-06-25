@@ -15,13 +15,26 @@ sources:
 
     tables:
       - name: active_volume
-        description: Table of monthly active rows measured by table at various points in time.
+        description: Table of monthly active rows (MAR) measured by table at various points in time.
         columns:
           - name: id
             description: System-generated unique ID of the active volume measurement.
             tests:
               - unique
               - not_null
+          - name: connector_id
+            description: Foreign key referencing the CONNECTOR whose table is being measured
+          - name: destination_id
+            description: Foreign key referencing the DESTINATION whose table is being measured
+          - name: measured_at
+            description: Timestamp of when the entry's MAR measurement was made.
+          - name: monthly_active_rows
+            description: The number of MAR measured on this date for this table
+          - name: schema_name
+            description: The name of the connector schema housing the measured table.
+          - name: table_name
+            description: The name of the table whose MAR is being measured.
+
       - name: connector
         description: Table of all connectors loading data into warehouses.
         columns: 
@@ -30,3 +43,35 @@ sources:
             tests:
               - unique
               - not_null
+          - name: connecting_user_id
+            description: Foreign key referencing the USER who set up the connector? # Todo: check this
+          - name: connector_name
+            description: Name of the connector
+        # will continue w other columns
+
+      - name: credits_used
+        description: Table of the credits used by the customer per each month.
+        tests:
+          - dbt_utils.unique_combination_of_columns:
+                combination_of_columns: 
+                  - destination_id
+                  - measured_month
+
+
+      - name: destination
+        description: Table of the warehouse destinations that have data loaded into them.
+        columns:
+          - name: id
+            description: Unique ID of the destination
+            tests:
+              - unique
+              - not_null
+      
+      - name: log
+        description: Table of logged events related to data syncs
+        tests:
+          - dbt_utils.unique_combination_of_columns:
+                combination_of_columns: 
+                  - id
+                  - time_stamp
+      

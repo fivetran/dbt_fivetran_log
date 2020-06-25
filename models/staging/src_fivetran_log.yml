@@ -1,0 +1,32 @@
+version: 2
+
+sources:
+  - name: fivetran_log
+    database: "{{var ('fivetran_log_database', target.database)}}"
+    schema: "{{var ('fivetran_log_schema', 'fivetran_log')}}"
+
+    loader: fivetran
+    loaded_at_field: _fivetran_synced
+      
+    freshness: # what's appropriate here?
+      warn_after: {count: 72, period: hour}
+      error_after: {count: 96, period: hour}
+
+
+    tables:
+      - name: active_volume
+        description: Table of monthly active rows measured by table at various points in time.
+        columns:
+          - name: id
+            description: System-generated unique ID of the active volume measurement.
+            tests:
+              - unique
+              - not_null
+      - name: connector
+        description: Table of all connectors loading data into warehouses.
+        columns: 
+          - name: connector_id
+            description: Unique ID of the connector - destination. Note that a connector loading data into 2 warehouses will have 2 distinct records.
+            tests:
+              - unique
+              - not_null

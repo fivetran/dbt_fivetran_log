@@ -1,0 +1,21 @@
+config-version: 2
+
+name: 'fivetran_log'
+version: '0.0.1'
+
+require-dbt-version: '>=0.17.0'
+
+models:
+    fivetran_log:
+        materialized: table # ephemeral after testing
+
+vars:
+    fivetran_log:
+        active_volume: "{{ source('fivetran_log', 'active_volume') }}" 
+        connector: "{{ source('fivetran_log', 'connector') }}" 
+        credits_used: "{{ source('fivetran_log', 'credits_used') }}" 
+        destination: "{{ source('fivetran_log', 'destination') }}" 
+        log: "{{ source('fivetran_log', 'log') }}" 
+
+# delete profile after testing
+profile: dev_bigquery_dbt_testing

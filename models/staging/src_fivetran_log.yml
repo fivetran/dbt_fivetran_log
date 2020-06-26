@@ -23,7 +23,7 @@ sources:
               - unique
               - not_null
           - name: connector_id
-            description: Foreign key referencing the CONNECTOR whose table is being measured
+            description: Foreign key referencing the CONNECTOR whose table is being measured # eek this is not the case in our data...
           - name: destination_id
             description: Foreign key referencing the DESTINATION whose table is being measured
           - name: measured_at

@@ -1,0 +1,30 @@
+version: 2
+
+models:
+
+  - name: stg_fivetran_log_active_volume
+    columns: 
+      - name: active_volume_id
+        description: Unique ID of the table's MAR measurement record
+        tests:
+          - unique
+          - not_null
+      - name: connector_id
+        description: # todo: figure out 
+      - name: destination_id
+        description: Foreign key referencing the DESTINATION whose table is being measured
+      - name: measured_at
+        description: Timestamp of when the entry's MAR measurement was made.
+      - name: monthly_active_rows
+        description: The number of MAR measured on this date for this table
+      - name: schema_name
+        description: The name of the connector schema where the measured table lives
+      - name: table_name
+        description: Name of the table whose volume is being measured
+
+
+  - name: stg_fivetran_log_connector
+  - name: stg_fivetran_log_credits_used
+  - name: stg_fivetran_log_destination
+  - name: stg_fivetran_log_log
+  

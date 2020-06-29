@@ -45,10 +45,10 @@ models:
 
   - name: stg_fivetran_log_credits_used
     tests:
-          - dbt_utils.unique_combination_of_columns:
-                combination_of_columns: 
-                  - destination_id
-                  - measured_month
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: 
+            - destination_id
+            - measured_month
     columns:
       - name: destination_id
         description: Foreign key referencing the DESTINATION warehouse that the credits were used on
@@ -76,9 +76,9 @@ models:
   - name: stg_fivetran_log_log
     tests:
       - dbt_utils.unique_combination_of_columns:
-            combination_of_columns: 
-              - log_id
-              - created_at
+          combination_of_columns: 
+            - log_id
+            - created_at
     columns: 
       - name: log_id # TODO: this is actually = connector_id or transformation_id
         description: System-generated unique ID of the log entry

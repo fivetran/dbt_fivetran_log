@@ -98,7 +98,7 @@ sources:
                   - time_stamp
         columns:
           - name: id # TODO: this is actually = connector name or transformation_id
-          - name: created_at
+          - name: time_stamp
             description: Timestamp of when the event was logged
           - name: connector_id # todo - figure this out, actually = connector_name
           - name: event

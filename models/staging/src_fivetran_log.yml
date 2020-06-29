@@ -44,10 +44,17 @@ sources:
               - unique
               - not_null
           - name: connecting_user_id
-            description: Foreign key referencing the USER who set up the connector? # Todo: check this
+            description: Foreign key referencing the USER who set up the connector
           - name: connector_name
-            description: Name of the connector
-        # will continue w other columns
+            description: Individual name of the connector
+          - name: connector_type
+            description: The kind of connector (ie google sheets, webhooks)
+          - name: destination_id
+            description: Foreign key referencing the DESTINATION warehouse that the connector data is loaded into.
+          - name: paused
+            description: Boolean that is true if the connector's sync is currently paused
+          - name: signed_up
+            description: Timestamp of when the connection was set up
 
       - name: credits_used
         description: Table of the credits used by the customer per each month.
@@ -56,6 +63,13 @@ sources:
                 combination_of_columns: 
                   - destination_id
                   - measured_month
+        columns:
+          - name: destination_id
+            description: Foreign key referencing the DESTINATION warehouse that the credits were used on
+          - name: measured_month
+            description: The month (yyyy-mm) in which the credits were used
+          - name: credits_consumed
+            description: The number of credits used for the given month - destination
 
 
       - name: destination
@@ -66,6 +80,14 @@ sources:
             tests:
               - unique
               - not_null
+          - name: account_id
+            description: Foreign key referencing the fivetran ACCOUNT associated with the destination
+          - name: created_at
+            description: Timestamp of when the destination was set up
+          - name: name
+            description: Name of the destination warehouse
+          - name: region
+            description: Geographical region of the destination
       
       - name: log
         description: Table of logged events related to data syncs
@@ -74,4 +96,17 @@ sources:
                 combination_of_columns: 
                   - id
                   - time_stamp
+        columns:
+          - name: id # TODO: this is actually = connector name or transformation_id
+          - name: created_at
+            description: Timestamp of when the event was logged
+          - name: connector_id # todo - figure this out, actually = connector_name
+          - name: event
+            description: The umbrella category of the event -- either INFO, SEVERE, WARNING, or TRANSFORMATION
+          - name: message_data # todo: unsure what to rename these...
+            description: JSON of the event-specific data
+          - name: message_event
+            description: More specific category related to the nature of the event
+          - name: transformation_id
+            description: Foreign key referencing the TRANSFORMATION if the event is a transformation
       

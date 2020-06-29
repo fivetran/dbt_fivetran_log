@@ -11,7 +11,7 @@ fields as (
         connecting_user_id,
         connector_name,
         connector_type,
-        -- coalesce(connector_type, service) as connector_type, -- use if table has service
+        -- coalesce(connector_type, service)  -- use if table has a service columns
         destination_id,
         paused as is_paused,
         signed_up as signed_up_at

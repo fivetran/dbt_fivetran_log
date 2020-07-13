@@ -2,6 +2,8 @@ with connector as (
     
     select *
     from {{ var('connector' ) }}
+
+    -- union tables from multiple destinations here
 ),
 
 fields as (

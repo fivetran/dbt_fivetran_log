@@ -2,6 +2,8 @@ with account as (
     
     select * 
     from {{ var('account') }}
+
+    -- union tables from multiple destinations here
 ),
 
 fields as (

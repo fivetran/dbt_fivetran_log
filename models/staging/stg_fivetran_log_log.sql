@@ -2,6 +2,8 @@ with log as (
 
     select *
     from {{ var('log') }}
+
+    -- union tables from multiple destinations here
 ),
 
 fields as (

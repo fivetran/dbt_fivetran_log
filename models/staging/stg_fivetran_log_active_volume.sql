@@ -2,6 +2,8 @@ with active_volume as (
     
     select *
     from {{ var('active_volume') }}
+
+    -- union tables from multiple destinations here
 ),
 
 fields as (

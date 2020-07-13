@@ -1,5 +1,7 @@
 version: 2
 
+# If you have multiple destinations with Fivetran, you'll need to declare them as sources here. 
+# The sources should differ only in database name.
 sources:
   - name: fivetran_log
     database: "{{var ('fivetran_log_database', target.database)}}"
@@ -13,7 +15,7 @@ sources:
       error_after: {count: 96, period: hour}
 
 
-    tables: &fivetran_log_tables
+    tables: &fivetran_log_tables # Reference this table structure in other sources with table: *fivetran_log_tables
       - name: active_volume
         description: Table of monthly active row (MAR) measurements by table per date.
         columns:

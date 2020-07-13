@@ -2,6 +2,8 @@ with destination as (
 
     select *
     from {{ var('destination') }}
+
+    -- union tables from multiple destinations here
 ),
 
 fields as (

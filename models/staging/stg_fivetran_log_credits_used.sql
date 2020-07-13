@@ -2,6 +2,8 @@ with  credits_used as (
 
     select *
     from {{ var('credits_used') }}
+
+    -- union tables from multiple destinations here
 ),
 
 fields as (

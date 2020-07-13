@@ -13,9 +13,9 @@ sources:
       error_after: {count: 96, period: hour}
 
 
-    tables:
+    tables: &fivetran_log_tables
       - name: active_volume
-        description: Table of monthly active rows (MAR) measured by table at various points in time.
+        description: Table of monthly active row (MAR) measurements by table per date.
         columns:
           - name: id
             description: System-generated unique ID of the active volume measurement.
@@ -23,13 +23,13 @@ sources:
               - unique
               - not_null
           - name: connector_id
-            description: Foreign key referencing the CONNECTOR whose table is being measured # eek this is not the case in our data...
+            description: Foreign key referencing the id of the CONNECTOR whose table is being measured # eek this is not the case in our data...
           - name: destination_id
             description: Foreign key referencing the DESTINATION whose table is being measured
           - name: measured_at
-            description: Timestamp of when the entry's MAR measurement was made.
+            description: Timestamp of when this measurement of monthly active rows was made.
           - name: monthly_active_rows
-            description: The number of MAR measured on this date for this table
+            description: The number of distinct primary keys synced for the table this month (MAR), up to the date of measurement.
           - name: schema_name
             description: The name of the connector schema housing the measured table.
           - name: table_name
@@ -37,6 +37,7 @@ sources:
 
       - name: connector
         description: Table of all connectors loading data into warehouses.
+        freshness: null
         columns: 
           - name: connector_id
             description: Unique ID of the connector - destination. Note that a connector loading data into 2 warehouses will have 2 distinct records.
@@ -58,6 +59,7 @@ sources:
 
       - name: credits_used
         description: Table of the credits used by the customer per each month.
+        freshness: null
         tests:
           - dbt_utils.unique_combination_of_columns:
                 combination_of_columns: 
@@ -74,6 +76,7 @@ sources:
 
       - name: destination
         description: Table of the warehouse destinations that have data loaded into them.
+        freshness: null
         columns:
           - name: id
             description: Unique ID of the destination
@@ -109,4 +112,120 @@ sources:
             description: More specific category related to the nature of the event
           - name: transformation_id
             description: Foreign key referencing the TRANSFORMATION if the event is a transformation
-      
+     
+      # not used for final models
+      - name: account
+        description: Table of information on this fivetran account
+        columns:
+          - name: id
+            description: Unique ID of the Fivetran account
+            tests:
+              - unique
+              - not_null
+          - name: country
+            description: Country associated with the account # TODO: check this
+          - name: created_at
+            description: Timestamp of when the account was created
+          - name: name
+            description: Name of the Fivetran account
+          - name: status
+            description: not sure # todo: get this
+
+      - name: account_membership
+        description: Table of the users given access to this account
+        tests:
+          - dbt_utils.unique_combination_of_columns:
+                combination_of_columns: 
+                - account_id
+                - user_id
+        columns:
+          - name: account_id
+            description: Foreign key referencing the ID of the `account` that the user belongs to
+          - name: user_id
+            description: Foreign key referencing the ID of the `user` belonging to the account
+          - name: activated_at
+            description: Timestamp # todo: get this
+          - name: joined_at # todo: get description
+          - name: role
+            description: The user's permissions for this account
+
+      - name: destination_membership
+        description: Table of the users given access to this destination
+        tests:
+          - dbt_utils.unique_combination_of_columns:
+                combination_of_columns: 
+                - destination_id
+                - user_id
+        columns:
+          - name: destination_id
+            description: Foreign key referencing the ID of the `destination` that the user is a member of
+          - name: user_id
+            description: Foreign key referencing the ID of the `user` who has access to the destination
+          - name: activated_at
+            description: Timestamp # todo: get this
+          - name: joined_at # todo: get description
+          - name: role
+            description: The user's permissions for this individual destination 
+          
+      - name: transformation
+        description: Table of [transformations](https://fivetran.com/docs/transformations) made and carried out in Fivetran
+        columns:
+          - name: id
+            description: Unique ID of the transformation
+            tests:
+              - unique
+              - not_null
+          - name: created_at
+            description: Timestamp of when the transformation was created
+          - name: created_by_id
+            description: Foreign key referencing the `user` who created the transformation
+          - name: destination_id
+            description: Foreign key referenencing the `destination` whose data is being transformed
+          - name: name
+            description: Name given to the transformation
+          - name: paused
+            description: Boolean of whether the data transformation is currently paused
+          - name: script
+            description: The code content of the transformation
+          - name: trigger_delay # todo: description?
+          - name: trigger_interval
+            description: The scheduled frequency of the transformation, if a time schedule is chosen as its trigger
+          - name: trigger_type
+            description: The schedule type of the transformation (time schedule vs. new data in certain tables)
+
+      - name: trigger_table
+        description: Table relating transformations to the connector source tables that trigger them. Trasnformations on time schedules do not appear here.
+        tests:
+          - dbt_utils.unique_combination_of_columns:
+                combination_of_columns: 
+                - table
+                - transformation_id
+        columns:
+          - name: table
+            description: Connector source table that the transformation is triggered by, if it is triggered by new data
+          - name: transformation_id
+            description: Foreign key referencing the `transformation` that is triggered by new data
+
+      - name: user
+        description: Table of users given access to this Fivetran account
+        columns:
+          - name: id
+            description: Unique ID of the user's account
+            tests:
+              - unique
+              - not_null
+          - name: created_at
+            description: Timestamp of when the user was created
+          - name: email
+            description: Email associated with the user
+          - name: email_disabled
+            description: Boolean of whether they have disabled all email notifications 
+          - name: family_name
+            description: User's surname
+          - name: given_name
+            description: User's first name
+          - name: phone
+            description: Phone number associated with user
+          - name: verified # todo: how does a user become verified?
+
+          

@@ -16,6 +16,12 @@ vars:
         credits_used: "{{ source('fivetran_log', 'credits_used') }}" 
         destination: "{{ source('fivetran_log', 'destination') }}" 
         log: "{{ source('fivetran_log', 'log') }}" 
+        account: "{{ source('fivetran_log', 'account') }}" 
+        account_membership: "{{ source('fivetran_log', 'account_membership') }}" 
+        destination_membership: "{{ source('fivetran_log', 'destination_membership') }}" 
+        transformation: "{{ source('fivetran_log', 'transformation') }}" 
+        trigger_table: "{{ source('fivetran_log', 'trigger_table') }}" 
+        user: "{{ source('fivetran_log', 'user') }}" 
 
 # delete profile after testing
 profile: dev_bigquery_dbt_testing

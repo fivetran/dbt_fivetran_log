@@ -94,4 +94,118 @@ models:
         description: More specific category related to the nature of the event
       - name: transformation_id
         description: Foreign key referencing the TRANSFORMATION if the event is a transformation
-  
+
+  # not used for final models
+  - name: stg_fivetran_log_account
+    description: Table of information on this fivetran account
+    columns:
+      - name: account_id
+        description: Unique ID of the Fivetran account
+        tests:
+          - unique
+          - not_null
+      - name: country
+        description: Country associated with the account # TODO: check this
+      - name: created_at
+        description: Timestamp of when the account was created
+      - name: account_name
+        description: Name of the Fivetran account
+      - name: status
+        description: not sure # todo: get this
+
+  - name: stg_fivetran_log_account_membership
+    description: Table of the users given access to this account
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+            combination_of_columns: 
+            - account_id
+            - user_id
+    columns:
+      - name: account_id
+        description: Foreign key referencing the ID of the `account` that the user belongs to
+      - name: user_id
+        description: Foreign key referencing the ID of the `user` belonging to the account
+      - name: activated_at
+        description: Timestamp # todo: get this
+      - name: joined_at # todo: get description
+      - name: account_role
+        description: The user's permissions for this account
+
+  - name: stg_fivetran_log_destination_membership
+    description: Table of the users given access to this destination
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+            combination_of_columns: 
+            - destination_id
+            - user_id
+    columns:
+      - name: destination_id
+        description: Foreign key referencing the ID of the `destination` that the user is a member of
+      - name: user_id
+        description: Foreign key referencing the ID of the `user` who has access to the destination
+      - name: activated_at
+        description: Timestamp # todo: get this
+      - name: joined_at # todo: get description
+      - name: destination_role
+        description: The user's permissions for this individual destination 
+      
+  - name: stg_fivetran_log_transformation
+    description: Table of transformations made and carried out in Fivetran
+    columns:
+      - name: transformation_id
+        description: Unique ID of the transformation
+        tests:
+          - unique
+          - not_null
+      - name: created_at
+        description: Timestamp of when the transformation was created
+      - name: created_by_user_id
+        description: Foreign key referencing the `user` who created the transformation
+      - name: destination_id
+        description: Foreign key referenencing the `destination` whose data is being transformed
+      - name: transformation_name
+        description: Name given to the transformation
+      - name: is_paused
+        description: Boolean of whether the data transformation is currently paused
+      - name: script
+        description: The code content of the transformation
+      - name: trigger_delay # todo: description?
+      - name: trigger_interval
+        description: The scheduled frequency of the transformation, if a time schedule is chosen as its trigger
+      - name: trigger_type
+        description: The schedule type of the transformation (time schedule vs. new data in certain tables)
+
+  - name: stg_fivetran_log_trigger_table
+    description: Table relating transformations to the connector source tables that trigger them. Trasnformations on time schedules do not appear here.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+            combination_of_columns: 
+            - table
+            - transformation_id
+    columns:
+      - name: table
+        description: Connector source table that the transformation is triggered by, if it is triggered by new data
+      - name: transformation_id
+        description: Foreign key referencing the `transformation` that is triggered by new data
+
+  - name: stg_fivetran_log_user
+    description: Table of users given access to this Fivetran account
+    columns:
+      - name: user_id
+        description: Unique ID of the user's account
+        tests:
+          - unique
+          - not_null
+      - name: created_at
+        description: Timestamp of when the user was created
+      - name: email
+        description: Email associated with the user
+      - name: has_disabled_email_notifications
+        description: Boolean of whether they have disabled all email notifications 
+      - name: last_name
+        description: User's surname
+      - name: first_name
+        description: User's first name
+      - name: phone
+        description: Phone number associated with user
+      - name: is_verified # todo: how does a user become verified?

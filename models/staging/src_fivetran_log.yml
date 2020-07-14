@@ -95,7 +95,7 @@ sources:
             description: Geographical region of the destination
       
       - name: log
-        description: Table of logged events related to data syncs
+        description: Table of logged events related to data syncs. More info on error logs [here](https://fivetran.com/docs/logs/fivetran-log#errorlogs)
         tests:
           - dbt_utils.unique_combination_of_columns:
                 combination_of_columns: 
@@ -111,7 +111,7 @@ sources:
           - name: message_data # todo: unsure what to rename these...
             description: JSON of the event-specific data
           - name: message_event
-            description: More specific category related to the nature of the event
+            description: More specific category related to the nature of the event. Defined [here](https://fivetran.com/docs/logs#logevents)
           - name: transformation_id
             description: Foreign key referencing the TRANSFORMATION if the event is a transformation
      

@@ -64,3 +64,4 @@ mar_join as (
 )
 
 select * from mar_join
+order by measured_month desc, destination_id, connector_id

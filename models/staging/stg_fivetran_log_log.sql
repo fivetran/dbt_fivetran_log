@@ -17,7 +17,7 @@ fields as (
         -- event as event_type, -- eh different names for these? TODO
         message_data,
         case when transformation_id is not null and message_event is null then 'transformation'
-        else message_event end as message_event,
+        else message_event end as event_subtype,
         -- message_event,
         transformation_id
 

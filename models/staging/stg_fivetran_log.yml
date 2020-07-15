@@ -90,7 +90,7 @@ models:
         description: The umbrella category of the event -- either INFO, SEVERE, WARNING, or TRANSFORMATION
       - name: message_data # todo: unsure what to rename these...
         description: JSON of the event-specific data
-      - name: message_event
+      - name: event_subtype
         description: More specific category related to the nature of the event
       - name: transformation_id
         description: Foreign key referencing the TRANSFORMATION if the event is a transformation

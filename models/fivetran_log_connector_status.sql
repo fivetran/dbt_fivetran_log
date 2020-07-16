@@ -4,7 +4,7 @@ with log as (
     from {{ ref('stg_fivetran_log_log') }}
 
     -- ignoring INFO events and transformations
-    where event_type = 'ERROR'
+    where event_type = 'SEVERE'
         or event_type = 'WARNING'
         or event_subtype like 'sync%'
 
@@ -41,7 +41,7 @@ connector_metrics as (
         connector.is_paused,
         max(case when log.event_subtype = 'sync_start' then log.created_at else null end) as last_synced_at,
         max(case when log.event_subtype = 'sync_end' then log.created_at else null end) as last_sync_completed_at,
-        max(case when log.event_type = 'ERROR' then log.created_at else null end) as last_error_at,
+        max(case when log.event_type = 'SEVERE' then log.created_at else null end) as last_error_at,
         max(case when event_type = 'WARNING' then created_at else null end) as last_warning_at
 
     from log 
@@ -84,7 +84,7 @@ connector_recent_logs as (
 
     from connector_health left join log 
         on log.connector_id = connector_health.connector_name -- TODO: should actually be connector_id once bug is fixed 
-        and log.created_at > connector_health.last_sync_completed_at
+        and log.created_at > cast('2020-07-11' as timestamp) -- connector_health.last_sync_completed_at
         and log.event_type != 'INFO'  -- only looking at erors and warnings
 
     group by 1,2,3,4,5,6,7,8,9,10 -- getting the distinct error messages
@@ -105,7 +105,7 @@ final as (
         coalesce(schema_changes.number_of_schema_changes, 0) as number_of_schema_changes_last_month,
         
         -- need some data with errors/warnings to test.... TODO
-        {{ string_agg('case when connector_recent_logs.event_type = "ERROR" then connector_recent_logs.message_data else null end', "'\\n'") }} as errors_since_last_completed_sync,
+        {{ string_agg('case when connector_recent_logs.event_type = "SEVERE" then connector_recent_logs.message_data else null end', "'\\n'") }} as errors_since_last_completed_sync,
         {{ string_agg('case when connector_recent_logs.event_type = "WARNING" then connector_recent_logs.message_data else null end', "'\\n'") }} as warnings_since_last_completed_sync
         
 

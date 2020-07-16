@@ -92,6 +92,12 @@ connector_recent_logs as (
 
 ),
 
+destination as (
+
+    select * 
+    from {{ ref('stg_fivetran_log_destination') }}
+),
+
 final as (
 
     select
@@ -99,6 +105,7 @@ final as (
         connector_recent_logs.connector_name,
         connector_recent_logs.connector_type,
         connector_recent_logs.destination_id,
+        destination.destination_name,
         connector_recent_logs.connector_status,
         connector_recent_logs.data_sync_status,
         connector_recent_logs.last_synced_at,
@@ -112,7 +119,8 @@ final as (
     from connector_recent_logs
     left join schema_changes 
         on connector_recent_logs.connector_name = schema_changes.connector_id -- TODO: change when bug is fixed
-    group by 1,2,3,4,5,6,7,8
+    join destination on destination.destination_id = connector_recent_logs.destination_id
+    group by 1,2,3,4,5,6,7,8,9
 )
 
 select * from final

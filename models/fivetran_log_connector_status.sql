@@ -84,7 +84,7 @@ connector_recent_logs as (
 
     from connector_health left join log 
         on log.connector_id = connector_health.connector_name -- TODO: should actually be connector_id once bug is fixed 
-        and log.created_at > cast('2020-07-11' as timestamp) -- connector_health.last_sync_completed_at
+        and log.created_at > connector_health.last_sync_completed_at
         and log.event_type != 'INFO'  -- only looking at erors and warnings
 
     group by 1,2,3,4,5,6,7,8,9,10 -- getting the distinct error messages

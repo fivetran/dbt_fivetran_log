@@ -114,23 +114,5 @@ final as (
         on connector_recent_logs.connector_name = schema_changes.connector_id -- TODO: change when bug is fixed
     group by 1,2,3,4,5,6,7,8
 )
--- ,
-
--- final as (
-
---     select 
---         agg_connector_recent_logs.connector_id,
---         agg_connector_recent_logs.connector_name,
---         agg_connector_recent_logs.connector_type,
---         agg_connector_recent_logs.destination_id,
---         agg_connector_recent_logs.connector_status,
---         agg_connector_recent_logs.data_sync_status,
---         agg_connector_recent_logs.last_synced_at,
---         coalesce(schema_changes.number_of_schema_changes, 0) as number_of_schema_changes_last_month
-    
---     from agg_connector_recent_logs
---     left join schema_changes 
---         on agg_connector_recent_logs.connector_name = schema_changes.connector_id -- TODO: change when bug is fixed
--- )
 
 select * from final

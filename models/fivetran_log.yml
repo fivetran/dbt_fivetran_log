@@ -3,6 +3,7 @@ version: 2
 models:
 
   - name: fivetran_log_connector_status
+    description: Table of connectors enriched with 
   - name: fivetran_log_credit_mar_history
   - name: fivetran_log_mar_table_history
   - name: fivetran_log_transformation_status

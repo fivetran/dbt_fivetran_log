@@ -2,10 +2,10 @@ version: 2
 
 # If you have multiple destinations with Fivetran, you'll need to declare them as sources here. 
 # The sources should differ only in database name.
-sources:
-  - name: fivetran_log
-    database: "{{var ('fivetran_log_database', target.database)}}"
-    schema: "{{var ('fivetran_log_schema', 'fivetran_log')}}"
+sources: 
+  - name: fivetran_log_bigquery 
+    database: "{{var ('fivetran_log_database', target.database) }}" # TODO: should it just be user given (in this first source just target.database)
+    schema: "{{var ('fivetran_log_schema', 'fivetran_log') }}" # just set to 'fivetran_log' as default?
 
     loader: fivetran
     loaded_at_field: _fivetran_synced
@@ -230,4 +230,16 @@ sources:
             description: Phone number associated with user
           - name: verified # todo: how does a user become verified?
 
-          
+  # - name: fivetran_log_2
+  #   database: digital-arbor-400
+  #   schema: fivetran_log_2
+
+  #   loader: fivetran
+  #   loaded_at_field: _fivetran_synced
+      
+  #   freshness: # what's appropriate here?
+  #     warn_after: {count: 72, period: hour}
+  #     error_after: {count: 96, period: hour}
+
+
+  #   tables: *fivetran_log_tables         

@@ -1,6 +1,6 @@
 with trigger_table as (
     
-    {% for source_destination in var('source_destinations')  %}
+    {% for source_destination in var('source_destinations_with_transformations')  %}
     select 
         *,
         '{{ source_destination }}' as source_destination

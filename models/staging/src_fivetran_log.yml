@@ -192,22 +192,7 @@ sources:
           - name: phone
             description: Phone number associated with user
           - name: verified # todo: how does a user become verified?
-    
-    
-  - name: fivetran_log_dbt_package_testing 
-    database: dbt-package-testing # default is target.database from the given profile
-    schema: fivetran_log # default name of the connector schema
-
-    loader: fivetran
-    loaded_at_field: _fivetran_synced
       
-    freshness: # what's appropriate here?
-      warn_after: {count: 72, period: hour}
-      error_after: {count: 96, period: hour}
-
-    
-    tables: 
-      - <<: *fivetran_log_tables  
       - name: transformation
         description: Table of [transformations](https://fivetran.com/docs/transformations) made and carried out in Fivetran
         columns:
@@ -246,3 +231,18 @@ sources:
             description: Connector source table that the transformation is triggered by, if it is triggered by new data
           - name: transformation_id
             description: Foreign key referencing the `transformation` that is triggered by new data
+
+    
+  # destination 2  
+  - name: fivetran_log_dbt_package_testing 
+    database: dbt-package-testing # default is target.database from the given profile
+    schema: fivetran_log # default name of the connector schema
+
+    loader: fivetran
+    loaded_at_field: _fivetran_synced
+      
+    freshness: # what's appropriate here?
+      warn_after: {count: 72, period: hour}
+      error_after: {count: 96, period: hour}
+
+    tables: *fivetran_log_tables

@@ -1,9 +1,13 @@
 with log as (
 
-    select *
-    from {{ var('log') }}
+    {% for source_destination in var('source_destinations')  %}
+    select 
+        *,
+        '{{ source_destination }}' as source_destination
+    from {{ source( source_destination, 'log') }} 
+    {% if not loop.last -%} union all {%- endif %}
+    {% endfor %}
 
-    -- union tables from multiple destinations here
 ),
 
 fields as (
@@ -20,7 +24,8 @@ fields as (
         when transformation_id is not null and message_data like '%has succeeded%' then 'transformation run success'
         when transformation_id is not null and message_data like '%has failed%' then 'transformation run failed'
         else message_event end as event_subtype,
-        transformation_id
+        transformation_id,
+        source_destination
 
     from log
 )

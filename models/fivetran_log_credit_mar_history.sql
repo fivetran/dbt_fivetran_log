@@ -23,7 +23,7 @@ credits_used as (
         credits_consumed,
         cast(concat(measured_month, '-01') as date) as measured_month -- to join with MAR table
 
-    from {{ var('credits_used') }}
+    from {{ ref('stg_fivetran_log_credits_used') }}
 ),
 
 join_credits_mar as (

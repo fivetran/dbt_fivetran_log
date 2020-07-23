@@ -1,9 +1,13 @@
 with  credits_used as (
 
-    select *
-    from {{ var('credits_used') }}
+    {% for source_destination in var('source_destinations')  %}
+    select 
+        *,
+        '{{ source_destination }}' as source_destination
+    from {{ source( source_destination, 'credits_used') }} 
+    {% if not loop.last -%} union all {%- endif %}
+    {% endfor %}
 
-    -- union tables from multiple destinations here
 ),
 
 fields as (
@@ -11,7 +15,8 @@ fields as (
     select 
         destination_id,
         measured_month,
-        credits_consumed
+        credits_consumed,
+        source_destination
     
     from credits_used
 )

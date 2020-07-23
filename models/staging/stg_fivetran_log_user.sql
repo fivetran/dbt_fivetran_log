@@ -1,9 +1,13 @@
 with user as (
     
-    select * 
-    from {{ var('user') }}
+    {% for source_destination in var('source_destinations')  %}
+    select 
+        *,
+        '{{ source_destination }}' as source_destination
+    from {{ source( source_destination, 'user') }} 
+    {% if not loop.last -%} union all {%- endif %}
+    {% endfor %}
 
-    -- union tables from multiple destinations here
 ),
 
 fields as (
@@ -16,7 +20,8 @@ fields as (
         family_name as last_name,
         given_name as first_name,
         phone,
-        verified as is_verified
+        verified as is_verified,
+        source_destination
         
     from user
 )

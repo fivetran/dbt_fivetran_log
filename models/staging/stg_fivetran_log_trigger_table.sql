@@ -1,16 +1,21 @@
 with trigger_table as (
     
-    select * 
-    from {{ var('trigger_table') }}
+    {% for source_destination in var('source_destinations')  %}
+    select 
+        *,
+        '{{ source_destination }}' as source_destination
+    from {{ source( source_destination, 'trigger_table') }} 
+    {% if not loop.last -%} union all {%- endif %}
+    {% endfor %}
 
-    -- union tables from multiple destinations here
 ),
 
 fields as (
 
     select
         table,
-        transformation_id
+        transformation_id,
+        source_destination
         
     from trigger_table
 )

@@ -9,21 +9,11 @@ models:
     fivetran_log:
         materialized: table # ephemeral after testing
 
-# vars:
-#     fivetran_log: # todo: do variables make sense to use with multiple destinations?
-
-#         active_volume: "{{ source('fivetran_log', 'active_volume') }}" 
-#         connector: "{{ source('fivetran_log', 'connector') }}" 
-#         credits_used: "{{ source('fivetran_log', 'credits_used') }}" 
-#         destination: "{{ source('fivetran_log', 'destination') }}" 
-#         log: "{{ source('fivetran_log', 'log') }}" 
-#         account: "{{ source('fivetran_log', 'account') }}" 
-#         account_membership: "{{ source('fivetran_log', 'account_membership') }}" 
-#         destination_membership: "{{ source('fivetran_log', 'destination_membership') }}" 
-#         transformation: "{{ source('fivetran_log', 'transformation') }}" 
-#         trigger_table: "{{ source('fivetran_log', 'trigger_table') }}" 
-#         user: "{{ source('fivetran_log', 'user') }}" 
-
+vars:
+    # Input the sources declared in src_fivetran_log.yml. They *must* match.
+    source_destinations: ['fivetran_log_dbt_package_testing', 'fivetran_log_digital_arbor_400'] 
+    # The above destinations that have transformations
+    source_destinations_with_transformations: ['fivetran_log_dbt_package_testing'] 
 
 # delete profile after testing
 profile: dev_bigquery_dbt_testing

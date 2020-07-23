@@ -1,11 +1,13 @@
 version: 2
 
-# If you have multiple destinations with Fivetran, you'll need to declare them as sources here. 
-# The sources should differ only in database name.
+# If you have multiple destinations with Fivetran Log Connectors, you'll need to declare them individually as sources here.
+# You'll need to also add each source's name to the 'source_destinations' variable in dbt_project.yml
+
+# Example naming convention for each source: fivetran_log_[destination name]
 sources: 
-  - name: fivetran_log_bigquery 
-    database: "{{var ('fivetran_log_database', target.database) }}" # TODO: should it just be user given (in this first source just target.database)
-    schema: "{{var ('fivetran_log_schema', 'fivetran_log') }}" # just set to 'fivetran_log' as default?
+  - name: fivetran_log_digital_arbor_400
+    database: digital-arbor-400
+    schema: fivetran_log_2
 
     loader: fivetran
     loaded_at_field: _fivetran_synced
@@ -14,8 +16,8 @@ sources:
       warn_after: {count: 72, period: hour}
       error_after: {count: 96, period: hour}
 
-
-    tables: &fivetran_log_tables # Reference this table structure in other sources with table: *fivetran_log_tables
+    # Reference this table structure in other sources with table: *fivetran_log_tables
+    tables: &fivetran_log_tables 
       - name: active_volume
         description: Table of monthly active row (MAR) measurements by table per date.
         columns:
@@ -168,7 +170,44 @@ sources:
           - name: joined_at # todo: get description
           - name: role
             description: The user's permissions for this individual destination 
-          
+
+      - name: user
+        description: Table of users given access to this Fivetran account
+        columns:
+          - name: id
+            description: Unique ID of the user's account
+            tests:
+              - unique
+              - not_null
+          - name: created_at
+            description: Timestamp of when the user was created
+          - name: email
+            description: Email associated with the user
+          - name: email_disabled
+            description: Boolean of whether they have disabled all email notifications 
+          - name: family_name
+            description: User's surname
+          - name: given_name
+            description: User's first name
+          - name: phone
+            description: Phone number associated with user
+          - name: verified # todo: how does a user become verified?
+    
+    
+  - name: fivetran_log_dbt_package_testing 
+    database: dbt-package-testing # default is target.database from the given profile
+    schema: fivetran_log # default name of the connector schema
+
+    loader: fivetran
+    loaded_at_field: _fivetran_synced
+      
+    freshness: # what's appropriate here?
+      warn_after: {count: 72, period: hour}
+      error_after: {count: 96, period: hour}
+
+    
+    tables: 
+      - <<: *fivetran_log_tables  
       - name: transformation
         description: Table of [transformations](https://fivetran.com/docs/transformations) made and carried out in Fivetran
         columns:
@@ -207,39 +246,3 @@ sources:
             description: Connector source table that the transformation is triggered by, if it is triggered by new data
           - name: transformation_id
             description: Foreign key referencing the `transformation` that is triggered by new data
-
-      - name: user
-        description: Table of users given access to this Fivetran account
-        columns:
-          - name: id
-            description: Unique ID of the user's account
-            tests:
-              - unique
-              - not_null
-          - name: created_at
-            description: Timestamp of when the user was created
-          - name: email
-            description: Email associated with the user
-          - name: email_disabled
-            description: Boolean of whether they have disabled all email notifications 
-          - name: family_name
-            description: User's surname
-          - name: given_name
-            description: User's first name
-          - name: phone
-            description: Phone number associated with user
-          - name: verified # todo: how does a user become verified?
-
-  # - name: fivetran_log_2
-  #   database: digital-arbor-400
-  #   schema: fivetran_log_2
-
-  #   loader: fivetran
-  #   loaded_at_field: _fivetran_synced
-      
-  #   freshness: # what's appropriate here?
-  #     warn_after: {count: 72, period: hour}
-  #     error_after: {count: 96, period: hour}
-
-
-  #   tables: *fivetran_log_tables         

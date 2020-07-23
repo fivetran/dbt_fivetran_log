@@ -1,9 +1,13 @@
 with active_volume as (
     
-    select *
-    from {{ var('active_volume') }}
+    {% for source_destination in var('source_destinations')  %}
+    select 
+        *,
+        '{{ source_destination }}' as source_destination
+    from {{ source( source_destination, 'active_volume') }} 
+    {% if not loop.last -%} union all {%- endif %}
+    {% endfor %}
 
-    -- union tables from multiple destinations here
 ),
 
 fields as (
@@ -15,7 +19,8 @@ fields as (
         measured_at,
         monthly_active_rows,
         schema_name,
-        table_name
+        table_name,
+        source_destination
     
     from active_volume
 )

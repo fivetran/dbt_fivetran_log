@@ -1,9 +1,13 @@
 with destination_membership as (
     
-    select * 
-    from {{ var('destination_membership') }}
+    {% for source_destination in var('source_destinations')  %}
+    select 
+        *,
+        '{{ source_destination }}' as source_destination
+    from {{ source( source_destination, 'destination_membership') }} 
+    {% if not loop.last -%} union all {%- endif %}
+    {% endfor %}
 
-    -- union tables from multiple destinations here
 ),
 
 fields as (
@@ -13,7 +17,8 @@ fields as (
         user_id,
         activated_at,
         joined_at,
-        role as destination_role
+        role as destination_role,
+        source_destination
         
     from destination_membership
 )

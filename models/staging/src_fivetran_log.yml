@@ -17,7 +17,7 @@ sources:
       error_after: {count: 96, period: hour}
 
     # Reference this table structure in other sources with table: *fivetran_log_tables
-    tables: &fivetran_log_tables 
+    tables: &fivetran_log_tables_without_transformations
       - name: active_volume
         description: Table of monthly active row (MAR) measurements by table per date.
         columns:
@@ -192,7 +192,207 @@ sources:
           - name: phone
             description: Phone number associated with user
           - name: verified # todo: how does a user become verified?
+    
+  # destination 2  
+  - name: fivetran_log_dbt_package_testing 
+    database: dbt-package-testing # default is target.database from the given profile
+    schema: fivetran_log # default name of the connector schema
+
+    loader: fivetran
+    loaded_at_field: _fivetran_synced
       
+    freshness: # what's appropriate here?
+      warn_after: {count: 72, period: hour}
+      error_after: {count: 96, period: hour}
+
+    tables: &fivetran_log_tables
+      - name: active_volume
+        description: Table of monthly active row (MAR) measurements by table per date.
+        columns:
+          - name: id
+            description: System-generated unique ID of the active volume measurement.
+            tests:
+              - unique
+              - not_null
+          - name: connector_id
+            description: Foreign key referencing the id of the CONNECTOR whose table is being measured # eek this is not the case in our data...
+          - name: destination_id
+            description: Foreign key referencing the DESTINATION whose table is being measured
+          - name: measured_at
+            description: Timestamp of when this measurement of monthly active rows was made.
+          - name: monthly_active_rows
+            description: The number of distinct primary keys synced for the table this month (MAR), up to the date of measurement.
+          - name: schema_name
+            description: The name of the connector schema housing the measured table.
+          - name: table_name
+            description: The name of the table whose MAR is being measured.
+
+      - name: connector
+        description: Table of all connectors loading data into warehouses.
+        freshness: null
+        columns: 
+          - name: connector_id
+            description: Unique ID of the connector - destination. Note that a connector loading data into 2 warehouses will have 2 distinct records.
+            tests:
+              - unique
+              - not_null
+          - name: connecting_user_id
+            description: Foreign key referencing the USER who set up the connector
+          - name: connector_name
+            description: Individual name of the connector
+          - name: connector_type
+            description: The kind of connector (ie google sheets, webhooks)
+          - name: destination_id
+            description: Foreign key referencing the DESTINATION warehouse that the connector data is loaded into.
+          - name: paused
+            description: Boolean that is true if the connector's sync is currently paused
+          - name: signed_up
+            description: Timestamp of when the connection was set up
+
+      - name: credits_used
+        description: Table of the credits used by the customer per each month.
+        freshness: null
+        tests:
+          - dbt_utils.unique_combination_of_columns:
+                combination_of_columns: 
+                  - destination_id
+                  - measured_month
+        columns:
+          - name: destination_id
+            description: Foreign key referencing the DESTINATION warehouse that the credits were used on
+          - name: measured_month
+            description: The month (yyyy-mm) in which the credits were used
+          - name: credits_consumed
+            description: The number of credits used for the given month - destination
+
+
+      - name: destination
+        description: Table of the warehouse destinations that have data loaded into them.
+        freshness: null
+        columns:
+          - name: id
+            description: Unique ID of the destination
+            tests:
+              - unique
+              - not_null
+          - name: account_id
+            description: Foreign key referencing the fivetran ACCOUNT associated with the destination
+          - name: created_at
+            description: Timestamp of when the destination was set up
+          - name: name
+            description: Name of the destination warehouse
+          - name: region
+            description: Geographical region of the destination
+      
+      - name: log
+        description: Table of logged events related to data syncs. More info on error logs [here](https://fivetran.com/docs/logs/fivetran-log#errorlogs)
+        tests:
+          - dbt_utils.unique_combination_of_columns:
+                combination_of_columns: 
+                  - id
+                  - time_stamp
+        columns:
+          - name: id # TODO: this is actually = connector name or transformation_id
+          - name: time_stamp
+            description: Timestamp of when the event was logged
+          - name: connector_id # todo - figure this out, actually = connector_name
+          - name: event
+            description: The umbrella category of the event -- either INFO, SEVERE, WARNING, or TRANSFORMATION
+          - name: message_data # todo: unsure what to rename these...
+            description: JSON of the event-specific data
+          - name: message_event
+            description: More specific category related to the nature of the event. Defined [here](https://fivetran.com/docs/logs#logevents)
+          - name: transformation_id
+            description: Foreign key referencing the TRANSFORMATION if the event is a transformation
+     
+      # not used for final models
+      - name: account
+        description: Table of information on this fivetran account
+        columns:
+          - name: id
+            description: Unique ID of the Fivetran account
+            tests:
+              - unique
+              - not_null
+          - name: country
+            description: Country associated with the account # TODO: check this
+          - name: created_at
+            description: Timestamp of when the account was created
+          - name: name
+            description: Name of the Fivetran account
+          - name: status
+            description: not sure # todo: get this
+
+      - name: account_membership
+        description: Table of the users given access to this account
+        tests:
+          - dbt_utils.unique_combination_of_columns:
+                combination_of_columns: 
+                - account_id
+                - user_id
+        columns:
+          - name: account_id
+            description: Foreign key referencing the ID of the `account` that the user belongs to
+          - name: user_id
+            description: Foreign key referencing the ID of the `user` belonging to the account
+          - name: activated_at
+            description: Timestamp # todo: get this
+          - name: joined_at # todo: get description
+          - name: role
+            description: The user's permissions for this account
+
+      - name: destination_membership
+        description: Table of the users given access to this destination
+        tests:
+          - dbt_utils.unique_combination_of_columns:
+                combination_of_columns: 
+                - destination_id
+                - user_id
+        columns:
+          - name: destination_id
+            description: Foreign key referencing the ID of the `destination` that the user is a member of
+          - name: user_id
+            description: Foreign key referencing the ID of the `user` who has access to the destination
+          - name: activated_at
+            description: Timestamp # todo: get this
+          - name: joined_at # todo: get description
+          - name: role
+            description: The user's permissions for this individual destination 
+
+      - name: user
+        description: Table of users given access to this Fivetran account
+        columns:
+          - name: id
+            description: Unique ID of the user's account
+            tests:
+              - unique
+              - not_null
+          - name: created_at
+            description: Timestamp of when the user was created
+          - name: email
+            description: Email associated with the user
+          - name: email_disabled
+            description: Boolean of whether they have disabled all email notifications 
+          - name: family_name
+            description: User's surname
+          - name: given_name
+            description: User's first name
+          - name: phone
+            description: Phone number associated with user
+          - name: verified # todo: how does a user become verified?
+      - name: trigger_table
+        description: Table relating transformations to the connector source tables that trigger them. Transformations on time schedules do not appear here.
+        tests:
+          - dbt_utils.unique_combination_of_columns:
+                combination_of_columns: 
+                - table
+                - transformation_id
+        columns:
+          - name: table
+            description: Connector source table that the transformation is triggered by, if it is triggered by new data
+          - name: transformation_id
+            description: Foreign key referencing the `transformation` that is triggered by new data
+
       - name: transformation
         description: Table of [transformations](https://fivetran.com/docs/transformations) made and carried out in Fivetran
         columns:
@@ -218,20 +418,3 @@ sources:
             description: The scheduled frequency of the transformation, if a time schedule is chosen as its trigger
           - name: trigger_type
             description: The schedule type of the transformation (time schedule vs. new data in certain tables)
-
-
-
-    
-  # destination 2  
-  - name: fivetran_log_dbt_package_testing 
-    database: dbt-package-testing # default is target.database from the given profile
-    schema: fivetran_log # default name of the connector schema
-
-    loader: fivetran
-    loaded_at_field: _fivetran_synced
-      
-    freshness: # what's appropriate here?
-      warn_after: {count: 72, period: hour}
-      error_after: {count: 96, period: hour}
-
-    tables: *fivetran_log_tables

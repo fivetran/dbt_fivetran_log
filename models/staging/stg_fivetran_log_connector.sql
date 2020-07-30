@@ -9,7 +9,7 @@ with connector as (
     {% endfor %}
 
 ),
-
+-- TODO: de-dupe connectors (multiple connector_id's) -- maybe add flag has_been_re_added
 fields as (
 
     select 

@@ -1,3 +1,6 @@
+{% set a = enable_model('trigger_model') %}
+{{ config(enabled=var('a', false) ) }}
+
 with trigger_table as (
     
 

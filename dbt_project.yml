@@ -11,7 +11,7 @@ models:
 
 vars:
     # Input the sources declared in src_fivetran_log.yml. They *must* match.
-    source_destinations: ['fivetran_log_dbt_package_testing', 'fivetran_log_digital_arbor_400'] 
+    source_destinations: [ 'fivetran_log_digital_arbor_400'] 
     # The above destinations that have transformations
     source_destinations_with_transformations: ['fivetran_log_dbt_package_testing'] 
 

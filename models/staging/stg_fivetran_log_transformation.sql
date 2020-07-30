@@ -1,12 +1,9 @@
+{% set union_source_tables_query = union_source_tables('transformation') %}
+{% set enable_model = 'select null as destination_database' not in ("'" ~ union_source_tables_query ~ "'") %}
+
 with transformation as (
     
-    {% for source_destination in var('source_destinations_with_transformations')  %}
-    select 
-        *,
-        '{{ source_destination }}' as source_destination
-    from {{ source( source_destination, 'transformation') }} 
-    {% if not loop.last -%} union all {%- endif %}
-    {% endfor %}
+    {{ union_source_tables_query }}
 
 ),
 

@@ -1,9 +1,6 @@
-{% set union_source_tables_query = union_source_tables('transformation') %}
-{% set enable_model = 'select null as destination_database' not in ("'" ~ union_source_tables_query ~ "'") %}
-
 with transformation as (
     
-    {{ union_source_tables_query }}
+    {{ union_source_tables('transformation') }}
 
 ),
 
@@ -20,9 +17,11 @@ fields as (
         trigger_delay,
         trigger_interval,
         trigger_type,
-        source_destination
+        destination_database
         
     from transformation
+
+    where destination_database is not null
 )
 
 select * from fields

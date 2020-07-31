@@ -1,8 +1,4 @@
-{% set a = enable_model('trigger_model') %}
-{{ config(enabled=var('a', false) ) }}
-
 with trigger_table as (
-    
 
     {{ union_source_tables('trigger_table') }}
 
@@ -10,12 +6,16 @@ with trigger_table as (
 
 fields as (
 
-    select
+    select 
+
         table,
         transformation_id,
         destination_database
-        
+    
     from trigger_table
+
+    where destination_database is not null
 )
+
 
 select * from fields

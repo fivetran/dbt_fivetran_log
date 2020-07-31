@@ -195,11 +195,6 @@ sources:
 
       - name: trigger_table
         description: Table relating transformations to the connector source tables that trigger them. Transformations on time schedules do not appear here.
-        tests:
-          - dbt_utils.unique_combination_of_columns:
-                combination_of_columns: 
-                - table
-                - transformation_id
         columns:
           - name: table
             description: Connector source table that the transformation is triggered by, if it is triggered by new data
@@ -211,9 +206,6 @@ sources:
         columns:
           - name: id
             description: Unique ID of the transformation
-            tests:
-              - unique
-              - not_null
           - name: created_at
             description: Timestamp of when the transformation was created
           - name: created_by_id

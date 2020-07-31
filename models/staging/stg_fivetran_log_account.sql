@@ -1,12 +1,7 @@
 with account as (
     
-    {% for source_destination in var('source_destinations')  %}
-    select 
-        *,
-        '{{ source_destination }}' as source_destination
-    from {{ source( source_destination, 'account') }} 
-    {% if not loop.last -%} union all {%- endif %}
-    {% endfor %}
+    {{ union_source_tables('account') }}
+    
 ),
 
 fields as (
@@ -17,7 +12,7 @@ fields as (
         created_at,
         name as account_name,
         status,
-        source_destination
+        destination_database
         
     from account
 )

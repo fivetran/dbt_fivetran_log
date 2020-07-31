@@ -1,12 +1,6 @@
 with destination_membership as (
     
-    {% for source_destination in var('source_destinations')  %}
-    select 
-        *,
-        '{{ source_destination }}' as source_destination
-    from {{ source( source_destination, 'destination_membership') }} 
-    {% if not loop.last -%} union all {%- endif %}
-    {% endfor %}
+    {{ union_source_tables('destination_membership') }}
 
 ),
 
@@ -18,7 +12,7 @@ fields as (
         activated_at,
         joined_at,
         role as destination_role,
-        source_destination
+        destination_database
         
     from destination_membership
 )

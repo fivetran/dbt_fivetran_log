@@ -6,9 +6,9 @@
             {%- set source_relation = adapter.get_relation(
                     database=node.database,
                     schema=node.schema,
-                    identifier=table_name ) -%} -- todo: for some reason it's totally ignoring the identifier
+                    identifier=table_name ) -%} -- todo: it's ignoring this and grabbing all tables in the db.schema ... maybe misunderstanding identifier
 
-            {%- if source_relation != None and node.name == table_name -%}
+            {%- if source_relation != None and node.name == table_name -%} 
                 {%- do sources.append(source(node.source_name, node.name)) -%}
             {%- endif -%}
         {%- endfor -%}
@@ -22,14 +22,29 @@
         {%- endfor -%} 
 
         {%- if sources == [] %} 
-            select null as destination_database 
+            select 
+        
+            {% if table_name == 'trigger_table' %}
+                cast(null as {{ dbt_utils.type_string() }}) as table,
+                cast(null as {{ dbt_utils.type_string() }}) as transformation_id,
+            
+            {% elif table_name == 'transformation' %}
+                cast(null as {{ dbt_utils.type_string() }}) as transformation_id,
+                cast(null as {{ dbt_utils.type_string() }}) as created_at,
+                cast(null as {{ dbt_utils.type_string() }}) as created_by_user_id,
+                cast(null as timestamp) as destination_id,
+                cast(null as {{ dbt_utils.type_string() }}) as transformation_name,
+                cast(null as boolean ) as is_paused,
+                cast(null as {{ dbt_utils.type_string() }}) as script,
+                cast(null as {{ dbt_utils.type_string() }}) as trigger_delay,
+                cast(null as {{ dbt_utils.type_string() }}) as trigger_interval,
+                cast(null as {{ dbt_utils.type_string() }}) as trigger_type,
+            
+            {% endif %}
+
+                cast(null as {{ dbt_utils.type_string() }}) as destination_database
+
         {%- endif -%}
     
     {%- endif -%} 
 {% endmacro %}
-
--- iterate through defined sources
--- take their database 
--- check if the database-table relation != none from adapter.get_relation
--- store the databases that have the table
--- union their tables

@@ -14,22 +14,27 @@ models:
       - name: destination_id
         description: Foreign key referencing the DESTINATION whose table is being measured
       - name: measured_at
-        description: Timestamp of when the entry's MAR measurement was made.
+        description: Timestamp of when the entry's MAR measurement was made
       - name: monthly_active_rows
         description: The number of MAR measured on this date for this table
       - name: schema_name
         description: The name of the connector schema where the measured table lives
       - name: table_name
         description: Name of the table whose volume is being measured
+      - name: destination_database
+        description: Name of the destination's database (as defined in src_fivetran_log.yml) for which the active volume was measured
 
 
   - name: stg_fivetran_log_connector
+    tests:
+      # This combo will be used to join with other tables lacking connector_id
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: 
+            - connector_name
+            - destination_database
     columns:
       - name: connector_id
-        description: Unique ID of the connector. Note that a connector loading data into 2 warehouses will have 2 distinct records.
-        tests:
-          - unique
-          - not_null
+        description: Destination-unique ID of the connector.
       - name: connecting_user_id
         description: Foreign key referencing the USER who set up the connection.
       - name: connector_name
@@ -42,6 +47,8 @@ models:
         description: Boolean that's true if the connect
       - name: signed_up_at
         description: Timestamp of when the connection was set up
+      - name: destination_database
+        description: Name of the destination's database that houses the connector
 
   - name: stg_fivetran_log_credits_used
     tests:
@@ -56,6 +63,8 @@ models:
         description: The month (yyyy-mm) in which the credits were used
       - name: credits_consumed
         description: The number of credits used for the given month - destination
+      - name: destination_database
+        description: Name of the destination's database for which the credits were used
 
   - name: stg_fivetran_log_destination
     columns:
@@ -72,6 +81,8 @@ models:
         description: Name of the destination warehouse
       - name: region
         description: Geographical region of the destination
+      - name: destination_database
+        description: Name of the destination's database
 
   - name: stg_fivetran_log_log
     tests:
@@ -94,6 +105,8 @@ models:
         description: More specific category related to the nature of the event
       - name: transformation_id
         description: Foreign key referencing the TRANSFORMATION if the event is a transformation
+      - name: destination_database
+        description: Name of the destination's database in which the logged event occurred
 
   # not used for final models
   - name: stg_fivetran_log_account
@@ -112,6 +125,8 @@ models:
         description: Name of the Fivetran account
       - name: status
         description: not sure # todo: get this
+      - name: destination_database
+        description: Name of the destination's database that the account has access to
 
   - name: stg_fivetran_log_account_membership
     description: Table of the users given access to this account
@@ -130,6 +145,8 @@ models:
       - name: joined_at # todo: get description
       - name: account_role
         description: The user's permissions for this account
+      - name: destination_database
+        description: Name of the destination's database the account has access to
 
   - name: stg_fivetran_log_destination_membership
     description: Table of the users given access to this destination
@@ -148,9 +165,11 @@ models:
       - name: joined_at # todo: get description
       - name: destination_role
         description: The user's permissions for this individual destination 
+      - name: destination_database
+        description: Name of the destination's database
       
   - name: stg_fivetran_log_transformation
-    description: Table of transformations made and carried out in Fivetran
+    description: Table of transformations made and carried out in Fivetran. Will be empty if no transformations exist.
     columns:
       - name: transformation_id
         description: Unique ID of the transformation
@@ -174,9 +193,11 @@ models:
         description: The scheduled frequency of the transformation, if a time schedule is chosen as its trigger
       - name: trigger_type
         description: The schedule type of the transformation (time schedule vs. new data in certain tables)
+      - name: destination_database
+        description: Name of the destination's database in which the transformation is run
 
   - name: stg_fivetran_log_trigger_table
-    description: Table relating transformations to the connector source tables that trigger them. Trasnformations on time schedules do not appear here.
+    description: Table relating transformations to the connector source tables that trigger them. Will be empty if no triggered transformations (vs time schedule) exist.
     tests:
       - dbt_utils.unique_combination_of_columns:
             combination_of_columns: 
@@ -187,6 +208,8 @@ models:
         description: Connector source table that the transformation is triggered by, if it is triggered by new data
       - name: transformation_id
         description: Foreign key referencing the `transformation` that is triggered by new data
+      - name: destination_database
+        description: Name of the destination's database in which the transformation is triggered
 
   - name: stg_fivetran_log_user
     description: Table of users given access to this Fivetran account
@@ -209,3 +232,5 @@ models:
       - name: phone
         description: Phone number associated with user
       - name: is_verified # todo: how does a user become verified?
+      - name: destination_database
+        description: Name of the destination's database that the user has access to

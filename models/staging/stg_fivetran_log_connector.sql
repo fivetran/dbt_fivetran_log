@@ -3,20 +3,42 @@ with connector as (
     {{ union_source_tables('connector') }}
 
 ),
--- TODO: de-dupe connectors (multiple connector_id's) -- maybe add flag has_been_re_added
+
 fields as (
 
     select 
         connector_id,
-        connecting_user_id,
         connector_name,
         connector_type,  -- use coalesce(connector_type, service) if the table has a service column (deprecated)
         destination_id,
+        connecting_user_id,
         paused as is_paused,
         signed_up as signed_up_at,
-        destination_database
+        destination_database,
+
+        -- Consolidating duplicate connectors (ie deleted and then re-added)
+        row_number() over ( partition by connector_name, destination_id order by _fivetran_synced desc ) as nth_last_record
 
     from connector
+
+),
+
+final as (
+
+    select 
+        connector_id,
+        connector_name,
+        connector_type, 
+        destination_id,
+        connecting_user_id,
+        is_paused,
+        signed_up_at,
+        destination_database
+
+    from fields
+
+    -- Only look at the most recent one
+    where nth_last_record = 1
 )
 
-select * from fields
+select * from final

@@ -19,7 +19,9 @@ sources:
     # Reference this table structure in other sources with table: *fivetran_log_tables
     tables: &fivetran_log_tables
       - name: active_volume
-        description: Table of monthly active row (MAR) measurements by table per date.
+        description: >
+          Table of **monthly active row (MAR)** measurements made by table per date. 
+          Each measurement is calculated cumulatively for the month. 
         columns:
           - name: id
             description: System-generated unique ID of the active volume measurement.
@@ -27,43 +29,48 @@ sources:
               - unique
               - not_null
           - name: connector_id
-            description: Foreign key referencing the id of the CONNECTOR whose table is being measured # eek this is not the case in our data...
+            description: The *name* of the connector being measured. Note - this is erroneously named and will be fixed soon by Fivetran.
           - name: destination_id
-            description: Foreign key referencing the DESTINATION whose table is being measured
+            description: Foreign key referencing the `destination` whose table is being measured.
           - name: measured_at
-            description: Timestamp of when this measurement of monthly active rows was made.
+            description: Timestamp of when the MAR measurement was made.
           - name: monthly_active_rows
-            description: The number of distinct primary keys synced for the table this month (MAR), up to the date of measurement.
+            description: The number of active rows cumulatively synced this month for this table.
           - name: schema_name
-            description: The name of the connector schema housing the measured table.
+            description: The name of the connector's schema that houses the measured table.
           - name: table_name
-            description: The name of the table whose MAR is being measured.
+            description: The name of the table whose MAR was measured.
 
       - name: connector
-        description: Table of all connectors loading data into warehouses.
-        freshness: null
+        description: >
+          Table of all connectors loading data into warehouses. Note that deleted connectors 
+          are not removed, but can be identified by having an older _fivetran_synced field relative
+          to other connectors.
         columns: 
           - name: connector_id
-            description: Unique ID of the connector - destination. Note that a connector loading data into 2 warehouses will have 2 distinct records.
+            description: System generated destination-unique ID of the connector. 
             tests:
               - unique
               - not_null
           - name: connecting_user_id
-            description: Foreign key referencing the USER who set up the connector
+            description: Foreign key referencing the `user` who set up the connector.
           - name: connector_name
-            description: Individual name of the connector
+            description: Individual name of the connector. Note that this could be different from the `active_volume.schema_name`.
+            # Other tables lack a true `connector_id` and will have to join with connector_name, which should be unique within a destination.
+            tests:
+              - unique
+              - not_null
           - name: connector_type
-            description: The kind of connector (ie google sheets, webhooks)
+            description: The kind of connector (ie google sheets, webhooks).
           - name: destination_id
-            description: Foreign key referencing the DESTINATION warehouse that the connector data is loaded into.
+            description: Foreign key referencing the `destination` warehouse that the connector data is loaded into.
           - name: paused
-            description: Boolean that is true if the connector's sync is currently paused
+            description: Boolean that is true if the connector's sync is currently paused.
           - name: signed_up
-            description: Timestamp of when the connection was set up
+            description: Timestamp of when the connection was set up.
 
       - name: credits_used
         description: Table of the credits used by the customer per each month.
-        freshness: null
         tests:
           - dbt_utils.unique_combination_of_columns:
                 combination_of_columns: 
@@ -71,16 +78,14 @@ sources:
                   - measured_month
         columns:
           - name: destination_id
-            description: Foreign key referencing the DESTINATION warehouse that the credits were used on
+            description: Foreign key referencing the `destination` warehouse that the credits were used on
           - name: measured_month
-            description: The month (yyyy-mm) in which the credits were used
+            description: The month (yyyy-mm) in which the credits were consumed.
           - name: credits_consumed
-            description: The number of credits used for the given month - destination
-
+            description: The number of credits used by the destination for the given month.
 
       - name: destination
-        description: Table of the warehouse destinations that have data loaded into them.
-        freshness: null
+        description: Table of the destinations that have data loaded into them. For each declared source, there will be just one record.
         columns:
           - name: id
             description: Unique ID of the destination
@@ -195,6 +200,7 @@ sources:
 
       - name: trigger_table
         description: Table relating transformations to the connector source tables that trigger them. Transformations on time schedules do not appear here.
+        freshness: null
         columns:
           - name: table
             description: Connector source table that the transformation is triggered by, if it is triggered by new data
@@ -203,6 +209,7 @@ sources:
 
       - name: transformation
         description: Table of [transformations](https://fivetran.com/docs/transformations) made and carried out in Fivetran
+        freshness: null
         columns:
           - name: id
             description: Unique ID of the transformation

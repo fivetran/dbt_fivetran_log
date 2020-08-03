@@ -6,7 +6,7 @@
             {%- set source_relation = adapter.get_relation(
                     database=node.database,
                     schema=node.schema,
-                    identifier=table_name ) -%} -- todo: it's ignoring this and grabbing all tables in the db.schema ... maybe misunderstanding identifier
+                    identifier=node.name ) -%} 
 
             {%- if source_relation != None and node.name == table_name -%} 
                 {%- do sources.append(source(node.source_name, node.name)) -%}
@@ -23,7 +23,7 @@
 
         {%- if sources == [] %} 
             select 
-        
+            -- these are the only tables that should possibly not exist
             {% if table_name == 'trigger_table' %}
                 cast(null as {{ dbt_utils.type_string() }}) as table,
                 cast(null as {{ dbt_utils.type_string() }}) as transformation_id,

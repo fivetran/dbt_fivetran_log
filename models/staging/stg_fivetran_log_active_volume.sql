@@ -8,7 +8,7 @@ fields as (
 
     select
         id as active_volume_id,
-        connector_id,
+        connector_id as connector_name, -- Note: this misnomer will be changed by Fivetran soon.
         destination_id,
         measured_at,
         monthly_active_rows,

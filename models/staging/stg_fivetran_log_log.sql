@@ -9,7 +9,7 @@ fields as (
     select
         id as log_id, -- unclear what this is
         time_stamp as created_at,
-        connector_id,
+        connector_id as connector_name, -- Note: this misnomer will be changed by Fivetran soon.
         case when transformation_id is not null and event is null then 'TRANSFORMATION'
         else event end as event_type, 
         message_data,

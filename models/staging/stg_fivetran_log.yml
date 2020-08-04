@@ -9,8 +9,8 @@ models:
         tests:
           - unique
           - not_null
-      - name: connector_id
-        description:  todo - figure out what to do about this since connector_id actually refers to connector_name....
+      - name: connector_name
+        description: Name of the `connector` whose table is being measured.
       - name: destination_id
         description: Foreign key referencing the DESTINATION whose table is being measured
       - name: measured_at
@@ -91,12 +91,14 @@ models:
             - log_id
             - created_at
     columns: 
-      - name: log_id # TODO: this is actually = connector_id or transformation_id
-        description: System-generated unique ID of the log entry
+      - name: log_id
+        description: >
+          Contains either connector_name (for app/api logs), transformation_id (for transformation logs), 
+          or the value "system" (for system generated logs).
       - name: created_at
         description: Timestamp of when the event was logged
-      - name: connector_id
-        description: todo - figure this out
+      - name: connector_name
+        description: The name of the `connector` that the logged event pertains to.
       - name: event_type
         description: The umbrella category of the event -- either INFO, SEVERE, WARNING, or TRANSFORMATION
       - name: message_data # todo: unsure what to rename these...

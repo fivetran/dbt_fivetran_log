@@ -44,14 +44,11 @@ sources:
       - name: connector
         description: >
           Table of all connectors loading data into warehouses. Note that deleted connectors 
-          are not removed, but can be identified by having an older _fivetran_synced field relative
+          are not removed, but can be identified by having an older _fivetran_synced field relative 
           to other connectors.
         columns: 
           - name: connector_id
             description: System generated destination-unique ID of the connector. 
-            tests:
-              - unique
-              - not_null
           - name: connecting_user_id
             description: Foreign key referencing the `user` who set up the connector.
           - name: connector_name
@@ -88,18 +85,18 @@ sources:
         description: Table of the destinations that have data loaded into them. For each declared source, there will be just one record.
         columns:
           - name: id
-            description: Unique ID of the destination
+            description: Unique ID of the destination.
             tests:
               - unique
               - not_null
           - name: account_id
-            description: Foreign key referencing the fivetran ACCOUNT associated with the destination
+            description: Foreign key referencing the fivetran `account` associated with the destination.
           - name: created_at
-            description: Timestamp of when the destination was set up
+            description: Timestamp of when the destination was set up.
           - name: name
-            description: Name of the destination warehouse
+            description: Name of the destination warehouse.
           - name: region
-            description: Geographical region of the destination
+            description: Geographical region of the destination.
       
       - name: log
         description: Table of logged events related to data syncs. More info on error logs [here](https://fivetran.com/docs/logs/fivetran-log#errorlogs)
@@ -109,39 +106,42 @@ sources:
                   - id
                   - time_stamp
         columns:
-          - name: id # TODO: this is actually = connector name or transformation_id
+          - name: id 
+            description: >
+              Contains either connector_name (for app/api logs), transformation_id (for transformation logs), 
+              or the value "system" (for system generated logs).
           - name: time_stamp
-            description: Timestamp of when the event was logged
-          - name: connector_id # todo - figure this out, actually = connector_name
+            description: Timestamp of when the event was logged.
+          - name: connector_id 
+            description: The *name* of the connector being logged. Note - this is erroneously named and will be fixed soon by Fivetran.
           - name: event
-            description: The umbrella category of the event -- either INFO, SEVERE, WARNING, or TRANSFORMATION
-          - name: message_data # todo: unsure what to rename these...
-            description: JSON of the event-specific data
+            description: The umbrella event type. Events can be classified as a warning, an error, or just an information log.
+          - name: message_data  
+            description: The details of the event in JSON format.
           - name: message_event
-            description: More specific category related to the nature of the event. Defined [here](https://fivetran.com/docs/logs#logevents)
+            description: The routine involved in the log, defined [here](https://fivetran.com/docs/logs#logevents).
           - name: transformation_id
-            description: Foreign key referencing the TRANSFORMATION if the event is a transformation
+            description: Foreign key referencing the `transformation` if the event refers to a transformation run.
      
-      # not used for final models
       - name: account
-        description: Table of information on this fivetran account
+        description: Table of information on this fivetran account.
         columns:
           - name: id
-            description: Unique ID of the Fivetran account
+            description: Unique ID of the Fivetran account.
             tests:
               - unique
               - not_null
           - name: country
-            description: Country associated with the account # TODO: check this
+            description: Country of the account.
           - name: created_at
-            description: Timestamp of when the account was created
+            description: Timestamp of when the account was created.
           - name: name
-            description: Name of the Fivetran account
+            description: Name of the Fivetran account.
           - name: status
-            description: not sure # todo: get this
+            description: Status of the Fivetran account (ie trial, frozen).
 
       - name: account_membership
-        description: Table of the users given access to this account
+        description: Table of the users given access to this account.
         tests:
           - dbt_utils.unique_combination_of_columns:
                 combination_of_columns: 
@@ -149,14 +149,15 @@ sources:
                 - user_id
         columns:
           - name: account_id
-            description: Foreign key referencing the ID of the `account` that the user belongs to
+            description: Foreign key referencing the ID of the `account` that the user belongs to.
           - name: user_id
-            description: Foreign key referencing the ID of the `user` belonging to the account
+            description: Foreign key referencing the ID of the `user` belonging to the account.
           - name: activated_at
-            description: Timestamp # todo: get this
-          - name: joined_at # todo: get description
+            description: Timestamp of when the user was activated in the account.
+          - name: joined_at 
+            description: Timestamp when the user joined the account.
           - name: role
-            description: The user's permissions for this account
+            description: The user's permissions for this account.
 
       - name: destination_membership
         description: Table of the users given access to this destination
@@ -171,76 +172,84 @@ sources:
           - name: user_id
             description: Foreign key referencing the ID of the `user` who has access to the destination
           - name: activated_at
-            description: Timestamp # todo: get this
-          - name: joined_at # todo: get description
+            description: Timestamp of when the user was activated in the destination.
+          - name: joined_at
+            description: Timestamp of when the user was added to the destination.
           - name: role
-            description: The user's permissions for this individual destination 
+            description: The user's permissions for this individual destination.
 
       - name: user
-        description: Table of users given access to this Fivetran account
+        description: Table of users given access to this Fivetran account.
         columns:
           - name: id
-            description: Unique ID of the user's account
+            description: Unique ID of the user's account.
             tests:
               - unique
               - not_null
           - name: created_at
-            description: Timestamp of when the user was created
+            description: Timestamp of when the user was created.
           - name: email
-            description: Email associated with the user
+            description: Email associated with the user.
           - name: email_disabled
-            description: Boolean of whether they have disabled all email notifications 
+            description: Boolean of whether they have disabled all email notifications.
           - name: family_name
-            description: User's surname
+            description: User's last name.
           - name: given_name
-            description: User's first name
+            description: User's first name.
           - name: phone
-            description: Phone number associated with user
-          - name: verified # todo: how does a user become verified?
+            description: Phone number associated with user.
+          - name: verified 
+            description: Boolean that indicates whether the user has verified their email address in the account creation process.
 
       - name: trigger_table
-        description: Table relating transformations to the connector source tables that trigger them. Transformations on time schedules do not appear here.
+        description: >
+          Table relating transformations to the connector source tables that trigger them. 
+          Transformations on time schedules do not appear here. Note - this table is only created 
+          once you have created a triggered transformation.
         freshness: null
         columns:
           - name: table
-            description: Connector source table that the transformation is triggered by, if it is triggered by new data
+            description: Connector source table whose new data triggers the transformation.
           - name: transformation_id
-            description: Foreign key referencing the `transformation` that is triggered by new data
+            description: Foreign key referencing the `transformation` that is triggered by new data.
 
       - name: transformation
-        description: Table of [transformations](https://fivetran.com/docs/transformations) made and carried out in Fivetran
+        description: > 
+          Table of [transformations](https://fivetran.com/docs/transformations) made and carried out in Fivetran.
+          Note - this table is only created once you have created a transformation for the destination.
         freshness: null
         columns:
           - name: id
-            description: Unique ID of the transformation
+            description: Unique ID of the transformation.
           - name: created_at
-            description: Timestamp of when the transformation was created
+            description: Timestamp of when the transformation was created.
           - name: created_by_id
-            description: Foreign key referencing the `user` who created the transformation
+            description: Foreign key referencing the `user` who created the transformation.
           - name: destination_id
-            description: Foreign key referenencing the `destination` whose data is being transformed
+            description: Foreign key referenencing the `destination` whose data is being transformed.
           - name: name
-            description: Name given to the transformation
+            description: Name given to the transformation.
           - name: paused
-            description: Boolean of whether the data transformation is currently paused
+            description: Boolean of whether the transformation is currently paused.
           - name: script
-            description: The code content of the transformation
-          - name: trigger_delay # todo: description?
+            description: The code content of the transformation.
+          - name: trigger_delay 
+            description: The delay in triggering transformation.
           - name: trigger_interval
-            description: The scheduled frequency of the transformation, if a time schedule is chosen as its trigger
+            description: The scheduled frequency of the transformation, if a time schedule is chosen as its trigger.
           - name: trigger_type
             description: The schedule type of the transformation (time schedule vs. new data in certain tables)
 
     
   # destination 2  
   - name: fivetran_log_dbt_package_testing 
-    database: dbt-package-testing # default is target.database from the given profile
-    schema: fivetran_log # default name of the connector schema
+    database: dbt-package-testing 
+    schema: fivetran_log 
 
     loader: fivetran
     loaded_at_field: _fivetran_synced
       
-    freshness: # what's appropriate here?
+    freshness: 
       warn_after: {count: 72, period: hour}
       error_after: {count: 96, period: hour}
 

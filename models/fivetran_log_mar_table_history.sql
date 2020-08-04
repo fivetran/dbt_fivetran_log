@@ -10,14 +10,14 @@ with active_volume as (
 
 ordered_mar as (
     select
-        connector_id,
+        connector_name,
         schema_name,
         table_name,
         destination_id,
         measured_at,
         measured_month,
         monthly_active_rows,
-        row_number() over(partition by table_name, connector_id, destination_id, measured_month order by measured_at desc) as n
+        row_number() over(partition by table_name, connector_name, destination_id, measured_month order by measured_at desc) as n
 
     from active_volume
 
@@ -27,7 +27,7 @@ latest_mar as (
     select 
         schema_name,
         table_name,
-        connector_id,
+        connector_name,
         destination_id,
         measured_month,
         date(measured_at) as last_measured_at,
@@ -59,9 +59,9 @@ mar_join as (
         destination.destination_name
 
     from latest_mar
-    join connector on latest_mar.connector_id = connector.connector_name -- data is messed up, TODO: fix connector_id in staging after sharing w bjorn? 
+    join connector on latest_mar.connector_name = connector.connector_name -- data is messed up, TODO: fix connector_id in staging after sharing w bjorn? 
     join destination on latest_mar.destination_id = destination.destination_id
 )
 
 select * from mar_join
-order by measured_month desc, destination_id, connector_id
+order by measured_month desc, destination_id, connector_name

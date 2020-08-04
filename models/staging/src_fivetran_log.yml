@@ -99,7 +99,7 @@ sources:
             description: Geographical region of the destination.
       
       - name: log
-        description: Table of logged events related to data syncs. More info on error logs [here](https://fivetran.com/docs/logs/fivetran-log#errorlogs)
+        description: Table of logged events related to data syncs. More info on error logs [here](https://fivetran.com/docs/logs/fivetran-log#errorlogs).
         tests:
           - dbt_utils.unique_combination_of_columns:
               combination_of_columns: 
@@ -124,10 +124,10 @@ sources:
             description: Foreign key referencing the `transformation` if the event refers to a transformation run.
      
       - name: account
-        description: Table of information on this fivetran account.
+        description: Table of information on this Fivetran account.
         columns:
           - name: id
-            description: Unique ID of the Fivetran account.
+            description: Unique ID of the account.
             tests:
               - unique
               - not_null
@@ -160,7 +160,7 @@ sources:
             description: The user's permissions for this account.
 
       - name: destination_membership
-        description: Table of the users given access to this destination
+        description: Table of the users given access to this destination.
         tests:
           - dbt_utils.unique_combination_of_columns:
                 combination_of_columns: 
@@ -168,7 +168,7 @@ sources:
                 - user_id
         columns:
           - name: destination_id
-            description: Foreign key referencing the ID of the `destination` that the user is a member of
+            description: Foreign key referencing the ID of the `destination` that the user is a member of.
           - name: user_id
             description: Foreign key referencing the ID of the `user` who has access to the destination
           - name: activated_at
@@ -240,7 +240,7 @@ sources:
           - name: trigger_interval
             description: The scheduled frequency of the transformation, if a time schedule is chosen as its trigger.
           - name: trigger_type
-            description: The schedule type of the transformation (time schedule vs. new data in certain tables)
+            description: The schedule type of the transformation (time schedule vs. new data in certain tables).
 
     
   # destination 2  

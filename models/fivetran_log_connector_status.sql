@@ -13,7 +13,7 @@ with log as (
 schema_changes as (
 
     select
-        connector_id,
+        connector_name,
         count(*) as number_of_schema_changes
 
     from {{ ref('stg_fivetran_log_log') }}
@@ -34,7 +34,7 @@ connector as (
 connector_metrics as (
 
     select
-        log.connector_id,
+        connector.connector_id,
         connector.connector_name,
         connector.connector_type,
         connector.destination_id,
@@ -45,7 +45,7 @@ connector_metrics as (
         max(case when event_type = 'WARNING' then created_at else null end) as last_warning_at
 
     from log 
-        join connector on log.connector_id = connector.connector_name -- todo: change when bug is fixed
+        join connector on log.connector_name = connector.connector_name -- todo: change when bug is fixed
     group by 1,2,3,4,5
 
 ),
@@ -83,7 +83,7 @@ connector_recent_logs as (
         log.message_data
 
     from connector_health left join log 
-        on log.connector_id = connector_health.connector_name -- TODO: should actually be connector_id once bug is fixed 
+        on log.connector_name = connector_health.connector_name -- TODO: should actually be connector_id once bug is fixed 
         and log.created_at > connector_health.last_sync_completed_at
         and log.event_type != 'INFO'  -- only looking at erors and warnings
 
@@ -118,7 +118,7 @@ final as (
 
     from connector_recent_logs
     left join schema_changes 
-        on connector_recent_logs.connector_name = schema_changes.connector_id -- TODO: change when bug is fixed
+        on connector_recent_logs.connector_name = schema_changes.connector_name -- TODO: change when bug is fixed
     join destination on destination.destination_id = connector_recent_logs.destination_id
     group by 1,2,3,4,5,6,7,8,9
 )

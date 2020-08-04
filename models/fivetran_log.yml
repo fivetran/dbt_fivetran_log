@@ -7,3 +7,34 @@ models:
   - name: fivetran_log_credit_mar_history
   - name: fivetran_log_mar_table_history
   - name: fivetran_log_transformation_status
+
+macros:
+  - name: union_source_tables
+    description: >
+      This macro rolls log data up from the destination level to the account
+      level. 
+
+      It does so by taking a table name and scanning the source databases 
+      (as declared in src_fivetran.yml) for relations matching this table name. 
+      It then unions together these tables, capturing the individual database 
+      it came from under `destination_database`. 
+      
+      Moreover, if you have never made a transformation, the `transformation`
+      and `trigger_table` tables will not exist. In these cases, the macro 
+      will return the proper columns with all null values.
+    arguments:
+      - name: table_name
+        type: string
+        description: The name of the table you want to union across destinations. 
+  
+  - name: string_agg
+    description: > 
+      A macro to concatenate strings across rows when writing to BigQuery, Redshift, 
+      or Snowflake warehouses.
+    arguments:
+      - name: field_to_agg
+        type: string
+        description: The field you want to concatenate across rows.
+      - name: delimiter
+        type: string
+        description: What you want to separate values by. 

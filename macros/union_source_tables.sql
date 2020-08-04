@@ -1,8 +1,11 @@
 {% macro union_source_tables(table_name) %}
     {% if execute %}
         {%- set sources = [] -%}
+
+        -- look at the declared source tables 
         {%- for node in graph.sources.values() -%}
 
+            -- call the database for the matching table
             {%- set source_relation = adapter.get_relation(
                     database=node.database,
                     schema=node.schema,

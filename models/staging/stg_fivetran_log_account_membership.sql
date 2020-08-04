@@ -12,9 +12,11 @@ fields as (
         activated_at,
         joined_at,
         role as account_role,
-        destination_database
+        {{ string_agg( 'destination_database', "', '") }} as destination_databases
         
     from account_membership
+    group by 1,2,3,4,5
+    
 )
 
 select * from fields

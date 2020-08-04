@@ -2,28 +2,31 @@ version: 2
 
 models:
 
+  # Note: source table `_id`s are unique within destinations. Tests should look at the combination of columns.
   - name: stg_fivetran_log_active_volume
+    description: >
+      Table of **monthly active row (MAR)** measurements made by table per date. 
+      Each measurement is calculated cumulatively for the month. 
     columns: 
       - name: active_volume_id
-        description: Unique ID of the table's MAR measurement record
+        description: System-generated destination-unique ID of the active volume measurement.
         tests:
           - unique
           - not_null
       - name: connector_name
-        description: Name of the `connector` whose table is being measured.
+        description: The *name* of the connector being measured. Note - this is erroneously named and will be fixed soon by Fivetran.
       - name: destination_id
-        description: Foreign key referencing the DESTINATION whose table is being measured
+        description: Foreign key referencing the `destination` whose table is being measured.
       - name: measured_at
-        description: Timestamp of when the entry's MAR measurement was made
+        description: Timestamp of when the MAR measurement was made.
       - name: monthly_active_rows
-        description: The number of MAR measured on this date for this table
+        description: The number of active rows cumulatively synced this month for this table.
       - name: schema_name
-        description: The name of the connector schema where the measured table lives
+        description: The name of the connector's schema that houses the measured table.
       - name: table_name
-        description: Name of the table whose volume is being measured
+        description: The name of the table whose MAR was measured.
       - name: destination_database
         description: Name of the destination's database (as defined in src_fivetran_log.yml) for which the active volume was measured
-
 
   - name: stg_fivetran_log_connector
     tests:
@@ -54,7 +57,7 @@ models:
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns: 
-            - destination_id
+            - destination_database
             - measured_month
     columns:
       - name: destination_id
@@ -83,13 +86,14 @@ models:
         description: Geographical region of the destination
       - name: destination_database
         description: Name of the destination's database
+        tests:
+          - unique
+          - not_null
 
   - name: stg_fivetran_log_log
     tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns: 
-            - log_id
-            - created_at
+      - unique:
+          column_name: "log_id || '-' || destination_database || '-' || created_at"
     columns: 
       - name: log_id
         description: >
@@ -110,7 +114,6 @@ models:
       - name: destination_database
         description: Name of the destination's database in which the logged event occurred
 
-  # not used for final models
   - name: stg_fivetran_log_account
     description: Table of information on this fivetran account
     columns:
@@ -120,7 +123,7 @@ models:
           - unique
           - not_null
       - name: country
-        description: Country associated with the account # TODO: check this
+        description: Country associated with the account 
       - name: created_at
         description: Timestamp of when the account was created
       - name: account_name

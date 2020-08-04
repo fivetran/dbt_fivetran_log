@@ -48,14 +48,16 @@ sources:
           to other connectors.
         columns: 
           - name: connector_id
-            description: System generated destination-unique ID of the connector. 
+            description: System generated unique ID of the connector. 
+            tests:
+              - unique
+              - not_null
           - name: connecting_user_id
             description: Foreign key referencing the `user` who set up the connector.
           - name: connector_name
             description: Individual name of the connector. Note that this could be different from the `active_volume.schema_name`.
-            # Other tables lack a true `connector_id` and will have to join with connector_name, which should be unique within a destination.
+            # Other tables lack a true `connector_id` and will have to join with connector_name
             tests:
-              - unique
               - not_null
           - name: connector_type
             description: The kind of connector (ie google sheets, webhooks).
@@ -67,17 +69,15 @@ sources:
             description: Timestamp of when the connection was set up.
 
       - name: credits_used
-        description: Table of the credits used by the customer per each month.
-        tests:
-          - dbt_utils.unique_combination_of_columns:
-                combination_of_columns: 
-                  - destination_id
-                  - measured_month
+        description: Table of the credits used by the customer per month within a destination.
         columns:
           - name: destination_id
             description: Foreign key referencing the `destination` warehouse that the credits were used on
           - name: measured_month
             description: The month (yyyy-mm) in which the credits were consumed.
+            tests:
+              - unique
+              - not_null
           - name: credits_consumed
             description: The number of credits used by the destination for the given month.
 
@@ -102,9 +102,9 @@ sources:
         description: Table of logged events related to data syncs. More info on error logs [here](https://fivetran.com/docs/logs/fivetran-log#errorlogs)
         tests:
           - dbt_utils.unique_combination_of_columns:
-                combination_of_columns: 
-                  - id
-                  - time_stamp
+              combination_of_columns: 
+                - id
+                - time_stamp
         columns:
           - name: id 
             description: >
@@ -207,6 +207,7 @@ sources:
           Transformations on time schedules do not appear here. Note - this table is only created 
           once you have created a triggered transformation.
         freshness: null
+        # transformation data tests are currently implemented at the staging level to accomodate schemas without this source table
         columns:
           - name: table
             description: Connector source table whose new data triggers the transformation.
@@ -218,6 +219,7 @@ sources:
           Table of [transformations](https://fivetran.com/docs/transformations) made and carried out in Fivetran.
           Note - this table is only created once you have created a transformation for the destination.
         freshness: null
+        # transformation data tests are currently implemented at the staging level to accomodate schemas without this source table
         columns:
           - name: id
             description: Unique ID of the transformation.

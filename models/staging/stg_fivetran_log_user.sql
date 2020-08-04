@@ -15,9 +15,10 @@ fields as (
         given_name as first_name,
         phone,
         verified as is_verified,
-        destination_database
+        {{ string_agg( 'destination_database', "', '") }} as destination_databases
         
     from user
+    group by 1,2,3,4,5,6,7,8
 )
 
 select * from fields

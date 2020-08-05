@@ -1,9 +1,9 @@
-with log as (
+with connector_log as (
 
     select *
     from {{ ref('stg_fivetran_log_log') }}
 
-    -- ignoring INFO events and transformations
+    -- only looking at errors, warnings, and syncs here
     where event_type = 'SEVERE'
         or event_type = 'WARNING'
         or event_subtype like 'sync%'
@@ -14,11 +14,13 @@ schema_changes as (
 
     select
         connector_name,
-        count(*) as number_of_schema_changes
+        count(*) as number_of_schema_changes_last_month
 
     from {{ ref('stg_fivetran_log_log') }}
-    where {{ dbt_utils.datediff('created_at', dbt_utils.current_timestamp(), 'day') }} <= 30
-    and event_subtype in ('create_table', 'alter_table', 'create_schema')
+
+    where 
+        {{ dbt_utils.datediff('created_at', dbt_utils.current_timestamp(), 'day') }} <= 30
+        and event_subtype in ('create_table', 'alter_table', 'create_schema')
 
     group by 1
 
@@ -31,6 +33,12 @@ connector as (
 
 ),
 
+destination as (
+
+    select * 
+    from {{ ref('stg_fivetran_log_destination') }}
+),
+
 connector_metrics as (
 
     select
@@ -38,15 +46,17 @@ connector_metrics as (
         connector.connector_name,
         connector.connector_type,
         connector.destination_id,
+        connector.destination_database,
         connector.is_paused,
-        max(case when log.event_subtype = 'sync_start' then log.created_at else null end) as last_synced_at,
-        max(case when log.event_subtype = 'sync_end' then log.created_at else null end) as last_sync_completed_at,
-        max(case when log.event_type = 'SEVERE' then log.created_at else null end) as last_error_at,
-        max(case when event_type = 'WARNING' then created_at else null end) as last_warning_at
+        connector.set_up_at,
+        max(case when connector_log.event_subtype = 'sync_start' then connector_log.created_at else null end) as last_synced_at,
+        max(case when connector_log.event_subtype = 'sync_end' then connector_log.created_at else null end) as last_sync_completed_at,
+        max(case when connector_log.event_type = 'SEVERE' then connector_log.created_at else null end) as last_error_at,
+        max(case when event_type = 'WARNING' then connector_log.created_at else null end) as last_warning_at
 
-    from log 
-        join connector on log.connector_name = connector.connector_name -- todo: change when bug is fixed
-    group by 1,2,3,4,5
+    from connector_log 
+        join connector on connector_log.connector_name = connector.connector_name
+    group by 1,2,3,4,5,6,7
 
 ),
 
@@ -54,8 +64,9 @@ connector_health as (
 
     select
         *,
-        case when last_sync_completed_at > last_error_at or connector_metrics.last_error_at is null then 'connected'
-        else 'broken' end as connector_status,
+        case 
+            when last_error_at > last_sync_completed_at or last_sync_completed_at is null then 'broken'
+        else 'connected' end as connector_status,
 
         case 
         when is_paused then 'paused'
@@ -67,7 +78,7 @@ connector_health as (
     from connector_metrics
 ),
 
-
+-- Joining with log to grab pertinent error/warning messagees
 connector_recent_logs as (
 
     select 
@@ -75,27 +86,24 @@ connector_recent_logs as (
         connector_health.connector_name,
         connector_health.connector_type,
         connector_health.destination_id,
+        connector_health.destination_database,
         connector_health.connector_status,
         connector_health.data_sync_status,
         connector_health.last_synced_at,
-        log.event_subtype,
-        log.event_type,
-        log.message_data
+        connector_health.set_up_at,
+        connector_log.event_subtype,
+        connector_log.event_type,
+        connector_log.message_data
 
-    from connector_health left join log 
-        on log.connector_name = connector_health.connector_name -- TODO: should actually be connector_id once bug is fixed 
-        and log.created_at > connector_health.last_sync_completed_at
-        and log.event_type != 'INFO'  -- only looking at erors and warnings
+    from connector_health left join connector_log 
+        on connector_log.connector_name = connector_health.connector_name 
+        -- limiting relevance to since the last sync completion (if there is one)
+        and connector_log.created_at > coalesce(connector_health.last_sync_completed_at, '2000-01-01')
+        and connector_log.event_type != 'INFO'  -- only looking at erors and warnings (excluding syncs)
 
-    group by 1,2,3,4,5,6,7,8,9,10 -- getting the distinct error messages
+    group by 1,2,3,4,5,6,7,8,9,10,11,12 -- de-duping error messages
     
 
-),
-
-destination as (
-
-    select * 
-    from {{ ref('stg_fivetran_log_destination') }}
 ),
 
 final as (
@@ -106,21 +114,23 @@ final as (
         connector_recent_logs.connector_type,
         connector_recent_logs.destination_id,
         destination.destination_name,
+        connector_recent_logs.destination_database,
         connector_recent_logs.connector_status,
         connector_recent_logs.data_sync_status,
         connector_recent_logs.last_synced_at,
-        coalesce(schema_changes.number_of_schema_changes, 0) as number_of_schema_changes_last_month,
+        connector_recent_logs.set_up_at,
+        coalesce(schema_changes.number_of_schema_changes_last_month, 0) as number_of_schema_changes_last_month,
         
-        -- need some data with errors/warnings to test.... TODO
         {{ string_agg('case when connector_recent_logs.event_type = "SEVERE" then connector_recent_logs.message_data else null end', "'\\n'") }} as errors_since_last_completed_sync,
         {{ string_agg('case when connector_recent_logs.event_type = "WARNING" then connector_recent_logs.message_data else null end', "'\\n'") }} as warnings_since_last_completed_sync
         
 
     from connector_recent_logs
     left join schema_changes 
-        on connector_recent_logs.connector_name = schema_changes.connector_name -- TODO: change when bug is fixed
+        on connector_recent_logs.connector_name = schema_changes.connector_name 
+
     join destination on destination.destination_id = connector_recent_logs.destination_id
-    group by 1,2,3,4,5,6,7,8,9
+    group by 1,2,3,4,5,6,7,8,9,10,11
 )
 
 select * from final

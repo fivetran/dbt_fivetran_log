@@ -55,7 +55,7 @@ models:
         description: Foreign key referencing the `destination` warehouse that the connector data is loaded into.
       - name: is_paused
         description: Boolean that is true if the connector's sync is currently paused.
-      - name: signed_up_at
+      - name: set_up_at
         description: Timestamp of when the connection was set up.
       - name: destination_database
         description: Name of the destination's database that houses the connector.

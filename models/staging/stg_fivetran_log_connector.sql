@@ -13,7 +13,7 @@ fields as (
         destination_id,
         connecting_user_id,
         paused as is_paused,
-        signed_up as signed_up_at,
+        signed_up as set_up_at,
         destination_database,
 
         -- Consolidating duplicate connectors (ie deleted and then re-added)
@@ -32,7 +32,7 @@ final as (
         destination_id,
         connecting_user_id,
         is_paused,
-        signed_up_at,
+        set_up_at,
         destination_database
 
     from fields

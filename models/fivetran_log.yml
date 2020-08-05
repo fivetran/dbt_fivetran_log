@@ -3,8 +3,68 @@ version: 2
 models:
 
   - name: fivetran_log_connector_status
-    description: Table of connectors enriched with 
+    description: > 
+      Table of each destination's connector and details surrounding its 
+      connection and data-sync status.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: 
+            - connector_name
+            - destination_database     
+    columns:
+
+      - name: connector_id
+        description: System generated destination-unique ID of the connector.
+
+      - name: connector_name
+        description: Name of the connector.
+
+      - name: connector_type
+        description: The kind of connector (ie google sheets, webhooks).
+
+      - name: destination_id
+        description: >
+          Foreign key referencing the `destination` warehouse that the connector data is loaded into.
+
+      - name: destination_name
+        description: Name of the destination loading data from this connector.
+
+      - name: destination_database
+        description: Name of the destination's database that houses the connector.
+
+      - name: connector_health
+        description: Status of the connector's *connection*. Can be `"broken"` or `"connected"`.
+
+      - name: data_sync_status
+        description: > 
+          Status of the data flowing from the connector. Can be `"paused"`, `"sync failed"`, `"in progress"`, 
+          `"in progress, see warnings"`, or `"running on schedule"`.
+
+      - name: last_synced_at
+        description: > 
+          Timestamp of when the last sync was started. Note that if new data comes in after a sync has 
+          begun, the new data will not be included in this sync.
+          
+      - name: set_up_at
+        description: Timestamp of when the connector was set up.
+
+      - name: number_of_schema_changes_last_month
+        description: > 
+          The number of schema changes (creating tables or schemas and altering tables) in the past 30 days.
+
+      - name: errors_since_last_completed_sync
+        description: >
+          Aggregated line-separated list of error messages (in JSON format) raised synce the last 
+          sync completion. 
+
+      - name: warnings_since_last_completed_sync
+        description: >
+          Aggregated line-separated list of warning messages (in JSON format) raised synce the last 
+          sync completion. 
+
+
   - name: fivetran_log_credit_mar_history
+    
   - name: fivetran_log_mar_table_history
   - name: fivetran_log_transformation_status
 

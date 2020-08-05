@@ -8,7 +8,6 @@ models:
       Table of **monthly active row (MAR)** measurements made by table per date. 
       Each measurement is calculated cumulatively for the month. 
     tests:
-      # This combo will be used to join with other tables lacking connector_id
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns: 
             - active_volume_id
@@ -37,7 +36,7 @@ models:
       are not removed, but can be identified by having an older _fivetran_synced field relative 
       to other connectors.
     tests:
-      # This combo will be used to join with other tables lacking connector_id
+      # This combo will be used to join with other tables lacking `connector_id`
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns: 
             - connector_name
@@ -107,8 +106,8 @@ models:
     columns: 
       - name: log_id
         description: >
-          Contains either connector_name (for app/api logs), transformation_id (for transformation logs), 
-          or the value "system" (for system generated logs).
+          Contains either `connector_name` (for app/api logs), `transformation_id` (for transformation logs), 
+          or the value `"system"` (for system generated logs).
       - name: created_at
         description: Timestamp of when the event was logged.
       - name: connector_name

@@ -56,7 +56,7 @@ sources:
             description: Foreign key referencing the `user` who set up the connector.
           - name: connector_name
             description: Individual name of the connector. Note that this could be different from the `active_volume.schema_name`.
-            # Other tables lack a true `connector_id` and will have to join with connector_name
+            # Other tables lack a true `connector_id` and will have to join with `connector_name`
             tests:
               - not_null
           - name: connector_type
@@ -108,8 +108,8 @@ sources:
         columns:
           - name: id 
             description: >
-              Contains either connector_name (for app/api logs), transformation_id (for transformation logs), 
-              or the value "system" (for system generated logs).
+              Contains either `connector_name` (for app/api logs), `transformation_id` (for transformation logs), 
+              or the value `"system"` (for system generated logs).
           - name: time_stamp
             description: Timestamp of when the event was logged.
           - name: connector_id 

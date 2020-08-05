@@ -66,7 +66,7 @@ connector_health as (
         *,
         case 
             when last_error_at > last_sync_completed_at or last_sync_completed_at is null then 'broken'
-        else 'connected' end as connector_status,
+        else 'connected' end as connector_health,
 
         case 
         when is_paused then 'paused'
@@ -87,7 +87,7 @@ connector_recent_logs as (
         connector_health.connector_type,
         connector_health.destination_id,
         connector_health.destination_database,
-        connector_health.connector_status,
+        connector_health.connector_health,
         connector_health.data_sync_status,
         connector_health.last_synced_at,
         connector_health.set_up_at,
@@ -97,9 +97,12 @@ connector_recent_logs as (
 
     from connector_health left join connector_log 
         on connector_log.connector_name = connector_health.connector_name 
-        -- limiting relevance to since the last sync completion (if there is one)
-        and connector_log.created_at > coalesce(connector_health.last_sync_completed_at, '2000-01-01')
-        and connector_log.event_type != 'INFO'  -- only looking at erors and warnings (excluding syncs)
+
+        -- limiting relevance to since the last successful sync completion (if there has been one)
+        and connector_log.created_at > coalesce(connector_health.last_sync_completed_at, '2000-01-01') 
+
+        -- only looking at erors and warnings (excluding syncs)
+        and connector_log.event_type != 'INFO'  
 
     group by 1,2,3,4,5,6,7,8,9,10,11,12 -- de-duping error messages
     
@@ -115,7 +118,7 @@ final as (
         connector_recent_logs.destination_id,
         destination.destination_name,
         connector_recent_logs.destination_database,
-        connector_recent_logs.connector_status,
+        connector_recent_logs.connector_health,
         connector_recent_logs.data_sync_status,
         connector_recent_logs.last_synced_at,
         connector_recent_logs.set_up_at,

@@ -14,6 +14,7 @@ schema_changes as (
 
     select
         connector_name,
+        destination_database,
         count(*) as number_of_schema_changes_last_month
 
     from {{ ref('stg_fivetran_log_log') }}
@@ -22,7 +23,7 @@ schema_changes as (
         {{ dbt_utils.datediff('created_at', dbt_utils.current_timestamp(), 'day') }} <= 30
         and event_subtype in ('create_table', 'alter_table', 'create_schema')
 
-    group by 1
+    group by 1,2
 
 ),
 
@@ -56,6 +57,7 @@ connector_metrics as (
 
     from connector_log 
         join connector on connector_log.connector_name = connector.connector_name
+        and connector_log.destination_database = connector.destination_database
     group by 1,2,3,4,5,6,7
 
 ),
@@ -95,8 +97,10 @@ connector_recent_logs as (
         connector_log.event_type,
         connector_log.message_data
 
-    from connector_health left join connector_log 
+    from connector_health 
+    left join connector_log 
         on connector_log.connector_name = connector_health.connector_name 
+        and connector_log.destination_database = connector_health.destination_database
 
         -- limiting relevance to since the last successful sync completion (if there has been one)
         and connector_log.created_at > coalesce(connector_health.last_sync_completed_at, '2000-01-01') 
@@ -131,6 +135,7 @@ final as (
     from connector_recent_logs
     left join schema_changes 
         on connector_recent_logs.connector_name = schema_changes.connector_name 
+        and connector_recent_logs.destination_database = schema_changes.destination_database
 
     join destination on destination.destination_id = connector_recent_logs.destination_id
     group by 1,2,3,4,5,6,7,8,9,10,11

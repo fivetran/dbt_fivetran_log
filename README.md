@@ -14,7 +14,7 @@ This package contains transformation models, designed to work simultaneously wit
 
 | **model**                  | **description**                                                                                                                                               |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| github\_issues             | Each record represents a GitHub issue, enriched with data about its assignees, milestones, and time comparisons.                                             |
+| fivetran\_log\_connenector\_status        | Each record represents a connector loading data into a destination. enriched with data about the connector's status and the status of its data flow.                                          |
 | github\_pull\_requests     | Each record represents a GitHub pull request, enriched with data about its repository, reviewers, and durations between review requests, merges and reviews. |
 | github\_daily\_metrics     | Each record represents a single day, enriched with metrics about PRs and issues that were created and closed during that period.                              |
 | github\_weekly\_metrics    | Each record represents a single week, enriched with metrics about PRs and issues that were created and closed during that period.                             |

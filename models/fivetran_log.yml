@@ -6,11 +6,12 @@ models:
     description: > 
       Table of each destination's connector and details surrounding its 
       connection and data-sync status.
+
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns: 
             - connector_name
-            - destination_database     
+            - destination_id     
     columns:
 
       - name: connector_id
@@ -62,11 +63,141 @@ models:
           Aggregated line-separated list of warning messages (in JSON format) raised synce the last 
           sync completion. 
 
-
-  - name: fivetran_log_credit_mar_history
     
   - name: fivetran_log_mar_table_history
+    description: > 
+      Table of each table's monthly active rows (MAR) for all connectors and destinations, per month.
+      Read more about how monthly active rows are defined and calculated 
+      [here](https://fivetran.com/docs/getting-started/consumption-based-pricing).
+
+    tests:
+      - unique:
+          column_name: "destination_database || '-' || schema || '-' || table || '-' || measured_month"
+    columns:
+
+      - name: connector_name
+        description: Name of the connector loading this table.
+
+      - name: schema_name
+        description: Name of the schema in which the table lives.
+        
+      - name: table_name
+        description: Name of the table whose MAR was measured.
+
+      - name: destination_id
+        description: >
+          Foreign key referencing the `destination` warehouse that the connector data is loaded into.
+
+      - name: destination_database
+        description: Name of the destination's database housing the monthly active rows.
+
+      - name: measured_month
+        description: The month (yyyy-mm-01) of the measurement.
+
+      - name: last_measured_at
+        description: Timestamp of when the last MAR measurement for the month was made.
+
+      - name: monthly_active_rows
+        description: The number of active rows measured in the table for the month.
+
+
+  - name: fivetran_log_credit_mar_history
+    description: >
+      Table of each destination's credit consumption and active volume, per month. Includes the 
+      credits used per million MAR and MAR per credit. Read more about the relationship between 
+      credit consumption and MAR [here](https://fivetran.com/creditconsumption).
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: 
+            - destination_id
+            - measured_month 
+
+    columns:
+      - name: measured_month
+        description: The month (yyyy-mm-01) of the credit/MAR measurement.
+
+      - name: destination_id
+        description: >
+          Foreign key referencing the `destination` warehouse housing the active rows.
+
+      - name: destination_name
+        description: Name of the destination as it appears in the UI.
+
+      - name: destination_database
+        description: Name of the destination's database in which the active rows live.
+
+      - name: credits_consumed
+        description: The number of credits used by the destination for the given month.
+
+      - name: monthly_active_rows
+        description: The number of total active rows measured in the destination for the month.
+
+      - name: credits_per_million_mar
+        description: The ratio of credits used that month per every million active rows synced.
+
+      - name: mar_per_credit
+        description: The ratio of the month's active volume to the credits used.
+
+
   - name: fivetran_log_transformation_status
+    description: >
+      Table of transformations enriched with data regarding its run status and any tables 
+      whose new data trigger the transformation to run.
+    
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: 
+            - destination_id
+            - transformation_id 
+
+    columns:
+      - name: transformation_id
+        description: Destination-unique ID of the transformation.
+
+      - name: created_at
+        description: Timestamp of when the transformation was created.
+
+      - name: created_by_user_id
+        description: Foreign key referencing the `user` who created the transformation.
+
+      - name: destination_id
+        description: Foreign key referenencing the `destination` whose data is being transformed.
+
+      - name: transformation_name
+        description: Name given to the transformation.
+
+      - name: is_paused
+        description: Boolean of whether the data transformation is currently paused.
+
+      - name: script
+        description: The code content of the transformation.
+
+      - name: trigger_delay 
+        description: The delay in triggering transformation.
+
+      - name: trigger_interval
+        description: The scheduled frequency of the transformation, if a time schedule is chosen as its trigger.
+
+      - name: trigger_type
+        description: The schedule type of the transformation (time schedule vs. new data in certain tables).
+      
+      - name: destination_name
+        description: Name of the destination in which the destination is run.
+      
+      - name: destination_database
+        description: Name of the destination's database in which the transformation is run.
+      
+      - name: last_successful_run_at
+        description: Timestamp of when the transformation was last run successfully.
+      
+      - name: last_run_attempt
+        description: Outcome of the last run attempt (`"success"` or `"failure"`).
+      
+      - name: trigger_tables
+        description: >
+          Aggregated string list of the tables that trigger the transformation to run, if it is
+          not on a time schedule.
 
 macros:
   - name: union_source_tables

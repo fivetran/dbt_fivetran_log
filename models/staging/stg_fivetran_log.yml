@@ -68,7 +68,7 @@ models:
             - destination_database
     columns:
       - name: destination_id
-        description: Foreign key referencing the `destination` warehouse that the credits were used on
+        description: Foreign key referencing the `destination` warehouse that the credits were used on.
       - name: measured_month
         description: The month (yyyy-mm) in which the credits were consumed.
       - name: credits_consumed
@@ -99,7 +99,9 @@ models:
           - not_null
 
   - name: stg_fivetran_log_log
-    description: Table of logged events related to data syncs. More info on error logs [here](https://fivetran.com/docs/logs/fivetran-log#errorlogs)
+    description: > 
+      Table of logged events related to data syncs. More info on error logs 
+      [here](https://fivetran.com/docs/logs/fivetran-log#errorlogs)
     tests:
       - unique:
           column_name: "log_id || '-' || destination_database || '-' || created_at"

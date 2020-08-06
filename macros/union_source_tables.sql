@@ -32,12 +32,12 @@
                 cast(null as {{ dbt_utils.type_string() }}) as transformation_id,
             
             {% elif table_name == 'transformation' %}
-                cast(null as {{ dbt_utils.type_string() }}) as transformation_id,
-                cast(null as {{ dbt_utils.type_string() }}) as created_at,
-                cast(null as {{ dbt_utils.type_string() }}) as created_by_user_id,
-                cast(null as timestamp) as destination_id,
-                cast(null as {{ dbt_utils.type_string() }}) as transformation_name,
-                cast(null as boolean ) as is_paused,
+                cast(null as {{ dbt_utils.type_string() }}) as id,
+                cast(null as timestamp) as created_at,
+                cast(null as {{ dbt_utils.type_string() }}) as created_by_id,
+                cast(null as {{ dbt_utils.type_string() }}) as destination_id,
+                cast(null as {{ dbt_utils.type_string() }}) as name,
+                cast(null as boolean ) as paused,
                 cast(null as {{ dbt_utils.type_string() }}) as script,
                 cast(null as {{ dbt_utils.type_string() }}) as trigger_delay,
                 cast(null as {{ dbt_utils.type_string() }}) as trigger_interval,

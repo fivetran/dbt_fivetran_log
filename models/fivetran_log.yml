@@ -72,7 +72,7 @@ models:
 
     tests:
       - unique:
-          column_name: "destination_database || '-' || schema || '-' || table || '-' || measured_month"
+          column_name: "destination_id || '-' || connector_name || '-' || table_name || '-' || measured_month"
     columns:
 
       - name: connector_name

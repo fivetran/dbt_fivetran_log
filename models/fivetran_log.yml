@@ -99,6 +99,12 @@ models:
 
       - name: monthly_active_rows
         description: The number of active rows measured in the table for the month.
+      
+      - name: connector_type
+        description: The kind of connector (ie google sheets, webhooks).
+        
+      - name: destination_name 
+        description: Name of the destination as it appears in the UI.
 
 
   - name: fivetran_log_credit_mar_history

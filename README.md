@@ -70,10 +70,10 @@ sources:
 ```
 
 Then, in each of the staging models, the `union_source_tables(table_name)` macro will:
-* iterate through the declared sources and their tables
-* check if the source's database does indeed have a relation matching the given `table_name` (necessary because the `transformation` and `trigger_table` tables will only exist if you've created a transformation in that destination)
-* union the matching tables
-* in the unioned table, store the record's source's *database* as `destination_database`
+1. iterate through the declared sources and their tables
+2. check if the source's database does indeed have a relation matching the given `table_name` (necessary because the `transformation` and `trigger_table` tables will only exist if you've created a transformation in that destination)
+3. union the matching tables
+4. in the unioned table, store the record's source's *database* as `destination_database`
 
 ## Contributions
 

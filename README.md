@@ -1,44 +1,79 @@
 # Fivetran Log 
 
-This package models Fivetran Log data from [Fivetran's free, internal connector](https://fivetran.com/docs/logs/fivetran-log). It uses data in the format described by [this ERD](https://docs.google.com/presentation/d/1lny-kFwJIvOCbKky3PEvEQas4oaHVVTahj3OTRONpu8/?usp=sharing).
+This package models Fivetran Log data from [our free, internal connector](https://fivetran.com/docs/logs/fivetran-log). It uses **destination-level** data in the format described by [this ERD](https://docs.google.com/presentation/d/1lny-kFwJIvOCbKky3PEvEQas4oaHVVTahj3OTRONpu8/?usp=sharing) and unions the data to the **account level**.
 
-Read more about monthly active rows [here](https://fivetran.com/blog/consumption-based-pricing).
+This package enables you to better understand:
+* how you are spending money in Fivetran according to our [consumption based pricing model](https://fivetran.com/docs/getting-started/consumption-based-pricing) at the table, connector, destination, and account levels
+* how your data is flowing in Fivetran:
+    * connector health and sync status
+    * transformation run status
 
-# continue here
-
-This package enables you to better understand your GitHub issues and pull requests.  Its main focus is to enhance these two core objects with commonly used metrics. Additionally, the metrics tables let you better understand your team's velocity over time.  These metrics are available on a daily, weekly, monthly and quarterly level.
+Thus, the package's main foci are to:
+* union log data across destinations
+* create a history of measured monthly active rows (MAR) and credit consumption (and their relationship)
+* enhance the connector table with sync metrics and relevant alert messages
+* enhance the transformation table with run metrics
 
 ## Models
 
-This package contains transformation models, designed to work simultaneously with our [GitHub source package](https://github.com/fivetran/dbt_github_source). A dependency on the source package is declared in this package's `packages.yml` file, so it will automatically download when you run `dbt deps`. The primary outputs of this package are described below. Intermediate models are used to create these output models.
-
 | **model**                  | **description**                                                                                                                                               |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| fivetran\_log\_connenector\_status        | Each record represents a connector loading data into a destination. enriched with data about the connector's status and the status of its data flow.                                          |
-| github\_pull\_requests     | Each record represents a GitHub pull request, enriched with data about its repository, reviewers, and durations between review requests, merges and reviews. |
-| github\_daily\_metrics     | Each record represents a single day, enriched with metrics about PRs and issues that were created and closed during that period.                              |
-| github\_weekly\_metrics    | Each record represents a single week, enriched with metrics about PRs and issues that were created and closed during that period.                             |
-| github\_monthly\_metrics   | Each record represents a single month, enriched with metrics about PRs and issues that were created and closed during that period.                            |
-| github\_quarterly\_metrics | Each record represents a single quarter, enriched with metrics about PRs and issues that were created and closed during that period.                          |
+| fivetran\_log\_connenector\_status        | Each record represents a connector loading data into a destination, enriched with data about the connector's status and the status of its data flow.                                          |
+| fivetran\_log\_transformation\_status     | Each record represents a transformation, enriched with data about the transformation's last sync and any tables whose new data triggers the transformation to run. |
+| fivetran\_log\_mar\_table\_history     | Each record represents a table's active volume for a month, complete with data about its connector and destination.                             |
+| fivetran\_log\_credit\_mar\_history    | Each record represents a destination's consumption, via its MAR, total credits used, and credits per millions MAR.                             |
 
 
 ## Installation Instructions
 Check [dbt Hub](https://hub.getdbt.com/) for the latest installation instructions, or [read the dbt docs](https://docs.getdbt.com/docs/package-management) for more information on installing packages.
 
 ## Configuration
-By default, this package will look for your GitHub data in the `github` schema of your [target database](https://docs.getdbt.com/docs/running-a-dbt-project/using-the-command-line-interface/configure-your-profile). If this is not where your GitHub data is (perhaps your GitHub schema is `github_fivetran`), add the following configuration to your `dbt_project.yml` file:
+Because the Fivetran Log connector exists at the *destination* level, you will need to declare each destination's log connector as a separate source in `src_fivetran_log.yml`. 
+
+However, because each schema is identical in table structure, you can use [yaml anchors](https://support.atlassian.com/bitbucket-cloud/docs/yaml-anchors/) to avoid duplicating code. You'll need to provide the structure in the first source, which you can then point to in subsequent ones. See the example configuration of two sources below:
 
 ```yml
-# dbt_project.yml
+# src_fivetran_log.yml
 
 ...
-config-version: 2
+version: 2
 
-vars:
-  github_source:
-    github_database: your_database_name
-    github_schema: your_schema_name 
+sources: 
+    - name: fivetran_log_source_1
+      database: source-1-database-name
+      schema: fivetran_log
+
+      loader: fivetran
+      loaded_at_field: _fivetran_synced
+      
+      freshness:
+        warn_after: {count: 72, period: hour}
+        error_after: {count: 96, period: hour}
+
+      tables: &fivetran_log_tables # declaring the anchor
+        - name: active_volume 
+          description: ...
+
+    - name: fivetran_log_source_2
+      database: source-2-database-name
+      schema: fivetran_log
+
+      loader: fivetran
+      loaded_at_field: _fivetran_synced
+      
+      freshness:
+        warn_after: {count: 72, period: hour}
+        error_after: {count: 96, period: hour}
+
+    tables: *fivetran_log_tables # points to the anchor
+
 ```
+
+Then, in each of the staging models, the `union_source_tables(table_name)` macro will:
+* iterate through the declared sources and their tables
+* check if the source's database does indeed have a relation matching the given `table_name` (necessary because the `transformation` and `trigger_table` tables will only exist if you've created a transformation in that destination)
+* union the matching tables
+* in the unioned table, store the record's source's *database* as `destination_database`
 
 ## Contributions
 
@@ -55,3 +90,4 @@ on the best workflow for contributing to a package.
 - Join the [chat](http://slack.getdbt.com/) on Slack for live discussions and support
 - Find [dbt events](https://events.getdbt.com) near you
 - Check out [the dbt blog](https://blog.getdbt.com/) for the latest news on dbt's development and best practices
+- Learn how to set up a Fivetran Log connector [here](https://fivetran.com/docs/logs/fivetran-log/setup-guide)

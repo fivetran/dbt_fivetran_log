@@ -29,7 +29,7 @@ Check [dbt Hub](https://hub.getdbt.com/) for the latest installation instruction
 
 ## Configuration
 Because the Fivetran Log connector exists at the *destination* level, you will need to declare each destination's log connector as a separate source in `src_fivetran_log.yml`. 
-
+ 
 However, because each schema is identical in table structure, you can use [yaml anchors](https://support.atlassian.com/bitbucket-cloud/docs/yaml-anchors/) to avoid duplicating code. You'll need to provide the structure in the first source, which you can then point to in subsequent ones. See the example configuration of two sources below:
 
 ```yml

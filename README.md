@@ -1,6 +1,6 @@
 # Fivetran Log 
 
-This package models Fivetran Log data from [our free, internal connector](https://fivetran.com/docs/logs/fivetran-log). It uses **destination-level** data in the format described by [this ERD](https://docs.google.com/presentation/d/1lny-kFwJIvOCbKky3PEvEQas4oaHVVTahj3OTRONpu8/?usp=sharing) and unions the data to the **account level**.
+This package models Fivetran Log data from [our free, internal connector](https://fivetran.com/docs/logs/fivetran-log). It uses **destination-level** data in the format described by [this ERD](https://docs.google.com/presentation/d/1lny-kFwJIvOCbKky3PEvEQas4oaHVVTahj3OTRONpu8/?usp=sharing) and reformats and unions the data to the **account level**.
 
 This package enables you to better understand:
 * how you are spending money in Fivetran according to our [consumption based pricing model](https://fivetran.com/docs/getting-started/consumption-based-pricing) at the table, connector, destination, and account levels
@@ -9,10 +9,12 @@ This package enables you to better understand:
     * transformation run status
 
 Thus, the package's main foci are to:
-* union log data across destinations
+* union log data across different destinations, if given multiple warehouses
 * create a history of measured monthly active rows (MAR) and credit consumption (and their relationship)
 * enhance the connector table with sync metrics and relevant alert messages
 * enhance the transformation table with run metrics
+
+Note: this package is built to be compatible with BigQuery, Redshift, and Snowflake. 
 
 ## Models
 
@@ -28,7 +30,7 @@ Thus, the package's main foci are to:
 Check [dbt Hub](https://hub.getdbt.com/) for the latest installation instructions, or [read the dbt docs](https://docs.getdbt.com/docs/package-management) for more information on installing packages.
 
 ## Configuration
-Because the Fivetran Log connector exists at the *destination* level, you will need to declare each destination's log connector as a separate source in `src_fivetran_log.yml`. 
+Because the Fivetran Log connector exists at the *destination* level, you will need to declare each destination's log connector as a separate source in `src_fivetran_log.yml`.  
 
 However, because each schema is identical in table structure, you can use [yaml anchors](https://support.atlassian.com/bitbucket-cloud/docs/yaml-anchors/) to avoid duplicating code. You'll need to provide the structure in the first source, which you can then point to in subsequent ones. See the example configuration of two sources below:
 
@@ -83,6 +85,7 @@ or open PRs against `master`. Check out
 on the best workflow for contributing to a package.
 
 ## Resources:
+- Provide [feedback](https://www.surveymonkey.com/r/DQ7K7WW) on our existing dbt packages or what you'd like to see next
 - Learn more about Fivetran [in the Fivetran docs](https://fivetran.com/docs)
 - Check out [Fivetran's blog](https://fivetran.com/blog)
 - Learn more about dbt [in the dbt docs](https://docs.getdbt.com/docs/introduction)

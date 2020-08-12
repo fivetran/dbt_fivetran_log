@@ -15,6 +15,7 @@ Thus, the package's main foci are to:
 * enhance the transformation table with run metrics
 
 Note: this package is built to be compatible with BigQuery, Redshift, and Snowflake. 
+// todo: still need to test some cross-db combining
 
 ## Models
 
@@ -30,9 +31,19 @@ Note: this package is built to be compatible with BigQuery, Redshift, and Snowfl
 Check [dbt Hub](https://hub.getdbt.com/) for the latest installation instructions, or [read the dbt docs](https://docs.getdbt.com/docs/package-management) for more information on installing packages.
 
 ## Configuration
-Because the Fivetran Log connector exists at the *destination* level, you will need to declare each destination's log connector as a separate source in `src_fivetran_log.yml`.  
+### Accessing your destinations
+First, you'll need to ensure that dbt can access your destination(s) by providing credentials in your `~/.dbt/profiles.yml` file. Different types of warehouses may require different profile setups, which are laid out in the dbt docs [here](https://docs.getdbt.com/docs/supported-databases). 
 
-However, because each schema is identical in table structure, you can use [yaml anchors](https://support.atlassian.com/bitbucket-cloud/docs/yaml-anchors/) to avoid duplicating code. You'll need to provide the structure in the first source, which you can then point to in subsequent ones. See the example configuration of two sources below:
+Note: If you are using multiple BigQuery databases, you'll need to use the oauth authentication instead of service accounts.
+
+### When using a single destination 
+If you are only looking at data from one destination, you'll just need to declare one source in `src_fivetran_log.yml`. We've included a largely complete template of a source, in which you only need to input the source `database` and `schema`. This source template includes freshness tests and, most importantly, table declarations, complete with descriptions and tests. You must include these table declarations in your source for the package to function.
+
+### When using multiple destinations 
+Because the Fivetran Log connector exists at the *destination* level, you will need to declare each destination's log connector as a separate source in `src_fivetran_log.yml`. And due to how the `union_source_tables()` macro works, you'll need to declare the tables in each source definition. We've written out this table structure (with documentation and tests) in `src_fivetran_log.yml`. 
+
+For each source destination, you'll need to provide the 
+However, because each schema is identical in table structure, you can use [yaml anchors](https://support.atlassian.com/bitbucket-cloud/docs/yaml-anchors/) to remove code redundancy. You'll need to provide the structure in the first source, which you can then point to in subsequent ones. See the example configuration of two sources below:
 
 ```yml
 # src_fivetran_log.yml

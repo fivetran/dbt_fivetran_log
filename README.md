@@ -106,4 +106,4 @@ on the best workflow for contributing to a package.
 - Join the [chat](http://slack.getdbt.com/) on Slack for live discussions and support
 - Find [dbt events](https://events.getdbt.com) near you
 - Check out [the dbt blog](https://blog.getdbt.com/) for the latest news on dbt's development and best practices
-- Learn how to set up a Fivetran Log connector [here](https://fivetran.com/docs/logs/fivetran-log/setup-guide)
+- Learn how to set up a Fivetran Log Connector [here](https://fivetran.com/docs/logs/fivetran-log/setup-guide)

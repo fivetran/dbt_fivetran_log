@@ -1,18 +1,18 @@
 # Fivetran Log 
 
-This package models Fivetran Log data from [our free, internal connector](https://fivetran.com/docs/logs/fivetran-log). It uses **destination-level** data in the format described by [this ERD](https://docs.google.com/presentation/d/1lny-kFwJIvOCbKky3PEvEQas4oaHVVTahj3OTRONpu8/?usp=sharing) and reformats and unions the data to the **account level**.
+This package models Fivetran Log data from [our free internal connector](https://fivetran.com/docs/logs/fivetran-log). It uses **destination-level** data in the format described by [this ERD](https://docs.google.com/presentation/d/1lny-kFwJIvOCbKky3PEvEQas4oaHVVTahj3OTRONpu8/?usp=sharing) and unions the data to the **account level**.
 
-This package enables you to better understand:
-* how you are spending money in Fivetran according to our [consumption based pricing model](https://fivetran.com/docs/getting-started/consumption-based-pricing) at the table, connector, destination, and account levels
-* how your data is flowing in Fivetran:
-    * connector health and sync status
-    * transformation run status
+This package helps you understand:
+* How you are spending money in Fivetran according to our [consumption-based pricing model](https://fivetran.com/docs/getting-started/consumption-based-pricing). We display consumption data at the table, connector, destination, and account levels.
+* How your data is flowing in Fivetran:
+    * Connector health and sync statuses
+    * Transformation run statuses
 
-Thus, the package's main foci are to:
-* union log data across different destinations, if given multiple warehouses
-* create a history of measured monthly active rows (MAR) and credit consumption (and their relationship)
-* enhance the connector table with sync metrics and relevant alert messages
-* enhance the transformation table with run metrics
+The package's main goals are to:
+* Union log data across destinations
+* Create a history of measured monthly active rows (MAR), credit consumption, and the relationship between the two
+* Enhance the connector table with sync metrics and relevant alert messages
+* Enhance the transformation table with run metrics
 
 Note: this package is built to be compatible with BigQuery, Redshift, and Snowflake. 
 // todo: still need to test some cross-db combining
@@ -24,7 +24,7 @@ Note: this package is built to be compatible with BigQuery, Redshift, and Snowfl
 | fivetran\_log\_connenector\_status        | Each record represents a connector loading data into a destination, enriched with data about the connector's status and the status of its data flow.                                          |
 | fivetran\_log\_transformation\_status     | Each record represents a transformation, enriched with data about the transformation's last sync and any tables whose new data triggers the transformation to run. |
 | fivetran\_log\_mar\_table\_history     | Each record represents a table's active volume for a month, complete with data about its connector and destination.                             |
-| fivetran\_log\_credit\_mar\_history    | Each record represents a destination's consumption, via its MAR, total credits used, and credits per millions MAR.                             |
+| fivetran\_log\_credit\_mar\_history    | Each record represents a destination's consumption by showing its MAR, total credits used, and credits per millions MAR.                             |
 
 
 ## Installation Instructions
@@ -32,18 +32,21 @@ Check [dbt Hub](https://hub.getdbt.com/) for the latest installation instruction
 
 ## Configuration
 ### Accessing your destinations
-First, you'll need to ensure that dbt can access your destination(s) by providing credentials in your `~/.dbt/profiles.yml` file. Different types of warehouses may require different profile setups, which are laid out in the dbt docs [here](https://docs.getdbt.com/docs/supported-databases). 
+First, you'll need to ensure that dbt can access your destination(s) by providing the appropriate credentials in your `~/.dbt/profiles.yml` file. Different types of warehouses may require different profile setups, all of which are laid out in the dbt docs [here](https://docs.getdbt.com/docs/supported-databases). 
 
-Note: If you are using multiple BigQuery databases, you'll need to use the oauth authentication instead of service accounts.
+Note: If you are using multiple BigQuery databases, you'll need to use the oauth authentication method instead of service accounts. Both methods are included in [dbt docs](https://docs.getdbt.com/reference/warehouse-profiles/bigquery-profile).
 
-### When using a single destination 
-If you are only looking at data from one destination, you'll just need to declare one source in `src_fivetran_log.yml`. We've included a largely complete template of a source, in which you only need to input the source `database` and `schema`. This source template includes freshness tests and, most importantly, table declarations, complete with descriptions and tests. You must include these table declarations in your source for the package to function.
+### Using a single destination 
+If you are only looking at data from one destination, you'll just need to declare one source in `src_fivetran_log.yml`. 
 
-### When using multiple destinations 
-Because the Fivetran Log connector exists at the *destination* level, you will need to declare each destination's log connector as a separate source in `src_fivetran_log.yml`. And due to how the `union_source_tables()` macro works, you'll need to declare the tables in each source definition. We've written out this table structure (with documentation and tests) in `src_fivetran_log.yml`. 
+We've included a largely complete template of a source, in which you only need to input the source `database` and `schema`. This source template includes freshness tests and, most importantly, table declarations, complete with descriptions and tests. You **must** include these table declarations in your source for the package to function.
 
-For each source destination, you'll need to provide the 
-However, because each schema is identical in table structure, you can use [yaml anchors](https://support.atlassian.com/bitbucket-cloud/docs/yaml-anchors/) to remove code redundancy. You'll need to provide the structure in the first source, which you can then point to in subsequent ones. See the example configuration of two sources below:
+### Using multiple destinations 
+Because the Fivetran Log connector exists at the *destination* level, you will need to declare each destination's log connector as a separate source in `src_fivetran_log.yml`. 
+
+Moreover, the package's method of unioning data **requires that you declare all tables in each source**. However, because each source's schema is indentical in table structure, you can use [yaml anchors](https://support.atlassian.com/bitbucket-cloud/docs/yaml-anchors/) to avoid duplicating this code. This way, you'll only need to provide the table structure in the first source, which we have already written out (with table documentation and tests) in `src_fivetran_log.yml`. Then, for any subsequent sources, you can simply point to the anchored table structure.
+
+See exactly how to do so in the example configuration of two sources below:
 
 ```yml
 # src_fivetran_log.yml
@@ -83,10 +86,10 @@ sources:
 ```
 
 Then, in each of the staging models, the `union_source_tables(table_name)` macro will:
-1. iterate through the declared sources and their tables
-2. check if the source's database does indeed have a relation matching the given `table_name` (necessary because the `transformation` and `trigger_table` tables will only exist if you've created a transformation in that destination)
-3. union the matching tables
-4. in the unioned table, store the record's source's *database* as `destination_database`
+1. Iterate through the declared sources and their tables
+2. Verify that the source's database has a relation matching the given `table_name`. This verification step is necessary because the `transformation` and `trigger_table` tables will only exist if you've created a transformation in that destination.
+3. Union the matching tables
+4. In the unioned table, store the record's source's *database* as `destination_database`
 
 ## Contributions
 

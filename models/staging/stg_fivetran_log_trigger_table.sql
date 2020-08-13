@@ -7,8 +7,7 @@ with trigger_table as (
 fields as (
 
     select 
-
-        table,
+        "TABLE" as trigger_table,
         transformation_id,
         destination_database
     

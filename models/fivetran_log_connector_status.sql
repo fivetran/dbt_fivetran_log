@@ -21,7 +21,7 @@ schema_changes as (
 
     where 
         {{ dbt_utils.datediff('created_at', dbt_utils.current_timestamp(), 'day') }} <= 30
-        and event_subtype in ('create_table', 'alter_table', 'create_schema')
+        and event_subtype in ('create_table', 'alter_table', 'create_schema', 'change_schema_config')
 
     group by 1,2
 
@@ -56,7 +56,7 @@ connector_metrics as (
         max(case when event_type = 'WARNING' then connector_log.created_at else null end) as last_warning_at
 
     from connector_log 
-        join connector on connector_log.connector_name = connector.connector_name
+        right join connector on connector_log.connector_name = connector.connector_name
         and connector_log.destination_database = connector.destination_database
     group by 1,2,3,4,5,6,7
 
@@ -128,8 +128,8 @@ final as (
         connector_recent_logs.set_up_at,
         coalesce(schema_changes.number_of_schema_changes_last_month, 0) as number_of_schema_changes_last_month,
         
-        {{ string_agg('case when connector_recent_logs.event_type = "SEVERE" then connector_recent_logs.message_data else null end', "'\\n'") }} as errors_since_last_completed_sync,
-        {{ string_agg('case when connector_recent_logs.event_type = "WARNING" then connector_recent_logs.message_data else null end', "'\\n'") }} as warnings_since_last_completed_sync
+        {{ string_agg("case when connector_recent_logs.event_type = 'SEVERE' then connector_recent_logs.message_data else null end", "'\\n'") }} as errors_since_last_completed_sync,
+        {{ string_agg("case when connector_recent_logs.event_type = 'WARNING' then connector_recent_logs.message_data else null end", "'\\n'") }} as warnings_since_last_completed_sync
         
 
     from connector_recent_logs

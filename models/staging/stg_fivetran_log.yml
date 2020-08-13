@@ -230,7 +230,7 @@ models:
             - table
             - transformation_id
     columns:
-      - name: table
+      - name: trigger_table
         description: Connector source table whose new data triggers the transformation.
       - name: transformation_id
         description: Foreign key referencing the `transformation` that is triggered by new data.

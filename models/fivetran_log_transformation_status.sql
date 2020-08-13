@@ -15,7 +15,7 @@ trigger_tables as (
     select 
         transformation_id, 
         destination_database,
-        {{ string_agg('table', "', '") }} as trigger_tables 
+        {{ string_agg("trigger_table", "', '") }} as trigger_tables 
 
     from {{ ref('stg_fivetran_log_trigger_table') }}
 

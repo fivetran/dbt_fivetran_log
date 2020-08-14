@@ -258,15 +258,15 @@ sources:
   #   tables: *fivetran_log_tables
 
   # snowflake
-  - name: fivetran_log_snowflake_2
-    database: DBT_PACKAGE_TESTING 
-    schema: FIVETRAN_LOG_2
+  # - name: fivetran_log_snowflake_2
+  #   database: DBT_PACKAGE_TESTING 
+  #   schema: FIVETRAN_LOG_2
 
-    loader: fivetran
-    loaded_at_field: _fivetran_synced
+  #   loader: fivetran
+  #   loaded_at_field: _fivetran_synced
       
-    freshness: 
-      warn_after: {count: 72, period: hour}
-      error_after: {count: 96, period: hour}
+  #   freshness: 
+  #     warn_after: {count: 72, period: hour}
+  #     error_after: {count: 96, period: hour}
 
-    tables: *fivetran_log_tables
+  #   tables: *fivetran_log_tables

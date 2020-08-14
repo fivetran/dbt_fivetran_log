@@ -27,7 +27,11 @@
             select 
             -- these are the only tables that should possibly not exist
             {% if table_name == 'trigger_table' -%}
+            {% if target.type == 'bigquery' -%}
+                cast(null as {{ type_string() }}) as table, 
+            {% else -%} 
                 cast(null as {{ type_string() }}) as "TABLE",
+            {% endif -%}
                 cast(null as {{ type_string() }}) as transformation_id,
             {% elif table_name == 'transformation' -%}
                 cast(null as {{ type_string() }}) as id,

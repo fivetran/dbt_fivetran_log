@@ -7,7 +7,11 @@ with trigger_table as (
 fields as (
 
     select 
+    {% if target.type == 'bigquery' %} 
+        table as trigger_table, 
+    {% else %} 
         "TABLE" as trigger_table,
+    {% endif %}
         transformation_id,
         destination_database
     

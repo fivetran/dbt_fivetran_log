@@ -1,4 +1,4 @@
-with user as (
+with fivetran_user as (
     
     {{ union_source_tables('user') }}
 
@@ -17,7 +17,7 @@ fields as (
         verified as is_verified,
         {{ string_agg( 'destination_database', "', '") }} as destination_databases
         
-    from user
+    from fivetran_user
     group by 1,2,3,4,5,6,7,8
 )
 

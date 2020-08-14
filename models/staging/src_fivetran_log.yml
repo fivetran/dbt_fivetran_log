@@ -5,9 +5,9 @@ version: 2
 
 # Example naming convention for each source: fivetran_log_[destination name]
 sources: 
-  - name: source_1
-    database: redshift-test-kristin # target.database
-    schema: fivetran_log  # target.schema
+  - name: fivetran_log_dbt_package_testing
+    database: digital-arbor-400 # target.database
+    schema: fivetran_log_2  # target.schema
 
     loader: fivetran
     loaded_at_field: _fivetran_synced
@@ -258,15 +258,15 @@ sources:
   #   tables: *fivetran_log_tables
 
   # snowflake
-  - name: fivetran_log_snowflake_2
-    database: redshift-test-kristin 
-    schema: fivetran_log_2
+  # - name: fivetran_log_2
+  #   database: digital-arbor-400
+  #   schema: fivetran_log_2
 
-    loader: fivetran
-    loaded_at_field: _fivetran_synced
+  #   loader: fivetran
+  #   loaded_at_field: _fivetran_synced
       
-    freshness: 
-      warn_after: {count: 72, period: hour}
-      error_after: {count: 96, period: hour}
+  #   freshness: 
+  #     warn_after: {count: 72, period: hour}
+  #     error_after: {count: 96, period: hour}
 
-    tables: *fivetran_log_tables
+  #   tables: *fivetran_log_tables

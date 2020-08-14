@@ -3,6 +3,7 @@
 This package models Fivetran Log data from [our free internal connector](https://fivetran.com/docs/logs/fivetran-log). It uses **destination-level** data in the format described by [this ERD](https://docs.google.com/presentation/d/1lny-kFwJIvOCbKky3PEvEQas4oaHVVTahj3OTRONpu8/?usp=sharing) and unions the data to the **account level**.
 
 > Note: The Fivetran Log Connector dbt package is compatible with BigQuery, Redshift, and Snowflake.
+>
 > Though compatible with each individual kind of warehouse, the package is not *cross-compatible*. For example, you can union log data across various BigQuery destinations, but not BigQuery *and* Snowflake destinations.
 
 This package helps you understand:
@@ -44,7 +45,7 @@ We've included a largely complete template of a source, in which you only need t
 ### Using multiple destinations 
 Because the Fivetran Log Connector exists at the *destination* level, you need to declare each destination's log connector as a separate source in `src_fivetran_log.yml`. 
 
-Because of the way the Fivetran Log Connector dbt package unions data, you **must declare all tables in each source**. However, because each source's schema is indentical in table structure, you can use [yaml anchors](https://support.atlassian.com/bitbucket-cloud/docs/yaml-anchors/) to avoid duplicating this code. This way, you only need to provide the table structure in the first source, which we have already written out (with table documentation and tests) in `src_fivetran_log.yml`. For any subsequent sources, you can simply point to the anchored table structure.
+And due to the way that the Fivetran Log Connector dbt package unions data, you **must declare all tables in each source**. However, because each source's schema is indentical in table structure, you can use [yaml anchors](https://support.atlassian.com/bitbucket-cloud/docs/yaml-anchors/) to avoid duplicating this code. This way, you only need to provide the table structure in the first source, which we have already written out (with table documentation and tests) in `src_fivetran_log.yml`. For any subsequent sources, you can simply point to the anchored table structure.
 
 See how to use yaml anchors in the example configuration of two sources below:
 

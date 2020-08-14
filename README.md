@@ -2,7 +2,8 @@
 
 This package models Fivetran Log data from [our free internal connector](https://fivetran.com/docs/logs/fivetran-log). It uses **destination-level** data in the format described by [this ERD](https://docs.google.com/presentation/d/1lny-kFwJIvOCbKky3PEvEQas4oaHVVTahj3OTRONpu8/?usp=sharing) and unions the data to the **account level**.
 
-> Note: The Fivetran Log Connector dbt package is compatible with BigQuery, Redshift, and Snowflake. 
+> Note: The Fivetran Log Connector dbt package is compatible with BigQuery, Redshift, and Snowflake.
+> Though compatible with each individual kind of warehouse, the package is not *cross-compatible*. For example, you can union log data across various BigQuery destinations, but not BigQuery *and* Snowflake destinations.
 
 This package helps you understand:
 * How you are spending money in Fivetran according to our [consumption-based pricing model](https://fivetran.com/docs/getting-started/consumption-based-pricing). We display consumption data at the table, connector, destination, and account levels.

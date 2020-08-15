@@ -1,7 +1,12 @@
 with connector as (
 
+    {% if unioning_multiple_destinations is true %}
     {{ union_source_tables('connector') }}
 
+    {% else %}
+    select * from {{ var('connector') }}
+    
+    {% endif %}
 ),
 
 fields as (
@@ -14,7 +19,12 @@ fields as (
         connecting_user_id,
         paused as is_paused,
         signed_up as set_up_at,
-        destination_database,
+
+        {% if unioning_multiple_destinations is true -%}
+        destination_database
+        {% else -%}
+        {{ "'" ~ var('fivetran_log_database', target.database) ~ "'" }} 
+        {%- endif %} as destination_database,
 
         -- Consolidating duplicate connectors (ie deleted and then re-added)
         row_number() over ( partition by connector_name, destination_id order by _fivetran_synced desc ) as nth_last_record

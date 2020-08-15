@@ -1,7 +1,12 @@
 with fivetran_user as (
     
+    {% if unioning_multiple_destinations is true %}
     {{ union_source_tables('user') }}
 
+    {% else %}
+    select * from {{ var('user') }}
+    
+    {% endif %}
 ),
 
 fields as (
@@ -15,7 +20,12 @@ fields as (
         given_name as first_name,
         phone,
         verified as is_verified,
-        {{ string_agg( 'destination_database', "', '") }} as destination_databases
+
+        {% if unioning_multiple_destinations is true -%}
+        {{ string_agg( 'destination_database', "', '") }} 
+        {% else -%}
+        {{ "'" ~ var('fivetran_log_database', target.database) ~ "'" }} 
+        {%- endif %} as destination_databases
         
     from fivetran_user
     group by 1,2,3,4,5,6,7,8

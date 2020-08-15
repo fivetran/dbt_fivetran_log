@@ -1,6 +1,12 @@
 with account_membership as (
     
+    {% if unioning_multiple_destinations is true %}
     {{ union_source_tables('account_membership') }}
+
+    {% else %}
+    select * from {{ var('account_membership') }}
+    
+    {% endif %}
 
 ),
 
@@ -12,7 +18,11 @@ fields as (
         activated_at,
         joined_at,
         role as account_role,
-        {{ string_agg( 'destination_database', "', '") }} as destination_databases
+        {% if unioning_multiple_destinations is true -%}
+        {{ string_agg( 'destination_database', "', '") }} 
+        {% else -%}
+        {{ "'" ~ var('fivetran_log_database', target.database) ~ "'" }} 
+        {%- endif %} as destination_databases
         
     from account_membership
     group by 1,2,3,4,5

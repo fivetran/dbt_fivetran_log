@@ -5,9 +5,9 @@ version: 2
 
 # Example naming convention for each source: fivetran_log_[destination name]
 sources: 
-  - name: fivetran_log_1
-    database: DBT_PACKAGE_TESTING # target.database
-    schema: FIVETRAN_LOG  # target.schema
+  - name: fivetran_log
+    database: "{{var ('fivetran_log_database', target.database)}}" # add var config to dbt_project.yml
+    schema: fivetran_log  # target.schema
 
     loader: fivetran
     loaded_at_field: _fivetran_synced
@@ -258,15 +258,15 @@ sources:
   #   tables: *fivetran_log_tables
 
   # snowflake
-  - name: fivetran_log_2
-    database: DBT_PACKAGE_TESTING
-    schema: FIVETRAN_LOG_2
+  # - name: fivetran_log_2
+  #   database: digital-arbor-400
+  #   schema: fivetran_log
 
-    loader: fivetran
-    loaded_at_field: _fivetran_synced
+  #   loader: fivetran
+  #   loaded_at_field: _fivetran_synced
       
-    freshness: 
-      warn_after: {count: 72, period: hour}
-      error_after: {count: 96, period: hour}
+  #   freshness: 
+  #     warn_after: {count: 72, period: hour}
+  #     error_after: {count: 96, period: hour}
 
-    tables: *fivetran_log_tables
+  #   tables: *fivetran_log_tables

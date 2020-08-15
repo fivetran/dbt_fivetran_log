@@ -1,7 +1,12 @@
 with log as (
 
+    {% if unioning_multiple_destinations is true %}
     {{ union_source_tables('log') }}
 
+    {% else %}
+    select * from {{ var('log') }}
+    
+    {% endif %}
 ),
 
 fields as (
@@ -18,7 +23,12 @@ fields as (
         when transformation_id is not null and message_data like '%has failed%' then 'transformation run failed'
         else message_event end as event_subtype,
         transformation_id,
+        
+        {% if unioning_multiple_destinations is true -%}
         destination_database
+        {% else -%}
+        {{ "'" ~ var('fivetran_log_database', target.database) ~ "'" }} 
+        {%- endif %} as destination_database
 
     from log
 )

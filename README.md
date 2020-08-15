@@ -38,9 +38,19 @@ First, you'll need to ensure that dbt can access your destination(s) by providin
 > Note: If you are using multiple BigQuery databases, you must use the OAuth authentication method instead of service accounts. Both methods are included in [dbt's BigQuery profile documentation](https://docs.getdbt.com/reference/warehouse-profiles/bigquery-profile).
 
 ### Using a single destination 
-If you are only looking at data from one destination, you only need to declare one source in `src_fivetran_log.yml`. 
+By default, this package will run using your target database and the `fivetran_log` schema. If this is not where your Fivetran Log data is, add the following configuration to your `dbt_project.yml` file:
 
-We've included a largely complete template of a source, in which you only need to input the source `database` and `schema`. This source template includes freshness tests and table declarations, complete with descriptions and tests. You **must** include these table declarations in your source for the package to function.
+```yml
+# dbt_project.yml
+
+...
+config-version: 2
+
+vars:
+  asana_source:
+    asana_database: your_database_name
+    asana_schema: your_schema_name 
+```
 
 ### Using multiple destinations 
 Because the Fivetran Log Connector exists at the *destination* level, you need to declare each destination's log connector as a separate source in `src_fivetran_log.yml`. 

@@ -47,9 +47,9 @@ By default, this package will run using your target database and the `fivetran_l
 config-version: 2
 
 vars:
-  asana_source:
-    asana_database: your_database_name
-    asana_schema: your_schema_name 
+  fivetran_log:
+    fivetran_log_database: your_database_name
+    fivetran_log_schema: your_schema_name 
 ```
 
 ### Using multiple destinations 

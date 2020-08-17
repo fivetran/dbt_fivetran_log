@@ -11,7 +11,7 @@ models:
 
 vars:
     fivetran_log:
-        unioning_multiple_destinations: false # disables macro for combining multiple destinations' Log Connectors
+        unioning_multiple_destinations: true # disables macro for combining multiple destinations' Log Connectors
 
         account: "{{ source('fivetran_log', 'account') }}" 
         account_membership: "{{ source('fivetran_log', 'account_membership') }}"

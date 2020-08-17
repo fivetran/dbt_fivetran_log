@@ -1,6 +1,6 @@
 with account as (
     
-    {% if unioning_multiple_destinations is true %}
+    {% if var('unioning_multiple_destinations') is true %}
     {{ union_source_tables('account') }}
 
     {% else %}
@@ -17,7 +17,7 @@ fields as (
         created_at,
         name as account_name,
         status,
-        {% if unioning_multiple_destinations is true -%}
+        {% if var('unioning_multiple_destinations') is true -%}
         {{ string_agg( 'destination_database', "', '") }} 
         {% else -%}
         {{ "'" ~ var('fivetran_log_database', target.database) ~ "'" }} 

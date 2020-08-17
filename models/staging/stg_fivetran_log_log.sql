@@ -1,6 +1,6 @@
 with log as (
 
-    {% if unioning_multiple_destinations is true %}
+    {% if var('unioning_multiple_destinations') is true %}
     {{ union_source_tables('log') }}
 
     {% else %}
@@ -24,7 +24,7 @@ fields as (
         else message_event end as event_subtype,
         transformation_id,
         
-        {% if unioning_multiple_destinations is true -%}
+        {% if var('unioning_multiple_destinations') is true -%}
         destination_database
         {% else -%}
         {{ "'" ~ var('fivetran_log_database', target.database) ~ "'" }} 

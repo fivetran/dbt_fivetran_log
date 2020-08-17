@@ -1,6 +1,6 @@
 with connector as (
 
-    {% if unioning_multiple_destinations is true %}
+    {% if var('unioning_multiple_destinations') is true %}
     {{ union_source_tables('connector') }}
 
     {% else %}
@@ -20,7 +20,7 @@ fields as (
         paused as is_paused,
         signed_up as set_up_at,
 
-        {% if unioning_multiple_destinations is true -%}
+        {% if var('unioning_multiple_destinations') is true -%}
         destination_database
         {% else -%}
         {{ "'" ~ var('fivetran_log_database', target.database) ~ "'" }} 

@@ -1,6 +1,6 @@
 with trigger_table as (
 
-    {% if unioning_multiple_destinations is true %}
+    {% if var('unioning_multiple_destinations') is true %}
     {{ union_source_tables('trigger_table') }}
 
     {% else %}
@@ -21,7 +21,7 @@ fields as (
         
         transformation_id,
         
-        {% if unioning_multiple_destinations is true -%}
+        {% if var('unioning_multiple_destinations') is true -%}
         destination_database
         {% else -%}
         {{ "'" ~ var('fivetran_log_database', target.database) ~ "'" }} 

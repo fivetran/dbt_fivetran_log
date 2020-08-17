@@ -1,6 +1,6 @@
 with fivetran_user as (
     
-    {% if unioning_multiple_destinations is true %}
+    {% if var('unioning_multiple_destinations') is true %}
     {{ union_source_tables('user') }}
 
     {% else %}
@@ -21,7 +21,7 @@ fields as (
         phone,
         verified as is_verified,
 
-        {% if unioning_multiple_destinations is true -%}
+        {% if var('unioning_multiple_destinations') is true -%}
         {{ string_agg( 'destination_database', "', '") }} 
         {% else -%}
         {{ "'" ~ var('fivetran_log_database', target.database) ~ "'" }} 

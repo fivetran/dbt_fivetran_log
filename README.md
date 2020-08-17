@@ -2,10 +2,6 @@
 
 This package models Fivetran Log data from [our free internal connector](https://fivetran.com/docs/logs/fivetran-log). It uses **destination-level** data in the format described by [this ERD](https://docs.google.com/presentation/d/1lny-kFwJIvOCbKky3PEvEQas4oaHVVTahj3OTRONpu8/?usp=sharing) and unions the data to the **account level**, if needed.
 
-> Note: The Fivetran Log Connector dbt package is compatible with BigQuery, Redshift, and Snowflake.
->
-> Though compatible with each individual kind of warehouse, the package is not *cross-compatible*. For example, you can union log data across various BigQuery destinations, but not BigQuery *and* Snowflake destinations.
-
 This package helps you understand:
 * How you are spending money in Fivetran according to our [consumption-based pricing model](https://fivetran.com/docs/getting-started/consumption-based-pricing). We display consumption data at the table, connector, destination, and account levels.
 * How your data is flowing in Fivetran:
@@ -17,6 +13,10 @@ The package's main goals are to:
 * Enhance the connector table with sync metrics and relevant alert messages
 * Enhance the transformation table with run metrics
 * Union log data across destinations
+
+> Note: The Fivetran Log Connector dbt package is compatible with BigQuery, Redshift, and Snowflake.
+>
+> Though compatible with each individual kind of warehouse, the package is not *cross-compatible*. For example, you can union log data across various BigQuery destinations, but not BigQuery *and* Snowflake destinations.
 
 ## Models
 
@@ -59,7 +59,7 @@ You will first need to fork the package's repository. See steps 0-4 of [dbt's gu
 #### 2. Update `unioning_multiple_destinations`
 Next, in `dbt_project.yml`, you must set the `unioning_multiple_destinations` variable to `true`. This is set to `false` by default in the project's `dbt_project.yml` file.
 
-This is necessary because `unioning_multiple_destinations` enables the package's `union_source_tables()` macro to run and aggregate data across destinations.
+This is necessary because the `unioning_multiple_destinations` boolean enables the package's `union_source_tables()` macro to run and aggregate data across destinations.
 
 #### 3. Declare sources in `src_fivetran_log.yml`
 Then, you will need to define each destination as a separate source in `src_fivetran_log.yml`. The package comes with:
@@ -109,7 +109,7 @@ sources:
 
 The above is necessary due to how the `union_source_tables()` macro works. In each of the staging models, the macro will:
 1. Iterate through the declared sources and their tables
-2. Verify that the source's database has a relation matching the given `table_name`. This verification step is necessary because the `transformation` and `trigger_table` tables will only exist if you've created a transformation in that destination.
+2. Verify that the source's database has a relation matching the given `table_name`. This verification step is required because the `transformation` and `trigger_table` tables will only exist if you've created a transformation in that destination.
 3. Union the matching tables
 4. In the unioned table, store the record's source's *database* as `destination_database`
 

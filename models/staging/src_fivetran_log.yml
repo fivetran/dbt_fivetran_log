@@ -1,18 +1,17 @@
 version: 2
 
-# If you have multiple destinations with Fivetran Log Connectors, you'll need to declare them individually as sources here.
-# You'll need to also add each source's name to the 'source_destinations' variable in dbt_project.yml
+# If you have multiple destinations with Fivetran Log Connectors, you'll need to declare them individually as sources here
 
 # Example naming convention for each source: fivetran_log_[destination name]
 sources: 
   - name: fivetran_log
     database: "{{var ('fivetran_log_database', target.database)}}" # add var config to dbt_project.yml
-    schema: fivetran_log  # target.schema
+    schema: fivetran_log
 
     loader: fivetran
     loaded_at_field: _fivetran_synced
       
-    freshness: # what's appropriate here?
+    freshness:
       warn_after: {count: 72, period: hour}
       error_after: {count: 96, period: hour}
 
@@ -243,10 +242,10 @@ sources:
             description: The schedule type of the transformation (time schedule vs. new data in certain tables).
 
     
-  # destination 2  
-  # - name: fivetran_log_dbt_package_testing 
-  #   database: dbt-package-testing 
-  #   schema: fivetran_log 
+  # example of second/nth source destination  
+  # - name: fivetran_log_2 
+  #   database: name_of_your_database
+  #   schema: fivetran_log # most likely the name of your schema
 
   #   loader: fivetran
   #   loaded_at_field: _fivetran_synced
@@ -255,18 +254,4 @@ sources:
   #     warn_after: {count: 72, period: hour}
   #     error_after: {count: 96, period: hour}
 
-  #   tables: *fivetran_log_tables
-
-  # snowflake
-  # - name: fivetran_log_2
-  #   database: digital-arbor-400
-  #   schema: fivetran_log
-
-  #   loader: fivetran
-  #   loaded_at_field: _fivetran_synced
-      
-  #   freshness: 
-  #     warn_after: {count: 72, period: hour}
-  #     error_after: {count: 96, period: hour}
-
-  #   tables: *fivetran_log_tables
+  #   tables: *fivetran_log_tables 

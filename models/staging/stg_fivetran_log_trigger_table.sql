@@ -28,7 +28,6 @@ fields as (
         {%- endif %} as destination_database
     
     from trigger_table
-
     
 )
 

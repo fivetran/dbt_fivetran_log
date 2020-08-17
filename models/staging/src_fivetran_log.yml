@@ -5,8 +5,8 @@ version: 2
 # Example naming convention for each source: fivetran_log_[destination name]
 sources: 
   - name: fivetran_log
-    database: "{{var ('fivetran_log_database', target.database)}}" # add var config to dbt_project.yml
-    schema: fivetran_log
+    database: "{{ var('fivetran_log_database', target.database)}}" # add var config to dbt_project.yml
+    schema: "{{ var('fivetran_log_schema', 'fivetran_log')}}"
 
     loader: fivetran
     loaded_at_field: _fivetran_synced

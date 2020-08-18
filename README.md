@@ -1,6 +1,6 @@
 # Fivetran Log 
 
-This package models Fivetran Log data from [our free internal connector](https://fivetran.com/docs/logs/fivetran-log). It uses **destination-level** data in the format described by [this ERD](https://docs.google.com/presentation/d/1lny-kFwJIvOCbKky3PEvEQas4oaHVVTahj3OTRONpu8/?usp=sharing) and unions the data to the **account level**, if needed.
+This package models Fivetran Log data from [our free internal connector](https://fivetran.com/docs/logs/fivetran-log). It uses destination-level data in the format described by [this ERD](https://docs.google.com/presentation/d/1lny-kFwJIvOCbKky3PEvEQas4oaHVVTahj3OTRONpu8/?usp=sharing) and unions the data to the account level, if needed.
 
 This package helps you understand:
 * How you are spending money in Fivetran according to our [consumption-based pricing model](https://fivetran.com/docs/getting-started/consumption-based-pricing). We display consumption data at the table, connector, destination, and account levels.
@@ -16,7 +16,7 @@ The package's main goals are to:
 
 > Note: The Fivetran Log Connector dbt package is compatible with BigQuery, Redshift, and Snowflake.
 >
-> Though compatible with each individual kind of warehouse, the package is not *cross-compatible*. For example, you can union log data across various BigQuery destinations, but not BigQuery *and* Snowflake destinations.
+> Though compatible with each individual kind of warehouse, the package is not *cross-compatible*. For example, you can union log data across various BigQuery destinations, but not between BigQuery *and* Snowflake destinations.
 
 ## Models
 
@@ -32,11 +32,6 @@ The package's main goals are to:
 Check [dbt Hub](https://hub.getdbt.com/) for the latest installation instructions, or [read the dbt docs](https://docs.getdbt.com/docs/package-management) for more information on installing packages.
 
 ## Configuration
-### Accessing your destinations
-First, you'll need to ensure that dbt can access your destination(s) by providing the appropriate credentials in your `~/.dbt/profiles.yml` file. Different destinations may require different profile setups. Learn how to set up your destination's profile in [dbt's supported databases documentation](https://docs.getdbt.com/docs/supported-databases). 
-
-> Note: If you are using multiple BigQuery databases, you must use the OAuth authentication method instead of service accounts. Both methods are included in [dbt's BigQuery profile documentation](https://docs.getdbt.com/reference/warehouse-profiles/bigquery-profile).
-
 ### Using a single destination 
 By default, this package will run using your target database and the `fivetran_log` schema. If this is not where your Fivetran Log data is, add the following configuration to your `dbt_project.yml` file:
 
@@ -53,20 +48,25 @@ vars:
 ```
 
 ### Using multiple destinations 
+#### 0. Ensure dbt access to all destinations
+First, you will need to ensure that your target profile (whose credentials are defined in your `~/.dbt/profiles.yml` file) has access to query all of the destinations that you are loading log data from.
+
+> Note: If you are using multiple BigQuery databases, you must use the OAuth authentication method instead of service accounts in `profiles.yml`. Both methods are included in [dbt's BigQuery profile documentation](https://docs.getdbt.com/reference/warehouse-profiles/bigquery-profile).
+
 #### 1. Fork the repo
-You will first need to fork the package's repository. See steps 0-4 of [dbt's guide to editing external packages](https://discourse.getdbt.com/t/contributing-to-an-external-dbt-package/657) for how to do so.
+Next, you will need to fork the package's repository. See steps 0-4 of [dbt's guide to editing external packages](https://discourse.getdbt.com/t/contributing-to-an-external-dbt-package/657) for how to do so.
 
 #### 2. Update `unioning_multiple_destinations`
-Next, in `dbt_project.yml`, you must set the `unioning_multiple_destinations` variable to `true`. This is set to `false` by default in the project's `dbt_project.yml` file.
+In `dbt_project.yml`, you must then set the `unioning_multiple_destinations` variable to `true`. This is set to `false` by default in the project's `dbt_project.yml` file.
 
-This is necessary because the `unioning_multiple_destinations` boolean enables the package's `union_source_tables()` macro to run and aggregate data across destinations.
+This step is necessary because the `unioning_multiple_destinations` boolean enables the package's `union_source_tables()` macro to run and aggregate data across destination databases.
 
 #### 3. Declare sources in `src_fivetran_log.yml`
-Then, you will need to define each destination as a separate source in `src_fivetran_log.yml`. The package comes with:
+Finally, you will need to define each destination as a separate source in `src_fivetran_log.yml`. The package already comes with:
 1. A fully-defined source that runs on your target database and `fivetran_log` schema by default
-2. A commented out template to use for any subsequent sources
+2. A commented-out template to use for any subsequent sources
 
-Due to the way that the Fivetran Log Connector dbt package unions data, you **must declare all tables in each source**. However, because each source's schema is indentical in table structure, you can use [yaml anchors](https://support.atlassian.com/bitbucket-cloud/docs/yaml-anchors/) to avoid duplicating this code. This way, you only need to provide the table structure in the first source, which we have already written out (with table documentation and tests) in `src_fivetran_log.yml`. For any subsequent sources, you can simply point to the anchored table structure.
+Due to the way that the Fivetran Log Connector dbt package unions data, you **must declare all tables in each source**. However, because each source's schema is indentical in table structure, you can use [yaml anchors](https://support.atlassian.com/bitbucket-cloud/docs/yaml-anchors/) to avoid duplicating this code. This way, you only need to explictly provide the table structure in the first source, which we have already written out (with table documentation and tests) in `src_fivetran_log.yml`. For any subsequent sources, you can simply point to the anchored table structure to incorporate these tables into the source.
 
 See how to use yaml anchors in the example configuration of two sources below:
 
@@ -88,7 +88,7 @@ sources:
         warn_after: {count: 72, period: hour}
         error_after: {count: 96, period: hour}
 
-      tables: &fivetran_log_tables # declaring the anchor
+      tables: &fivetran_log_tables # declares the anchor
         - name: active_volume 
           description: ... 
 
@@ -107,11 +107,11 @@ sources:
 
 ```
 
-The above is necessary due to how the `union_source_tables()` macro works. In each of the staging models, the macro will:
-1. Iterate through the declared sources and their tables
-2. Verify that the source's database has a relation matching the given `table_name`. This verification step is required because the `transformation` and `trigger_table` tables will only exist if you've created a transformation in that destination.
-3. Union the matching tables
-4. In the unioned table, store the record's source's *database* as `destination_database`
+> Declaring each source table is necessary due to how the `union_source_tables()` macro works. In each of the staging models, the macro will:
+> 1. Iterate through the declared sources and their tables
+> 2. Verify that the source's database has a relation matching the given `table_name`. This verification step is required because the `transformation` and `trigger_table` tables will only exist if you've created a transformation in that destination.
+> 3. Union the matching tables
+> 4. In the unioned table, store the record's source's *database* as `destination_database`
 
 ## Contributions
 Additional contributions to this package are very welcome! Please create issues

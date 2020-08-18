@@ -107,7 +107,7 @@ sources:
 
 ```
 
-> Declaring each source table is necessary due to how the `union_source_tables()` macro works. In each of the staging models, the macro will:
+> Note: Declaring each source table is necessary due to how the `union_source_tables()` macro works. In each of the staging models, the macro will:
 > 1. Iterate through the declared sources and their tables
 > 2. Verify that the source's database has a relation matching the given `table_name`. This verification step is required because the `transformation` and `trigger_table` tables will only exist if you've created a transformation in that destination.
 > 3. Union the matching tables

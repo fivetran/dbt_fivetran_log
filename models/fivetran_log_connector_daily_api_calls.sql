@@ -52,7 +52,8 @@ spine as (
     {{ dbt_utils.date_spine(
         datepart = "day", 
         start_date =  "'" ~ first_date[0:10] ~ "'", 
-        end_date = dbt_utils.dateadd("week", 1, "current_date") ) 
+        end_date = dbt_utils.dateadd("week", 1, dbt_utils.date_trunc('day', dbt_utils.current_timestamp())) 
+        ) 
     }} 
 ),
 
@@ -95,5 +96,6 @@ join_api_call_history as (
 )
 
 select *
+-- from spine
 from connector_api_call_history 
 order by date_day desc, connector_name, destination_id

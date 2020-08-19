@@ -225,10 +225,8 @@ models:
       Transformations on time schedules do not appear here. Note - this table is only created 
       once you have created a triggered transformation.
     tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns: 
-            - table
-            - transformation_id
+      - unique:
+          column_name: "trigger_table || '-' || transformation_id || '-' || destination_database"
     columns:
       - name: trigger_table
         description: Connector source table whose new data triggers the transformation.

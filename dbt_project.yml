@@ -27,4 +27,4 @@ vars:
 
 
 # delete profile after testing
-profile: integration_test
+profile: dev_bigquery_dbt_testing

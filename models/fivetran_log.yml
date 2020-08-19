@@ -205,6 +205,39 @@ models:
           Aggregated string list of the tables that trigger the transformation to run, if it is
           not on a time schedule.
 
+  - name: fivetran_log_connector_daily_api_calls
+    description: >
+      Table of each connector's daily history of the quantity of api calls made, 
+      starting at the connector's setup date. 
+    
+    tests:
+      - unique:
+          column_name: "connector_name || '-' || destination_id || '-' || date_day"
+
+    columns:
+      - name: connector_id
+        description: System generated destination-unique ID of the connector.
+
+      - name: connector_name
+        description: Name of the connector.
+
+      - name: connector_type
+        description: The kind of connector (ie google sheets, webhooks).
+
+      - name: destination_id
+        description: >
+          Foreign key referencing the `destination` warehouse that the connector data is loaded into.
+
+      - name: destination_name
+        description: Name of the destination loading data from this connector.
+
+      - name: date_day
+        description: Date on which the number of api calls for the connector is measured.
+
+      - name: number_of_api_calls
+        description: The number of api call events logged for this connector on this day.
+
+
 macros:
   - name: union_source_tables
     description: >

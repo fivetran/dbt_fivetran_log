@@ -7,11 +7,13 @@ This package helps you understand:
 * How your data is flowing in Fivetran:
     * Connector health and sync statuses
     * Transformation run statuses
+    * Daily API calls
 
 The package's main goals are to:
 * Create a history of measured monthly active rows (MAR), credit consumption, and the relationship between the two
 * Enhance the connector table with sync metrics and relevant alert messages
 * Enhance the transformation table with run metrics
+* Create a history of daily API calls for each connector
 * Union log data across destinations
 
 > Note: The Fivetran Log Connector dbt package is compatible with BigQuery, Redshift, and Snowflake.
@@ -26,6 +28,7 @@ The package's main goals are to:
 | fivetran\_log\_transformation\_status     | Each record represents a transformation, enriched with data about the transformation's last sync and any tables whose new data triggers the transformation to run. |
 | fivetran\_log\_mar\_table\_history     | Each record represents a table's active volume for a month, complete with data about its connector and destination.                             |
 | fivetran\_log\_credit\_mar\_history    | Each record represents a destination's consumption by showing its MAR, total credits used, and credits per millions MAR.                             |
+| fivetran\_log\_connector\_daily_api\_calls    | Each record represents a daily measurement of the API calls made by a connector, starting from the date on which the connector was set up.                            |
 
 
 ## Installation Instructions

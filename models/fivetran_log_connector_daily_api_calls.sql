@@ -77,6 +77,7 @@ connector_api_call_history as (
     group by 1,2,3,4,5,6
 ),
 
+-- now rejoin spine to get a complete calendar
 join_api_call_history as (
     
     select
@@ -93,9 +94,17 @@ join_api_call_history as (
         on spine.date_day = connector_api_call_history.date_day
 
     group by 1,2,3,4,5,6,7
+),
+
+final as (
+
+    select *
+    from join_api_call_history
+
+    where cast(date_day as timestamp) <= {{ dbt_utils.current_timestamp() }}
+
+    order by date_day desc
 )
 
 select *
--- from spine
-from connector_api_call_history 
-order by date_day desc, connector_name, destination_id
+from final

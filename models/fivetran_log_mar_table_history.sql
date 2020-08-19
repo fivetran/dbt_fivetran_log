@@ -2,11 +2,7 @@ with active_volume as (
 
     select 
         *, 
-        {%- if target.type == 'bigquery' %}
-        DATE_TRUNC(date(measured_at), month) as measured_month
-        {%- else %} 
-        DATE_TRUNC('month', date(measured_at)) as measured_month
-        {%- endif %}
+        {{ dbt_utils.date_trunc('month', 'measured_at') }} as measured_month
 
     from {{ ref('stg_fivetran_log_active_volume') }} 
 

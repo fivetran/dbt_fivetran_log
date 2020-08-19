@@ -7,7 +7,8 @@ require-dbt-version: '>=0.17.0'
 
 models:
     fivetran_log:
-        materialized: table # ephemeral after testing
+        materialized: table 
+
 
 vars:
     fivetran_log:
@@ -24,7 +25,3 @@ vars:
         transformation: "{{ source('fivetran_log', 'transformation') }}"
         trigger_table: "{{ source('fivetran_log', 'trigger_table') }}"
         user: "{{ source('fivetran_log', 'user') }}"
-
-
-# delete profile after testing
-profile: dev_bigquery_dbt_testing

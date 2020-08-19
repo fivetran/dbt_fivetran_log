@@ -41,7 +41,7 @@ join_credits_mar as (
 
     from 
     destination_mar left join credits_used 
-        on destination_mar.measured_month = credits_used.measured_month
+        on destination_mar.measured_month = cast(credits_used.measured_month as timestamp)
         and destination_mar.destination_id = credits_used.destination_id
 
 )

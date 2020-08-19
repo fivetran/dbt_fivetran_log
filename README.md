@@ -21,6 +21,7 @@ The package's main goals are to:
 > Though compatible with each individual kind of warehouse, the package is not *cross-compatible*. For example, you can union log data across various BigQuery destinations, but not between BigQuery *and* Snowflake destinations.
 
 ## Models
+See the Fivetran Log package [docs site](https://fivetran-log-dbt-package.netlify.app/#!/overview).
 
 | **model**                  | **description**                                                                                                                                               |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |

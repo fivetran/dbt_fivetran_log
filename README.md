@@ -65,6 +65,17 @@ In `dbt_project.yml`, you must then set the `unioning_multiple_destinations` var
 
 This step is necessary because the `unioning_multiple_destinations` boolean enables the package's `union_source_tables()` macro to run and aggregate data across destination databases.
 
+```yml
+# dbt_project.yml
+
+...
+config-version: 2
+
+vars:
+  fivetran_log:
+    unioning_multiple_destinations: True
+```
+
 #### 3. Declare sources in `src_fivetran_log.yml`
 Finally, you will need to define each destination as a separate source in `src_fivetran_log.yml`. The package already comes with:
 1. A fully-defined source that runs on your target database and `fivetran_log` schema by default

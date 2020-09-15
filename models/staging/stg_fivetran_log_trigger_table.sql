@@ -4,7 +4,7 @@ with trigger_table as (
     {{ union_source_tables('trigger_table') }}
 
     {% else %}
-    select * from {{ var('trigger_table') }}
+    {{ handle_no_transformations('trigger_table') }}
     
     {% endif %}
 
@@ -32,4 +32,4 @@ fields as (
 )
 
 select * from fields
-where destination_database is not null
+where transformation_id is not null

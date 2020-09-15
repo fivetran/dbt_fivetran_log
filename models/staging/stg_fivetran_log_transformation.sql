@@ -4,7 +4,7 @@ with transformation as (
     {{ union_source_tables('transformation') }}
 
     {% else %}
-    select * from {{ var('transformation') }}
+    {{ handle_no_transformations('transformation') }}
     
     {% endif %}
 ),
@@ -33,4 +33,4 @@ fields as (
 )
 
 select * from fields
-where destination_database is not null
+where transformation_id is not null

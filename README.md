@@ -61,7 +61,7 @@ First, you will need to ensure that your target profile (whose credentials are d
 Next, you will need to fork the package's repository. See steps 0-4 of [dbt's guide to editing external packages](https://discourse.getdbt.com/t/contributing-to-an-external-dbt-package/657) for how to do so.
 
 #### 2. Update `unioning_multiple_destinations`
-In `dbt_project.yml`, you must then set the `unioning_multiple_destinations` variable to `true`. This is set to `false` by default in the project's `dbt_project.yml` file.
+In your `dbt_project.yml` file, you must then add the `unioning_multiple_destinations` variable and set it to `true`. By default, the package assumes this to be `false`.
 
 This step is necessary because the `unioning_multiple_destinations` boolean enables the package's `union_source_tables()` macro to run and aggregate data across destination databases.
 

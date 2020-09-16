@@ -290,5 +290,11 @@ macros:
   - name: type_string
     description: > 
       A macro to cast a value as a string across Redshift, Snowflake, and BigQuery
-      warehouses. Adapted from the dbt_utils.datatypes.type_string() macro, which 
+      warehouses. Adapted from the `dbt_utils.datatypes.type_string` macro, which 
       has some whitepace issues.
+
+  - name: _get_utils_namespaces
+    description: > 
+      A macro used for compatibility across warehouses in the `type_string` and 
+      `string_agg` macros. It returns the `dbt_utils_dispatch_list` variable, which 
+      is then passed to `adapter.dispatch` as its `packages` argument.

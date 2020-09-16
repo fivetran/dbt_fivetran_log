@@ -1,6 +1,6 @@
 with active_volume as (
 
-    {% if var('unioning_multiple_destinations') is true %}
+    {% if var('unioning_multiple_destinations', false) is true %}
     {{ union_source_tables('active_volume') }}
 
     {% else %}
@@ -20,7 +20,7 @@ fields as (
         schema_name,
         table_name,
 
-        {% if var('unioning_multiple_destinations') is true -%}
+        {% if var('unioning_multiple_destinations', false) is true -%}
         destination_database
         {% else -%}
         {{ "'" ~ var('fivetran_log_database', target.database) ~ "'" }} 

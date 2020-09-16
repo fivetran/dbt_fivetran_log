@@ -1,6 +1,6 @@
 {% macro string_agg(field_to_agg, delimiter) -%}
 
-{{ adapter_macro('fivetran_log.string_agg', field_to_agg, delimiter) }}
+{{ adapter.dispatch('string_agg', packages = fivetran_log._get_utils_namespaces()) (field_to_agg, delimiter) }}
 
 {%- endmacro %}
 

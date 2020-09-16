@@ -1,6 +1,6 @@
 with destination as (
 
-    {% if var('unioning_multiple_destinations') is true %}
+    {% if var('unioning_multiple_destinations', false) is true %}
     {{ union_source_tables('destination') }}
 
     {% else %}
@@ -18,7 +18,7 @@ fields as (
         created_at,
         name as destination_name,
         region,
-        {% if var('unioning_multiple_destinations') is true -%}
+        {% if var('unioning_multiple_destinations', false) is true -%}
         destination_database
         {% else -%}
         {{ "'" ~ var('fivetran_log_database', target.database) ~ "'" }} 

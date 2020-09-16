@@ -1,6 +1,6 @@
 with  credits_used as (
 
-    {% if var('unioning_multiple_destinations') is true %}
+    {% if var('unioning_multiple_destinations', false) is true %}
     {{ union_source_tables('credits_used') }}
 
     {% else %}
@@ -16,7 +16,7 @@ fields as (
         destination_id,
         measured_month,
         credits_consumed,
-        {% if var('unioning_multiple_destinations') is true -%}
+        {% if var('unioning_multiple_destinations', false) is true -%}
         destination_database
         {% else -%}
         {{ "'" ~ var('fivetran_log_database', target.database) ~ "'" }} 

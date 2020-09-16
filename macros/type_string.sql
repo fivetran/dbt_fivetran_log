@@ -1,5 +1,5 @@
 {%- macro type_string() -%}
-  {{ adapter_macro('fivetran_log.type_string') }}
+  {{ adapter.dispatch('type_string', packages = fivetran_log._get_utils_namespaces()) () }}
 {%- endmacro -%}
 
 {%- macro default__type_string() -%}

@@ -1,6 +1,6 @@
 with account_membership as (
     
-    {% if var('unioning_multiple_destinations') is true %}
+    {% if var('unioning_multiple_destinations', false) is true %}
     {{ union_source_tables('account_membership') }}
 
     {% else %}
@@ -18,7 +18,7 @@ fields as (
         activated_at,
         joined_at,
         role as account_role,
-        {% if var('unioning_multiple_destinations') is true -%}
+        {% if var('unioning_multiple_destinations', false) is true -%}
         {{ string_agg( 'destination_database', "', '") }} 
         {% else -%}
         {{ "'" ~ var('fivetran_log_database', target.database) ~ "'" }} 

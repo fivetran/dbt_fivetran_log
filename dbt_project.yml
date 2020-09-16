@@ -1,0 +1,29 @@
+config-version: 2
+
+name: 'fivetran_log'
+version: '0.0.1'
+
+require-dbt-version: '>=0.17.0'
+
+models:
+    fivetran_log:
+        materialized: table 
+
+
+vars:
+    fivetran_log:
+        account: "{{ source('fivetran_log', 'account') }}" 
+        account_membership: "{{ source('fivetran_log', 'account_membership') }}"
+        active_volume: "{{ source('fivetran_log', 'active_volume') }}"
+        connector: "{{ source('fivetran_log', 'connector') }}"  
+        credits_used: "{{ source('fivetran_log', 'credits_used') }}"
+        destination: "{{ source('fivetran_log', 'destination') }}"
+        destination_membership: "{{ source('fivetran_log', 'destination_membership') }}" 
+        log: "{{ source('fivetran_log', 'log') }}" 
+        transformation: "{{ source('fivetran_log', 'transformation') }}"
+        trigger_table: "{{ source('fivetran_log', 'trigger_table') }}"
+        user: "{{ source('fivetran_log', 'user') }}"
+
+        dbt_utils_dispatch_list:
+            - fivetran_log 
+            - dbt_utils 

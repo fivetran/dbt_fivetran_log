@@ -129,6 +129,25 @@ sources:
 > 3. Union the matching tables
 > 4. In the unioned table, store the record's source's *database* as `destination_database`
 
+## Additional Configuration
+If you have never created Fivetran-orchestrated transformations, your source data will not contain the `transformation` and `trigger_table` tables. In this case, the package will still create transformation models, but they will be completely empty. If you do not want these empty tables in your warehouse, add the following configuration to your `dbt_project.yml` file to disable these models:
+
+```yml
+# dbt_project.yml
+
+...
+config-version: 2
+
+models:
+  fivetran_log_transformation_status:
+      +enabled: false
+    staging:
+      stg_fivetran_log_trigger_table:
+        +enabled: false
+      stg_fivetran_log_transformation:
+        +enabled: false
+```
+
 ## Contributions
 Additional contributions to this package are very welcome! Please create issues
 or open PRs against `master`. Check out 

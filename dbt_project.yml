@@ -1,9 +1,9 @@
 config-version: 2
 
 name: 'fivetran_log'
-version: '0.0.1'
+version: '0.2.0'
 
-require-dbt-version: '>=0.17.0'
+require-dbt-version: '>=0.18.0'
 
 models:
     fivetran_log:
@@ -26,4 +26,3 @@ vars:
 
         dbt_utils_dispatch_list:
             - fivetran_log 
-            - dbt_utils 

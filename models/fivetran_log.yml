@@ -241,8 +241,8 @@ models:
 macros:
   - name: union_source_tables
     description: >
-      This macro rolls log data up from the destination level to the account
-      level. 
+      For *multiple-destination* users, This macro rolls log data up from 
+      the destination level to the account level.
 
       It does so by taking a table name and scanning the source databases 
       (as declared in src_fivetran.yml) for relations matching this table name. 
@@ -256,6 +256,24 @@ macros:
       - name: table_name
         type: string
         description: The name of the table you want to union across destinations. 
+
+  - name: handle_no_transformations
+    description: >
+      For *single-destination* users, this macro checks that a given table 
+      actually exists in your source database. 
+      
+      It is intended to be used only for the `transformation` and `trigger_table` 
+      tables. These are the only Fivetran Log tables that might not exist, as 
+      they are only created once you have made a transformation in Fivetran.
+
+      Thus, if no tables are found, the macro is hard-coded to create the 
+      appropriate columns for `transformation` and `trigger_table` with all 
+      null values. Otherwise, it simply selects * from the tables.
+    arguments:
+      - name: table_name
+        type: string
+        description: >
+          The name of the table to check the database for ('transformation' or 'trigger_table').
   
   - name: string_agg
     description: > 
@@ -268,3 +286,9 @@ macros:
       - name: delimiter
         type: string
         description: What you want to separate values by. 
+
+  - name: type_string
+    description: > 
+      A macro to cast a value as a string across Redshift, Snowflake, and BigQuery
+      warehouses. Adapted from the dbt_utils.datatypes.type_string() macro, which 
+      has some whitepace issues.

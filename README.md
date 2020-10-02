@@ -141,7 +141,8 @@ If you do not want these empty tables in your warehouse, add the following confi
 config-version: 2
 
 models:
-  fivetran_log_transformation_status:
+  fivetran_log:
+    fivetran_log_transformation_status:
       +enabled: false
     staging:
       stg_fivetran_log_trigger_table:

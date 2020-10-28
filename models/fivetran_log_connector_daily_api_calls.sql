@@ -67,12 +67,12 @@ connector_api_call_history as (
         connector_api_calls.destination_name,
         connector_api_calls.destination_id,
         max(case 
-            when cast(spine.date_day as timestamp) = connector_api_calls.date_day then connector_api_calls.number_of_api_calls
+            when spine.date_day = cast(connector_api_calls.date_day as date) then connector_api_calls.number_of_api_calls
             else 0
         end) as number_of_api_calls
     from
-    spine join connector_api_calls  -- can't do left join with >= 
-        on cast(spine.date_day as timestamp) >= connector_api_calls.set_up_at
+    spine join connector_api_calls
+        on spine.date_day  >= cast( {{ dbt_utils.date_trunc('day', 'connector_api_calls.set_up_at') }} as date)
 
     group by 1,2,3,4,5,6
 ),

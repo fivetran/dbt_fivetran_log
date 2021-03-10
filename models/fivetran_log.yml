@@ -2,7 +2,7 @@ version: 2
 
 models:
 
-  - name: fivetran_log_connector_status
+  - name: fivetran_log__connector_status
     description: > 
       Table of each destination's connector and details surrounding its 
       connection and data-sync status.
@@ -29,9 +29,6 @@ models:
 
       - name: destination_name
         description: Name of the destination loading data from this connector.
-
-      - name: destination_database
-        description: Name of the destination's database that houses the connector.
 
       - name: connector_health
         description: Status of the connector's *connection*. Can be `"broken"` or `"connected"`.
@@ -64,15 +61,18 @@ models:
           sync completion. 
 
     
-  - name: fivetran_log_mar_table_history
+  - name: fivetran_log__mar_table_history
     description: > 
       Table of each table's monthly active rows (MAR) for all connectors and destinations, per month.
       Read more about how monthly active rows are defined and calculated 
       [here](https://fivetran.com/docs/getting-started/consumption-based-pricing).
-
     tests:
-      - unique:
-          column_name: "destination_id || '-' || connector_name || '-' || table_name || '-' || measured_month"
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: 
+            - connector_name
+            - destination_id  
+            - table_name
+            - measured_month
     columns:
 
       - name: connector_name
@@ -87,9 +87,6 @@ models:
       - name: destination_id
         description: >
           Foreign key referencing the `destination` warehouse that the connector data is loaded into.
-
-      - name: destination_database
-        description: Name of the destination's database housing the monthly active rows.
 
       - name: measured_month
         description: The month (yyyy-mm-01) of the measurement.
@@ -107,7 +104,7 @@ models:
         description: Name of the destination as it appears in the UI.
 
 
-  - name: fivetran_log_credit_mar_history
+  - name: fivetran_log__credit_mar_history
     description: >
       Table of each destination's credit consumption and active volume, per month. Includes the 
       credits used per million MAR and MAR per credit. Read more about the relationship between 
@@ -130,9 +127,6 @@ models:
       - name: destination_name
         description: Name of the destination as it appears in the UI.
 
-      - name: destination_database
-        description: Name of the destination's database in which the active rows live.
-
       - name: credits_consumed
         description: The number of credits used by the destination for the given month.
 
@@ -146,7 +140,7 @@ models:
         description: The ratio of the month's active volume to the credits used.
 
 
-  - name: fivetran_log_transformation_status
+  - name: fivetran_log__transformation_status
     description: >
       Table of transformations enriched with data regarding its run status and any tables 
       whose new data trigger the transformation to run.
@@ -191,9 +185,6 @@ models:
       - name: destination_name
         description: Name of the destination in which the destination is run.
       
-      - name: destination_database
-        description: Name of the destination's database in which the transformation is run.
-      
       - name: last_successful_run_at
         description: Timestamp of when the transformation was last run successfully.
       
@@ -205,14 +196,17 @@ models:
           Aggregated string list of the tables that trigger the transformation to run, if it is
           not on a time schedule.
 
-  - name: fivetran_log_connector_daily_api_calls
+  - name: fivetran_log__connector_daily_api_calls
     description: >
       Table of each connector's daily history of the quantity of api calls made, 
       starting at the connector's setup date. 
     
     tests:
-      - unique:
-          column_name: "connector_name || '-' || destination_id || '-' || date_day"
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: 
+            - connector_name
+            - destination_id 
+            - date_day
 
     columns:
       - name: connector_id
@@ -236,65 +230,3 @@ models:
 
       - name: number_of_api_calls
         description: The number of api call events logged for this connector on this day.
-
-
-macros:
-  - name: union_source_tables
-    description: >
-      For *multiple-destination* users, This macro rolls log data up from 
-      the destination level to the account level.
-
-      It does so by taking a table name and scanning the source databases 
-      (as declared in src_fivetran.yml) for relations matching this table name. 
-      It then unions together these tables, capturing the individual database 
-      it came from under `destination_database`. 
-      
-      Moreover, if you have never made a transformation, the `transformation`
-      and `trigger_table` tables will not exist. In these cases, the macro 
-      will return the proper columns with all null values.
-    arguments:
-      - name: table_name
-        type: string
-        description: The name of the table you want to union across destinations. 
-
-  - name: handle_no_transformations
-    description: >
-      For *single-destination* users, this macro checks that a given table 
-      actually exists in your source database. 
-      
-      It is intended to be used only for the `transformation` and `trigger_table` 
-      tables. These are the only Fivetran Log tables that might not exist, as 
-      they are only created once you have made a transformation in Fivetran.
-
-      Thus, if no tables are found, the macro is hard-coded to create the 
-      appropriate columns for `transformation` and `trigger_table` with all 
-      null values. Otherwise, it simply selects * from the tables.
-    arguments:
-      - name: table_name
-        type: string
-        description: >
-          The name of the table to check the database for ('transformation' or 'trigger_table').
-  
-  - name: string_agg
-    description: > 
-      A macro to concatenate strings across rows when writing to BigQuery, Redshift, 
-      or Snowflake warehouses.
-    arguments:
-      - name: field_to_agg
-        type: string
-        description: The field you want to concatenate across rows.
-      - name: delimiter
-        type: string
-        description: What you want to separate values by. 
-
-  - name: type_string
-    description: > 
-      A macro to cast a value as a string across Redshift, Snowflake, and BigQuery
-      warehouses. Adapted from the `dbt_utils.datatypes.type_string` macro, which 
-      has some whitepace issues.
-
-  - name: _get_utils_namespaces
-    description: > 
-      A macro used for compatibility across warehouses in the `type_string` and 
-      `string_agg` macros. It returns the `dbt_utils_dispatch_list` variable, which 
-      is then passed to `adapter.dispatch` as its `packages` argument.

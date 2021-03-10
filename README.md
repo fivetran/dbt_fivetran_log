@@ -1,6 +1,6 @@
-# Fivetran Log 
+# Fivetran Log ([docs](https://fivetran-log-dbt-package.netlify.app/#!/overview))
 
-This package models Fivetran Log data from [our free internal connector](https://fivetran.com/docs/logs/fivetran-log). It uses destination-level data in the format described by [this ERD](https://docs.google.com/presentation/d/1lny-kFwJIvOCbKky3PEvEQas4oaHVVTahj3OTRONpu8/?usp=sharing) and unions the data to the account level, if needed.
+This package models Fivetran Log data from [our free internal connector](https://fivetran.com/docs/logs/fivetran-log). It uses account-level data in the format described by [this ERD](https://docs.google.com/presentation/d/1lny-kFwJIvOCbKky3PEvEQas4oaHVVTahj3OTRONpu8/?usp=sharing).
 
 This package helps you understand:
 * How you are spending money in Fivetran according to our [consumption-based pricing model](https://fivetran.com/docs/getting-started/consumption-based-pricing). We display consumption data at the table, connector, destination, and account levels.
@@ -14,14 +14,10 @@ The package's main goals are to:
 * Enhance the connector table with sync metrics and relevant alert messages
 * Enhance the transformation table with run metrics
 * Create a history of daily API calls for each connector
-* Union log data across destinations
 
-> Note: The Fivetran Log Connector dbt package is compatible with BigQuery, Redshift, and Snowflake.
->
-> Though compatible with each individual kind of warehouse, the package is not *cross-compatible*. For example, you can union log data across various BigQuery destinations, but not between BigQuery *and* Snowflake destinations.
+> Note: An earlier version of this package unioned destination-level connector data to the account level. As of [December 2020](https://fivetran.com/docs/logs/fivetran-log/changelog#december2020), the Fivetran Log now supports the creation of account-level connectors. We have removed the Fivetran Log dbt package's unioning functionality and recommend that users resync their Log connectors at the account level.
 
 ## Models
-See the Fivetran Log package [docs site](https://fivetran-log-dbt-package.netlify.app/#!/overview).
 
 | **model**                  | **description**                                                                                                                                               |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -36,7 +32,6 @@ See the Fivetran Log package [docs site](https://fivetran-log-dbt-package.netlif
 Check [dbt Hub](https://hub.getdbt.com/) for the latest installation instructions, or [read the dbt docs](https://docs.getdbt.com/docs/package-management) for more information on installing packages.
 
 ## Configuration
-### Using a single destination 
 By default, this package will run using your target database and the `fivetran_log` schema. If this is not where your Fivetran Log data is, add the following configuration to your `dbt_project.yml` file:
 
 ```yml
@@ -51,85 +46,7 @@ vars:
     fivetran_log_schema: your_schema_name 
 ```
 
-### Using multiple destinations 
-#### 0. Ensure dbt access to all destinations
-First, you will need to ensure that your target profile (whose credentials are defined in your `~/.dbt/profiles.yml` file) has access to query all of the destinations that you are loading log data from.
-
-> Note: If you are using multiple BigQuery databases, you must use the OAuth authentication method instead of service accounts in `profiles.yml`. Both methods are included in [dbt's BigQuery profile documentation](https://docs.getdbt.com/reference/warehouse-profiles/bigquery-profile).
-
-#### 1. Fork the repo
-Next, you will need to fork the package's repository. See steps 0-4 of [dbt's guide to editing external packages](https://discourse.getdbt.com/t/contributing-to-an-external-dbt-package/657) for how to do so.
-
-#### 2. Update `unioning_multiple_destinations`
-In your `dbt_project.yml` file, you must then add the `unioning_multiple_destinations` variable and set it to `true`. By default, the package assumes this to be `false`.
-
-This step is necessary because the `unioning_multiple_destinations` boolean enables the package's `union_source_tables()` macro to run and aggregate data across destination databases.
-
-```yml
-# dbt_project.yml
-
-...
-config-version: 2
-
-vars:
-  fivetran_log:
-    unioning_multiple_destinations: True
-```
-
-#### 3. Declare sources in `src_fivetran_log.yml`
-Finally, you will need to define each destination as a separate source in `src_fivetran_log.yml`. The package already comes with:
-1. A fully-defined source that runs on your target database and `fivetran_log` schema by default
-2. A commented-out template to use for any subsequent sources
-
-Due to the way that the Fivetran Log Connector dbt package unions data, you **must declare all tables in each source**. However, because each source's schema is indentical in table structure, you can use [yaml anchors](https://support.atlassian.com/bitbucket-cloud/docs/yaml-anchors/) to avoid duplicating this code. This way, you only need to explictly provide the table structure in the first source, which we have already written out (with table documentation and tests) in `src_fivetran_log.yml`. For any subsequent sources, you can simply point to the anchored table structure to incorporate these tables into the source.
-
-See how to use yaml anchors in the example configuration of two sources below:
-
-```yml
-# src_fivetran_log.yml
-
-...
-version: 2
-
-sources: 
-    - name: fivetran_log_source_1
-      database: source-1-database-name
-      schema: fivetran_log
-
-      loader: fivetran
-      loaded_at_field: _fivetran_synced
-      
-      freshness:
-        warn_after: {count: 72, period: hour}
-        error_after: {count: 96, period: hour}
-
-      tables: &fivetran_log_tables # declares the anchor
-        - name: active_volume 
-          description: ... 
-
-    - name: fivetran_log_source_2
-      database: source-2-database-name
-      schema: fivetran_log
-
-      loader: fivetran
-      loaded_at_field: _fivetran_synced
-      
-      freshness:
-        warn_after: {count: 72, period: hour}
-        error_after: {count: 96, period: hour}
-
-    tables: *fivetran_log_tables # points to the anchor and integrates its table structure
-
-```
-
-
-> Note: Declaring each source table is necessary due to how the `union_source_tables()` macro works. In each of the staging models, this macro will:
-> 1. Iterate through the declared sources and their tables
-> 2. Verify that the source's database has a relation matching the given `table_name`. This verification step is required because the `transformation` and `trigger_table` tables will only exist if you've created a transformation in that destination.
-> 3. Union the matching tables
-> 4. In the unioned table, store the record's source's *database* as `destination_database`
-
-## Additional Configuration
+## Disabling Transformation Models
 If you have never created Fivetran-orchestrated transformations, your source data will not contain the `transformation` and `trigger_table` tables. In this case, the package will still create transformation models, but they will be completely empty. 
 
 If you do not want these empty tables in your warehouse, add the following configuration to your `dbt_project.yml` file to disable these models:
@@ -151,21 +68,38 @@ models:
         +enabled: false
 ```
 
+### Changing the Build Schema
+By default this package will build the Fivetran Log staging models within a schema titled (<target_schema> + `_stg_fivetran_log`)  and the Fivetran Log final models within your <target_schema> in your target database. If this is not where you would like you Fivetran Log staging and final models to be written to, add the following configuration to your `dbt_project.yml` file:
+
+```yml
+# dbt_project.yml
+
+...
+models:
+  fivetran_log:
+    +schema: my_new_final_models_schema
+    staging:
+      +schema: my_new_staging_models_schema
+
+```
+
 ## Contributions
-Additional contributions to this package are very welcome! Please create issues
-or open PRs against `master`. Check out 
-[this post](https://discourse.getdbt.com/t/contributing-to-a-dbt-package/657) 
-on the best workflow for contributing to a package.
+Don't see a model or specific metric you would have liked to be included? Notice any bugs when installing 
+and running the package? If so, we highly encourage and welcome contributions to this package! 
+Please create issues or open PRs against `master`. See [the Discourse post](https://discourse.getdbt.com/t/contributing-to-a-dbt-package/657) for information on how to contribute to a package.
+
+## Database Support
+This package has been tested on BigQuery, Snowflake and Redshift.
 
 ## Resources:
-- Find all of Fivetran's pre-built dbt packages in our [dbt hub](https://hub.getdbt.com/fivetran/)
 - Provide [feedback](https://www.surveymonkey.com/r/DQ7K7WW) on our existing dbt packages or what you'd like to see next
-- Reach out to solutions@fivetran.com for any package assistance 
-- Learn more about Fivetran [in the Fivetran docs](https://fivetran.com/docs)
+- Have questions, feedback, or need help? Book a time during our office hours [using Calendly](https://calendly.com/fivetran-solutions-team/fivetran-solutions-team-office-hours) or email us at solutions@fivetran.com
+- Find all of Fivetran's pre-built dbt packages in our [dbt hub](https://hub.getdbt.com/fivetran/)
+- Learn how to orchestrate [dbt transformations with Fivetran](https://fivetran.com/docs/transformations/dbt)
+- Learn more about Fivetran overall [in our docs](https://fivetran.com/docs)
 - Check out [Fivetran's blog](https://fivetran.com/blog)
 - Learn more about dbt [in the dbt docs](https://docs.getdbt.com/docs/introduction)
 - Check out [Discourse](https://discourse.getdbt.com/) for commonly asked questions and answers
 - Join the [chat](http://slack.getdbt.com/) on Slack for live discussions and support
 - Find [dbt events](https://events.getdbt.com) near you
 - Check out [the dbt blog](https://blog.getdbt.com/) for the latest news on dbt's development and best practices
-- Learn how to set up a Fivetran Log Connector [here](https://fivetran.com/docs/logs/fivetran-log/setup-guide)

@@ -1,13 +1,16 @@
 config-version: 2
 
 name: 'fivetran_log'
-version: '0.2.0'
+version: '0.2.1'
 
 require-dbt-version: '>=0.18.0'
 
 models:
     fivetran_log:
-        materialized: table 
+        +materialized: table 
+        +schema: _fivetran_log
+        staging:
+            +schema: _stg_fivetran_log
 
 
 vars:
@@ -24,5 +27,4 @@ vars:
         trigger_table: "{{ source('fivetran_log', 'trigger_table') }}"
         user: "{{ source('fivetran_log', 'user') }}"
 
-        dbt_utils_dispatch_list:
-            - fivetran_log 
+profile: dev_bigquery_dbt_testing

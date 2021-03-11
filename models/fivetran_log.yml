@@ -104,7 +104,7 @@ models:
         description: Name of the destination as it appears in the UI.
 
 
-  - name: fivetran_log__credit_mar_history
+  - name: fivetran_log__credit_mar_destination_history
     description: >
       Table of each destination's credit consumption and active volume, per month. Includes the 
       credits used per million MAR and MAR per credit. Read more about the relationship between 
@@ -196,7 +196,7 @@ models:
           Aggregated string list of the tables that trigger the transformation to run, if it is
           not on a time schedule.
 
-  - name: fivetran_log__connector_daily_api_calls
+  - name: fivetran_log__connector_daily_history
     description: >
       Table of each connector's daily history of the quantity of api calls made, 
       starting at the connector's setup date. 

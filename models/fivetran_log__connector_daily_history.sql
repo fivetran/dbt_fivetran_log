@@ -19,8 +19,10 @@ log_events as (
 
     from {{ ref('stg_fivetran_log__log') }}
 
-    where event_subtype in ('api_call', 'records_modified', 
+    where event_subtype in ('api_call', 
+                            'records_modified', 
                             'create_table', 'alter_table', 'create_schema', 'change_schema_config') -- all schema chnages
+                            
         and connector_id is not null
 
     group by 1,2,3

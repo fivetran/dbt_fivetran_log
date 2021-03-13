@@ -1,0 +1,58 @@
+name: 'fivetran_log_integration_tests'
+version: '0.1.0'
+config-version: 2
+profile: 'integration_tests'
+
+
+vars:
+  fivetran_log:
+    account: "{{ ref('account') }}"
+    account_membership: "{{ ref('account_membership') }}"
+    active_volume: "{{ ref('active_volume') }}"
+    connector: "{{ ref('connector') }}"
+    credits_used: "{{ ref('credits_used') }}"
+    destination: "{{ ref('destination') }}"
+    destination_membership: "{{ ref('destination_membership') }}"
+    log: "{{ ref('log') }}"
+    transformation: "{{ ref('transformation') }}"
+    trigger_table: "{{ ref('trigger_table') }}"
+    user: "{{ ref('user') }}"
+
+
+seeds:
+  fivetran_log_integration_tests:
+    +column_types:
+      _fivetran_synced: timestamp
+    account:
+      +column_types:
+        created_at: timestamp
+    account_membership:
+      +column_types:
+        activated_at: timestamp
+        joined_at: timestamp
+    active_volume:
+      +column_types:
+        measured_at: timestamp
+        monthly_active_rows: "{{ 'int64' if target.type == 'bigquery' else 'bigint' }}"
+    connector:
+      +column_types:
+        signed_up: timestamp
+    credits_used:
+      +column_types:
+        credits_consumed: "{{ 'int64' if target.type == 'bigquery' else 'bigint' }}"
+    destination:
+      +column_types:
+        created_at: timestamp
+    destination_membership:
+      +column_types:
+        activated_at: timestamp
+        joined_at: timestamp
+    log:
+      +column_types:
+        time_stamp: timestamp
+    transformation:
+      +column_types:
+        created_at: timestamp
+    user:
+      +column_types:
+        created_at: timestamp

@@ -1,0 +1,3 @@
+id,_fivetran_synced,connector_id,destination_id,measured_at,monthly_active_rows,schema_name,table_name
+19605264,2021-02-17 05:50:32.114,adwords,plunged_fairs,2020-04-08 00:00:00,38,adwords,audience
+23900937,2021-02-17 05:50:29.088,google_cloud_fake,escaping_kitty,2020-04-23 00:00:00,7882670,google_cloud_fake,alpine10

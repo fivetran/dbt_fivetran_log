@@ -196,7 +196,7 @@ models:
           Aggregated string list of the tables that trigger the transformation to run, if it is
           not on a time schedule.
 
-  - name: fivetran_log__connector_daily_history
+  - name: fivetran_log__connector_daily_events
     description: >
       Table of each connector's daily history of the quantity of api calls made, 
       starting at the connector's setup date. 

@@ -53,6 +53,9 @@ seeds:
     transformation:
       +column_types:
         created_at: timestamp
+    trigger_table:
+      +column_types:
+        +quote_columns: "{{ true if target.type == 'redshift' else false }}"
     user:
       +column_types:
         created_at: timestamp

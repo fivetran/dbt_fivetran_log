@@ -138,4 +138,4 @@ final as (
 )
 
 select *
-from final
+from connector_event_counts

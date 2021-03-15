@@ -63,11 +63,11 @@ spine as (
 
     {% if execute %}
     {% set first_date_query %}
-        select  min( set_up_at ) as min_date from {{ ref('fivetran_log__connector_status') }}
+        select  min( signed_up ) as min_date from {{ var('connector') }}
     {% endset %}
     {% set first_date = run_query(first_date_query).columns[0][0]|string %}
     
-    {% else %} {% set first_date = "'2016-01-01'" %}
+    {% else %} {% set first_date = "2016-01-01" %}
     {% endif %}
 
     {{ dbt_utils.date_spine(

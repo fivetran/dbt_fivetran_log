@@ -1,4 +1,4 @@
--- depends_on: {{ ref('connector') }}
+-- depends_on: {{ var('connector') }}
 
 with connector as (
     

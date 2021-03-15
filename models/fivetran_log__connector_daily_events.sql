@@ -1,3 +1,5 @@
+-- depends_on: {{ ref('connector') }}
+
 with connector as (
     
     select * 

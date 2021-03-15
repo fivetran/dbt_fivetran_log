@@ -93,7 +93,6 @@ models:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns: 
             - log_id
-            - destination_id
             - created_at
     columns: 
       - name: log_id
@@ -208,7 +207,6 @@ models:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns: 
             - trigger_table
-            - destination_id
             - transformation_id
     columns:
       - name: trigger_table

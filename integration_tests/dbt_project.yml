@@ -15,7 +15,7 @@ vars:
     destination_membership: "{{ ref('destination_membership') }}"
     log: "{{ ref('log') }}"
     transformation: "{{ ref('transformation') }}"
-    trigger_table: "{{ ref('trigger_table') }}"
+    trigger_table: "{{ fivetran_utils.snowflake_seed_data('trigger_table') }}"
     user: "{{ ref('user') }}"
 
 
@@ -43,6 +43,7 @@ seeds:
     destination:
       +column_types:
         created_at: timestamp
+        id: "{{ 'string' if target.name == 'bigquery' else 'varchar' }}"
     destination_membership:
       +column_types:
         activated_at: timestamp
@@ -50,11 +51,19 @@ seeds:
     log:
       +column_types:
         time_stamp: timestamp
+        transformation_id:  "{{ 'string' if target.name == 'bigquery' else 'varchar' }}"
     transformation:
       +column_types:
         created_at: timestamp
+        destination_id: "{{ 'string' if target.name == 'bigquery' else 'varchar' }}"
+        id:  "{{ 'string' if target.name == 'bigquery' else 'varchar' }}"
     trigger_table:
-      +quote_columns: "{{ true if target.type == 'redshift' else false }}" ## todo - add to snowflake as well
+      +quote_columns: "{{ true if target.type == 'redshift' else false }}"
+      +enabled: "{{ true if target.type != 'snowflake' else false }}"
+      +column_types:
+        transformation_id:  "{{ 'string' if target.name == 'bigquery' else 'varchar' }}"
+    trigger_table_snowflake:
+      +enabled: "{{ true if target.type == 'snowflake' else false }}"
     user:
       +column_types:
         created_at: timestamp

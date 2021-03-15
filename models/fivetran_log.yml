@@ -198,7 +198,7 @@ models:
 
   - name: fivetran_log__connector_daily_events
     description: >
-      Table of each connector's daily history of the quantity of api calls made, 
+      Table of each connector's daily history of the quantity of api calls, schema changes, and records modified,
       starting at the connector's setup date. 
     
     tests:

@@ -2,6 +2,5 @@
 target/
 dbt_modules/
 logs/
-.DS_Store
 .gitignore
-models/.DS_Store
+.DS_Store

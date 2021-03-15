@@ -1,19 +1,21 @@
 # Fivetran Log ([docs](https://fivetran-log-dbt-package.netlify.app/#!/overview))
 
-This package models Fivetran Log data from [our free internal connector](https://fivetran.com/docs/logs/fivetran-log). It uses account-level data in the format described by [this ERD](https://docs.google.com/presentation/d/1lny-kFwJIvOCbKky3PEvEQas4oaHVVTahj3OTRONpu8/?usp=sharing).
+This package models Fivetran Log data from [our free internal connector](https://fivetran.com/docs/logs/fivetran-log). It uses account-level data in the format described by [this ERD](https://fivetran.com/docs/logs/fivetran-log#schemainformation).
 
 This package helps you understand:
 * How you are spending money in Fivetran according to our [consumption-based pricing model](https://fivetran.com/docs/getting-started/consumption-based-pricing). We display consumption data at the table, connector, destination, and account levels.
 * How your data is flowing in Fivetran:
     * Connector health and sync statuses
     * Transformation run statuses
-    * Daily API calls
+    * Daily API calls, schema changes, and records modified
+    * Table-level details of each connector sync
 
 The package's main goals are to:
 * Create a history of measured monthly active rows (MAR), credit consumption, and the relationship between the two
 * Enhance the connector table with sync metrics and relevant alert messages
 * Enhance the transformation table with run metrics
-* Create a history of daily API calls for each connector
+* Create a history of vital daily events for each connector
+* Create an audit log of records inserted, deleted, an updated in each table during connector syncs
 
 > Note: An earlier version of this package unioned destination-level connector data to the account level. As of [December 2020](https://fivetran.com/docs/logs/fivetran-log/changelog#december2020), the Fivetran Log now supports the creation of account-level connectors. We have removed the Fivetran Log dbt package's unioning functionality and recommend that users resync their Log connectors at the account level.
 
@@ -21,11 +23,13 @@ The package's main goals are to:
 
 | **model**                  | **description**                                                                                                                                               |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| fivetran\_log\_connector\_status        | Each record represents a connector loading data into a destination, enriched with data about the connector's status and the status of its data flow.                                          |
-| fivetran\_log\_transformation\_status     | Each record represents a transformation, enriched with data about the transformation's last sync and any tables whose new data triggers the transformation to run. |
-| fivetran\_log\_mar\_table\_history     | Each record represents a table's active volume for a month, complete with data about its connector and destination.                             |
-| fivetran\_log\_credit\_mar\_history    | Each record represents a destination's consumption by showing its MAR, total credits used, and credits per millions MAR.                             |
-| fivetran\_log\_connector\_daily_api\_calls    | Each record represents a daily measurement of the API calls made by a connector, starting from the date on which the connector was set up.                            |
+| [fivetran_log__connector_status](models/fivetran_log__connector_status.sql)        | Each record represents a connector loading data into a destination, enriched with data about the connector's status and the status of its data flow.                                          |
+| [fivetran_log__transformation_status](models/fivetran_log_transformation_status.sql)     | Each record represents a transformation, enriched with data about the transformation's last sync and any tables whose new data triggers the transformation to run. |
+| [fivetran_log__mar_table_history](models/fivetran_log__mar_table_history.sql)     | Each record represents a table's active volume for a month, complete with data about its connector and destination.                             |
+| [fivetran_log__credit_mar_destination_history](models/fivetran_log__credit_mar_destination_history.sql)    | Each record represents a destination's consumption by showing its MAR, total credits used, and credits per millions MAR.                             |
+| [fivetran_log__connector_daily_events](models/fivetran_log__connector_daily_events.sql)    | Each record represents a daily measurement of the API calls, schema changes, and record modifications made by a connector, starting from the date on which the connector was set up.                            |
+| [fivetran_log__schema_changelog](models/fivetran_log__schema_changelog.sql)    | Each record represents a schema change (altering/creating tables, creating schemas, and changing schema configurations) made to a connector and contains detailed information about the schema change event.                           |
+| [fivetran_log__audit_table](models/fivetran_log__audit_table.sql)    | Replaces the deprecated [`fivetran_audit` table](https://fivetran.com/docs/getting-started/system-columns-and-tables#audittables). Each record represents a table being written to during a connector sync. Contains timestamps related to the connector and table-level sync progress and the sum of records inserted/replaced, updated, and deleted in the table.                             |
 
 
 ## Installation Instructions
@@ -47,9 +51,9 @@ vars:
 ```
 
 ## Disabling Transformation Models
-If you have never created Fivetran-orchestrated transformations, your source data will not contain the `transformation` and `trigger_table` tables. In this case, the package will still create transformation models, but they will be completely empty. 
+If you have never created Fivetran-orchestrated [basic SQL transformations](https://fivetran.com/docs/transformations/basic-sql), your source data will not contain the `transformation` and `trigger_table` tables. Moreover, if you have only created *scheduled* basic transformations that are not triggered by table syncs, your source data will not contain the `trigger_table` table (though it will contain `transformation`).
 
-If you do not want these empty tables in your warehouse, add the following configuration to your `dbt_project.yml` file to disable these models:
+To disable the corresponding functionality in the package, you must add the following variable(s) to your `dbt_project.yml` file. By default, all variables are assumed to be `true`:
 
 ```yml
 # dbt_project.yml
@@ -57,19 +61,14 @@ If you do not want these empty tables in your warehouse, add the following confi
 ...
 config-version: 2
 
-models:
+vars:
   fivetran_log:
-    fivetran_log_transformation_status:
-      +enabled: false
-    staging:
-      stg_fivetran_log_trigger_table:
-        +enabled: false
-      stg_fivetran_log_transformation:
-        +enabled: false
+    fivetran_log_using_transformations: false # this will disable all transformation + trigger_table logic
+    fivetran_log_using_triggers: false # this will disable only trigger_table logic 
 ```
 
 ### Changing the Build Schema
-By default this package will build the Fivetran Log staging models within a schema titled (<target_schema> + `_stg_fivetran_log`)  and the Fivetran Log final models within your <target_schema> + `_stg_fivetran_log` in your target database. If this is not where you would like you Fivetran Log staging and final models to be written to, add the following configuration to your `dbt_project.yml` file:
+By default this package will build the Fivetran Log staging models within a schema titled (<target_schema> + `_stg_fivetran_log`)  and the Fivetran Log final models within your <target_schema> + `_fivetran_log` in your target database. If this is not where you would like you Fivetran Log staging and final models to be written to, add the following configuration to your `dbt_project.yml` file:
 
 ```yml
 # dbt_project.yml
@@ -77,11 +76,13 @@ By default this package will build the Fivetran Log staging models within a sche
 ...
 models:
   fivetran_log:
-    +schema: my_new_final_models_schema
+    +schema: my_new_final_models_schema # leave blank for just the target_schema
     staging:
-      +schema: my_new_staging_models_schema
+      +schema: my_new_staging_models_schema # leave blank for just the target_schema
 
 ```
+
+*Read more about using custom schemas in dbt [here](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/using-custom-schemas).*
 
 ## Contributions
 Don't see a model or specific metric you would have liked to be included? Notice any bugs when installing 

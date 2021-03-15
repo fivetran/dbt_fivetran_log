@@ -23,7 +23,7 @@ log_events as (
 
     where event_subtype in ('api_call', 
                             'records_modified', 
-                            'create_table', 'alter_table', 'create_schema', 'change_schema_config') -- all schema chnages
+                            'create_table', 'alter_table', 'create_schema', 'change_schema_config') -- all schema changes
                             
         and connector_id is not null
 

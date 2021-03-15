@@ -10,12 +10,12 @@ models:
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns: 
-            - connector_name
+            - connector_id
             - destination_id     
     columns:
 
       - name: connector_id
-        description: System generated destination-unique ID of the connector.
+        description: System generated unique ID of the connector.
 
       - name: connector_name
         description: Name of the connector.
@@ -153,7 +153,7 @@ models:
 
     columns:
       - name: transformation_id
-        description: Destination-unique ID of the transformation.
+        description: Unique ID of the transformation.
 
       - name: created_at
         description: Timestamp of when the transformation was created.
@@ -204,13 +204,13 @@ models:
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns: 
-            - connector_name
+            - connector_id
             - destination_id 
             - date_day
 
     columns:
       - name: connector_id
-        description: System generated destination-unique ID of the connector.
+        description: System generated unique ID of the connector.
 
       - name: connector_name
         description: Name of the connector.
@@ -228,5 +228,76 @@ models:
       - name: date_day
         description: Date on which the number of api calls for the connector is measured.
 
-      - name: number_of_api_calls
+      - name: count_api_calls
         description: The number of api call events logged for this connector on this day.
+
+      - name: count_record_modifications
+        description: The sum of all records modified (includes updates, inserts, and deletes).
+
+      - name: count_schema_changes
+        description: The number of schema change events for this connector. 
+
+  - name: fivetran_log__audit_table
+    description: >
+      Table replacing the deprecated `fivetran_audit` table. For each table written to in a sync,
+      captures timestamps and row quantities around table syncs. Each record represents a table being
+      written to in a connector sync. Note: the quantities here will not match the deprecated `fivetran_audit`
+      table completely, as `fivetran_audit` reported on pre-duplicated data loads.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: 
+            - connector_id
+            - destination_id 
+            - table_name
+            - write_to_table_start
+    columns:
+      - name: connector_id
+        description: System generated unique ID of the connector.
+      - name: connector_name
+        description: Name of the connector.
+      - name: table_name
+        description: Name of the table being written to. 
+      - name: destination_id
+        description: >
+          Foreign key referencing the `destination` warehouse that the connector data is loaded into.
+      - name: destination_name
+        description: Name of the destination that the table is being written to. 
+      - name: write_to_table_start
+        description: Timestamp of when Fivetran began to write to this table.
+      - name: write_to_table_end
+        description: Timestamp of when Fivetran finished writing to this table.
+      - name: sync_start
+        description: Timestamp of when this connector-level sync began. 
+      - name: sync_end
+        description: Timestamp of when this connector-level sync finished, if successful. 
+      - name: sum_rows_replaced_or_inserted
+        description: Sum of the rows replaced or inserted into this table during a sync. 
+      - name: sum_rows_updated
+        description: Sum of the rows updated in this table during a sync.
+      - name: sum_rows_deleted
+        description: Sum of the rows deleted from this table during a sync.
+
+  - name: fivteran_log__schema_changelog
+    description: >
+      Table capturing information around each kind of schema change made to a connector.
+      Schema changes include altering and creating tables, changing the schema configuration, and creating schemas. 
+    columns:
+      - name: connector_id
+        description: System generated unique ID of the connector.
+      - name: connector_name
+        description: Name of the connector whose schema was changed. 
+      - name: destination_id
+        description: >
+          Foreign key referencing the `destination` warehouse that the connector data is loaded into.
+      - name: destination_name
+        description: Name of the destination that the table is being written to. 
+      - name: created_at
+        description: Timestamp of when the schema was changed. 
+      - name: event_subtype
+        description: Type of schema change event. One of 'alter_table', 'create_table', 'change_schema_config', 'create_schema'.
+      - name: message_data
+        description: The details of the event in JSON format.
+      - name: table_name
+        description: Name of the table, if a table is being altered or created. 
+      - name: schema_name
+        description: Name of the schema, if a schema or table is being created. 

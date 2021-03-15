@@ -55,6 +55,7 @@ sync_timestamps as (
 
 ),
 
+-- this will be the base for every record in the final CTE
 limit_to_table_starts as (
 
     select *
@@ -101,6 +102,7 @@ sum_records_modified as (
     left join records_modified_log on 
         limit_to_table_starts.connector_id = records_modified_log.connector_id
         and limit_to_table_starts.table_name = records_modified_log.table_name
+        -- confine it to one sync
         and records_modified_log.created_at > limit_to_table_starts.sync_start 
         and records_modified_log.created_at < coalesce(limit_to_table_starts.sync_end, limit_to_table_starts.next_sync_start) 
 

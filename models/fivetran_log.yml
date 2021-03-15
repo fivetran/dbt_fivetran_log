@@ -280,10 +280,16 @@ models:
       - name: sum_rows_deleted
         description: Sum of the rows deleted from this table during a sync.
 
-  - name: fivteran_log__schema_changelog
+  - name: fivetran_log__schema_changelog
     description: >
       Table capturing information around each kind of schema change made to a connector.
       Schema changes include altering and creating tables, changing the schema configuration, and creating schemas. 
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: 
+            - connector_id
+            - destination_id
+            - created_at
     columns:
       - name: connector_id
         description: System generated unique ID of the connector.

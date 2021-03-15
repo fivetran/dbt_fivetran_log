@@ -69,7 +69,7 @@ models:
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns: 
-            - connector_name
+            - connector_id
             - destination_id  
             - table_name
             - measured_month
@@ -77,6 +77,9 @@ models:
 
       - name: connector_name
         description: Name of the connector loading this table.
+
+      - name: connector_id
+        description: System-generated uniqu ID of the connector loading this table.
 
       - name: schema_name
         description: Name of the schema in which the table lives.

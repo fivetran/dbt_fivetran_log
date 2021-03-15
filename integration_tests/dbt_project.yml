@@ -15,7 +15,7 @@ vars:
     destination_membership: "{{ ref('destination_membership') }}"
     log: "{{ ref('log') }}"
     transformation: "{{ ref('transformation') }}"
-    trigger_table: "{{ ref('trigger_table') }}"
+    trigger_table: "{{ fivetran_utils.snowflake_seed_data('trigger_table') }}"
     user: "{{ ref('user') }}"
 
 
@@ -54,7 +54,10 @@ seeds:
       +column_types:
         created_at: timestamp
     trigger_table:
-      +quote_columns: "{{ true if target.type == 'redshift' else false }}" ## todo - add to snowflake as well
+      +quote_columns: "{{ true if target.type == 'redshift' else false }}"
+      +enabled: "{{ true if target.type != 'snowflake' else false }}"
+    trigger_table_snowflake:
+      +enabled: "{{ true if target.type == 'snowflake' else false }}"
     user:
       +column_types:
         created_at: timestamp

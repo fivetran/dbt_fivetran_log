@@ -4,7 +4,7 @@ with active_volume as (
         *, 
         {{ dbt_utils.date_trunc('month', 'measured_at') }} as measured_month
 
-    from {{ ref('stg_fivetran_log_active_volume') }} 
+    from {{ ref('stg_fivetran_log__active_volume') }} 
 
     where schema_name != 'fivetran_log' -- it's free! 
 
@@ -13,13 +13,13 @@ with active_volume as (
 connector as (
 
     select * 
-    from {{ ref('stg_fivetran_log_connector') }}
+    from {{ ref('stg_fivetran_log__connector') }}
 ),
 
 destination as (
 
     select *
-    from {{ ref('stg_fivetran_log_destination') }}
+    from {{ ref('stg_fivetran_log__destination') }}
 ),
 
 ordered_mar as (
@@ -32,7 +32,6 @@ ordered_mar as (
         measured_at,
         measured_month,
         monthly_active_rows,
-        destination_database,
 
         -- each measurement is cumulative for the month, so we'll only look at the latest date for each month
         row_number() over(partition by table_name, connector_name, destination_id, measured_month order by measured_at desc) as n
@@ -47,7 +46,6 @@ latest_mar as (
         schema_name,
         table_name,
         destination_id,
-        destination_database,
         measured_month,
         date(measured_at) as last_measured_at,
         monthly_active_rows
@@ -62,6 +60,7 @@ mar_join as (
     select 
         latest_mar.*,
         connector.connector_type,
+        connector.connector_id,
         destination.destination_name
 
     from latest_mar

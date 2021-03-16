@@ -1,0 +1,69 @@
+name: 'fivetran_log_integration_tests'
+version: '0.3.0'
+config-version: 2
+profile: 'integration_tests'
+
+
+vars:
+  fivetran_log:
+    account: "{{ ref('account') }}"
+    account_membership: "{{ ref('account_membership') }}"
+    active_volume: "{{ ref('active_volume') }}"
+    connector: "{{ ref('connector') }}"
+    credits_used: "{{ ref('credits_used') }}"
+    destination: "{{ ref('destination') }}"
+    destination_membership: "{{ ref('destination_membership') }}"
+    log: "{{ ref('log') }}"
+    transformation: "{{ ref('transformation') }}"
+    trigger_table: "{{ fivetran_utils.snowflake_seed_data('trigger_table') }}"
+    user: "{{ ref('user') }}"
+
+
+seeds:
+  fivetran_log_integration_tests:
+    +column_types:
+      _fivetran_synced: timestamp
+    account:
+      +column_types:
+        created_at: timestamp
+    account_membership:
+      +column_types:
+        activated_at: timestamp
+        joined_at: timestamp
+    active_volume:
+      +column_types:
+        measured_at: timestamp
+        monthly_active_rows: "{{ 'int64' if target.type == 'bigquery' else 'bigint' }}"
+    connector:
+      +column_types:
+        signed_up: timestamp
+    credits_used:
+      +column_types:
+        credits_consumed: "{{ 'int64' if target.type == 'bigquery' else 'bigint' }}"
+    destination:
+      +column_types:
+        created_at: timestamp
+        id: "{{ 'string' if target.name == 'bigquery' else 'varchar' }}"
+    destination_membership:
+      +column_types:
+        activated_at: timestamp
+        joined_at: timestamp
+    log:
+      +column_types:
+        time_stamp: timestamp
+        transformation_id:  "{{ 'string' if target.name == 'bigquery' else 'varchar' }}"
+    transformation:
+      +column_types:
+        created_at: timestamp
+        destination_id: "{{ 'string' if target.name == 'bigquery' else 'varchar' }}"
+        id:  "{{ 'string' if target.name == 'bigquery' else 'varchar' }}"
+    trigger_table:
+      +quote_columns: "{{ true if target.type == 'redshift' else false }}"
+      +enabled: "{{ true if target.type != 'snowflake' else false }}"
+      +column_types:
+        transformation_id:  "{{ 'string' if target.name == 'bigquery' else 'varchar' }}"
+    trigger_table_snowflake:
+      +enabled: "{{ true if target.type == 'snowflake' else false }}"
+    user:
+      +column_types:
+        created_at: timestamp

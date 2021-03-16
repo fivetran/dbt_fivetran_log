@@ -2,7 +2,7 @@ version: 2
 
 models:
 
-  - name: fivetran_log_connector_status
+  - name: fivetran_log__connector_status
     description: > 
       Table of each destination's connector and details surrounding its 
       connection and data-sync status.
@@ -10,12 +10,12 @@ models:
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns: 
-            - connector_name
+            - connector_id
             - destination_id     
     columns:
 
       - name: connector_id
-        description: System generated destination-unique ID of the connector.
+        description: System generated unique ID of the connector.
 
       - name: connector_name
         description: Name of the connector.
@@ -29,9 +29,6 @@ models:
 
       - name: destination_name
         description: Name of the destination loading data from this connector.
-
-      - name: destination_database
-        description: Name of the destination's database that houses the connector.
 
       - name: connector_health
         description: Status of the connector's *connection*. Can be `"broken"` or `"connected"`.
@@ -64,19 +61,25 @@ models:
           sync completion. 
 
     
-  - name: fivetran_log_mar_table_history
+  - name: fivetran_log__mar_table_history
     description: > 
       Table of each table's monthly active rows (MAR) for all connectors and destinations, per month.
       Read more about how monthly active rows are defined and calculated 
       [here](https://fivetran.com/docs/getting-started/consumption-based-pricing).
-
     tests:
-      - unique:
-          column_name: "destination_id || '-' || connector_name || '-' || table_name || '-' || measured_month"
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: 
+            - connector_id
+            - destination_id  
+            - table_name
+            - measured_month
     columns:
 
       - name: connector_name
         description: Name of the connector loading this table.
+
+      - name: connector_id
+        description: System-generated uniqu ID of the connector loading this table.
 
       - name: schema_name
         description: Name of the schema in which the table lives.
@@ -87,9 +90,6 @@ models:
       - name: destination_id
         description: >
           Foreign key referencing the `destination` warehouse that the connector data is loaded into.
-
-      - name: destination_database
-        description: Name of the destination's database housing the monthly active rows.
 
       - name: measured_month
         description: The month (yyyy-mm-01) of the measurement.
@@ -107,7 +107,7 @@ models:
         description: Name of the destination as it appears in the UI.
 
 
-  - name: fivetran_log_credit_mar_history
+  - name: fivetran_log__credit_mar_destination_history
     description: >
       Table of each destination's credit consumption and active volume, per month. Includes the 
       credits used per million MAR and MAR per credit. Read more about the relationship between 
@@ -130,9 +130,6 @@ models:
       - name: destination_name
         description: Name of the destination as it appears in the UI.
 
-      - name: destination_database
-        description: Name of the destination's database in which the active rows live.
-
       - name: credits_consumed
         description: The number of credits used by the destination for the given month.
 
@@ -146,7 +143,7 @@ models:
         description: The ratio of the month's active volume to the credits used.
 
 
-  - name: fivetran_log_transformation_status
+  - name: fivetran_log__transformation_status
     description: >
       Table of transformations enriched with data regarding its run status and any tables 
       whose new data trigger the transformation to run.
@@ -159,7 +156,7 @@ models:
 
     columns:
       - name: transformation_id
-        description: Destination-unique ID of the transformation.
+        description: Unique ID of the transformation.
 
       - name: created_at
         description: Timestamp of when the transformation was created.
@@ -191,9 +188,6 @@ models:
       - name: destination_name
         description: Name of the destination in which the destination is run.
       
-      - name: destination_database
-        description: Name of the destination's database in which the transformation is run.
-      
       - name: last_successful_run_at
         description: Timestamp of when the transformation was last run successfully.
       
@@ -205,18 +199,21 @@ models:
           Aggregated string list of the tables that trigger the transformation to run, if it is
           not on a time schedule.
 
-  - name: fivetran_log_connector_daily_api_calls
+  - name: fivetran_log__connector_daily_events
     description: >
-      Table of each connector's daily history of the quantity of api calls made, 
+      Table of each connector's daily history of the quantity of api calls, schema changes, and records modified,
       starting at the connector's setup date. 
     
     tests:
-      - unique:
-          column_name: "connector_name || '-' || destination_id || '-' || date_day"
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: 
+            - connector_id
+            - destination_id 
+            - date_day
 
     columns:
       - name: connector_id
-        description: System generated destination-unique ID of the connector.
+        description: System generated unique ID of the connector.
 
       - name: connector_name
         description: Name of the connector.
@@ -234,67 +231,82 @@ models:
       - name: date_day
         description: Date on which the number of api calls for the connector is measured.
 
-      - name: number_of_api_calls
+      - name: count_api_calls
         description: The number of api call events logged for this connector on this day.
 
+      - name: count_record_modifications
+        description: The sum of all records modified (includes updates, inserts, and deletes).
 
-macros:
-  - name: union_source_tables
+      - name: count_schema_changes
+        description: The number of schema change events for this connector. 
+
+  - name: fivetran_log__audit_table
     description: >
-      For *multiple-destination* users, This macro rolls log data up from 
-      the destination level to the account level.
-
-      It does so by taking a table name and scanning the source databases 
-      (as declared in src_fivetran.yml) for relations matching this table name. 
-      It then unions together these tables, capturing the individual database 
-      it came from under `destination_database`. 
-      
-      Moreover, if you have never made a transformation, the `transformation`
-      and `trigger_table` tables will not exist. In these cases, the macro 
-      will return the proper columns with all null values.
-    arguments:
+      Table replacing the deprecated `fivetran_audit` table. For each table written to in a sync,
+      captures timestamps and row quantities around table syncs. Each record represents a table being
+      written to in a connector sync. Note: the quantities here will not match the deprecated `fivetran_audit`
+      table completely, as `fivetran_audit` reported on pre-duplicated data loads.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: 
+            - connector_id
+            - destination_id 
+            - table_name
+            - write_to_table_start
+    columns:
+      - name: connector_id
+        description: System generated unique ID of the connector.
+      - name: connector_name
+        description: Name of the connector.
       - name: table_name
-        type: string
-        description: The name of the table you want to union across destinations. 
-
-  - name: handle_no_transformations
-    description: >
-      For *single-destination* users, this macro checks that a given table 
-      actually exists in your source database. 
-      
-      It is intended to be used only for the `transformation` and `trigger_table` 
-      tables. These are the only Fivetran Log tables that might not exist, as 
-      they are only created once you have made a transformation in Fivetran.
-
-      Thus, if no tables are found, the macro is hard-coded to create the 
-      appropriate columns for `transformation` and `trigger_table` with all 
-      null values. Otherwise, it simply selects * from the tables.
-    arguments:
-      - name: table_name
-        type: string
+        description: Name of the table being written to. 
+      - name: destination_id
         description: >
-          The name of the table to check the database for ('transformation' or 'trigger_table').
-  
-  - name: string_agg
-    description: > 
-      A macro to concatenate strings across rows when writing to BigQuery, Redshift, 
-      or Snowflake warehouses.
-    arguments:
-      - name: field_to_agg
-        type: string
-        description: The field you want to concatenate across rows.
-      - name: delimiter
-        type: string
-        description: What you want to separate values by. 
+          Foreign key referencing the `destination` warehouse that the connector data is loaded into.
+      - name: destination_name
+        description: Name of the destination that the table is being written to. 
+      - name: write_to_table_start
+        description: Timestamp of when Fivetran began to write to this table.
+      - name: write_to_table_end
+        description: Timestamp of when Fivetran finished writing to this table.
+      - name: sync_start
+        description: Timestamp of when this connector-level sync began. 
+      - name: sync_end
+        description: Timestamp of when this connector-level sync finished, if successful. 
+      - name: sum_rows_replaced_or_inserted
+        description: Sum of the rows replaced or inserted into this table during a sync. 
+      - name: sum_rows_updated
+        description: Sum of the rows updated in this table during a sync.
+      - name: sum_rows_deleted
+        description: Sum of the rows deleted from this table during a sync.
 
-  - name: type_string
-    description: > 
-      A macro to cast a value as a string across Redshift, Snowflake, and BigQuery
-      warehouses. Adapted from the `dbt_utils.datatypes.type_string` macro, which 
-      has some whitepace issues.
-
-  - name: _get_utils_namespaces
-    description: > 
-      A macro used for compatibility across warehouses in the `type_string` and 
-      `string_agg` macros. It returns the `dbt_utils_dispatch_list` variable, which 
-      is then passed to `adapter.dispatch` as its `packages` argument.
+  - name: fivetran_log__schema_changelog
+    description: >
+      Table capturing information around each kind of schema change made to a connector.
+      Schema changes include altering and creating tables, changing the schema configuration, and creating schemas. 
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: 
+            - connector_id
+            - destination_id
+            - created_at
+    columns:
+      - name: connector_id
+        description: System generated unique ID of the connector.
+      - name: connector_name
+        description: Name of the connector whose schema was changed. 
+      - name: destination_id
+        description: >
+          Foreign key referencing the `destination` warehouse that the connector data is loaded into.
+      - name: destination_name
+        description: Name of the destination that the table is being written to. 
+      - name: created_at
+        description: Timestamp of when the schema was changed. 
+      - name: event_subtype
+        description: Type of schema change event. One of 'alter_table', 'create_table', 'change_schema_config', 'create_schema'.
+      - name: message_data
+        description: The details of the event in JSON format.
+      - name: table_name
+        description: Name of the table, if a table is being altered or created. 
+      - name: schema_name
+        description: Name of the schema, if a schema or table is being created. 

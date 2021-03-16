@@ -50,7 +50,7 @@ vars:
     fivetran_log_schema: your_schema_name 
 ```
 
-## Disabling Transformation Models
+### Disabling Transformation Models
 If you have never created Fivetran-orchestrated [basic SQL transformations](https://fivetran.com/docs/transformations/basic-sql), your source data will not contain the `transformation` and `trigger_table` tables. Moreover, if you have only created *scheduled* basic transformations that are not triggered by table syncs, your source data will not contain the `trigger_table` table (though it will contain `transformation`).
 
 To disable the corresponding functionality in the package, you must add the following variable(s) to your `dbt_project.yml` file. By default, all variables are assumed to be `true`:

@@ -31,17 +31,16 @@ models:
         description: Name of the destination loading data from this connector.
 
       - name: connector_health
-        description: Status of the connector's *connection*. Can be `"broken"` or `"connected"`.
+        description: Status of the connector's data flow. Can be `"broken"`, `"incomplete"`, `"connected"`, `"paused"`, or `"initial sync in progress"`.
 
-      - name: data_sync_status
-        description: > 
-          Status of the data flowing from the connector. Can be `"paused"`, `"sync failed"`, `"in progress"`, 
-          `"in progress, see warnings"`, or `"running on schedule"`.
-
-      - name: last_synced_at
+      - name: last_sync_started_at
         description: > 
           Timestamp of when the last sync was started. Note that if new data comes in after a sync has 
           begun, the new data will not be included in this sync.
+
+      - name: last_sync_completed_at
+        description: > 
+          Timestamp of when the last sync was complted.
           
       - name: set_up_at
         description: Timestamp of when the connector was set up.

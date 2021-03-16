@@ -48,7 +48,7 @@ connector_metrics as (
         connector.destination_id,
         connector.is_paused,
         connector.set_up_at,
-        max(case when connector_log.event_subtype = 'sync_start' then connector_log.created_at else null end) as last_synced_at,
+        max(case when connector_log.event_subtype = 'sync_start' then connector_log.created_at else null end) as last_sync_started_at,
         max(case when connector_log.event_subtype = 'sync_end' then connector_log.created_at else null end) as last_sync_completed_at,
         max(case when connector_log.event_type = 'SEVERE' then connector_log.created_at else null end) as last_error_at,
         max(case when event_type = 'WARNING' then connector_log.created_at else null end) as last_warning_at
@@ -65,15 +65,14 @@ connector_health as (
     select
         *,
         case 
-            when last_error_at > last_sync_completed_at or last_sync_completed_at is null then 'broken'
-        else 'connected' end as connector_health,
+            -- there has not been a sync
+            when is_paused then 'paused'
+            when last_sync_started_at is null then 'incomplete'
+            when last_sync_completed_at is null and last_error_at is null then 'initial sync in progress'
 
-        case 
-        when is_paused then 'paused'
-        when last_error_at > last_synced_at then 'sync failed'
-        when last_synced_at > last_sync_completed_at and last_warning_at > last_synced_at then 'in progress, see warnings'
-        when last_synced_at > last_sync_completed_at then 'in progress'
-        else 'running on schedule' end as data_sync_status
+            when last_error_at > last_sync_completed_at then 'broken'
+            when last_sync_completed_at is null and last_error_at is not null then 'broken'
+        else 'connected' end as connector_health
 
     from connector_metrics
 ),
@@ -87,8 +86,8 @@ connector_recent_logs as (
         connector_health.connector_type,
         connector_health.destination_id,
         connector_health.connector_health,
-        connector_health.data_sync_status,
-        connector_health.last_synced_at,
+        connector_health.last_sync_started_at,
+        connector_health.last_sync_completed_at,
         connector_health.set_up_at,
         connector_log.event_subtype,
         connector_log.event_type,
@@ -116,8 +115,8 @@ final as (
         connector_recent_logs.destination_id,
         destination.destination_name,
         connector_recent_logs.connector_health,
-        connector_recent_logs.data_sync_status,
-        connector_recent_logs.last_synced_at,
+        connector_recent_logs.last_sync_started_at,
+        connector_recent_logs.last_sync_completed_at,
         connector_recent_logs.set_up_at,
         coalesce(schema_changes.number_of_schema_changes_last_month, 0) as number_of_schema_changes_last_month,
         

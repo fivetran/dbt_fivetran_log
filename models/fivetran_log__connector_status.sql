@@ -53,9 +53,9 @@ connector_metrics as (
         max(case when connector_log.event_type = 'SEVERE' then connector_log.created_at else null end) as last_error_at,
         max(case when event_type = 'WARNING' then connector_log.created_at else null end) as last_warning_at
 
-    from connector_log 
-        right join connector 
-            on connector_log.connector_id = connector.connector_id
+    from connector 
+    left join connector_log 
+        on connector_log.connector_id = connector.connector_id
     group by 1,2,3,4,5,6
 
 ),

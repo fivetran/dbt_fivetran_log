@@ -8,9 +8,9 @@ require-dbt-version: [">=0.18.0", "<0.20.0"]
 models:
     fivetran_log:
         +materialized: table 
-        +schema: _fivetran_log
+        +schema: fivetran_log
         staging:
-            +schema: _stg_fivetran_log
+            +schema: stg_fivetran_log
 
 
 vars:

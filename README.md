@@ -1,4 +1,4 @@
-# Fivetran Log ([docs](https://fivetran-log-dbt-package.netlify.app/#!/overview))
+# Fivetran Log ([docs](https://fivetran.github.io/dbt_fivetran_log/#!/overview))
 
 This package models Fivetran Log data from [our free internal connector](https://fivetran.com/docs/logs/fivetran-log). It uses account-level data in the format described by [this ERD](https://fivetran.com/docs/logs/fivetran-log#schemainformation).
 

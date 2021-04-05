@@ -11,6 +11,8 @@ models:
         +schema: fivetran_log
         staging:
             +schema: stg_fivetran_log
+            tmp:
+                +materialized: view
 
 
 vars:

@@ -132,5 +132,5 @@ final as (
     join destination on destination.destination_id = connector_recent_logs.destination_id
     {{ dbt_utils.group_by(n=10) }}
 )
-{{ log(target.type,info=true)}}
+
 select * from final

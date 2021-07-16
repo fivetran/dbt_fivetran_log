@@ -118,18 +118,19 @@ final as (
         connector_recent_logs.last_sync_started_at,
         connector_recent_logs.last_sync_completed_at,
         connector_recent_logs.set_up_at,
-        coalesce(schema_changes.number_of_schema_changes_last_month, 0) as number_of_schema_changes_last_month,
+        coalesce(schema_changes.number_of_schema_changes_last_month, 0) as number_of_schema_changes_last_month
         
-        {{ fivetran_utils.string_agg("case when connector_recent_logs.event_type = 'SEVERE' then connector_recent_logs.message_data else null end", "'\\n'") }} as errors_since_last_completed_sync,
-        {{ fivetran_utils.string_agg("case when connector_recent_logs.event_type = 'WARNING' then connector_recent_logs.message_data else null end", "'\\n'") }} as warnings_since_last_completed_sync
-        
+        {% if var('fivetran_log_using_sync_alert_messages', true) %}
+        , {{ fivetran_utils.string_agg("distinct case when connector_recent_logs.event_type = 'SEVERE' then connector_recent_logs.message_data else null end", "'\\n'") }} as errors_since_last_completed_sync
+        , {{ fivetran_utils.string_agg("distinct case when connector_recent_logs.event_type = 'WARNING' then connector_recent_logs.message_data else null end", "'\\n'") }} as warnings_since_last_completed_sync
+        {% endif %}
 
     from connector_recent_logs
     left join schema_changes 
         on connector_recent_logs.connector_id = schema_changes.connector_id 
 
     join destination on destination.destination_id = connector_recent_logs.destination_id
-    group by 1,2,3,4,5,6,7,8,9,10
+    {{ dbt_utils.group_by(n=10) }}
 )
-
+{{ log(target.type,info=true)}}
 select * from final

@@ -62,7 +62,7 @@ vars:
 ```
 
 ### Disabling Transformation Models
-If you have never created Fivetran-orchestrated [basic SQL transformations](https://fivetran.com/docs/transformations/basic-sql), your source data will not contain the `transformation` and `trigger_table` tables. Moreover, if you have only created *scheduled* basic transformations that are not triggered by table syncs, your source data will not contain the `trigger_table` table (though it will contain `transformation`).
+If you have never created Fivetran-orchestrated [basic SQL transformations](https://fivetran.com/docs/transformations/basic-sql), your source data will not contain the `transformation` and `trigger_table` tables. Moreover, if you have only created *scheduled* basic transformations that are not triggered by table syncs, your source data will not contain the `trigger_table` table (though it will contain `transformation`). 
 
 To disable the corresponding functionality in the package, you must add the following variable(s) to your `dbt_project.yml` file. By default, all variables are assumed to be `true`:
 
@@ -76,6 +76,19 @@ vars:
   fivetran_log:
     fivetran_log_using_transformations: false # this will disable all transformation + trigger_table logic
     fivetran_log_using_triggers: false # this will disable only trigger_table logic 
+```
+
+### Disabling Fivetran Error and Warning Messages
+Some users may wish to exclude Fivetran error and warnings messages from the final `fivetran_log__connector_status` model due to the length of the message. To disable the `errors_since_last_completed_sync` and `warnings_since_last_completed_sync` fields from the final model you may add the following variable to you to your `dbt_project.yml` file. By default, this variable is assumed to be `true`:
+```yml
+# dbt_project.yml
+
+...
+config-version: 2
+
+vars:
+  fivetran_log:
+    fivetran_log_using_sync_alert_messages: false # this will disable only the sync alert messages within the connector status model
 ```
 
 ### Changing the Build Schema

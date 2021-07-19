@@ -121,8 +121,8 @@ final as (
         coalesce(schema_changes.number_of_schema_changes_last_month, 0) as number_of_schema_changes_last_month
         
         {% if var('fivetran_log_using_sync_alert_messages', true) %}
-        , {{ fivetran_utils.string_agg("distinct case when connector_recent_logs.event_type = 'SEVERE' then connector_recent_logs.message_data else null end", "'\\n'") }} as errors_since_last_completed_sync
-        , {{ fivetran_utils.string_agg("distinct case when connector_recent_logs.event_type = 'WARNING' then connector_recent_logs.message_data else null end", "'\\n'") }} as warnings_since_last_completed_sync
+        , {{ fivetran_utils.string_agg("case when connector_recent_logs.event_type = 'SEVERE' then connector_recent_logs.message_data else null end", "'\\n'") }} as errors_since_last_completed_sync
+        , {{ fivetran_utils.string_agg("case when connector_recent_logs.event_type = 'WARNING' then connector_recent_logs.message_data else null end", "'\\n'") }} as warnings_since_last_completed_sync
         {% endif %}
 
     from connector_recent_logs

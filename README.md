@@ -1,3 +1,4 @@
+[![Apache License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![dbt Logo and Version](https://img.shields.io/static/v1?logo=dbt&label=dbt-version&message=0.20.x&color=orange)
 # Fivetran Log ([docs](https://fivetran.github.io/dbt_fivetran_log/#!/overview))
 
 This package models Fivetran Log data from [our free internal connector](https://fivetran.com/docs/logs/fivetran-log). It uses account-level data in the format described by [this ERD](https://fivetran.com/docs/logs/fivetran-log#schemainformation).
@@ -33,7 +34,17 @@ The package's main goals are to:
 
 
 ## Installation Instructions
+`dbt_fivetran_log` currently supports `dbt 0.20.x`.
+
 Check [dbt Hub](https://hub.getdbt.com/) for the latest installation instructions, or [read the dbt docs](https://docs.getdbt.com/docs/package-management) for more information on installing packages.
+
+Include in your `packages.yml`
+
+```yaml
+packages:
+  - package: fivetran/fivetran_log
+    version: [">=0.4.0", "<0.5.0"]
+```
 
 ## Configuration
 By default, this package will run using your target database and the `fivetran_log` schema. If this is not where your Fivetran Log data is, add the following configuration to your `dbt_project.yml` file:
@@ -51,7 +62,7 @@ vars:
 ```
 
 ### Disabling Transformation Models
-If you have never created Fivetran-orchestrated [basic SQL transformations](https://fivetran.com/docs/transformations/basic-sql), your source data will not contain the `transformation` and `trigger_table` tables. Moreover, if you have only created *scheduled* basic transformations that are not triggered by table syncs, your source data will not contain the `trigger_table` table (though it will contain `transformation`).
+If you have never created Fivetran-orchestrated [basic SQL transformations](https://fivetran.com/docs/transformations/basic-sql), your source data will not contain the `transformation` and `trigger_table` tables. Moreover, if you have only created *scheduled* basic transformations that are not triggered by table syncs, your source data will not contain the `trigger_table` table (though it will contain `transformation`). 
 
 To disable the corresponding functionality in the package, you must add the following variable(s) to your `dbt_project.yml` file. By default, all variables are assumed to be `true`:
 
@@ -65,6 +76,19 @@ vars:
   fivetran_log:
     fivetran_log_using_transformations: false # this will disable all transformation + trigger_table logic
     fivetran_log_using_triggers: false # this will disable only trigger_table logic 
+```
+
+### Disabling Fivetran Error and Warning Messages
+Some users may wish to exclude Fivetran error and warnings messages from the final `fivetran_log__connector_status` model due to the length of the message. To disable the `errors_since_last_completed_sync` and `warnings_since_last_completed_sync` fields from the final model you may add the following variable to you to your `dbt_project.yml` file. By default, this variable is assumed to be `true`:
+```yml
+# dbt_project.yml
+
+...
+config-version: 2
+
+vars:
+  fivetran_log:
+    fivetran_log_using_sync_alert_messages: false # this will disable only the sync alert messages within the connector status model
 ```
 
 ### Changing the Build Schema

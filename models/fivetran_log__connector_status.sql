@@ -125,9 +125,13 @@ connector_recent_logs as (
     left join connector_log 
         on connector_log.connector_id = connector_health.connector_id
         -- limiting relevance to since the last successful sync completion (if there has been one)
-        and connector_log.created_at > coalesce(connector_health.last_sync_completed_at, '2000-01-01') 
-        -- only looking at erors and warnings (excluding syncs)
-        and connector_log.event_type != 'INFO'  
+        and connector_log.created_at > coalesce(connector_health.last_sync_completed_at, connector_health.last_priority_first_sync_completed_at, '2000-01-01') 
+        -- only looking at errors and warnings (excluding syncs - both normal and priority first)
+        and connector_log.event_type != 'INFO' 
+        -- need to explicitly avoid priority first statuses because they are of event_type WARNING
+        and not (connector_log.event_subtype = 'status' 
+            and {{ fivetran_utils.json_extract(string="connector_log.message_data", string_path="status") }} ='RESCHEDULED'
+            and {{ fivetran_utils.json_extract(string="connector_log.message_data", string_path="reason") }} like '%intended behavior%')
 
     group by 1,2,3,4,5,6,7,8,9,10,11 -- de-duping error messages
     

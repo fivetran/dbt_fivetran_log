@@ -56,11 +56,13 @@ connector_metrics as (
         max(case when connector_log.event_subtype = 'sync_start' then connector_log.created_at else null end) as last_sync_started_at,
 
         max(case when connector_log.event_subtype = 'sync_end' 
-            -- priority-first syncs do not end each batch of synced data with a `sync_end` event and instead send a `status='RESCHEDULED'` event
-            or (connector_log.event_subtype = 'status'             
-                and {{ fivetran_utils.json_extract(string="connector_log.message_data", string_path="status") }} ='RESCHEDULED'
-                and {{ fivetran_utils.json_extract(string="connector_log.message_data", string_path="reason") }} like '%intended behavior%')
             then connector_log.created_at else null end) as last_sync_completed_at,
+
+        max(case when connector_log.event_subtype = 'status'
+                and {{ fivetran_utils.json_extract(string="connector_log.message_data", string_path="status") }} ='RESCHEDULED'
+                and {{ fivetran_utils.json_extract(string="connector_log.message_data", string_path="reason") }} like '%intended behavior%'
+            then connector_log.created_at else null end) as last_priority_first_sync_completed_at,
+                
 
         max(case when connector_log.event_type = 'SEVERE' then connector_log.created_at else null end) as last_error_at,
         max(case when event_type = 'WARNING' then connector_log.created_at else null end) as last_warning_at
@@ -83,7 +85,13 @@ connector_health as (
             -- a sync has never been attempted
             when last_sync_started_at is null then 'incomplete'
 
-            -- a sync has been attempted, but not completed, and it's not due to errors
+            -- a priority-first sync has occurred, but a normal sync has not
+            when last_priority_first_sync_completed_at is not null and last_sync_completed_at is null then 'priority first sync'
+
+            -- a priority sync has occurred more recently than a normal one (may occurr if the connector has been paused and resumed)
+            when last_priority_first_sync_completed_at > last_sync_completed_at then 'priority first sync'
+
+            -- a sync has been attempted, but not completed, and it's not due to errors. also a priority-first sync hasn't
             when last_sync_completed_at is null and last_error_at is null then 'initial sync in progress'
 
             -- there's been an error since the connector last completed a sync

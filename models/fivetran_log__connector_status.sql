@@ -7,7 +7,12 @@ with connector_log as (
     where event_type = 'SEVERE'
         or event_type = 'WARNING'
         or event_subtype like 'sync%'
+        or (event_subtype = 'status' 
+            and {{ fivetran_utils.json_extract(string="message_data", string_path="status") }} ='RESCHEDULED'
+            and {{ fivetran_utils.json_extract(string="message_data", string_path="reason") }} like '%intended behavior%'
+            ) -- for priority-first syncs. these should be captured by event_type = 'WARNING' but let's make sure
 
+        -- whole reason is "We have rescheduled the connector to force flush data from the forward sync into your destination. This is intended behavior and means that the connector is working as expected."
 ),
 
 schema_changes as (
@@ -49,7 +54,16 @@ connector_metrics as (
         connector.is_paused,
         connector.set_up_at,
         max(case when connector_log.event_subtype = 'sync_start' then connector_log.created_at else null end) as last_sync_started_at,
-        max(case when connector_log.event_subtype = 'sync_end' then connector_log.created_at else null end) as last_sync_completed_at,
+
+        max(case when connector_log.event_subtype = 'sync_end' 
+            then connector_log.created_at else null end) as last_sync_completed_at,
+
+        max(case when connector_log.event_subtype = 'status'
+                and {{ fivetran_utils.json_extract(string="connector_log.message_data", string_path="status") }} ='RESCHEDULED'
+                and {{ fivetran_utils.json_extract(string="connector_log.message_data", string_path="reason") }} like '%intended behavior%'
+            then connector_log.created_at else null end) as last_priority_first_sync_completed_at,
+                
+
         max(case when connector_log.event_type = 'SEVERE' then connector_log.created_at else null end) as last_error_at,
         max(case when event_type = 'WARNING' then connector_log.created_at else null end) as last_warning_at
 
@@ -65,13 +79,27 @@ connector_health as (
     select
         *,
         case 
-            -- there has not been a sync
+            -- connector is paused
             when is_paused then 'paused'
+
+            -- a sync has never been attempted
             when last_sync_started_at is null then 'incomplete'
+
+            -- a priority-first sync has occurred, but a normal sync has not
+            when last_priority_first_sync_completed_at is not null and last_sync_completed_at is null then 'priority first sync'
+
+            -- a priority sync has occurred more recently than a normal one (may occurr if the connector has been paused and resumed)
+            when last_priority_first_sync_completed_at > last_sync_completed_at then 'priority first sync'
+
+            -- a sync has been attempted, but not completed, and it's not due to errors. also a priority-first sync hasn't
             when last_sync_completed_at is null and last_error_at is null then 'initial sync in progress'
 
+            -- there's been an error since the connector last completed a sync
             when last_error_at > last_sync_completed_at then 'broken'
+
+            -- there's never been a successful sync and there have been errors
             when last_sync_completed_at is null and last_error_at is not null then 'broken'
+
         else 'connected' end as connector_health
 
     from connector_metrics
@@ -97,9 +125,13 @@ connector_recent_logs as (
     left join connector_log 
         on connector_log.connector_id = connector_health.connector_id
         -- limiting relevance to since the last successful sync completion (if there has been one)
-        and connector_log.created_at > coalesce(connector_health.last_sync_completed_at, '2000-01-01') 
-        -- only looking at erors and warnings (excluding syncs)
-        and connector_log.event_type != 'INFO'  
+        and connector_log.created_at > coalesce(connector_health.last_sync_completed_at, connector_health.last_priority_first_sync_completed_at, '2000-01-01') 
+        -- only looking at errors and warnings (excluding syncs - both normal and priority first)
+        and connector_log.event_type != 'INFO' 
+        -- need to explicitly avoid priority first statuses because they are of event_type WARNING
+        and not (connector_log.event_subtype = 'status' 
+            and {{ fivetran_utils.json_extract(string="connector_log.message_data", string_path="status") }} ='RESCHEDULED'
+            and {{ fivetran_utils.json_extract(string="connector_log.message_data", string_path="reason") }} like '%intended behavior%')
 
     group by 1,2,3,4,5,6,7,8,9,10,11 -- de-duping error messages
     

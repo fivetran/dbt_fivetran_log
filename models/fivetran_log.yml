@@ -31,7 +31,7 @@ models:
         description: Name of the destination loading data from this connector.
 
       - name: connector_health
-        description: Status of the connector's data flow. Can be `"broken"`, `"incomplete"`, `"connected"`, `"paused"`, or `"initial sync in progress"`.
+        description: Status of the connector's data flow. Can be `"broken"`, `"incomplete"`, `"connected"`, `"paused"`, `"initial sync in progress"`, or `"priority first sync"`.
 
       - name: last_sync_started_at
         description: > 

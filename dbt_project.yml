@@ -1,30 +1,30 @@
 config-version: 2
 
 name: 'fivetran_log'
-version: '0.4.1'
+version: '0.5.0'
 
-require-dbt-version: ">=0.20.0"
+require-dbt-version: [">=1.0.0", "<2.0.0"]
 
 models:
-    fivetran_log:
-        +materialized: table 
-        +schema: fivetran_log
-        staging:
-            +schema: stg_fivetran_log
-            tmp:
-                +materialized: view
+  fivetran_log:
+    +materialized: table
+    +schema: fivetran_log
+    staging:
+      +schema: stg_fivetran_log
+      tmp:
+        +materialized: view
 
 
 vars:
-    fivetran_log:
-        account: "{{ source('fivetran_log', 'account') }}" 
-        account_membership: "{{ source('fivetran_log', 'account_membership') }}"
-        active_volume: "{{ source('fivetran_log', 'active_volume') }}"
-        connector: "{{ source('fivetran_log', 'connector') }}"  
-        credits_used: "{{ source('fivetran_log', 'credits_used') }}"
-        destination: "{{ source('fivetran_log', 'destination') }}"
-        destination_membership: "{{ source('fivetran_log', 'destination_membership') }}" 
-        log: "{{ source('fivetran_log', 'log') }}" 
-        transformation: "{{ source('fivetran_log', 'transformation') }}"
-        trigger_table: "{{ source('fivetran_log', 'trigger_table') }}"
-        user: "{{ source('fivetran_log', 'user') }}"
+  fivetran_log:
+    account: "{{ source('fivetran_log', 'account') }}"
+    account_membership: "{{ source('fivetran_log', 'account_membership') }}"
+    active_volume: "{{ source('fivetran_log', 'active_volume') }}"
+    connector: "{{ source('fivetran_log', 'connector') }}"
+    credits_used: "{{ source('fivetran_log', 'credits_used') }}"
+    destination: "{{ source('fivetran_log', 'destination') }}"
+    destination_membership: "{{ source('fivetran_log', 'destination_membership') }}"
+    log: "{{ source('fivetran_log', 'log') }}"
+    transformation: "{{ source('fivetran_log', 'transformation') }}"
+    trigger_table: "{{ source('fivetran_log', 'trigger_table') }}"
+    user: "{{ source('fivetran_log', 'user') }}"

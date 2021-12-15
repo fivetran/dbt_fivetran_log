@@ -1,0 +1,3 @@
+id,_fivetran_synced,created_at,created_by_id,destination_id,name,paused,script,trigger_delay,trigger_interval,trigger_type
+nullify_emotion,2021-03-12 21:03:46.301,2020-11-19 20:14:34.925,tome_typing,1k56c2c4xlti6,test_once_per_day_time,false,select 1;,,,DAILY
+footman_cone,2021-03-03 15:08:47.778,2020-11-25 17:40:11.403,tabby_wallet,unearned_garret,fivetran_log__Calculate_MAR_by_Schema,false,select 0;,,,DAILY

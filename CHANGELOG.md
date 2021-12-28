@@ -1,5 +1,5 @@
-# dbt_fivetran_log v0.5.0
-🎉 dbt v1.0.0 Compatibility 🎉
+# dbt_fivetran_log v0.5.0-b1
+🎉 dbt v1.0.0 Compatibility Pre Release 🎉 An official dbt v1.0.0 compatible version of the package will be released once existing feature/bug PRs are merged.
 ## 🚨 Breaking Changes 🚨
 - Adjusts the `require-dbt-version` to now be within the range [">=1.0.0", "<2.0.0"]. Additionally, the package has been updated for dbt v1.0.0 compatibility. If you are using a dbt version <1.0.0, you will need to upgrade in order to leverage the latest version of the package.
   - For help upgrading your package, I recommend reviewing this GitHub repo's Release Notes on what changes have been implemented since your last upgrade.

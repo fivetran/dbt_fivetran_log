@@ -1,3 +1,19 @@
+{{ config(
+    materialized='incremental',
+    partition_by={
+        'field': 'sync_start',
+        'data_type': 'timestamp',
+        'granularity': 'day'
+    }
+) }}
+
+{%- call statement('max_sync_start', fetch_result=True) -%}
+    select date(max(sync_start)) from {{ this }}
+{%- endcall -%}
+
+{%- set query = load_result('max_sync_start') -%}
+{%- set max_sync_start = query['data'][0][0] -%}
+
 with sync_log as (
     
     select 
@@ -7,6 +23,10 @@ with sync_log as (
     from {{ ref('stg_fivetran_log__log') }}
 
     where event_subtype in ('sync_start', 'sync_end', 'write_to_table_start', 'write_to_table_end', 'records_modified')
+
+    {% if is_incremental() %}
+    and date(created_at) >= '{{ max_sync_start }}'
+    {% endif %}
 ),
 
 
@@ -14,6 +34,7 @@ connector as (
 
     select *
     from {{ ref('fivetran_log__connector_status') }}
+
 ),
 
 add_connector_info as (

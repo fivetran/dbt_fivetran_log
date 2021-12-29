@@ -4,15 +4,10 @@
         'field': 'sync_start',
         'data_type': 'timestamp',
         'granularity': 'day'
-    }
+    } if target.type == 'bigquery' else none,
+    incremental_strategy = 'merge',
+    file_format = 'delta'
 ) }}
-
-{%- call statement('max_sync_start', fetch_result=True) -%}
-    select date(max(sync_start)) from {{ this }}
-{%- endcall -%}
-
-{%- set query = load_result('max_sync_start') -%}
-{%- set max_sync_start = query['data'][0][0] -%}
 
 with sync_log as (
     
@@ -25,7 +20,7 @@ with sync_log as (
     where event_subtype in ('sync_start', 'sync_end', 'write_to_table_start', 'write_to_table_end', 'records_modified')
 
     {% if is_incremental() %}
-    and date(created_at) >= '{{ max_sync_start }}'
+        and created_at >= ( select max(sync_start) from {{ this }} )
     {% endif %}
 ),
 
@@ -127,7 +122,7 @@ sum_records_modified as (
         and records_modified_log.created_at > limit_to_table_starts.sync_start 
         and records_modified_log.created_at < coalesce(limit_to_table_starts.sync_end, limit_to_table_starts.next_sync_start) 
 
-    group by 1,2,3,4,5,6,7,8,9
+    {{ dbt_utils.group_by(n=9) }}
 )
 
 select *

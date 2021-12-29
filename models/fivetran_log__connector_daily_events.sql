@@ -74,7 +74,7 @@ spine as (
 
     {{ dbt_utils.date_spine(
         datepart = "day", 
-        start_date = "cast('" ~ first_date[0:10] ~ "' as date)",
+        start_date =  "'" ~ first_date[0:10] ~ "'", 
         end_date = dbt_utils.dateadd("week", 1, dbt_utils.date_trunc('day', dbt_utils.current_timestamp())) 
         ) 
     }} 

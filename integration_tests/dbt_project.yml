@@ -58,7 +58,7 @@ seeds:
         destination_id: "{{ 'string' if target.name == 'bigquery' else 'varchar' }}"
         id:  "{{ 'string' if target.name == 'bigquery' else 'varchar' }}"
     trigger_table:
-      +quote_columns: "{{ true if target.type == 'redshift' else false }}"
+      +quote_columns: "{{ true if target.type in ('redshift', 'postgres') else false }}"
       +enabled: "{{ true if target.type != 'snowflake' else false }}"
       +column_types:
         transformation_id:  "{{ 'string' if target.name == 'bigquery' else 'varchar' }}"

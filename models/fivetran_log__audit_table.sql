@@ -1,5 +1,6 @@
 {{ config(
     materialized='incremental',
+    unique_key='unique_table_sync_key',
     partition_by={
         'field': 'sync_start',
         'data_type': 'timestamp',
@@ -123,7 +124,17 @@ sum_records_modified as (
         and records_modified_log.created_at < coalesce(limit_to_table_starts.sync_end, limit_to_table_starts.next_sync_start) 
 
     {{ dbt_utils.group_by(n=9) }}
+
+),
+
+surrogate_key as (
+
+    select 
+        *,
+        {{ dbt_utils.surrogate_key(['connector_id', 'destination_id', 'table_name', 'write_to_table_start']) }} as unique_table_sync_key
+
+    from sum_records_modified
 )
 
 select *
-from sum_records_modified
+from surrogate_key

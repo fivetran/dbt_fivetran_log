@@ -34,6 +34,7 @@ jobs:
             dbt deps
             dbt seed --target redshift --full-refresh
             dbt run --target redshift --full-refresh
+            dbt run --target redshift
             dbt test --target redshift
       - run:
           name: "Run Tests - Snowflake"
@@ -44,6 +45,7 @@ jobs:
             dbt deps
             dbt seed --target snowflake --full-refresh
             dbt run --target snowflake --full-refresh
+            dbt run --target snowflake
             dbt test --target snowflake
       - run:
           name: "Run Tests - BigQuery"
@@ -57,6 +59,7 @@ jobs:
             dbt deps
             dbt seed --target bigquery --full-refresh
             dbt run --target bigquery --full-refresh
+            dbt run --target bigquery
             dbt test --target bigquery
       - run:
           name: "Run Tests - Postgres"
@@ -67,6 +70,7 @@ jobs:
             dbt deps
             dbt seed --target postgres --full-refresh
             dbt run --target postgres --full-refresh
+            dbt run --target postgres
             dbt test --target postgres
       - save_cache:
           key: deps2-{{ .Branch }}

@@ -43,7 +43,7 @@ Include in your `packages.yml`
 ```yaml
 packages:
   - package: fivetran/fivetran_log
-    version: 0.5.0-b1
+    version: 0.5.0
 ```
 
 ## Package Maintenance

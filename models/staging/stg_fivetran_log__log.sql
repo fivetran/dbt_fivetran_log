@@ -1,11 +1,3 @@
-{{ config(
-    partition_by={
-        'field': 'created_at',
-        'data_type': 'timestamp',
-        'granularity': 'day'
-    }
-) }}
-
 with log as (
 
     select * from {{ var('log') }}

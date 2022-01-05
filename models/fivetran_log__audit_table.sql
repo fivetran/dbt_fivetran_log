@@ -29,7 +29,7 @@ with sync_log as (
 
         {%- set query = load_result('max_sync_start') -%}
         {%- set max_sync_start = query['data'][0][0] -%}
-
+        {{ log('sync start is ' ~ max_sync_start, info=true)}}
         and date(created_at) >= '{{ max_sync_start }}'
 
     {% endif %}

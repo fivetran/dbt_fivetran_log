@@ -8,7 +8,7 @@
   - Please note, if you are installing a version of `dbt_utils` in your `packages.yml` that is not in the range above then you will encounter a package dependency error.
 
 ## Additional Features
-- Materializes the `fivetran_log__audit_table` incrementally, and employs partitioning for BigQuery users. As a non-incremental table, this model involved high runtimes for some users. (https://github.com/fivetran/dbt_fivetran_log/issues/27)
+- Materializes the `fivetran_log__audit_table` incrementally, and employs partitioning for BigQuery users. As a non-incremental table, this model involved high runtimes for some users ([#27](https://github.com/fivetran/dbt_fivetran_log/issues/27))
 - Expands compatibility to Postgres!
 
 # dbt_fivetran_log v0.5.0-b1

@@ -10,12 +10,6 @@
     file_format = 'delta'
 ) }}
 
-{%- call statement('max_sync_start', fetch_result=True) -%}
-    select date(max(sync_start)) from {{ this }}
-{%- endcall -%}
-
-{%- set query = load_result('max_sync_start') -%}
-{%- set max_sync_start = query['data'][0][0] -%}
 
 with sync_log as (
     
@@ -28,7 +22,16 @@ with sync_log as (
     where event_subtype in ('sync_start', 'sync_end', 'write_to_table_start', 'write_to_table_end', 'records_modified')
 
     {% if is_incremental() %}
+
+        {%- call statement('max_sync_start', fetch_result=True) -%}
+            select date(max(sync_start)) from {{ this }}
+        {%- endcall -%}
+
+        {%- set query = load_result('max_sync_start') -%}
+        {%- set max_sync_start = query['data'][0][0] -%}
+
         and date(created_at) >= '{{ max_sync_start }}'
+
     {% endif %}
 ),
 

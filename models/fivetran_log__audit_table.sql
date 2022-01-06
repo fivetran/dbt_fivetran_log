@@ -27,7 +27,7 @@ with sync_log as (
 
     where event_subtype in ('sync_start', 'sync_end', 'write_to_table_start', 'write_to_table_end', 'records_modified')
 
-    {% if is_incremental() and max_sync_start is not None %}
+    {% if is_incremental() and max_sync_start %}
 
         and date(created_at) >= '{{ max_sync_start }}'
 

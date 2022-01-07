@@ -34,7 +34,7 @@ The package's main goals are to:
 
 
 ## Installation Instructions
-`dbt_fivetran_log` currently supports `dbt 0.20.x`.
+`dbt_fivetran_log` currently supports `dbt 1.0.x`.
 
 Check [dbt Hub](https://hub.getdbt.com/) for the latest installation instructions, or [read the dbt docs](https://docs.getdbt.com/docs/package-management) for more information on installing packages.
 
@@ -117,7 +117,7 @@ and running the package? If so, we highly encourage and welcome contributions to
 Please create issues or open PRs against `main`. See [the Discourse post](https://discourse.getdbt.com/t/contributing-to-a-dbt-package/657) for information on how to contribute to a package.
 
 ## Database Support
-This package has been tested on BigQuery, Snowflake and Redshift.
+This package has been tested on BigQuery, Snowflake, Redshift, and Postgres.
 
 ## Resources:
 - Provide [feedback](https://www.surveymonkey.com/r/DQ7K7WW) on our existing dbt packages or what you'd like to see next

@@ -22,20 +22,18 @@ with sync_log as (
 
     {% if is_incremental() %}
 
-        -- Capture the latest timestamp in a call statement instead of a subquery for optimizing BQ costs on incremental runs
-        {%- call statement('max_sync_start', fetch_result=True) -%}
-            select date(max(sync_start)) from {{ this }}
-        {%- endcall -%}
+    -- Capture the latest timestamp in a call statement instead of a subquery for optimizing BQ costs on incremental runs
+    {%- call statement('max_sync_start', fetch_result=True) -%}
+        select date(max(sync_start)) from {{ this }}
+    {%- endcall -%}
 
-        {%- set query = load_result('max_sync_start') -%}
+    {%- set query = load_result('max_sync_start') -%}
 
-        -- store it as a singular value
-        {%- set max_sync_start = query['data'][0][0] -%}
+    -- store it as a singular value
+    {%- set max_sync_start = query['data'][0][0] -%}
 
-        -- only perform this comparison if max_sync_start is not None
-        {# {% if max_sync_start %} #}
-            and date(created_at) >= '{{ max_sync_start }}'
-        {# {% endif %} #}
+        -- compare the new batch of data to the latest sync already stored in this model
+        and date(created_at) >= '{{ max_sync_start }}'
 
     {% endif %}
 ),

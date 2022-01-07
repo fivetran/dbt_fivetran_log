@@ -33,9 +33,9 @@ with sync_log as (
         {%- set max_sync_start = query['data'][0][0] -%}
 
         -- only perform this comparison if max_sync_start is not None
-        {% if max_sync_start %}
+        {# {% if max_sync_start %} #}
             and date(created_at) >= '{{ max_sync_start }}'
-        {% endif %}
+        {# {% endif %} #}
 
     {% endif %}
 ),

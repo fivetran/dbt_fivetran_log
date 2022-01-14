@@ -27,10 +27,11 @@ with sync_log as (
         select date(max(sync_start)) from {{ this }}
     {%- endcall -%}
 
-    {%- set query = load_result('max_sync_start') -%}
+    -- load the result from the above query into a new variable
+    {%- set query_result = load_result('max_sync_start') -%}
 
-    -- store it as a singular value
-    {%- set max_sync_start = query['data'][0][0] -%}
+    -- the query_result is stored as a dataframe. Therefore, we want to now store it as a singular value.
+    {%- set max_sync_start = query_result['data'][0][0] -%}
 
         -- compare the new batch of data to the latest sync already stored in this model
         and date(created_at) >= '{{ max_sync_start }}'

@@ -11,6 +11,8 @@ fields as (
     select 
         {% if target.type == 'bigquery' %} 
         table as trigger_table, 
+        {% elif target.type == 'postgres' %}
+        "table" as trigger_table,
         {% else %} 
         "TABLE" as trigger_table,
         {% endif %}

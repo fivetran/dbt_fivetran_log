@@ -1,3 +1,15 @@
+{{ config(
+    materialized='incremental',
+    unique_key='unique_table_sync_key',
+    partition_by={
+        'field': 'sync_start',
+        'data_type': 'timestamp',
+        'granularity': 'day'
+    } if target.type == 'bigquery' else none,
+    incremental_strategy = 'merge',
+    file_format = 'delta'
+) }}
+
 with sync_log as (
     
     select 
@@ -7,6 +19,24 @@ with sync_log as (
     from {{ ref('stg_fivetran_log__log') }}
 
     where event_subtype in ('sync_start', 'sync_end', 'write_to_table_start', 'write_to_table_end', 'records_modified')
+
+    {% if is_incremental() %}
+
+    -- Capture the latest timestamp in a call statement instead of a subquery for optimizing BQ costs on incremental runs
+    {%- call statement('max_sync_start', fetch_result=True) -%}
+        select date(max(sync_start)) from {{ this }}
+    {%- endcall -%}
+
+    -- load the result from the above query into a new variable
+    {%- set query_result = load_result('max_sync_start') -%}
+
+    -- the query_result is stored as a dataframe. Therefore, we want to now store it as a singular value.
+    {%- set max_sync_start = query_result['data'][0][0] -%}
+
+        -- compare the new batch of data to the latest sync already stored in this model
+        and date(created_at) >= '{{ max_sync_start }}'
+
+    {% endif %}
 ),
 
 
@@ -14,6 +44,7 @@ connector as (
 
     select *
     from {{ ref('fivetran_log__connector_status') }}
+
 ),
 
 add_connector_info as (
@@ -106,8 +137,18 @@ sum_records_modified as (
         and records_modified_log.created_at > limit_to_table_starts.sync_start 
         and records_modified_log.created_at < coalesce(limit_to_table_starts.sync_end, limit_to_table_starts.next_sync_start) 
 
-    group by 1,2,3,4,5,6,7,8,9
+    {{ dbt_utils.group_by(n=9) }}
+
+),
+
+surrogate_key as (
+
+    select 
+        *,
+        {{ dbt_utils.surrogate_key(['connector_id', 'destination_id', 'table_name', 'write_to_table_start']) }} as unique_table_sync_key
+
+    from sum_records_modified
 )
 
 select *
-from sum_records_modified
+from surrogate_key

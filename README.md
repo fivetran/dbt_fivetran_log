@@ -34,7 +34,7 @@ The package's main goals are to:
 
 
 ## Installation Instructions
-`dbt_fivetran_log` currently supports `dbt 0.20.x`.
+`dbt_fivetran_log` currently supports `dbt 1.0.x`.
 
 Check [dbt Hub](https://hub.getdbt.com/) for the latest installation instructions, or [read the dbt docs](https://docs.getdbt.com/docs/package-management) for more information on installing packages.
 
@@ -43,7 +43,7 @@ Include in your `packages.yml`
 ```yaml
 packages:
   - package: fivetran/fivetran_log
-    version: 0.5.0-b1
+    version: 0.5.0
 ```
 
 ## Package Maintenance
@@ -111,13 +111,18 @@ models:
 
 *Read more about using custom schemas in dbt [here](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/using-custom-schemas).*
 
+### Partitioning Source Tables in BigQuery
+By default, the `fivetran_log__audit_table` is materialized as an incremental table, with partitions in BigQuery databases. BigQuery users may also want to add partitions to large underlying source tables, such as the `LOG` table, to optimize performance and query costs. 
+
+If you would like to apply partitioning to _source_ tables, please refer to the [Fivetran docs](https://fivetran.com/docs/destinations/bigquery/partition-table) for how to do so.
+
 ## Contributions
 Don't see a model or specific metric you would have liked to be included? Notice any bugs when installing 
 and running the package? If so, we highly encourage and welcome contributions to this package! 
 Please create issues or open PRs against `main`. See [the Discourse post](https://discourse.getdbt.com/t/contributing-to-a-dbt-package/657) for information on how to contribute to a package.
 
 ## Database Support
-This package has been tested on BigQuery, Snowflake and Redshift.
+This package has been tested on BigQuery, Snowflake, Redshift, and Postgres.
 
 ## Resources:
 - Provide [feedback](https://www.surveymonkey.com/r/DQ7K7WW) on our existing dbt packages or what you'd like to see next

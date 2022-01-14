@@ -245,14 +245,12 @@ models:
       captures timestamps and row quantities around table syncs. Each record represents a table being
       written to in a connector sync. Note: the quantities here will not match the deprecated `fivetran_audit`
       table completely, as `fivetran_audit` reported on pre-duplicated data loads.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns: 
-            - connector_id
-            - destination_id 
-            - table_name
-            - write_to_table_start
     columns:
+      - name: unique_table_sync_key
+        description: Primary key of this table, hashed on `connector_id`, `destination_id`, `table_name`, and `unique_table_sync_key`.
+        tests:
+          - unique
+          - not_null
       - name: connector_id
         description: System generated unique ID of the connector.
       - name: connector_name

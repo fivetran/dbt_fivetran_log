@@ -35,3 +35,12 @@ integration_tests:
       warehouse: "{{ env_var('CI_SNOWFLAKE_DBT_WAREHOUSE') }}"
       schema: fivetran_log_integration_tests
       threads: 8
+    postgres:
+      type: postgres
+      host: "{{ env_var('CI_POSTGRES_DBT_HOST') }}"
+      user: "{{ env_var('CI_POSTGRES_DBT_USER') }}"
+      pass: "{{ env_var('CI_POSTGRES_DBT_PASS') }}"
+      dbname: "{{ env_var('CI_POSTGRES_DBT_DBNAME') }}"
+      port: 5432
+      schema: fivetran_log_integration_tests
+      threads: 8

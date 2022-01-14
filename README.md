@@ -111,6 +111,11 @@ models:
 
 *Read more about using custom schemas in dbt [here](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/using-custom-schemas).*
 
+### Partitioning Source Tables in BigQuery
+By default, the `fivetran_log__audit_table` is materialized as an incremental table, with partitions in BigQuery databases. BigQuery users may also want to add partitions to large underlying source tables, such as the `LOG` table, to optimize performance and query costs. 
+
+If you would like to apply partitioning to _source_ tables, please refer to the [Fivetran docs](https://fivetran.com/docs/destinations/bigquery/partition-table) for how to do so.
+
 ## Contributions
 Don't see a model or specific metric you would have liked to be included? Notice any bugs when installing 
 and running the package? If so, we highly encourage and welcome contributions to this package! 

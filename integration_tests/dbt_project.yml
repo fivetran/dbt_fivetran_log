@@ -52,6 +52,7 @@ seeds:
       +column_types:
         time_stamp: timestamp
         transformation_id:  "{{ 'string' if target.name == 'bigquery' else 'varchar' }}"
+        message_event: "{{ 'string' if target.name == 'bigquery' else 'varchar' }}"
     transformation:
       +column_types:
         created_at: timestamp

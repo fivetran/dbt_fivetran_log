@@ -21,7 +21,7 @@ with schema_changes as (
 
     -- Capture the latest timestamp in a call statement instead of a subquery for optimizing BQ costs on incremental runs
     {%- call statement('max_schema_change', fetch_result=True) -%}
-        select max(created_at) from {{ this }}
+        select date(max(created_at)) from {{ this }}
     {%- endcall -%}
 
     -- load the result from the above query into a new variable
@@ -31,7 +31,7 @@ with schema_changes as (
     {%- set max_schema_change = query_result['data'][0][0] -%}
 
         -- compare the new batch of data to the latest sync already stored in this model
-        and created_at >= '{{ max_schema_change }}'
+        and date(created_at) >= '{{ max_schema_change }}'
 
     {% endif %}
 ),

@@ -43,7 +43,7 @@ seeds:
     destination:
       +column_types:
         created_at: timestamp
-        id: "{{ 'string' if target.name == 'bigquery' else 'varchar' }}"
+        id: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
     destination_membership:
       +column_types:
         activated_at: timestamp
@@ -51,18 +51,18 @@ seeds:
     log:
       +column_types:
         time_stamp: timestamp
-        transformation_id:  "{{ 'string' if target.name == 'bigquery' else 'varchar' }}"
-        message_event: "{{ 'string' if target.name == 'bigquery' else 'varchar' }}"
+        transformation_id:  "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+        message_event: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
     transformation:
       +column_types:
         created_at: timestamp
-        destination_id: "{{ 'string' if target.name == 'bigquery' else 'varchar' }}"
-        id:  "{{ 'string' if target.name == 'bigquery' else 'varchar' }}"
+        destination_id: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+        id:  "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
     trigger_table:
       +quote_columns: "{{ true if target.type in ('redshift', 'postgres') else false }}"
       +enabled: "{{ true if target.type != 'snowflake' else false }}"
       +column_types:
-        transformation_id:  "{{ 'string' if target.name == 'bigquery' else 'varchar' }}"
+        transformation_id:  "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
     trigger_table_snowflake:
       +enabled: "{{ true if target.type == 'snowflake' else false }}"
     user:

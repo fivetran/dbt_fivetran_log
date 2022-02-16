@@ -2,7 +2,7 @@ version: 2
 
 sources: 
   - name: fivetran_log
-    database: "{{ var('fivetran_log_database', target.database)}}" # add var config to dbt_project.yml
+    database: "{% if target.type != 'spark'%}{{ var('fivetran_log_database', target.database) }}{% endif %}" # add var config to dbt_project.yml
     schema: "{{ var('fivetran_log_schema', 'fivetran_log')}}"
 
     loader: fivetran

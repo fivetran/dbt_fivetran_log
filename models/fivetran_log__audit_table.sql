@@ -14,7 +14,7 @@ with sync_log as (
     
     select 
         *,
-        {{ fivetran_utils.json_extract(string='message_data', string_path='table') }} as table_name
+        {{ fivetran_utils.json_parse(string='message_data', string_path=['table']) }} as table_name
 
     from {{ ref('stg_fivetran_log__log') }}
 
@@ -101,10 +101,10 @@ records_modified_log as (
     select 
         connector_id,
         created_at,
-        {{ fivetran_utils.json_extract(string='message_data', string_path='table') }} as table_name,
-        {{ fivetran_utils.json_extract(string='message_data', string_path='schema') }} as schema_name,
-        {{ fivetran_utils.json_extract(string='message_data', string_path='operationType') }} as operation_type,
-        cast ({{ fivetran_utils.json_extract(string='message_data', string_path='count') }} as {{ dbt_utils.type_int() }}) as row_count
+        {{ fivetran_utils.json_parse(string='message_data', string_path=['table']) }} as table_name,
+        {{ fivetran_utils.json_parse(string='message_data', string_path=['schema']) }} as schema_name,
+        {{ fivetran_utils.json_parse(string='message_data', string_path=['operationType']) }} as operation_type,
+        cast ({{ fivetran_utils.json_parse(string='message_data', string_path=['count']) }} as {{ dbt_utils.type_int() }}) as row_count
 
     from sync_log 
     where event_subtype = 'records_modified'

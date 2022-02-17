@@ -35,12 +35,12 @@ final as (
         message_data,
 
         case 
-        when event_subtype = 'alter_table' then {{ fivetran_utils.json_extract(string='message_data', string_path='table') }} 
-        when event_subtype = 'create_table' then {{ fivetran_utils.json_extract(string='message_data', string_path='name') }} 
+        when event_subtype = 'alter_table' then {{ fivetran_utils.json_parse(string='message_data', string_path=['table']) }} 
+        when event_subtype = 'create_table' then {{ fivetran_utils.json_parse(string='message_data', string_path=['name']) }} 
         else null end as table_name,
 
         case 
-        when event_subtype = 'create_schema' or event_subtype = 'create_table' then {{ fivetran_utils.json_extract(string='message_data', string_path='schema') }} 
+        when event_subtype = 'create_schema' or event_subtype = 'create_table' then {{ fivetran_utils.json_parse(string='message_data', string_path=['schema']) }} 
         else null end as schema_name
     
     from add_connector_info

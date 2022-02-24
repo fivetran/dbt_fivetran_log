@@ -1,3 +1,8 @@
+# dbt_fivetran_log v0.5.1
+
+## Features
+This release just introduces Databricks compatibility! 🧱🧱
+
 # dbt_fivetran_log v0.5.0
 🎉 Official dbt v1.0.0 Compatibility Release 🎉
 ## 🚨 Breaking Changes 🚨

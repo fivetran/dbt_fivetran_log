@@ -8,8 +8,8 @@ with connector_log as (
         or event_type = 'WARNING'
         or event_subtype like 'sync%'
         or (event_subtype = 'status' 
-            and {{ fivetran_utils.json_extract(string="message_data", string_path="status") }} ='RESCHEDULED'
-            and {{ fivetran_utils.json_extract(string="message_data", string_path="reason") }} like '%intended behavior%'
+            and {{ fivetran_utils.json_parse(string="message_data", string_path=["status"]) }} ='RESCHEDULED'
+            and {{ fivetran_utils.json_parse(string="message_data", string_path=["reason"]) }} like '%intended behavior%'
             ) -- for priority-first syncs. these should be captured by event_type = 'WARNING' but let's make sure
 
         -- whole reason is "We have rescheduled the connector to force flush data from the forward sync into your destination. This is intended behavior and means that the connector is working as expected."
@@ -59,8 +59,8 @@ connector_metrics as (
             then connector_log.created_at else null end) as last_sync_completed_at,
 
         max(case when connector_log.event_subtype = 'status'
-                and {{ fivetran_utils.json_extract(string="connector_log.message_data", string_path="status") }} ='RESCHEDULED'
-                and {{ fivetran_utils.json_extract(string="connector_log.message_data", string_path="reason") }} like '%intended behavior%'
+                and {{ fivetran_utils.json_parse(string="connector_log.message_data", string_path=["status"]) }} ='RESCHEDULED'
+                and {{ fivetran_utils.json_parse(string="connector_log.message_data", string_path=["reason"]) }} like '%intended behavior%'
             then connector_log.created_at else null end) as last_priority_first_sync_completed_at,
                 
 
@@ -130,8 +130,8 @@ connector_recent_logs as (
         and connector_log.event_type != 'INFO' 
         -- need to explicitly avoid priority first statuses because they are of event_type WARNING
         and not (connector_log.event_subtype = 'status' 
-            and {{ fivetran_utils.json_extract(string="connector_log.message_data", string_path="status") }} ='RESCHEDULED'
-            and {{ fivetran_utils.json_extract(string="connector_log.message_data", string_path="reason") }} like '%intended behavior%')
+            and {{ fivetran_utils.json_parse(string="connector_log.message_data", string_path=["status"]) }} ='RESCHEDULED'
+            and {{ fivetran_utils.json_parse(string="connector_log.message_data", string_path=["reason"]) }} like '%intended behavior%')
 
     {{ dbt_utils.group_by(n=11) }} -- de-duping error messages
     

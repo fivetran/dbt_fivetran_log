@@ -9,7 +9,7 @@ fields as (
     select
         id as account_id,
         country,
-        created_at,
+        cast(created_at as {{ dbt_utils.type_timestamp() }}) as created_at,
         name as account_name,
         status
         

@@ -10,7 +10,7 @@ fields as (
 
     select
         id as transformation_id,
-        created_at,
+        cast(created_at as {{ dbt_utils.type_timestamp() }}) as created_at,
         created_by_id as created_by_user_id,
         destination_id,
         name as transformation_name,

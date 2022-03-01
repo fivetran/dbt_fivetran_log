@@ -9,8 +9,8 @@ fields as (
     select
         destination_id,
         user_id,
-        activated_at,
-        joined_at,
+        cast(activated_at as {{ dbt_utils.type_timestamp() }}) as activated_at,
+        cast(joined_at as {{ dbt_utils.type_timestamp() }}) as joined_at,
         role as destination_role
         
     from destination_membership

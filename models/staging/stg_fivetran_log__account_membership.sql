@@ -9,8 +9,8 @@ fields as (
     select
         account_id,
         user_id,
-        activated_at,
-        joined_at,
+        cast(activated_at as {{ dbt_utils.type_timestamp() }}) as activated_at,
+        cast(joined_at as {{ dbt_utils.type_timestamp() }}) as joined_at,
         role as account_role
         
     from account_membership

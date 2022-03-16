@@ -40,7 +40,7 @@ models:
 
       - name: last_sync_completed_at
         description: > 
-          Timestamp of when the last sync was complted.
+          Timestamp of when the last sync was completed.
           
       - name: set_up_at
         description: Timestamp of when the connector was set up.

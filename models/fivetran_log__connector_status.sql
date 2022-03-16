@@ -1,6 +1,8 @@
 with connector_log as (
 
-    select *
+    select *,
+        sum( case when event_subtype in ('sync_start') then 1 else 0 end) over ( partition by connector_id 
+            order by created_at rows unbounded preceding) as sync_batch_id
     from {{ ref('stg_fivetran_log__log') }}
 
     -- only looking at errors, warnings, and syncs here
@@ -58,6 +60,10 @@ connector_metrics as (
         max(case when connector_log.event_subtype = 'sync_end' 
             then connector_log.created_at else null end) as last_sync_completed_at,
 
+        --New batch logic
+        max(case when connector_log.event_subtype = 'sync_end' 
+            then connector_log.sync_batch_id else null end) as last_sync_batch_id,
+
         max(case when connector_log.event_subtype = 'status'
                 and {{ fivetran_utils.json_parse(string="connector_log.message_data", string_path=["status"]) }} ='RESCHEDULED'
                 and {{ fivetran_utils.json_parse(string="connector_log.message_data", string_path=["reason"]) }} like '%intended behavior%'
@@ -65,6 +71,8 @@ connector_metrics as (
                 
 
         max(case when connector_log.event_type = 'SEVERE' then connector_log.created_at else null end) as last_error_at,
+        --New batch logic
+        max(case when connector_log.event_type = 'SEVERE' then connector_log.sync_batch_id else null end) as last_error_batch,
         max(case when event_type = 'WARNING' then connector_log.created_at else null end) as last_warning_at
 
     from connector 
@@ -95,7 +103,8 @@ connector_health as (
             when last_sync_completed_at is null and last_error_at is null then 'initial sync in progress'
 
             -- there's been an error since the connector last completed a sync
-            when last_error_at > last_sync_completed_at then 'broken'
+            when --last_error_at > last_sync_completed_at and 
+                last_sync_batch_id = last_error_batch then 'broken'
 
             -- there's never been a successful sync and there have been errors
             when last_sync_completed_at is null and last_error_at is not null then 'broken'

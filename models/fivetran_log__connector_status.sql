@@ -10,7 +10,10 @@ with connector_log as (
         or event_type = 'WARNING'
         or event_subtype like 'sync%'
         or (event_subtype = 'status' 
+            and {{ fivetran_utils.json_parse(string="message_data", string_path=["status"]) }} ='SUCCESSFUL')
+        or (event_subtype = 'status' 
             and {{ fivetran_utils.json_parse(string="message_data", string_path=["status"]) }} ='RESCHEDULED'
+            
             and {{ fivetran_utils.json_parse(string="message_data", string_path=["reason"]) }} like '%intended behavior%'
             ) -- for priority-first syncs. these should be captured by event_type = 'WARNING' but let's make sure
 
@@ -59,6 +62,10 @@ connector_metrics as (
 
         max(case when connector_log.event_subtype = 'sync_end' 
             then connector_log.created_at else null end) as last_sync_completed_at,
+
+        max(case when connector_log.event_subtype = 'status'
+                and {{ fivetran_utils.json_parse(string="connector_log.message_data", string_path=["status"]) }} ='SUCCESSFUL'
+            then connector_log.created_at else null end) as last_successful_sync_completed_at,
 
         --New batch logic
         max(case when connector_log.event_subtype = 'sync_end' 
@@ -123,6 +130,7 @@ connector_recent_logs as (
         connector_health.connector_type,
         connector_health.destination_id,
         connector_health.connector_health,
+        connector_health.last_successful_sync_completed_at,
         connector_health.last_sync_started_at,
         connector_health.last_sync_completed_at,
         connector_health.set_up_at,
@@ -142,7 +150,7 @@ connector_recent_logs as (
             and {{ fivetran_utils.json_parse(string="connector_log.message_data", string_path=["status"]) }} ='RESCHEDULED'
             and {{ fivetran_utils.json_parse(string="connector_log.message_data", string_path=["reason"]) }} like '%intended behavior%')
 
-    {{ dbt_utils.group_by(n=11) }} -- de-duping error messages
+    {{ dbt_utils.group_by(n=12) }} -- de-duping error messages
     
 
 ),
@@ -156,6 +164,7 @@ final as (
         connector_recent_logs.destination_id,
         destination.destination_name,
         connector_recent_logs.connector_health,
+        connector_recent_logs.last_successful_sync_completed_at,
         connector_recent_logs.last_sync_started_at,
         connector_recent_logs.last_sync_completed_at,
         connector_recent_logs.set_up_at,
@@ -171,7 +180,7 @@ final as (
         on connector_recent_logs.connector_id = schema_changes.connector_id 
 
     join destination on destination.destination_id = connector_recent_logs.destination_id
-    {{ dbt_utils.group_by(n=10) }}
+    {{ dbt_utils.group_by(n=11) }}
 )
 
 select * from final

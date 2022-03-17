@@ -33,6 +33,10 @@ models:
       - name: connector_health
         description: Status of the connector's data flow. Can be `"broken"`, `"incomplete"`, `"connected"`, `"paused"`, `"initial sync in progress"`, or `"priority first sync"`.
 
+      - name: last_successful_sync_completed_at
+        description: > 
+          Timestamp of when the last successful sync completed.
+
       - name: last_sync_started_at
         description: > 
           Timestamp of when the last sync was started. Note that if new data comes in after a sync has 
@@ -40,7 +44,7 @@ models:
 
       - name: last_sync_completed_at
         description: > 
-          Timestamp of when the last sync was completed.
+          Timestamp of when the last sync was completed. This could be either a failure or a successful sync.
           
       - name: set_up_at
         description: Timestamp of when the connector was set up.

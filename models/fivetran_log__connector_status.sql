@@ -10,9 +10,7 @@ with connector_log as (
         or event_type = 'WARNING'
         or event_subtype like 'sync%'
         or (event_subtype = 'status' 
-            and {{ fivetran_utils.json_parse(string="message_data", string_path=["status"]) }} ='SUCCESSFUL')
-        or (event_subtype = 'status' 
-            and {{ fivetran_utils.json_parse(string="message_data", string_path=["status"]) }} ='RESCHEDULED'
+            and {{ fivetran_utils.json_parse(string="message_data", string_path=["status"]) }}  in ('SUCCESSFUL', 'RESCHEDULED'))
             
             and {{ fivetran_utils.json_parse(string="message_data", string_path=["reason"]) }} like '%intended behavior%'
             ) -- for priority-first syncs. these should be captured by event_type = 'WARNING' but let's make sure

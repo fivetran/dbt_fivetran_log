@@ -10,11 +10,13 @@ with connector_log as (
         or event_type = 'WARNING'
         or event_subtype like 'sync%'
         or (event_subtype = 'status' 
-            and {{ fivetran_utils.json_parse(string="message_data", string_path=["status"]) }}  in ('SUCCESSFUL', 'RESCHEDULED'))
+            and {{ fivetran_utils.json_parse(string="message_data", string_path=["status"]) }} = 'RESCHEDULED'
             
             and {{ fivetran_utils.json_parse(string="message_data", string_path=["reason"]) }} like '%intended behavior%'
             ) -- for priority-first syncs. these should be captured by event_type = 'WARNING' but let's make sure
-
+        or (event_subtype = 'status' 
+            and {{ fivetran_utils.json_parse(string="message_data", string_path=["status"]) }} = 'SUCCESSFUL'
+        )
         -- whole reason is "We have rescheduled the connector to force flush data from the forward sync into your destination. This is intended behavior and means that the connector is working as expected."
 ),
 
@@ -61,22 +63,22 @@ connector_metrics as (
         max(case when connector_log.event_subtype = 'sync_end' 
             then connector_log.created_at else null end) as last_sync_completed_at,
 
-        max(case when connector_log.event_subtype = 'status'
+        max(case when connector_log.event_subtype in ('status', 'sync_end')
                 and {{ fivetran_utils.json_parse(string="connector_log.message_data", string_path=["status"]) }} ='SUCCESSFUL'
             then connector_log.created_at else null end) as last_successful_sync_completed_at,
 
-        --New batch logic
+
         max(case when connector_log.event_subtype = 'sync_end' 
             then connector_log.sync_batch_id else null end) as last_sync_batch_id,
 
-        max(case when connector_log.event_subtype = 'status'
+        max(case when connector_log.event_subtype in ('status', 'sync_end')
                 and {{ fivetran_utils.json_parse(string="connector_log.message_data", string_path=["status"]) }} ='RESCHEDULED'
                 and {{ fivetran_utils.json_parse(string="connector_log.message_data", string_path=["reason"]) }} like '%intended behavior%'
             then connector_log.created_at else null end) as last_priority_first_sync_completed_at,
                 
 
         max(case when connector_log.event_type = 'SEVERE' then connector_log.created_at else null end) as last_error_at,
-        --New batch logic
+
         max(case when connector_log.event_type = 'SEVERE' then connector_log.sync_batch_id else null end) as last_error_batch,
         max(case when event_type = 'WARNING' then connector_log.created_at else null end) as last_warning_at
 
@@ -107,9 +109,8 @@ connector_health as (
             -- a sync has been attempted, but not completed, and it's not due to errors. also a priority-first sync hasn't
             when last_sync_completed_at is null and last_error_at is null then 'initial sync in progress'
 
-            -- there's been an error since the connector last completed a sync
-            when --last_error_at > last_sync_completed_at and 
-                last_sync_batch_id = last_error_batch then 'broken'
+            -- the last attempted sync had an error
+            when last_sync_batch_id = last_error_batch then 'broken'
 
             -- there's never been a successful sync and there have been errors
             when last_sync_completed_at is null and last_error_at is not null then 'broken'

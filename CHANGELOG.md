@@ -1,3 +1,10 @@
+# dbt_fivetran_log v0.5.3
+## Fixes
+- Addition of the `sync_id` field within the `stg_fivetran_log__log` model.
+- Inclusion of the `sync_id` field within the unique combination of columns test for the `stg_fivetran_log__log` model to ensure true uniqueness of sync records.
+
+## Under the Hood
+- Fixes spelling errors within the `fivetran_log.yml` file.
 # dbt_fivetran_log v0.5.2
 ## Fixes
 - The `fivetran_log__connector_status` model uses a date function off of `created_at` from the `stg_fivetran_log__log` model. This fails on certain redshift destinations as the timestamp is synced as `timestamptz`. Therefore, the field within the staging model is cast using `dbt_utils.type_timestamp` to appropriately cast the field for downstream functions. Further, to future proof, timestamps were cast within the following staging models: `account`, `account_membership`, `active_volume`, `destination_membership`, `destination`, `log`, `transformation`, and `user`. ([#40](https://github.com/fivetran/dbt_fivetran_log/pull/40))

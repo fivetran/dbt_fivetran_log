@@ -12,7 +12,7 @@ sources:
       warn_after: {count: 72, period: hour}
       error_after: {count: 96, period: hour}
 
-    tables: 
+    tables:        
       - name: active_volume
         description: >
           Table of **monthly active row (MAR)** measurements made by table per date. 
@@ -64,6 +64,16 @@ sources:
             description: The month (yyyy-mm) in which the credits were consumed.
           - name: credits_consumed
             description: The number of credits used by the destination for the given month.
+
+      - name: usage_cost
+        description: Table of the credits used by the customer per month within each destination.
+        columns:
+          - name: destination_id
+            description: Foreign key referencing the `destination` warehouse that the credits were used on
+          - name: measured_month
+            description: The month (yyyy-mm) in which the credits were consumed.
+          - name: amount
+            description: The dollar amount associated with the cost of your connector.
 
       - name: destination
         description: Table of the destinations that have data loaded into them. For each declared source, there will be just one record.

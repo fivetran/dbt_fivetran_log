@@ -65,8 +65,8 @@ models:
         description: Foreign key referencing the `destination` warehouse that the credits were used on.
       - name: measured_month
         description: The month (yyyy-mm) in which the credits were consumed.
-      - name: credits_consumed
-        description: The number of credits used by the destination for the given month.
+      - name: consumption_amount
+        description: The number of credits or dollar amount used by the destination for the given month.
 
   - name: stg_fivetran_log__destination
     description: Table of the destinations that have data loaded into them. For each declared source, there will be just one record.

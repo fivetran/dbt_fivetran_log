@@ -133,8 +133,8 @@ models:
       - name: destination_name
         description: Name of the destination as it appears in the UI.
 
-      - name: credits_consumed
-        description: The number of credits used by the destination for the given month.
+      - name: consumption
+        description: The number of credits or dollar amount used by the destination for the given month.
 
       - name: monthly_active_rows
         description: The number of total active rows measured in the destination for the month.

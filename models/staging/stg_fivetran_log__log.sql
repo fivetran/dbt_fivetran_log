@@ -22,4 +22,6 @@ fields as (
     from log
 )
 
-select * from fields 
+select * 
+from fields 
+where transformation_id is null

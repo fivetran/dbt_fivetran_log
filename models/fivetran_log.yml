@@ -290,7 +290,7 @@ models:
           combination_of_columns: 
             - connector_id
             - destination_id
-            - created_at
+            - message_data
     columns:
       - name: connector_id
         description: System generated unique ID of the connector.

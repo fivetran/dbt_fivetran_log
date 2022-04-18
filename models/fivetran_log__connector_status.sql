@@ -2,7 +2,7 @@ with transformation_removal as (
 
     select *
     from {{ ref('stg_fivetran_log__log') }}
-    where event_subtype != 'TRANSFORMATION'
+    where transformation_id is null
 
 ),
 

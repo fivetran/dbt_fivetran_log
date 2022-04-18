@@ -56,6 +56,7 @@ sources:
             description: Timestamp of when the connection was set up.
 
       - name: credits_used
+        freshness: null
         description: Table of the credits used by the customer per month within each destination.
         columns:
           - name: destination_id
@@ -66,6 +67,7 @@ sources:
             description: The number of credits used by the destination for the given month.
 
       - name: usage_cost
+        freshness: null
         description: Table of the credits used by the customer per month within each destination.
         columns:
           - name: destination_id

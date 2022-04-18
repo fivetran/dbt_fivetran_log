@@ -27,7 +27,7 @@ The package's main goals are to:
 | [fivetran_log__connector_status](models/fivetran_log__connector_status.sql)        | Each record represents a connector loading data into a destination, enriched with data about the connector's data sync status.                                          |
 | [fivetran_log__transformation_status](models/fivetran_log_transformation_status.sql)     | Each record represents a transformation, enriched with data about the transformation's last sync and any tables whose new data triggers the transformation to run. |
 | [fivetran_log__mar_table_history](models/fivetran_log__mar_table_history.sql)     | Each record represents a table's active volume for a month, complete with data about its connector and destination.                             |
-| [fivetran_log__credit_mar_destination_history](models/fivetran_log__credit_mar_destination_history.sql)    | Each record represents a destination's consumption by showing its MAR, total credits used, and credits per millions MAR.                             |
+| [fivetran_log__usage_mar_destination_history](models/fivetran_log__credit_mar_destination_history.sql)    | Each record represents a destination's consumption by showing its MAR, total usage, and usage per millions MAR. Usage either refers to a dollar or credit amount, depending on customer's pricing model.                            |
 | [fivetran_log__connector_daily_events](models/fivetran_log__connector_daily_events.sql)    | Each record represents a daily measurement of the API calls, schema changes, and record modifications made by a connector, starting from the date on which the connector was set up.                            |
 | [fivetran_log__schema_changelog](models/fivetran_log__schema_changelog.sql)    | Each record represents a schema change (altering/creating tables, creating schemas, and changing schema configurations) made to a connector and contains detailed information about the schema change event.                           |
 | [fivetran_log__audit_table](models/fivetran_log__audit_table.sql)    | Replaces the deprecated [`fivetran_audit` table](https://fivetran.com/docs/getting-started/system-columns-and-tables#audittables). Each record represents a table being written to during a connector sync. Contains timestamps related to the connector and table-level sync progress and the sum of records inserted/replaced, updated, and deleted in the table.                             |
@@ -79,6 +79,20 @@ vars:
   fivetran_log:
     fivetran_log_using_transformations: false # this will disable all transformation + trigger_table logic
     fivetran_log_using_triggers: false # this will disable only trigger_table logic 
+```
+
+### Toggling between pricing models
+Customers using Fivetran with the newest pricing model will have a `usage_cost` table in place of the older `credits_used` table. Therefore to accommodate two different source tables we added additional logic in the `stg_fivetran_log__usage` model to check if there exists the `usage_cost` table using a new does_table_exist() macro. If not, it will look for a `credits_used` table. While the default is to use the `usage_cost` table if it exists, you may add the following to your `dbt_project.yml` to override using the macro. 
+
+```yml
+# dbt_project.yml
+
+...
+config-version: 2
+
+vars:
+  fivetran_log:
+    fivetran_log__usage_pricing: false #  If true, will look `usage_cost` table. If false, will look for the `credits_used` table. 
 ```
 
 ### Disabling Fivetran Error and Warning Messages

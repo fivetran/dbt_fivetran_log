@@ -25,4 +25,3 @@ fields as (
 )
 
 select * from fields
-where transformation_id is not null

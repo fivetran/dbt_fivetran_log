@@ -1,3 +1,6 @@
+# dbt_fivetran_log v0.6.3
+## New Pricing Model Updates
+- Introduces a new macro `does_table_exist` as part of additional logic to `stg_fivetran_log__usage`. This checks and pulls from the `usage_cost` source table for customers on the new pricing model, which replaces the old `credits_used` table. Downstream models have also been updated to reflect the pricing changes. ([#50](https://github.com/fivetran/dbt_fivetran_log/pull/50))
 # dbt_fivetran_log v0.5.3
 ## Fixes
 - Per the [Fivetran Log December 2021 Release Notes](https://fivetran.com/docs/logs/changelog#december2021) every sync results in a final `sync_end` event. In the previous version of this package, a successful sync was identified via a `sync_end` event while anything else was a version of broken. Since all syncs result in a `sync_end` event now, the package has been updated to account for this change within the connector.

@@ -29,5 +29,3 @@ vars:
     trigger_table: "{{ source('fivetran_log', 'trigger_table') }}"
     user: "{{ source('fivetran_log', 'user') }}"
     usage_cost: "{{ source('fivetran_log', 'usage_cost') }}"
-
-    fivetran_log__usage_pricing: True

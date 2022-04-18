@@ -35,7 +35,6 @@ jobs:
             dbt seed --target spark --full-refresh
             dbt run --vars '{fivetran_log__usage_pricing: true}' --full-refresh --target spark
             dbt test --target spark
-            dbt seed --target spark --full-refresh
             dbt run --vars '{fivetran_log__usage_pricing: false}' --full-refresh --target spark
             dbt test --target spark
       - run:

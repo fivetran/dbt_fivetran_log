@@ -6,7 +6,7 @@ with table_mar as (
 
 consumption_cost as (
     select *
-    from {{ ref('stg_fivetran_log__credits_used') }}
+    from {{ ref('stg_fivetran_log__usage') }}
 
 ),
 

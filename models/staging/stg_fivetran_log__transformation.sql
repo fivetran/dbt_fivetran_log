@@ -24,4 +24,5 @@ fields as (
     
 )
 
-select * from fields
+select * 
+from fields

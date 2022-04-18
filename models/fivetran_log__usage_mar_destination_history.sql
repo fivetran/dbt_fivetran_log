@@ -32,7 +32,7 @@ usage as (
     from consumption_cost
 ),
 
-join_credits_mar as (
+join_usage_mar as (
 
     select 
         destination_mar.measured_month,
@@ -40,8 +40,8 @@ join_credits_mar as (
         destination_mar.destination_name,
         usage.consumption,
         destination_mar.monthly_active_rows,
-        round( nullif(usage.consumption,0) * 1000000.0 / nullif(destination_mar.monthly_active_rows,0), 2) as credits_per_million_mar,
-        round( nullif(destination_mar.monthly_active_rows,0) * 1.0 / nullif(usage.consumption,0), 0) as mar_per_credit
+        round( nullif(usage.consumption,0) * 1000000.0 / nullif(destination_mar.monthly_active_rows,0), 2) as usage_per_million_mar,
+        round( nullif(destination_mar.monthly_active_rows,0) * 1.0 / nullif(usage.consumption,0), 0) as mar_per_usage
 
     from 
     destination_mar left join usage 
@@ -50,5 +50,5 @@ join_credits_mar as (
 
 )
 
-select * from join_credits_mar
+select * from join_usage_mar
 order by measured_month desc

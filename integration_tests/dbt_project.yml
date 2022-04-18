@@ -20,6 +20,7 @@ vars:
     transformation: "{{ ref('transformation') }}"
     trigger_table: "{{ fivetran_utils.snowflake_seed_data('trigger_table') }}"
     user: "{{ ref('user') }}"
+    usage_cost: "{{ ref('usage_cost') }}"
 
 
 seeds:

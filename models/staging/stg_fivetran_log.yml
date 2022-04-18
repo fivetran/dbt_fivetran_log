@@ -54,7 +54,7 @@ models:
         description: Timestamp of when the connection was set up.
 
   - name: stg_fivetran_log__usage
-    description: Table of the usage by the customer per month for each destination. Usage either refers to a dollar or credit amount, depending on customer's pricing model.
+    description: Table of the usage by the customer per month for each destination. Usage either refers to a dollar or credit amount, depending on customer's pricing model and pulls from either the usage_cost or credits_used table respectively.
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns: 

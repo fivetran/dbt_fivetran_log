@@ -47,7 +47,7 @@ integration_tests:
     spark:
       type: spark
       method: http
-      schema: fivetran_log_integration__test
+      schema: fivetran_log_integration__test_2
       host: "{{ env_var('CI_SPARK_DBT_HOST') }}"
       organization: "{{ env_var('CI_SPARK_DBT_ORGANIZATION') }}"
       token: "{{ env_var('CI_SPARK_DBT_TOKEN') }}"

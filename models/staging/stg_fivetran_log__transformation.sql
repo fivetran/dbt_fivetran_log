@@ -24,5 +24,5 @@ fields as (
     
 )
 
-select * 
-from fields
+select * from fields
+where transformation_id is not null

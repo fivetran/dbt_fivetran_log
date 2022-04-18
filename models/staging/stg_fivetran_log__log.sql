@@ -22,5 +22,4 @@ fields as (
     from log
 )
 
-select * 
-from fields 
+select * from fields 

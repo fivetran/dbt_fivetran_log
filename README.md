@@ -47,7 +47,7 @@ packages:
 ```
 
 ## Package Maintenance
-The Fivetran team maintaining this package **only** maintains the latest version. We highly recommend you keep your `packages.yml` updated with the [dbt hub latest version](https://hub.getdbt.com/fivetran/fivetran_log/latest/). You may refer to the [CHANGELOG](/CHANGELOG.md) and release notes for more information on changes across versions.
+The Fivetran team maintaining this package **only** maintains the latest version. We highly recommend you keep your `packages.yml` updated with the [dbt hub latest version](https://hub.getdbt.com/fivetran/fivetran_log/latest/). You may refer to the [CHANGELOG](https://github.com/fivetran/dbt_fivetran_log/blob/main/CHANGELOG.md) and release notes for more information on changes across versions.
 
 ## Configuration
 By default, this package will run using your target database and the `fivetran_log` schema. If this is not where your Fivetran Log data is, add the following configuration to your `dbt_project.yml` file:

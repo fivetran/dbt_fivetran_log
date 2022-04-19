@@ -40,8 +40,8 @@ join_usage_mar as (
         destination_mar.destination_name,
         usage.consumption,
         destination_mar.monthly_active_rows,
-        round( nullif(usage.consumption,0) * 1000000.0 / nullif(destination_mar.monthly_active_rows,0), 2) as usage_per_million_mar,
-        round( nullif(destination_mar.monthly_active_rows,0) * 1.0 / nullif(usage.consumption,0), 0) as mar_per_usage
+        round( cast(nullif(usage.consumption,0) * 1000000.0 as {{ dbt_utils.type_numeric() }}) / cast(nullif(destination_mar.monthly_active_rows,0) as {{ dbt_utils.type_numeric() }}), 2) as usage_per_million_mar,
+        round( cast(nullif(destination_mar.monthly_active_rows,0) * 1.0 as {{ dbt_utils.type_numeric() }}) / cast(nullif(usage.consumption,0) as {{ dbt_utils.type_numeric() }}), 0) as mar_per_usage
 
     from 
     destination_mar left join usage 

@@ -290,6 +290,7 @@ models:
           combination_of_columns: 
             - connector_id
             - destination_id
+            - message_data
             - created_at
     columns:
       - name: connector_id

@@ -1,3 +1,22 @@
+# dbt_fivetran_log v0.5.5
+## Fixes
+- Added the option to disable some models that are not available depending on your Fivetran license. In dbt_project.yml you can now change these flags to disable parts of the package
+  - fivetran_log_account_membership
+  - fivetran_log_active_volume
+  - fivetran_log_credits_used
+  - fivetran_log_destination_membership
+  - fivetran_log_user
+
+  Include this in your dbt_project.yml file
+
+  ```
+  fivetran_log_account_membership: false # Disables account membership models
+  fivetran_log_active_volume: false # Disables account membership models
+  fivetran_log_credits_used: false # Disables account membership models
+  fivetran_log_destination_membership: false # Disables account membership models
+  fivetran_log_user: false # Disables account membership models
+  ```
+
 # dbt_fivetran_log v0.5.4
 ## Fixes
 - The unique combination of columns test within the `fivetran_log__schema_changelog` model has been updated to also check the `message_data` field. This is needed as schema changelog events may now sync at the same time. ([#51](https://github.com/fivetran/dbt_fivetran_log/pull/51))

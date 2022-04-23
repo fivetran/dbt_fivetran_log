@@ -1,3 +1,5 @@
+{{ config(enabled=fivetran_utils.enabled_vars(['fivetran_log_destination_membership'])) }}
+
 with destination_membership as (
     
     select * from {{ var('destination_membership') }}

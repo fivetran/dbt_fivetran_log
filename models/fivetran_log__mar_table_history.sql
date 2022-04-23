@@ -1,3 +1,5 @@
+{{ config(enabled=fivetran_utils.enabled_vars(['fivetran_log_active_volume'])) }}
+
 with active_volume as (
 
     select 

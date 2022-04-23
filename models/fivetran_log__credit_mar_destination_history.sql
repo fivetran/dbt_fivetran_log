@@ -1,3 +1,5 @@
+{{ config(enabled=fivetran_utils.enabled_vars(['fivetran_log_credits_used'])) }}
+
 with table_mar as (
     
     select *

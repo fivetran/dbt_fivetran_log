@@ -1,4 +1,4 @@
-{{ config(enabled=fivetran_utils.enabled_vars(['fivetran_log_account_membership'])) }}
+{{ config(enabled=false) }}
 
 with account_membership as (
     

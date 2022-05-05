@@ -53,8 +53,8 @@ models:
       - name: set_up_at
         description: Timestamp of when the connection was set up.
 
-  - name: stg_fivetran_log__usage
-    description: Table of the usage by the customer per month for each destination. Usage either refers to a dollar or credit amount, depending on customer's pricing model and pulls from either the usage_cost or credits_used table respectively.
+  - name: stg_fivetran_log__credits_used
+    description: Table of the credits used by the customer per month for each destination.
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns: 
@@ -65,8 +65,23 @@ models:
         description: Foreign key referencing the `destination` warehouse that was used. 
       - name: measured_month
         description: The month (yyyy-mm) of the usage activity.
-      - name: consumption_amount
-        description: The total usage (credits or dollar amount, depending on customer's pricing model) used by the destination for the given month.
+      - name: credits_spent
+        description: The total credits used by the destination for the given month.
+
+  - name: stg_fivetran_log__usage_cost
+    description: Table of the amount spent by the customer per month for each destination. Amount is represented in USD.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: 
+            - measured_month
+            - destination_id
+    columns:
+      - name: destination_id
+        description: Foreign key referencing the `destination` warehouse that was used. 
+      - name: measured_month
+        description: The month (yyyy-mm) of the usage activity.
+      - name: dollars_spent
+        description: The total amount spent by the destination for the given month.
 
   - name: stg_fivetran_log__destination
     description: Table of the destinations that have data loaded into them. For each declared source, there will be just one record.

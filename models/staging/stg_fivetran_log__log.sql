@@ -1,7 +1,7 @@
 with log as (
 
-    select * from {{ var('log') }}
-    
+    select * 
+    from {{ var('log') }}
 ),
 
 fields as (
@@ -18,8 +18,8 @@ fields as (
         when transformation_id is not null and message_data like '%has failed%' then 'transformation run failed'
         else message_event end as event_subtype,
         transformation_id
-
     from log
 )
 
-select * from fields 
+select * 
+from fields 

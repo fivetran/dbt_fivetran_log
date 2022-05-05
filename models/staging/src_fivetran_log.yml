@@ -14,6 +14,7 @@ sources:
 
     tables:        
       - name: active_volume
+        identifier: "{{ var('fivetran_log_active_volume_identifier', 'active_volume')}}"
         description: >
           Table of **monthly active row (MAR)** measurements made by table per date. 
           Each measurement is calculated cumulatively for the month. 
@@ -34,6 +35,7 @@ sources:
             description: The name of the table whose MAR was measured.
 
       - name: connector
+        identifier: "{{ var('fivetran_log_connector_identifier', 'connector')}}"
         description: >
           Table of all connectors loading data into warehouses. Note that deleted connectors 
           are not removed, but can be identified by having an older _fivetran_synced field relative 
@@ -56,6 +58,7 @@ sources:
             description: Timestamp of when the connection was set up.
 
       - name: credits_used
+        identifier: "{{ var('fivetran_log_credits_used_identifier', 'credits_used')}}"
         freshness: null
         description: Table of the credits used by the customer per month within each destination.
         columns:
@@ -67,6 +70,7 @@ sources:
             description: The number of credits used by the destination for the given month.
 
       - name: usage_cost
+        identifier: "{{ var('fivetran_log_usage_cost_identifier', 'usage_cost')}}"
         freshness: null
         description: Table of the credits used by the customer per month within each destination.
         columns:
@@ -78,6 +82,7 @@ sources:
             description: The dollar amount associated with the cost of your connector.
 
       - name: destination
+        identifier: "{{ var('fivetran_log_destination_identifier', 'destination')}}"
         description: Table of the destinations that have data loaded into them. For each declared source, there will be just one record.
         columns:
           - name: id
@@ -92,6 +97,7 @@ sources:
             description: Geographical region of the destination.
       
       - name: log
+        identifier: "{{ var('fivetran_log_log_identifier', 'log')}}"
         description: Table of logged events related to data syncs. More info on error logs [here](https://fivetran.com/docs/logs/fivetran-log#errorlogs).
         columns:
           - name: id 
@@ -110,8 +116,9 @@ sources:
             description: The routine involved in the log, defined [here](https://fivetran.com/docs/logs#logevents).
           - name: transformation_id
             description: Foreign key referencing the `transformation` if the event refers to a transformation run.
-     
+
       - name: account
+        identifier: "{{ var('fivetran_log_account_identifier', 'account')}}"
         description: Table of information on this Fivetran account.
         columns:
           - name: id
@@ -126,6 +133,7 @@ sources:
             description: Status of the Fivetran account (ie trial, frozen).
 
       - name: account_membership
+        identifier: "{{ var('fivetran_log_account_membership_identifier', 'account_membership')}}"
         description: Table of the users given access to this account.
         columns:
           - name: account_id
@@ -140,6 +148,7 @@ sources:
             description: The user's permissions for this account.
 
       - name: destination_membership
+        identifier: "{{ var('fivetran_log_destination_membership_identifier', 'destination_membership')}}"
         description: Table of the users given access to this destination.
         columns:
           - name: destination_id
@@ -154,6 +163,7 @@ sources:
             description: The user's permissions for this individual destination.
 
       - name: user
+        identifier: "{{ var('fivetran_log_user_identifier', 'user')}}"
         description: Table of users given access to this Fivetran account.
         columns:
           - name: id
@@ -174,12 +184,13 @@ sources:
             description: Boolean that indicates whether the user has verified their email address in the account creation process.
 
       - name: trigger_table
+        identifier: "{{ var('fivetran_log_trigger_table_identifier', 'trigger_table')}}"
         description: >
           Table relating transformations to the connector source tables that trigger them. 
           Transformations on time schedules do not appear here. Note - this table is only created 
           once you have created a triggered transformation.
         freshness: null
-        # transformation data tests are currently implemented at the staging level to accomodate schemas without this source table
+        # transformation data tests are currently implemented at the staging level to accommodate schemas without this source table
         columns:
           - name: table
             description: Connector source table whose new data triggers the transformation.
@@ -187,11 +198,12 @@ sources:
             description: Foreign key referencing the `transformation` that is triggered by new data.
 
       - name: transformation
+        identifier: "{{ var('fivetran_log_transformation_identifier', 'transformation')}}"
         description: > 
           Table of [transformations](https://fivetran.com/docs/transformations) made and carried out in Fivetran.
           Note - this table is only created once you have created a transformation for the destination.
         freshness: null
-        # transformation data tests are currently implemented at the staging level to accomodate schemas without this source table
+        # transformation data tests are currently implemented at the staging level to accommodate schemas without this source table
         columns:
           - name: id
             description: Unique ID of the transformation.
@@ -200,7 +212,7 @@ sources:
           - name: created_by_id
             description: Foreign key referencing the `user` who created the transformation.
           - name: destination_id
-            description: Foreign key referenencing the `destination` whose data is being transformed.
+            description: Foreign key referencing the `destination` whose data is being transformed.
           - name: name
             description: Name given to the transformation.
           - name: paused

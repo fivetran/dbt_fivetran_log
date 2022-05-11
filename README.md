@@ -15,14 +15,13 @@
 
 # Fivetran Log dbt Package ([Docs](https://fivetran.github.io/dbt_fivetran_log/))
 # 📣 What does this dbt package do?
-- Produces staging models in the format described by [this ERD](https://fivetran.com/docs/applications/fivetran-log/#schemainformation) which clean, test, and prepare your Fivetran Log data from [Fivetran's free connector](https://fivetran.com/docs/applications/fivetran-log) and generates analysis ready end models.
-- The above mentioned models enable you to better understand how you are spending money in Fivetran according to our [consumption-based pricing model](https://fivetran.com/docs/getting-started/consumption-based-pricing). We display consumption data at the table, connector, destination, and account levels. Additionally, this package also:
-    - Creates a history of measured monthly active rows (MAR), credit consumption, and the relationship between the two
-    - Enhances the connector table with sync metrics and relevant alert messages
-    - Enhances the transformation table with run metrics
-    - Creates a history of vital daily events for each connector
-    - Creates an audit log of records inserted, deleted, an updated in each table during connector syncs
 - Generates a comprehensive data dictionary of your Fivetran Log data via the [dbt docs site](https://fivetran.github.io/dbt_fivetran_log/)
+- Produces staging models in the format described by [this ERD](https://fivetran.com/docs/applications/fivetran-log/#schemainformation) which clean, test, and prepare your Fivetran Log data from [Fivetran's free connector](https://fivetran.com/docs/applications/fivetran-log) and generates analysis ready end models.
+- The above mentioned models enable you to better understand how you are spending money in Fivetran according to our [consumption-based pricing model](https://fivetran.com/docs/getting-started/consumption-based-pricing) as well as providing details about the performance and status of your Fivetran connectors and transformations. This is achieved by:
+    - Displaying consumption data at the table, connector, destination, and account levels
+    - Providing a history of measured monthly active rows (MAR), credit consumption, and the relationship between the two
+    - Creating a history of vital daily events for each connector
+    - Surfacing an audit log of records inserted, deleted, an updated in each table during connector syncs
 
 Refer to the table below for a detailed view of all models materialized by default within this package. Additionally, check out our [docs site](https://fivetran.github.io/dbt_fivetran_log/#!/overview?g_v=1) for more details about these models. 
 ## Models

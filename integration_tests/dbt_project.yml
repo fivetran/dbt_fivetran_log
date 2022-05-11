@@ -1,5 +1,5 @@
 name: 'fivetran_log_integration_tests'
-version: '0.5.4'
+version: '0.6.0'
 config-version: 2
 profile: 'integration_tests'
 
@@ -9,17 +9,19 @@ dispatch:
 
 vars:
   fivetran_log:
-    account: "{{ ref('account') }}"
-    account_membership: "{{ ref('account_membership') }}"
-    active_volume: "{{ ref('active_volume') }}"
-    connector: "{{ ref('connector') }}"
-    credits_used: "{{ ref('credits_used') }}"
-    destination: "{{ ref('destination') }}"
-    destination_membership: "{{ ref('destination_membership') }}"
-    log: "{{ ref('log') }}"
-    transformation: "{{ ref('transformation') }}"
-    trigger_table: "{{ fivetran_utils.snowflake_seed_data('trigger_table') }}"
-    user: "{{ ref('user') }}"
+    fivetran_log_schema: fivetran_log_integration_tests
+    fivetran_log_account_identifier: "account"
+    fivetran_log_account_membership_identifier: "account_membership"
+    fivetran_log_active_volume_identifier: "active_volume"
+    fivetran_log_connector_identifier: "connector"
+    fivetran_log_credits_used_identifier: "credits_used"
+    fivetran_log_usage_cost_identifier: "usage_cost"
+    fivetran_log_destination_identifier: "destination"
+    fivetran_log_destination_membership_identifier: "destination_membership"
+    fivetran_log_log_identifier: "log"
+    fivetran_log_transformation_identifier: "transformation"
+    fivetran_log_trigger_table_identifier: "ran_utils.snowflake_seed_data('trigger_table"
+    fivetran_log_user_identifier: "user"
 
 
 seeds:

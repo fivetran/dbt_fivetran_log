@@ -7,9 +7,9 @@
                     database=node.database,
                     schema=node.schema,
                     identifier=node.name ) -%} 
-            {%- if source_relation == None and node.name == table_name -%} 
+            {%- if source_relation == None and node.name | lower == table_name | lower -%} 
                 {{ return(False) }} -- return false if relation identified by the database.schema.identifier does not exist for the given table name
-            {%- elif source_relation != None and node.name == table_name -%} 
+            {%- elif source_relation != None and node.name | lower == table_name | lower -%} 
                 {{ return(True) }} -- otherwise return True 
             {% endif %}
         {%- endfor -%}

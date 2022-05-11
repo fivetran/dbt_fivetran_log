@@ -1,3 +1,8 @@
+# dbt_fivetran_log v0.6.0
+## 🎉 Features 🎉
+- README documentation updates for easier experience leveraging the dbt package.
+- Added `fivetran_log_[source_table_name]_identifier` variables to allow for easier flexibility of the package to refer to source tables with different names.
+
 # dbt_fivetran_log v0.5.4
 ## Fixes
 - The unique combination of columns test within the `fivetran_log__schema_changelog` model has been updated to also check the `message_data` field. This is needed as schema changelog events may now sync at the same time. ([#51](https://github.com/fivetran/dbt_fivetran_log/pull/51))

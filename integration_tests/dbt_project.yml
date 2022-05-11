@@ -20,7 +20,7 @@ vars:
     fivetran_log_destination_membership_identifier: "destination_membership"
     fivetran_log_log_identifier: "log"
     fivetran_log_transformation_identifier: "transformation"
-    fivetran_log_trigger_table_identifier: "ran_utils.snowflake_seed_data('trigger_table"
+    trigger_table: "{{ fivetran_utils.snowflake_seed_data('trigger_table') }}"
     fivetran_log_user_identifier: "user"
 
 

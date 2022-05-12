@@ -4,6 +4,7 @@
   - `stg_fivetran_log__credits_used`
     - The field `credits_consumed` has been renamed to `credits_spent`
   - `fivetran_log__credit_mar_destination_history`
+    - The model has been renamed to `fivetran_log__usage_mar_destination_history`
     - The field `credits_per_million_mar` has been renamed to `credits_spent_per_million_mar`
     - The field `mar_per_credit` has been renamed to `mar_per_credit_spent`
 

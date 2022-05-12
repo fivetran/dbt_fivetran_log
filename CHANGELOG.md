@@ -18,6 +18,10 @@
 ## Under the Hood
 - Introduces a new macro `does_table_exist` to be leveraged in the new pricing model updates. This macro will check the sources defined and provide either `true` or `false` if the table does or does not exist in the schema. ([#50](https://github.com/fivetran/dbt_fivetran_log/pull/50))
 
+# dbt_fivetran_log v0.5.4
+## Fixes
+- The unique combination of columns test within the `fivetran_log__schema_changelog` model has been updated to also check the `message_data` field. This is needed as schema changelog events may now sync at the same time. ([#51](https://github.com/fivetran/dbt_fivetran_log/pull/51))
+- The `fivetran_log__connector_status` model has been adjusted to filter out all logs that contain a `transformation_id`. Transformation logs are not always synced as a JSON object and thus the package may encounter errors on Snowflake warehouses when parsing non-JSON fields. Since transformation records are not used in this end model, they have been filtered out. ([#51](https://github.com/fivetran/dbt_fivetran_log/pull/51))
 
 # dbt_fivetran_log v0.5.3
 ## Fixes

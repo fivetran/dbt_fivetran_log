@@ -139,11 +139,17 @@ models:
       - name: monthly_active_rows
         description: The number of total active rows measured in the destination for the month.
 
-      - name: usage_per_million_mar
-        description: The ratio of usage that month per every million active rows synced.
+      - name: credits_spent_per_million_mar
+        description: The ratio of credits spent that month per every million active rows synced.
 
-      - name: mar_per_usage
-        description: The ratio of the month's active volume to usage.
+      - name: mar_per_credit_spent
+        description: The ratio of the month's active volume to credits spent.
+
+      - name: amount_spent_per_million_mar
+        description: The ratio of amount spent that month per every million active rows synced.
+
+      - name: mar_per_amount_spent
+        description: The ratio of the month's active volume to amount spent.
 
 
   - name: fivetran_log__transformation_status

@@ -1,10 +1,17 @@
-with connector_log as (
+with transformation_removal as (
 
-    select *,
+    select *
+    from {{ ref('stg_fivetran_log__log') }}
+    where transformation_id is null
+
+),
+
+connector_log as (
+    select 
+        *,
         sum( case when event_subtype in ('sync_start') then 1 else 0 end) over ( partition by connector_id 
             order by created_at rows unbounded preceding) as sync_batch_id
-    from {{ ref('stg_fivetran_log__log') }}
-
+    from transformation_removal
     -- only looking at errors, warnings, and syncs here
     where event_type = 'SEVERE'
         or event_type = 'WARNING'

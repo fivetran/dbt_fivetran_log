@@ -15,9 +15,7 @@ with sync_log as (
     select 
         *,
         {{ fivetran_utils.json_parse(string='message_data', string_path=['table']) }} as table_name
-
     from {{ ref('stg_fivetran_log__log') }}
-
     where event_subtype in ('sync_start', 'sync_end', 'write_to_table_start', 'write_to_table_end', 'records_modified')
 
     {% if is_incremental() %}
@@ -33,8 +31,8 @@ with sync_log as (
     -- the query_result is stored as a dataframe. Therefore, we want to now store it as a singular value.
     {%- set max_sync_start = query_result['data'][0][0] -%}
 
-        -- compare the new batch of data to the latest sync already stored in this model
-        and date(created_at) >= '{{ max_sync_start }}'
+    -- compare the new batch of data to the latest sync already stored in this model
+    and date(created_at) >= '{{ max_sync_start }}'
 
     {% endif %}
 ),
@@ -44,7 +42,6 @@ connector as (
 
     select *
     from {{ ref('fivetran_log__connector_status') }}
-
 ),
 
 add_connector_info as (
@@ -54,8 +51,9 @@ add_connector_info as (
         connector.connector_name,
         connector.destination_id,
         connector.destination_name
-
-    from sync_log join connector using(connector_id)
+    from sync_log 
+    left join connector
+        on connector.connector_id = sync_log.connector_id
 ),
 
 sync_timestamps as (
@@ -67,9 +65,7 @@ sync_timestamps as (
         event_subtype,
         destination_id,
         destination_name,
-
         created_at as write_to_table_start,
-        
         min(case when event_subtype = 'write_to_table_end' then created_at else null end) 
             over (partition by connector_id, table_name order by created_at ROWS between CURRENT ROW AND UNBOUNDED FOLLOWING) as write_to_table_end,
 
@@ -81,19 +77,15 @@ sync_timestamps as (
 
         min(case when event_subtype = 'sync_start' then created_at else null end) 
             over (partition by connector_id order by created_at ROWS between CURRENT ROW AND UNBOUNDED FOLLOWING) as next_sync_start
-
     from add_connector_info
-
 ),
 
 -- this will be the base for every record in the final CTE
 limit_to_table_starts as (
 
     select *
-
     from sync_timestamps 
     where event_subtype = 'write_to_table_start'
-
 ),
 
 records_modified_log as (
@@ -105,7 +97,6 @@ records_modified_log as (
         {{ fivetran_utils.json_parse(string='message_data', string_path=['schema']) }} as schema_name,
         {{ fivetran_utils.json_parse(string='message_data', string_path=['operationType']) }} as operation_type,
         cast ({{ fivetran_utils.json_parse(string='message_data', string_path=['count']) }} as {{ dbt_utils.type_int() }}) as row_count
-
     from sync_log 
     where event_subtype = 'records_modified'
 
@@ -123,22 +114,19 @@ sum_records_modified as (
         limit_to_table_starts.write_to_table_end,
         limit_to_table_starts.sync_start,
         case when limit_to_table_starts.sync_end > limit_to_table_starts.next_sync_start then null else limit_to_table_starts.sync_end end as sync_end,
-
         sum(case when records_modified_log.operation_type = 'REPLACED_OR_INSERTED' then records_modified_log.row_count else 0 end) as sum_rows_replaced_or_inserted,
         sum(case when records_modified_log.operation_type = 'UPDATED' then records_modified_log.row_count else 0 end) as sum_rows_updated,
         sum(case when records_modified_log.operation_type = 'DELETED' then records_modified_log.row_count else 0 end) as sum_rows_deleted
-
     from limit_to_table_starts
-
     left join records_modified_log on 
         limit_to_table_starts.connector_id = records_modified_log.connector_id
         and limit_to_table_starts.table_name = records_modified_log.table_name
+
         -- confine it to one sync
         and records_modified_log.created_at > limit_to_table_starts.sync_start 
         and records_modified_log.created_at < coalesce(limit_to_table_starts.sync_end, limit_to_table_starts.next_sync_start) 
 
     {{ dbt_utils.group_by(n=9) }}
-
 ),
 
 surrogate_key as (
@@ -146,7 +134,6 @@ surrogate_key as (
     select 
         *,
         {{ dbt_utils.surrogate_key(['connector_id', 'destination_id', 'table_name', 'write_to_table_start']) }} as unique_table_sync_key
-
     from sum_records_modified
 )
 

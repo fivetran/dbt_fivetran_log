@@ -1,7 +1,8 @@
 config-version: 2
 
 name: 'fivetran_log'
-version: '0.5.4'
+version: '0.6.0'
+
 
 require-dbt-version: [">=1.0.0", "<2.0.0"]
 
@@ -28,3 +29,4 @@ vars:
     transformation: "{{ source('fivetran_log', 'transformation') }}"
     trigger_table: "{{ source('fivetran_log', 'trigger_table') }}"
     user: "{{ source('fivetran_log', 'user') }}"
+    usage_cost: "{{ source('fivetran_log', 'usage_cost') }}"

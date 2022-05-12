@@ -14,8 +14,8 @@ fields as (
         monthly_active_rows,
         schema_name,
         table_name
-    
     from active_volume
 )
 
-select * from fields
+select * 
+from fields

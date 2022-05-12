@@ -2,8 +2,8 @@
 
 with trigger_table as (
 
-    select * from {{ var('trigger_table') }}
-
+    select * 
+    from {{ var('trigger_table') }}
 ),
 
 fields as (
@@ -16,12 +16,10 @@ fields as (
         {% else %} 
         "TABLE" as trigger_table,
         {% endif %}
-        
         transformation_id
-    
     from trigger_table
-    
 )
 
-select * from fields
+select * 
+from fields
 where transformation_id is not null

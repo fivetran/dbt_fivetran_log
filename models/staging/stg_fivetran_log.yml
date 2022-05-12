@@ -62,11 +62,26 @@ models:
             - destination_id
     columns:
       - name: destination_id
-        description: Foreign key referencing the `destination` warehouse that the credits were used on.
+        description: Foreign key referencing the `destination` warehouse that was used. 
       - name: measured_month
-        description: The month (yyyy-mm) in which the credits were consumed.
-      - name: credits_consumed
-        description: The number of credits used by the destination for the given month.
+        description: The month (yyyy-mm) of the usage activity.
+      - name: credits_spent
+        description: The total credits used by the destination for the given month.
+
+  - name: stg_fivetran_log__usage_cost
+    description: Table of the amount spent by the customer per month for each destination. Amount is represented in USD.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: 
+            - measured_month
+            - destination_id
+    columns:
+      - name: destination_id
+        description: Foreign key referencing the `destination` warehouse that was used. 
+      - name: measured_month
+        description: The month (yyyy-mm) of the usage activity.
+      - name: dollars_spent
+        description: The total amount spent by the destination for the given month.
 
   - name: stg_fivetran_log__destination
     description: Table of the destinations that have data loaded into them. For each declared source, there will be just one record.

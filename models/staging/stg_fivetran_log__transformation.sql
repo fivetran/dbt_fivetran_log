@@ -2,8 +2,8 @@
 
 with transformation as (
     
-    select * from {{ var('transformation') }}
-    
+    select * 
+    from {{ var('transformation') }}
 ),
 
 fields as (
@@ -19,10 +19,9 @@ fields as (
         trigger_delay,
         trigger_interval,
         trigger_type
-        
     from transformation
-    
 )
 
-select * from fields
+select * 
+from fields
 where transformation_id is not null

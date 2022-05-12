@@ -15,7 +15,7 @@
   - `mar_per_amount_spent`
 
 ## Under the Hood
-- Introduces a new macro `does_table_exist` to be leveraged in the new pricing model updates. ([#50](https://github.com/fivetran/dbt_fivetran_log/pull/50))
+- Introduces a new macro `does_table_exist` to be leveraged in the new pricing model updates. This macro will check the sources defined and provide either `true` or `false` if the table does or does not exist in the schema. ([#50](https://github.com/fivetran/dbt_fivetran_log/pull/50))
 
 
 # dbt_fivetran_log v0.5.3

@@ -1,12 +1,30 @@
 # dbt_fivetran_log v0.6.0
+## 🚨 Breaking Changes 🚨
+- This release includes updates to the `fivetran_log__credit_mar_destination_history` and `stg_fivetran_log__credits_used` models to account for the new Fivetran pricing model. These changes include: ([#50](https://github.com/fivetran/dbt_fivetran_log/pull/50))
+  - `stg_fivetran_log__credits_used`
+    - The field `credits_consumed` has been renamed to `credits_spent`
+  - `fivetran_log__credit_mar_destination_history`
+    - The model has been renamed to `fivetran_log__usage_mar_destination_history`
+    - The field `credits_per_million_mar` has been renamed to `credits_spent_per_million_mar`
+    - The field `mar_per_credit` has been renamed to `mar_per_credit_spent`
+
 ## 🎉 Features 🎉
 - README documentation updates for easier experience leveraging the dbt package.
 - Added `fivetran_log_[source_table_name]_identifier` variables to allow for easier flexibility of the package to refer to source tables with different names.
+- This package now accounts for the new Fivetran pricing model. In particular, the new model accounts for the amount of dollars spend vs credits spent. Therefore, a new staging model `stg_fivetran_log__usage_cost` has been added. ([#50](https://github.com/fivetran/dbt_fivetran_log/pull/50))
+  - This model relies on the `usage_cost` source table. If you do not have this source table it means you are not on the new pricing model yet. Please note, the dbt package will still generate this staging model. However, the model will be comprised of all `null` records.
+- In addition to the new staging model, two new fields have been added to the `fivetran_log__usage_mar_destination_history` model. These fields mirror the credits spent fields, but account for the amount of dollars spent instead of credits. ([#50](https://github.com/fivetran/dbt_fivetran_log/pull/50))
+  - `amount_spent_per_million_mar`
+  - `mar_per_amount_spent`
+
+## Under the Hood
+- Introduces a new macro `does_table_exist` to be leveraged in the new pricing model updates. This macro will check the sources defined and provide either `true` or `false` if the table does or does not exist in the schema. ([#50](https://github.com/fivetran/dbt_fivetran_log/pull/50))
 
 # dbt_fivetran_log v0.5.4
 ## Fixes
 - The unique combination of columns test within the `fivetran_log__schema_changelog` model has been updated to also check the `message_data` field. This is needed as schema changelog events may now sync at the same time. ([#51](https://github.com/fivetran/dbt_fivetran_log/pull/51))
 - The `fivetran_log__connector_status` model has been adjusted to filter out all logs that contain a `transformation_id`. Transformation logs are not always synced as a JSON object and thus the package may encounter errors on Snowflake warehouses when parsing non-JSON fields. Since transformation records are not used in this end model, they have been filtered out. ([#51](https://github.com/fivetran/dbt_fivetran_log/pull/51))
+
 # dbt_fivetran_log v0.5.3
 ## Fixes
 - Per the [Fivetran Log December 2021 Release Notes](https://fivetran.com/docs/logs/changelog#december2021) every sync results in a final `sync_end` event. In the previous version of this package, a successful sync was identified via a `sync_end` event while anything else was a version of broken. Since all syncs result in a `sync_end` event now, the package has been updated to account for this change within the connector.

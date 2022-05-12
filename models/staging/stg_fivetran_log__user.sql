@@ -1,7 +1,7 @@
 with fivetran_user as (
 
-    select * from {{ var('user') }}
-
+    select * 
+    from {{ var('user') }}
 ),
 
 fields as (
@@ -15,9 +15,8 @@ fields as (
         given_name as first_name,
         phone,
         verified as is_verified
-        
     from fivetran_user
-
 )
 
-select * from fields
+select * 
+from fields

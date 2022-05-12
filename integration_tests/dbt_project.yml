@@ -9,6 +9,7 @@ dispatch:
 
 vars:
   fivetran_log:
+
     fivetran_log_schema: fivetran_logs_integration_tests
     fivetran_log_account_identifier: "account"
     fivetran_log_account_membership_identifier: "account_membership"
@@ -22,6 +23,7 @@ vars:
     fivetran_log_transformation_identifier: "transformation"
     trigger_table: "{{ fivetran_utils.snowflake_seed_data('trigger_table') }}"
     fivetran_log_user_identifier: "user"
+
 
 models:
   fivetran_log:

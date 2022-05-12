@@ -1,7 +1,7 @@
 with destination as (
 
-    select * from {{ var('destination') }}
-
+    select * 
+    from {{ var('destination') }}
 ),
 
 fields as (
@@ -12,8 +12,8 @@ fields as (
         cast(created_at as {{ dbt_utils.type_timestamp() }}) as created_at,
         name as destination_name,
         region
-    
     from destination
 )
 
-select * from fields
+select * 
+from fields

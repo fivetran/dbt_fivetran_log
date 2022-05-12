@@ -12,7 +12,7 @@ sources:
       warn_after: {count: 72, period: hour}
       error_after: {count: 96, period: hour}
 
-    tables: 
+    tables:        
       - name: active_volume
         identifier: "{{ var('fivetran_log_active_volume_identifier', 'active_volume')}}"
         description: >
@@ -59,6 +59,7 @@ sources:
 
       - name: credits_used
         identifier: "{{ var('fivetran_log_credits_used_identifier', 'credits_used')}}"
+        freshness: null
         description: Table of the credits used by the customer per month within each destination.
         columns:
           - name: destination_id
@@ -115,7 +116,7 @@ sources:
             description: The routine involved in the log, defined [here](https://fivetran.com/docs/logs#logevents).
           - name: transformation_id
             description: Foreign key referencing the `transformation` if the event refers to a transformation run.
-    
+
       - name: account
         identifier: "{{ var('fivetran_log_account_identifier', 'account')}}"
         description: Table of information on this Fivetran account.
@@ -189,7 +190,7 @@ sources:
           Transformations on time schedules do not appear here. Note - this table is only created 
           once you have created a triggered transformation.
         freshness: null
-        # transformation data tests are currently implemented at the staging level to accomodate schemas without this source table
+        # transformation data tests are currently implemented at the staging level to accommodate schemas without this source table
         columns:
           - name: table
             description: Connector source table whose new data triggers the transformation.
@@ -202,7 +203,7 @@ sources:
           Table of [transformations](https://fivetran.com/docs/transformations) made and carried out in Fivetran.
           Note - this table is only created once you have created a transformation for the destination.
         freshness: null
-        # transformation data tests are currently implemented at the staging level to accomodate schemas without this source table
+        # transformation data tests are currently implemented at the staging level to accommodate schemas without this source table
         columns:
           - name: id
             description: Unique ID of the transformation.

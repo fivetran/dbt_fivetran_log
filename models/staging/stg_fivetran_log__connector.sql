@@ -2,7 +2,6 @@ with connector as (
 
     select * 
     from {{ ref('stg_fivetran_log__connector_tmp') }}
-
 ),
 
 fields as (
@@ -15,7 +14,6 @@ fields as (
         }}
         ,row_number() over ( partition by connector_name, destination_id order by _fivetran_synced desc ) as nth_last_record
     from connector
-
 ),
 
 final as (
@@ -28,7 +26,6 @@ final as (
         connecting_user_id,
         paused as is_paused,
         signed_up as set_up_at
-
     from fields
 
     -- Only look at the most recent one

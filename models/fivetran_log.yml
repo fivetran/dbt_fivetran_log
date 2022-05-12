@@ -110,11 +110,11 @@ models:
         description: Name of the destination as it appears in the UI.
 
 
-  - name: fivetran_log__credit_mar_destination_history
+  - name: fivetran_log__usage_mar_destination_history
     description: >
-      Table of each destination's credit consumption and active volume, per month. Includes the 
-      credits used per million MAR and MAR per credit. Read more about the relationship between 
-      credit consumption and MAR [here](https://fivetran.com/creditconsumption).
+      Table of each destination's usage and active volume, per month. Includes the 
+      usage per million MAR and MAR per usage. Usage either refers to a dollar or credit amount, depending on customer's pricing model.
+      Read more about the relationship between usage and MAR [here](https://www.fivetran.com/legal/service-consumption-table).
 
     tests:
       - dbt_utils.unique_combination_of_columns:
@@ -124,7 +124,7 @@ models:
 
     columns:
       - name: measured_month
-        description: The month (yyyy-mm-01) of the credit/MAR measurement.
+        description: The month (yyyy-mm-01) of the usage/MAR measurement.
 
       - name: destination_id
         description: >
@@ -133,17 +133,23 @@ models:
       - name: destination_name
         description: Name of the destination as it appears in the UI.
 
-      - name: credits_consumed
-        description: The number of credits used by the destination for the given month.
+      - name: consumption
+        description: The number of credits or dollar amount used by the destination for the given month.
 
       - name: monthly_active_rows
         description: The number of total active rows measured in the destination for the month.
 
-      - name: credits_per_million_mar
-        description: The ratio of credits used that month per every million active rows synced.
+      - name: credits_spent_per_million_mar
+        description: The ratio of credits spent that month per every million active rows synced.
 
-      - name: mar_per_credit
-        description: The ratio of the month's active volume to the credits used.
+      - name: mar_per_credit_spent
+        description: The ratio of the month's active volume to credits spent.
+
+      - name: amount_spent_per_million_mar
+        description: The ratio of amount spent that month per every million active rows synced.
+
+      - name: mar_per_amount_spent
+        description: The ratio of the month's active volume to amount spent.
 
 
   - name: fivetran_log__transformation_status

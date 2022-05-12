@@ -1,8 +1,23 @@
 # dbt_fivetran_log v0.6.0
-## New Pricing Model Updates
-- Introduces a new macro `does_table_exist` as part of additional logic to `stg_fivetran_log__usage`. This checks and pulls from the `usage_cost` source table for customers on the new pricing model, which replaces the old `credits_used` table. Downstream models have also been updated to reflect the pricing changes. ([#50](https://github.com/fivetran/dbt_fivetran_log/pull/50))
+## 🚨 Breaking Changes 🚨
+- This release includes updates to the `fivetran_log__credit_mar_destination_history` and `stg_fivetran_log__credits_used` models to account for the new Fivetran pricing model. These changes include: ([#50](https://github.com/fivetran/dbt_fivetran_log/pull/50))
+  - `stg_fivetran_log__credits_used`
+    - The field `credits_consumed` has been renamed to `credits_spent`
+  - `fivetran_log__credit_mar_destination_history`
+    - The field `credits_per_million_mar` has been renamed to `credits_spent_per_million_mar`
+    - The field `mar_per_credit` has been renamed to `mar_per_credit_spent`
 
-- With the introduction of the new pricing model some existing table and column names are no longer applicable. The `stg_fivetran_log__credits_used` model has been updated to `stg_fivetran_log__usage`. The downstream `fivetran_log__credit_mar_destination_history` model has been updated to `fivetran_log__usage_mar_destination_history`; within the model, `credits_consumed` is now `consumption_amount`, `credits_per_million_mar` is now `usage_per_million_mar`, and `mar_per_credit` is now `mar_per_usage`.
+## Features
+- This package now accounts for the new Fivetran pricing model. In particular, the new model accounts for the amount of dollars spend vs credits spent. Therefore, a new staging model `stg_fivetran_log__usage_cost` has been added. ([#50](https://github.com/fivetran/dbt_fivetran_log/pull/50))
+  - This model relies on the `usage_cost` source table. If you do not have this source table it means you are not on the new pricing model yet. Please note, the dbt package will still generate this staging model. However, the model will be comprised of all `null` records.
+- In addition to the new staging model, two new fields have been added to the `fivetran_log__usage_mar_destination_history` model. These fields mirror the credits spent fields, but account for the amount of dollars spent instead of credits. ([#50](https://github.com/fivetran/dbt_fivetran_log/pull/50))
+  - `amount_spent_per_million_mar`
+  - `mar_per_amount_spent`
+
+## Under the Hood
+- Introduces a new macro `does_table_exist` to be leveraged in the new pricing model updates. ([#50](https://github.com/fivetran/dbt_fivetran_log/pull/50))
+
+
 # dbt_fivetran_log v0.5.3
 ## Fixes
 - Per the [Fivetran Log December 2021 Release Notes](https://fivetran.com/docs/logs/changelog#december2021) every sync results in a final `sync_end` event. In the previous version of this package, a successful sync was identified via a `sync_end` event while anything else was a version of broken. Since all syncs result in a `sync_end` event now, the package has been updated to account for this change within the connector.

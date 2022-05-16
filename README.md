@@ -66,7 +66,7 @@ vars:
     fivetran_log_using_triggers: false # this will disable only trigger_table logic 
 ```
 
-## (Optional) Step 4: Additional Configurations
+## (Optional) Step 5: Additional Configurations
 <details><summary>Expand for configurations</summary>
 
 ### Configuring Fivetran Error and Warning Messages
@@ -104,7 +104,7 @@ dispatch:
 
 </details>
 
-## (Optional) Step 5: Orchestrate your models with Fivetran Transformations for dbt Core™
+## (Optional) Step 6: Orchestrate your models with Fivetran Transformations for dbt Core™
 <details><summary>Expand for details</summary>
 <br>
     

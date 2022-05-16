@@ -65,17 +65,17 @@ vars:
     fivetran_log_using_transformations: false # this will disable all transformation + trigger_table logic
     fivetran_log_using_triggers: false # this will disable only trigger_table logic 
 ```
-## Step 4: Configuring Fivetran Error and Warning Messages
+
+## (Optional) Step 4: Additional Configurations
+<details><summary>Expand for configurations</summary>
+
+### Configuring Fivetran Error and Warning Messages
 Some users may wish to exclude Fivetran error and warnings messages from the final `fivetran_log__connector_status` model due to the length of the message. To disable the `errors_since_last_completed_sync` and `warnings_since_last_completed_sync` fields from the final model you may add the following variable to you to your root `dbt_project.yml` file. By default, this variable is assumed to be `true`:
 
 ```yml
 vars:
     fivetran_log_using_sync_alert_messages: false # this will disable only the sync alert messages within the connector status model
 ```
-
-## (Optional) Step 5: Additional Configurations
-<details><summary>Expand for configurations</summary>
-    
 ### Change the Build Schema
 By default this package will build the Fivetran Log staging models within a schema titled (<target_schema> + `_stg_fivetran_log`)  and the Fivetran Log final models within your <target_schema> + `_fivetran_log` in your target database. If this is not where you would like you Fivetran Log staging and final models to be written to, add the following configuration to your root `dbt_project.yml` file:
 
@@ -104,7 +104,7 @@ dispatch:
 
 </details>
 
-## (Optional) Step 6: Orchestrate your models with Fivetran Transformations for dbt Core™
+## (Optional) Step 5: Orchestrate your models with Fivetran Transformations for dbt Core™
 <details><summary>Expand for details</summary>
 <br>
     

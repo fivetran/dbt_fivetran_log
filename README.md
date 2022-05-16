@@ -112,7 +112,7 @@ Fivetran offers the ability for you to orchestrate your dbt project through [Fiv
 </details>
     
 # 🔍 Does this package have dependencies?
-This dbt package is dependent on the following dbt packages. For more information on the below packages, refer to the [dbt hub](https://hub.getdbt.com/) site.
+This dbt package is dependent on the following dbt packages. Please be aware that these dependencies are installed by default within this package. For more information on the below packages, refer to the [dbt hub](https://hub.getdbt.com/) site.
 > **If you have any of these dependent packages in your own `packages.yml` I highly recommend you remove them to ensure there are no package version conflicts.**
 ```yml
 packages:

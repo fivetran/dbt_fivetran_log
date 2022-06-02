@@ -1,3 +1,19 @@
+# dbt_fivetran_log v0.6.1
+## Fixes
+- Added the option to disable some models that are not available depending on your Fivetran license. In your `dbt_project.yml` you can now change these flags to disable parts of the package
+  - fivetran_log_account_membership
+  - fivetran_log_destination_membership
+  - fivetran_log_user
+
+  Include this in your dbt_project.yml file
+
+  ```
+  fivetran_log_account_membership: false # Disables account membership models
+  fivetran_log_active_volume: false # Disables account membership models
+  fivetran_log_credits_used: false # Disables account membership models
+  fivetran_log_destination_membership: false # Disables account membership models
+  fivetran_log_user: false # Disables account membership models
+  ```
 # dbt_fivetran_log v0.6.0
 ## 🚨 Breaking Changes 🚨
 - This release includes updates to the `fivetran_log__credit_mar_destination_history` and `stg_fivetran_log__credits_used` models to account for the new Fivetran pricing model. These changes include: ([#50](https://github.com/fivetran/dbt_fivetran_log/pull/50))

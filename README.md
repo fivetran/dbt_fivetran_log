@@ -58,12 +58,15 @@ vars:
     fivetran_log_schema: your_schema_name 
 ```
 ## Step 4: Disable Models for Non Existent Sources
-If you have never created Fivetran-orchestrated [basic SQL transformations](https://fivetran.com/docs/transformations/basic-sql), your source data will not contain the `transformation` and `trigger_table` tables. Moreover, if you have only created *scheduled* basic transformations that are not triggered by table syncs, your source data will not contain the `trigger_table` table (though it will contain `transformation`). To disable the corresponding functionality in the package, you must add the following variable(s) to your root `dbt_project.yml` file. By default, all variables are assumed to be `true`:
+If you have never created Fivetran-orchestrated [basic SQL transformations](https://fivetran.com/docs/transformations/basic-sql), your source data will not contain the `transformation` and `trigger_table` tables. Moreover, if you have only created *scheduled* basic transformations that are not triggered by table syncs, your source data will not contain the `trigger_table` table (though it will contain `transformation`). Additionally, if you do not leverage Fivetran RBAC control, then you will not have the `user`, `account_membership`, or `destination_membership` sources. To disable the corresponding functionality in the package, you must add the following variable(s) to your root `dbt_project.yml` file. By default, all variables are assumed to be `true`:
 
 ```yml
 vars:
     fivetran_log_using_transformations: false # this will disable all transformation + trigger_table logic
     fivetran_log_using_triggers: false # this will disable only trigger_table logic 
+    fivetran_log_using_account_membership: false # this will disable only the account membership logic
+    fivetran_log_using_destination_membership: false # this will disable only the destination membership logic
+    fivetran_log_using_user: false # this will disable only the user logic
 ```
 
 ## (Optional) Step 5: Additional Configurations

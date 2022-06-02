@@ -1,3 +1,5 @@
+{{ config(enabled=fivetran_utils.enabled_vars(['fivetran_log_using_user'])) }}
+
 with fivetran_user as (
 
     select * 

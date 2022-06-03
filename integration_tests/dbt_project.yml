@@ -10,7 +10,7 @@ dispatch:
 vars:
   fivetran_log:
 
-    fivetran_log_schema: fivetran_logs_integration_tests
+    fivetran_log_schema: fivetrans_logs_integration_tests
     fivetran_log_account_identifier: "account"
     fivetran_log_account_membership_identifier: "account_membership"
     fivetran_log_active_volume_identifier: "active_volume"

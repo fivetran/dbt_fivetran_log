@@ -1,3 +1,5 @@
+{{ config(enabled=var('fivetran_log_using_account_membership', True)) }}
+
 with account_membership as (
     
     select * 

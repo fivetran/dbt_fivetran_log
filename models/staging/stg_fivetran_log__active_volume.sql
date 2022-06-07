@@ -1,7 +1,6 @@
 with active_volume as (
 
     select * from {{ var('active_volume') }}
-
 ),
 
 fields as (

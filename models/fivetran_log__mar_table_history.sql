@@ -49,7 +49,7 @@ latest_mar as (
         measured_month,
         date(measured_at) as last_measured_at,
         monthly_active_rows
-      
+    
     from ordered_mar
     where n = 1
 

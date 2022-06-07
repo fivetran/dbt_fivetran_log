@@ -40,20 +40,6 @@ jobs:
             dbt run --vars '{fivetran_log__usage_pricing: false}' --full-refresh --target spark
             dbt test --target spark
       - run:
-          name: "Run Tests - Redshift"
-          command: |
-            . venv/bin/activate
-            echo `pwd`
-            cd integration_tests
-            dbt deps
-            dbt seed --target redshift --full-refresh
-            dbt run --full-refresh --target redshift
-            dbt test --target redshift
-            dbt run --vars '{fivetran_log__usage_pricing: true}' --full-refresh --target redshift
-            dbt test --target redshift
-            dbt run --vars '{fivetran_log__usage_pricing: false}' --full-refresh --target redshift
-            dbt test --target redshift
-      - run:
           name: "Run Tests - Snowflake"
           command: |
             . venv/bin/activate
@@ -98,6 +84,20 @@ jobs:
             dbt test --target postgres
             dbt run --vars '{fivetran_log__usage_pricing: false}' --full-refresh --target postgres
             dbt test --target postgres
+      - run:
+          name: "Run Tests - Redshift"
+          command: |
+            . venv/bin/activate
+            echo `pwd`
+            cd integration_tests
+            dbt deps
+            dbt seed --target redshift --full-refresh
+            dbt run --full-refresh --target redshift
+            dbt test --target redshift
+            dbt run --vars '{fivetran_log__usage_pricing: true}' --full-refresh --target redshift
+            dbt test --target redshift
+            dbt run --vars '{fivetran_log__usage_pricing: false}' --full-refresh --target redshift
+            dbt test --target redshift
       - save_cache:
           key: deps2-{{ .Branch }}
           paths:

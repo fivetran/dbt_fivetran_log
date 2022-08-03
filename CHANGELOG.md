@@ -1,3 +1,9 @@
+# dbt_fivetran_log v0.6.2
+## Fixes
+- Extend model disablement with `meta: is_enabled` setting in sources to avoid running source freshness when a model is disabled.
+## Contributors
+- [@epapineau](https://github.com/epapineau) ([#58](https://github.com/fivetran/dbt_fivetran_log/pull/58))
+
 # dbt_fivetran_log v0.6.1
 ## Fixes
 - Added the option to disable the `user`, `account_membership`, and `destination_membership` models that may not be available depending on your Fivetran setup. In your `dbt_project.yml` you can now change these flags to disable parts of the package. Use the below to configure your project. ([#52](https://github.com/fivetran/dbt_fivetran_log/pull/52)) and ([#55](https://github.com/fivetran/dbt_fivetran_log/pull/55))

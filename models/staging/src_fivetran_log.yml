@@ -135,6 +135,8 @@ sources:
       - name: account_membership
         identifier: "{{ var('fivetran_log_account_membership_identifier', 'account_membership')}}"
         description: Table of the users given access to this account.
+        config:
+          enabled: "{{ var('fivetran_log_using_account_membership', true) }}"
         columns:
           - name: account_id
             description: Foreign key referencing the ID of the `account` that the user belongs to.
@@ -150,6 +152,8 @@ sources:
       - name: destination_membership
         identifier: "{{ var('fivetran_log_destination_membership_identifier', 'destination_membership')}}"
         description: Table of the users given access to this destination.
+        config:
+          enabled: "{{ var('fivetran_log_using_destination_membership', true) }}"
         columns:
           - name: destination_id
             description: Foreign key referencing the ID of the `destination` that the user is a member of.
@@ -165,6 +169,8 @@ sources:
       - name: user
         identifier: "{{ var('fivetran_log_user_identifier', 'user')}}"
         description: Table of users given access to this Fivetran account.
+        config:
+          enabled: "{{ var('fivetran_log_using_user', true) }}"
         columns:
           - name: id
             description: Unique ID of the user's account.
@@ -189,6 +195,8 @@ sources:
           Table relating transformations to the connector source tables that trigger them. 
           Transformations on time schedules do not appear here. Note - this table is only created 
           once you have created a triggered transformation.
+        config:
+          enabled: "{{ var('fivetran_log_using_triggers', true) }}"
         freshness: null
         # transformation data tests are currently implemented at the staging level to accommodate schemas without this source table
         columns:
@@ -202,6 +210,8 @@ sources:
         description: > 
           Table of [transformations](https://fivetran.com/docs/transformations) made and carried out in Fivetran.
           Note - this table is only created once you have created a transformation for the destination.
+        config:
+          enabled: "{{ var('fivetran_log_using_transformations', true) }}"
         freshness: null
         # transformation data tests are currently implemented at the staging level to accommodate schemas without this source table
         columns:

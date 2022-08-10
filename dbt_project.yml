@@ -1,7 +1,7 @@
 config-version: 2
 
 name: 'fivetran_log'
-version: '0.6.2'
+version: '0.6.3'
 
 require-dbt-version: [">=1.0.0", "<2.0.0"]
 
@@ -21,6 +21,7 @@ vars:
     account_membership: "{{ source('fivetran_log', 'account_membership') }}"
     active_volume: "{{ source('fivetran_log', 'active_volume') }}"
     connector: "{{ source('fivetran_log', 'connector') }}"
+    connector_type: "{{ source('fivetran_log', 'connector_type') }}"
     credits_used: "{{ source('fivetran_log', 'credits_used') }}"
     destination: "{{ source('fivetran_log', 'destination') }}"
     destination_membership: "{{ source('fivetran_log', 'destination_membership') }}"

@@ -52,6 +52,33 @@ models:
         description: Boolean that is true if the connector's sync is currently paused.
       - name: set_up_at
         description: Timestamp of when the connection was set up.
+      - name: sync_frequency_minutes
+        description: The frequency of how often each connector runs (in minutes).
+      - name: is_deleted
+        description: Boolean that tracks when a connector has been deleted.
+
+  - name: stg_fivetran_log__connector_type
+    description: Table of all connectors specified by their type to capture a connector's release phase.
+    columns:
+      - name: connector_type_id
+        description: The ID and name of the connector.
+      - name: connector
+        description: The official name of the connector.
+      - name: connector_type
+        description: The type of the connector (e.g. Productivity).
+      - name: availability
+        description: The general availability of the connector.
+      - name: created_at
+        description: Timestamp indicating when the connector was created.
+      - name: public_beta_at
+        description: Timestamp indicating when the connector was released to the public for beta testing.
+      - name: release_at
+        description: Timestamp indicating when the connector was released.
+      - name: is_deleted
+        description: Boolean indicating if the connector has been deleted.
+      - name: is_broken
+        description: Boolean indicating if the connector is broken.
+
 
   - name: stg_fivetran_log__credits_used
     description: Table of the credits used by the customer per month for each destination.
@@ -126,6 +153,8 @@ models:
         description: The routine involved in the log, defined [here](https://fivetran.com/docs/logs#logevents).
       - name: transformation_id
         description: Foreign key referencing the `transformation` if the event refers to a transformation run.
+      - name: sync_id
+        description: The ID of each sync per connector.
 
   - name: stg_fivetran_log__account
     description: Table of information on this Fivetran account.
@@ -251,3 +280,5 @@ models:
         description: Phone number associated with user.
       - name: is_verified
         description: Boolean that indicates whether the user has verified their email address in the account creation process.
+      - name: is_deleted
+        description: Boolean that tracks when a user has been deleted.

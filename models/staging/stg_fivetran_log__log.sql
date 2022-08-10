@@ -17,7 +17,8 @@ fields as (
         when transformation_id is not null and message_data like '%has succeeded%' then 'transformation run success'
         when transformation_id is not null and message_data like '%has failed%' then 'transformation run failed'
         else message_event end as event_subtype,
-        transformation_id
+        transformation_id,
+        sync_id
     from log
 )
 

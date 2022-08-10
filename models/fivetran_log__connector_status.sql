@@ -50,6 +50,13 @@ connector as (
 
 ),
 
+connector_type as (
+    select
+        *
+    from
+        {{ ref('stg_fivetran_log__connector_type') }}
+),
+
 destination as (
 
     select * 
@@ -61,10 +68,14 @@ connector_metrics as (
     select
         connector.connector_id,
         connector.connector_name,
-        connector.connector_type,
+        connector_type.connector as official_connector_name,
+        connector_type.connector_type,
+        connector_type.availability,
         connector.destination_id,
         connector.is_paused,
         connector.set_up_at,
+        connector_type.is_deleted,
+        connector_type.is_broken,
         max(case when connector_log.event_subtype = 'sync_start' then connector_log.created_at else null end) as last_sync_started_at,
 
         max(case when connector_log.event_subtype = 'sync_end' 
@@ -90,9 +101,11 @@ connector_metrics as (
         max(case when event_type = 'WARNING' then connector_log.created_at else null end) as last_warning_at
 
     from connector 
+    left join connector_type
+        on connector_type.connector_type_id = connector.connector_type
     left join connector_log 
         on connector_log.connector_id = connector.connector_id
-    {{ dbt_utils.group_by(n=6) }}
+    {{ dbt_utils.group_by(n=10) }}
 
 ),
 
@@ -133,13 +146,17 @@ connector_recent_logs as (
     select 
         connector_health.connector_id,
         connector_health.connector_name,
+        connector_health.official_connector_name,
         connector_health.connector_type,
+        connector_health.availability,
         connector_health.destination_id,
         connector_health.connector_health,
         connector_health.last_successful_sync_completed_at,
         connector_health.last_sync_started_at,
         connector_health.last_sync_completed_at,
         connector_health.set_up_at,
+        connector_health.is_deleted,
+        connector_health.is_broken,
         connector_log.event_subtype,
         connector_log.event_type,
         connector_log.message_data
@@ -156,7 +173,7 @@ connector_recent_logs as (
             and {{ fivetran_utils.json_parse(string="connector_log.message_data", string_path=["status"]) }} ='RESCHEDULED'
             and {{ fivetran_utils.json_parse(string="connector_log.message_data", string_path=["reason"]) }} like '%intended behavior%')
 
-    {{ dbt_utils.group_by(n=12) }} -- de-duping error messages
+    {{ dbt_utils.group_by(n=16) }} -- de-duping error messages
     
 
 ),
@@ -166,7 +183,9 @@ final as (
     select
         connector_recent_logs.connector_id,
         connector_recent_logs.connector_name,
+        connector_recent_logs.official_connector_name,
         connector_recent_logs.connector_type,
+        connector_recent_logs.availability,
         connector_recent_logs.destination_id,
         destination.destination_name,
         connector_recent_logs.connector_health,
@@ -174,6 +193,8 @@ final as (
         connector_recent_logs.last_sync_started_at,
         connector_recent_logs.last_sync_completed_at,
         connector_recent_logs.set_up_at,
+        connector_recent_logs.is_deleted,
+        connector_recent_logs.is_broken,
         coalesce(schema_changes.number_of_schema_changes_last_month, 0) as number_of_schema_changes_last_month
         
         {% if var('fivetran_log_using_sync_alert_messages', true) %}
@@ -186,7 +207,7 @@ final as (
         on connector_recent_logs.connector_id = schema_changes.connector_id 
 
     join destination on destination.destination_id = connector_recent_logs.destination_id
-    {{ dbt_utils.group_by(n=11) }}
+    {{ dbt_utils.group_by(n=15) }}
 )
 
 select * from final

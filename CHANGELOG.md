@@ -1,3 +1,8 @@
+# dbt_fivetran_log v0.6.3
+## Feature - connector_type table added
+- Added the connector_type table to the package and incorporated some of it's fields to the `fivetran_log__connector_status` model.
+- Also made some changes to the staging connector, user and log tables as per the connector release notes: https://fivetran.com/docs/logs/fivetran-log/changelog
+
 # dbt_fivetran_log v0.6.2
 ## Fixes
 - Extend model disablement with `config: is_enabled` setting in sources to avoid running source freshness when a model is disabled. ([#58](https://github.com/fivetran/dbt_fivetran_log/pull/58))

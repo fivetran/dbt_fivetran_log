@@ -1,3 +1,9 @@
+# dbt_fivetran_log v0.6.3
+## Fixes
+- Modified the argument used for the identifier in the get_relation macro used in the does_table_exist macro from name to identifier. This avoids issues on snowflake where the name of a table defined in a source yaml may be in lowercase while in snowflake it is uppercased.
+## Contributors
+- [@ggmblr](https://github.com/ggmblr) ([#60](https://github.com/fivetran/dbt_fivetran_log/pull/60))
+
 # dbt_fivetran_log v0.6.2
 ## Fixes
 - Extend model disablement with `config: is_enabled` setting in sources to avoid running source freshness when a model is disabled. ([#58](https://github.com/fivetran/dbt_fivetran_log/pull/58))

@@ -1,3 +1,10 @@
+# dbt_fivetran_log v0.6.3
+## Fixes
+- Changed partitioning logic in the connector_status model in order to avoid "allocated memory limit". ([#62](https://github.com/fivetran/dbt_fivetran_log/pull/62))
+## Contributors
+- [@fivetran-juliengoulley](https://github.com/fivetran-juliengoulley) ([#62](https://github.com/fivetran/dbt_fivetran_log/pull/62))
+
+
 # dbt_fivetran_log v0.6.2
 ## Fixes
 - Extend model disablement with `config: is_enabled` setting in sources to avoid running source freshness when a model is disabled. ([#58](https://github.com/fivetran/dbt_fivetran_log/pull/58))

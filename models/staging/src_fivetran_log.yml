@@ -62,7 +62,7 @@ sources:
             description: Boolean that tracks when a connector has been deleted.
 
       - name: connector_type
-        identifier: "{{ var('fivetran_log_connector_identifier', 'connector_type')}}"
+        identifier: "{{ var('fivetran_log_connector_type_identifier', 'connector_type')}}"
         description: >
           Table of all connectors specified by their type to capture a connector's release phase.
         columns:

@@ -1,10 +1,7 @@
 config-version: 2
-
 name: 'fivetran_log'
-version: '0.6.3'
-
-require-dbt-version: [">=1.0.0", "<2.0.0"]
-
+version: '0.7.0'
+require-dbt-version: [">=1.2.0", "<2.0.0"]
 models:
   fivetran_log:
     +materialized: table
@@ -13,8 +10,6 @@ models:
       +schema: stg_fivetran_log
       tmp:
         +materialized: view
-
-
 vars:
   fivetran_log:
     account: "{{ source('fivetran_log', 'account') }}"

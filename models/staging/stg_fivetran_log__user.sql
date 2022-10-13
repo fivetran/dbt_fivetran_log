@@ -10,7 +10,7 @@ fields as (
 
     select
         id as user_id,
-        cast(created_at as {{ dbt_utils.type_timestamp() }}) as created_at,
+        cast(created_at as {{ dbt.type_timestamp() }}) as created_at,
         email,
         email_disabled as has_disabled_email_notifications,
         family_name as last_name,

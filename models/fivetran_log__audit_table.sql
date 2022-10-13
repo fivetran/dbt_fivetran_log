@@ -96,7 +96,7 @@ records_modified_log as (
         {{ fivetran_utils.json_parse(string='message_data', string_path=['table']) }} as table_name,
         {{ fivetran_utils.json_parse(string='message_data', string_path=['schema']) }} as schema_name,
         {{ fivetran_utils.json_parse(string='message_data', string_path=['operationType']) }} as operation_type,
-        cast ({{ fivetran_utils.json_parse(string='message_data', string_path=['count']) }} as {{ dbt_utils.type_int() }}) as row_count
+        cast ({{ fivetran_utils.json_parse(string='message_data', string_path=['count']) }} as {{ dbt.type_int() }}) as row_count
     from sync_log 
     where event_subtype = 'records_modified'
 
@@ -133,7 +133,7 @@ surrogate_key as (
 
     select 
         *,
-        {{ dbt_utils.surrogate_key(['connector_id', 'destination_id', 'table_name', 'write_to_table_start']) }} as unique_table_sync_key
+        {{ dbt_utils.generate_surrogate_key(['connector_id', 'destination_id', 'table_name', 'write_to_table_start']) }} as unique_table_sync_key
     from sum_records_modified
 )
 

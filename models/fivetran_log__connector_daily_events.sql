@@ -11,12 +11,12 @@ log_events as (
 
     select 
         connector_id,
-        cast( {{ dbt_utils.date_trunc('day', 'created_at') }} as date) as date_day,
+        cast( {{ dbt.date_trunc('day', 'created_at') }} as date) as date_day,
         case 
             when event_subtype in ('create_table', 'alter_table', 'create_schema', 'change_schema_config') then 'schema_change' 
             else event_subtype end as event_subtype,
 
-        sum(case when event_subtype = 'records_modified' then cast( {{ fivetran_utils.json_parse(string='message_data', string_path=['count']) }} as {{ dbt_utils.type_int()}} )
+        sum(case when event_subtype = 'records_modified' then cast( {{ fivetran_utils.json_parse(string='message_data', string_path=['count']) }} as {{ dbt.type_int()}} )
         else 1 end) as count_events 
 
     from {{ ref('stg_fivetran_log__log') }}
@@ -75,7 +75,7 @@ spine as (
     {{ dbt_utils.date_spine(
         datepart = "day", 
         start_date =  "cast('" ~ first_date[0:10] ~ "' as date)", 
-        end_date = dbt_utils.dateadd("week", 1, dbt_utils.date_trunc('day', dbt_utils.current_timestamp())) 
+        end_date = dbt.dateadd("week", 1, dbt.date_trunc('day', dbt.current_timestamp_backcompat())) 
         ) 
     }} 
 ),
@@ -103,7 +103,7 @@ connector_event_history as (
         end) as count_schema_changes
     from
     spine join connector_event_counts
-        on spine.date_day  >= cast( {{ dbt_utils.date_trunc('day', 'connector_event_counts.set_up_at') }} as date)
+        on spine.date_day  >= cast( {{ dbt.date_trunc('day', 'connector_event_counts.set_up_at') }} as date)
 
     group by 1,2,3,4,5,6
 ),
@@ -134,7 +134,7 @@ final as (
     select *
     from join_event_history
 
-    where cast(date_day as timestamp) <= {{ dbt_utils.current_timestamp() }}
+    where cast(date_day as timestamp) <= {{ dbt.current_timestamp_backcompat() }}
 
     order by date_day desc
 )

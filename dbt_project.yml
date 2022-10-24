@@ -10,6 +10,7 @@ models:
       +schema: stg_fivetran_log
       tmp:
         +materialized: view
+
 vars:
   fivetran_log:
     account: "{{ source('fivetran_log', 'account') }}"

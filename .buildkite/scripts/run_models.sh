@@ -17,7 +17,7 @@ dbt deps
 dbt seed --target "$db" --full-refresh
 dbt run --target "$db" --full-refresh
 dbt test --target "$db"
-## UPDATE FOR VARS HERE, IF NO VARS, PLEASE REMOVE
-dbt run --vars '{apple_search_ads__using_search_terms: True}' --target "$db" --full-refresh
+dbt run --vars '{fivetran_log__usage_pricing: true}' --target "$db" --full-refresh
 dbt test --target "$db"
-### END VARS CHUNK, REMOVE IF NOT USING
+dbt run --vars '{fivetran_log__usage_pricing: false, fivetran_log_using_account_membership: false, fivetran_log_using_destination_membership: false, fivetran_log_using_user: false}' --target "$db" --full-refresh
+dbt test --target "$db"

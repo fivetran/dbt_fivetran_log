@@ -6,7 +6,7 @@
         'data_type': 'timestamp',
         'granularity': 'day'
     } if target.type == 'bigquery' else none,
-    incremental_strategy = 'merge',
+    incremental_strategy = 'merge' if target.type not in ['postgres', 'redshift'] else 'delete+insert',
     file_format = 'delta'
 ) }}
 

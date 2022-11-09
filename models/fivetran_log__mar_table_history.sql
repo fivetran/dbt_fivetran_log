@@ -1,12 +1,12 @@
-with active_volume as (
+with incremental_mar as (
 
     select 
         *, 
-        {{ dbt.date_trunc('month', 'measured_at') }} as measured_month
+        {{ dbt.date_trunc('month', 'measured_date') }} as measured_month
 
-    from {{ ref('stg_fivetran_log__active_volume') }} 
+    from {{ ref('stg_fivetran_log__incremental_mar') }} 
 
-    where schema_name != 'fivetran_log' -- it's free! 
+    -- where schema_name != 'fivetran_log' -- it's free! 
 
 ),
 
@@ -29,14 +29,20 @@ ordered_mar as (
         schema_name,
         table_name,
         destination_id,
-        measured_at,
+        measured_date,
         measured_month,
-        monthly_active_rows,
+        incremental_rows,
+        case when lower(free_type) = 'paid'
+            then incremental_rows
+        end as paid_monthly_active_rows,
+        case when lower(free_type) != 'paid'
+            then incremental_rows
+        end as free_monthly_active_rows,
 
         -- each measurement is cumulative for the month, so we'll only look at the latest date for each month
-        row_number() over(partition by table_name, connector_name, destination_id, measured_month order by measured_at desc) as n
+        row_number() over(partition by table_name, connector_name, destination_id, measured_month order by measured_date desc) as n
 
-    from active_volume
+    from incremental_mar
 
 ),
 
@@ -47,8 +53,10 @@ latest_mar as (
         table_name,
         destination_id,
         measured_month,
-        date(measured_at) as last_measured_at,
-        monthly_active_rows
+        date(measured_date) as last_measured_at,
+        free_monthly_active_rows,
+        paid_monthly_active_rows,
+        (free_monthly_active_rows + paid_monthly_active_rows) as total_monthly_active_rows
     
     from ordered_mar
     where n = 1

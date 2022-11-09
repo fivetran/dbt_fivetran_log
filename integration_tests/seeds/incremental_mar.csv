@@ -1,0 +1,11 @@
+connector_id,destination_id,free_type,measured_date,schema_name,sync_type,table_name,updated_at,_fivetran_synced,incremental_rows
+this_connector,111eee,PAID,2022-08-31 0:00:00,this_connector,UNKNOWN,my_table,2022-09-01 6:12:13,2022-11-09 20:09:26,46
+that_connector,222rrr,PAID,2022-05-22 0:00:00,that_connector,UNKNOWN,drop_table,2022-05-22 8:29:22,2022-11-07 20:10:24,1
+that_connector,222rrr,PAID,2022-03-01 0:00:00,that_connector,UNKNOWN,drop_table,2022-03-01 21:52:24,2022-11-07 20:10:15,8
+that_connector,222rrr,PAID,2022-03-04 0:00:00,that_connector,UNKNOWN,drop_table,2022-03-04 16:19:05,2022-11-07 20:10:16,1
+that_connector,222rrr,PAID,2022-07-29 0:00:00,that_connector,UNKNOWN,drop_table,2022-07-29 23:05:17,2022-11-07 20:10:33,4
+that_connector,222rrr,PAID,2022-05-14 0:00:00,that_connector,UNKNOWN,drop_table,2022-05-14 11:07:37,2022-11-07 20:10:24,1
+that_connector,222rrr,PAID,2021-09-19 0:00:00,that_connector,UNKNOWN,drop_table,2021-09-19 12:11:38,2022-11-07 20:09:55,0
+that_connector,222rrr,PAID,2022-06-08 0:00:00,that_connector,UNKNOWN,drop_table,2022-06-08 21:29:07,2022-11-07 20:10:25,2
+that_connector,222rrr,PAID,2022-03-05 0:00:00,that_connector,UNKNOWN,drop_table,2022-03-05 10:55:00,2022-11-07 20:10:16,1
+that_connector,222rrr,PAID,2022-07-01 0:00:00,that_connector,UNKNOWN,drop_table,2022-07-01 21:56:37,2022-11-07 20:10:30,1

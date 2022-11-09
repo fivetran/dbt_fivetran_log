@@ -1,30 +1,31 @@
 version: 2
 
 models:
-  - name: stg_fivetran_log__active_volume
+  - name: stg_fivetran_log__incremental_mar
     description: >
       Table of **monthly active row (MAR)** measurements made by table per date. 
-      Each measurement is calculated cumulatively for the month. 
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns: 
-            - active_volume_id
-            - destination_id
-    columns: 
-      - name: active_volume_id
-        description: System-generated destination-unique ID of the active volume measurement.
-      - name: connector_name
+      Each measurement is calculated cumulatively for the month and includes all types of mar (paid, free, etc.)
+    columns:
+      - name: connector_id
         description: The *name* of the connector being measured. Note - this is erroneously named and will be fixed soon by Fivetran.
       - name: destination_id
         description: Foreign key referencing the `destination` whose table is being measured.
-      - name: measured_at
+      - name: free_type
+        description: If it is free MAR, the value indicates the type of free MAR. For paid MAR, the value is `PAID`.
+      - name: measured_date
         description: Timestamp of when the MAR measurement was made.
-      - name: monthly_active_rows
-        description: The number of active rows cumulatively synced this month for this table.
+      - name: incremental_rows
+        description: The number of new distinct primary keys on the current day synced for the connector.
+      - name: sync_type
+        description: This defines whether the sync for which MAR calculated is HISTORICAL or INCREMENTAL. Currently, the available value is UNKNOWN.
       - name: schema_name
         description: The name of the connector's schema that houses the measured table.
       - name: table_name
         description: The name of the table whose MAR was measured.
+      - name: updated_at
+        description: Timestamp of when the record was last updated.
+      - name: _fivetran_synced
+        description: Timestamp of when the record was last synced.
 
   - name: stg_fivetran_log__connector
     description: >
@@ -43,7 +44,7 @@ models:
       - name: connecting_user_id
         description: Foreign key referencing the `user` who set up the connection.
       - name: connector_name
-        description: Individual name of the connector. Note that this could be different from the `active_volume.schema_name`.
+        description: Individual name of the connector. Note that this could be different from the `incremental_mar.schema_name`.
       - name: connector_type
         description: The kind of connector (ie google sheets, webhooks).
       - name: destination_id

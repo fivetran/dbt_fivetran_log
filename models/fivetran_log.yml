@@ -139,9 +139,6 @@ models:
       - name: destination_name
         description: Name of the destination as it appears in the UI.
 
-      - name: consumption
-        description: The number of credits or dollar amount used by the destination for the given month.
-
       - name: free_monthly_active_rows
         description: The number of free active rows measured in the destination for the month.
 
@@ -162,6 +159,12 @@ models:
 
       - name: mar_per_amount_spent
         description: The ratio of the month's active volume to amount spent.
+
+      - name: credits_spent
+        description: The number of credits used by the destination for the given month.
+
+      - name: dollars_spent
+        description: The dollar amount used by the destination for the given month.
 
   - name: fivetran_log__transformation_status
     description: >

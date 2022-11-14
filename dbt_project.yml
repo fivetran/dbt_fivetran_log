@@ -9,7 +9,7 @@ models:
     staging:
       +schema: stg_fivetran_log
       tmp:
-        +materialized: view
+        +materialized: view 
 
 vars:
   fivetran_log:

@@ -56,6 +56,34 @@ sources:
             description: Boolean that is true if the connector's sync is currently paused.
           - name: signed_up
             description: Timestamp of when the connection was set up.
+          - name: sync_frequency
+            description: The frequency of how often each connector runs (in minutes).
+          - name: _fivetran_deleted
+            description: Boolean that tracks when a connector has been deleted.
+
+      - name: connector_type
+        identifier: "{{ var('fivetran_log_connector_type_identifier', 'connector_type')}}"
+        description: >
+          Table of all connectors specified by their type to capture a connector's release phase.
+        columns:
+          - name: id
+            description: The name of the connector.
+          - name: official_connector_name
+            description: The official name of the connector.
+          - name: type
+            description: The type of the connector (e.g. Productivity).
+          - name: availability
+            description: The general availability of the connector.
+          - name: created_at
+            description: Timestamp indicating when the connector was created.
+          - name: public_beta_at
+            description: Timestamp indicating when the connector was released to the public for beta testing.
+          - name: release_at
+            description: Timestamp indicating when the connector was released.
+          - name: deleted
+            description: Boolean indicating if the connector has been deleted.
+          - name: broken
+            description: Boolean indicating if the connector is broken.
 
       - name: credits_used
         identifier: "{{ var('fivetran_log_credits_used_identifier', 'credits_used')}}"
@@ -116,6 +144,8 @@ sources:
             description: The routine involved in the log, defined [here](https://fivetran.com/docs/logs#logevents).
           - name: transformation_id
             description: Foreign key referencing the `transformation` if the event refers to a transformation run.
+          - name: sync_id
+            description: The ID of each sync per connector.
 
       - name: account
         identifier: "{{ var('fivetran_log_account_identifier', 'account')}}"
@@ -188,6 +218,8 @@ sources:
             description: Phone number associated with user.
           - name: verified 
             description: Boolean that indicates whether the user has verified their email address in the account creation process.
+          - name: _fivetran_deleted
+            description: Boolean that tracks when a user has been deleted.
 
       - name: trigger_table
         identifier: "{{ var('fivetran_log_trigger_table_identifier', 'trigger_table')}}"

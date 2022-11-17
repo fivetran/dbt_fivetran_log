@@ -25,7 +25,9 @@ final as (
         destination_id,
         connecting_user_id,
         paused as is_paused,
-        signed_up as set_up_at
+        signed_up as set_up_at,
+        sync_frequency as sync_frequency_minutes,
+        _fivetran_deleted as is_deleted
     from fields
 
     -- Only look at the most recent one

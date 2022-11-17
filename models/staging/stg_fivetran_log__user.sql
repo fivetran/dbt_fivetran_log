@@ -16,7 +16,8 @@ fields as (
         family_name as last_name,
         given_name as first_name,
         phone,
-        verified as is_verified
+        verified as is_verified,
+        _fivetran_deleted as is_deleted
     from fivetran_user
 )
 

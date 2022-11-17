@@ -11,7 +11,8 @@
     {"name": "destination_id", "datatype": dbt_utils.type_string()},
     {"name": "paused", "datatype": "boolean"},
     {"name": "service_version", "datatype": dbt_utils.type_int()},
-    {"name": "signed_up", "datatype": dbt_utils.type_timestamp()}
+    {"name": "signed_up", "datatype": dbt_utils.type_timestamp()},
+    {"name": "sync_frequency", "datatype": dbt_utils.type_int()}
 ] %}
 
 {{ return(columns) }}

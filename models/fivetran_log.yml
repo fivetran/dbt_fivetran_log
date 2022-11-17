@@ -20,8 +20,14 @@ models:
       - name: connector_name
         description: Name of the connector.
 
+      - name: official_connector_name
+        description: The official name of the connector.
+
       - name: connector_type
-        description: The kind of connector (ie google sheets, webhooks).
+        description: The type of connector (e.g. Productivity, Finance).
+
+      - name: availability
+        description: The general availability of the connector.
 
       - name: destination_id
         description: >
@@ -48,6 +54,12 @@ models:
           
       - name: set_up_at
         description: Timestamp of when the connector was set up.
+
+      - name: is_deleted
+        description: Boolean indicating if the connector has been deleted.
+
+      - name: is_broken
+        description: Boolean indicating if the connector is broken.
 
       - name: number_of_schema_changes_last_month
         description: > 

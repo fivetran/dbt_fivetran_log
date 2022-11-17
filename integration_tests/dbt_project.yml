@@ -1,5 +1,5 @@
 name: 'fivetran_log_integration_tests'
-version: '0.6.3'
+version: '0.6.4'
 config-version: 2
 profile: 'integration_tests'
 
@@ -10,11 +10,12 @@ dispatch:
 vars:
   fivetran_log:
 
-    fivetran_log_schema: fivetrans_logs_integration_tests
+    fivetran_log_schema: fivetrans_logs_integration_tests_1
     fivetran_log_account_identifier: "account"
     fivetran_log_account_membership_identifier: "account_membership"
     fivetran_log_active_volume_identifier: "active_volume"
     fivetran_log_connector_identifier: "connector"
+    fivetran_log_connector_type_identifier: "connector_type"
     fivetran_log_credits_used_identifier: "credits_used"
     fivetran_log_usage_cost_identifier: "usage_cost"
     fivetran_log_destination_identifier: "destination"

@@ -1,3 +1,7 @@
+# dbt_fivetran_log v0.6.4
+## Feature - connector_type table added
+- Added the connector_type table to the package and incorporated some of it's fields to the `fivetran_log__connector_status` model.
+- Also made some changes to the staging connector, user and log tables as per the connector release notes: https://fivetran.com/docs/logs/fivetran-log/changelog
 # dbt_fivetran_log v0.6.3
 ## Fixes
 - Modified the argument used for the identifier in the get_relation macro used in the does_table_exist macro from name to identifier. This avoids issues on snowflake where the name of a table defined in a source yaml may be in lowercase while in snowflake it is uppercased.

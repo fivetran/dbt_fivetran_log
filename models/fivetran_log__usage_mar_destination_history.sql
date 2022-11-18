@@ -37,6 +37,7 @@ usage as (
     from credits_used
     full outer join useage_cost
         on useage_cost.measured_month = credits_used.measured_month
+        and useage_cost.destination_id = credits_used.destination_id
 ),
 
 join_usage_mar as (

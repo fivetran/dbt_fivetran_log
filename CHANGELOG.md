@@ -9,6 +9,9 @@
             - measured_month 
 ```
 
+## Under the Hood
+- BuildKite testing has been added. ([#70](https://github.com/fivetran/dbt_fivetran_log/pull/70))
+
 ## Contributors
 - [@lord-skinner](https://github.com/lord-skinner) ([#67](https://github.com/fivetran/dbt_fivetran_log/pull/67))
 

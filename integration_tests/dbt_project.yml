@@ -53,7 +53,7 @@ seeds:
     destination:
       +column_types:
         created_at: timestamp
-        id: "{{ 'string' if target.type in ('bigquery', 'spark') else 'varchar' }}"
+        id: "{{ 'string' if target.type in ('bigquery', 'spark', 'databricks') else 'varchar' }}"
     destination_membership:
       +column_types:
         activated_at: timestamp
@@ -61,17 +61,17 @@ seeds:
     log:
       +column_types:
         time_stamp: timestamp
-        transformation_id:  "{{ 'string' if target.type in ('bigquery', 'spark') else 'varchar' }}"
+        transformation_id:  "{{ 'string' if target.type in ('bigquery', 'spark', 'databricks') else 'varchar' }}"
     transformation:
       +column_types:
         created_at: timestamp
-        destination_id: "{{ 'string' if target.type in ('bigquery', 'spark') else 'varchar' }}"
-        id:  "{{ 'string' if target.type in ('bigquery', 'spark') else 'varchar' }}"
+        destination_id: "{{ 'string' if target.type in ('bigquery', 'spark', 'databricks') else 'varchar' }}"
+        id:  "{{ 'string' if target.type in ('bigquery', 'spark', 'databricks') else 'varchar' }}"
     trigger_table:
       +quote_columns: "{{ true if target.type in ('redshift', 'postgres') else false }}"
       +enabled: "{{ true if target.type != 'snowflake' else false }}"
       +column_types:
-        transformation_id:  "{{ 'string' if target.type in ('bigquery', 'spark') else 'varchar' }}"
+        transformation_id:  "{{ 'string' if target.type in ('bigquery', 'spark', 'databricks') else 'varchar' }}"
     trigger_table_snowflake:
       +enabled: "{{ true if target.type == 'snowflake' else false }}"
     user:

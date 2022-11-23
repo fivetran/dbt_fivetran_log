@@ -6,8 +6,6 @@ with incremental_mar as (
 
     from {{ ref('stg_fivetran_log__incremental_mar') }} 
 
-    -- where schema_name != 'fivetran_log' -- it's free! 
-
 ),
 
 connector as (

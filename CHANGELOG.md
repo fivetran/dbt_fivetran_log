@@ -38,6 +38,23 @@
 - `dbt_utils.surrogate_key` has also been updated to `dbt_utils.generate_surrogate_key`. Since the method for creating surrogate keys differ, we suggest all users do a `full-refresh` for the most accurate data. For more information, please refer to dbt-utils [release notes](https://github.com/dbt-labs/dbt-utils/releases) for this update.
 - `packages.yml` has been updated to reflect new default `fivetran/fivetran_utils` version, previously `[">=0.3.0", "<0.4.0"]` now `[">=0.4.0", "<0.5.0"]`.
 
+# dbt_fivetran_log v0.6.4
+## Fixes
+- Added second qualifying join clause to `fivetran_log__usage_mar_destination_history` in the `usage` cte. This join was failing this test to ensure each `destination_id` has a single `measured_month` :
+
+```
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: 
+            - destination_id
+            - measured_month 
+```
+
+## Under the Hood
+- BuildKite testing has been added. ([#70](https://github.com/fivetran/dbt_fivetran_log/pull/70))
+
+## Contributors
+- [@lord-skinner](https://github.com/lord-skinner) ([#67](https://github.com/fivetran/dbt_fivetran_log/pull/67))
+
 # dbt_fivetran_log v0.6.3
 ## Fixes
 - Modified the argument used for the identifier in the get_relation macro used in the does_table_exist macro from name to identifier. This avoids issues on snowflake where the name of a table defined in a source yaml may be in lowercase while in snowflake it is uppercased.

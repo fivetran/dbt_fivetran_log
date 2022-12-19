@@ -51,10 +51,10 @@ join_usage_mar as (
         destination_mar.monthly_active_rows,
 
         -- credit and usage mar calculations
-        round( cast(nullif(usage.credits_spent,0) * 1000000.0 as {{ dbt_utils.type_numeric() }}) / cast(nullif(destination_mar.monthly_active_rows,0) as {{ dbt_utils.type_numeric() }}), 2) as credits_spent_per_million_mar,
-        round( cast(nullif(destination_mar.monthly_active_rows,0) * 1.0 as {{ dbt_utils.type_numeric() }}) / cast(nullif(usage.credits_spent,0) as {{ dbt_utils.type_numeric() }}), 0) as mar_per_credit_spent,
-        round( cast(nullif(usage.dollars_spent,0) * 1000000.0 as {{ dbt_utils.type_numeric() }}) / cast(nullif(destination_mar.monthly_active_rows,0) as {{ dbt_utils.type_numeric() }}), 2) as amount_spent_per_million_mar,
-        round( cast(nullif(destination_mar.monthly_active_rows,0) * 1.0 as {{ dbt_utils.type_numeric() }}) / cast(nullif(usage.dollars_spent,0) as {{ dbt_utils.type_numeric() }}), 0) as mar_per_amount_spent
+        round( cast(nullif(usage.credits_spent,0) * 1000000.0 as {{ dbt.type_numeric() }}) / cast(nullif(destination_mar.monthly_active_rows,0) as {{ dbt.type_numeric() }}), 2) as credits_spent_per_million_mar,
+        round( cast(nullif(destination_mar.monthly_active_rows,0) * 1.0 as {{ dbt.type_numeric() }}) / cast(nullif(usage.credits_spent,0) as {{ dbt.type_numeric() }}), 0) as mar_per_credit_spent,
+        round( cast(nullif(usage.dollars_spent,0) * 1000000.0 as {{ dbt.type_numeric() }}) / cast(nullif(destination_mar.monthly_active_rows,0) as {{ dbt.type_numeric() }}), 2) as amount_spent_per_million_mar,
+        round( cast(nullif(destination_mar.monthly_active_rows,0) * 1.0 as {{ dbt.type_numeric() }}) / cast(nullif(usage.dollars_spent,0) as {{ dbt.type_numeric() }}), 0) as mar_per_amount_spent
     from destination_mar 
     left join usage 
         on destination_mar.measured_month = cast(usage.measured_month as timestamp)

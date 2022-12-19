@@ -2,7 +2,7 @@ with active_volume as (
 
     select 
         *, 
-        {{ dbt_utils.date_trunc('month', 'measured_at') }} as measured_month
+        {{ dbt.date_trunc('month', 'measured_at') }} as measured_month
 
     from {{ ref('stg_fivetran_log__active_volume') }} 
 

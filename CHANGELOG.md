@@ -46,6 +46,23 @@
   - `paid_mothly_active_rows`: Detailing the total paid MAR
   - `total_mothly_active_rows`: Detailing the total free and paid MAR
 
+# dbt_fivetran_log v0.6.4
+## Fixes
+- Added second qualifying join clause to `fivetran_log__usage_mar_destination_history` in the `usage` cte. This join was failing this test to ensure each `destination_id` has a single `measured_month` :
+
+```
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: 
+            - destination_id
+            - measured_month 
+```
+
+## Under the Hood
+- BuildKite testing has been added. ([#70](https://github.com/fivetran/dbt_fivetran_log/pull/70))
+
+## Contributors
+- [@lord-skinner](https://github.com/lord-skinner) ([#67](https://github.com/fivetran/dbt_fivetran_log/pull/67))
+
 # dbt_fivetran_log v0.6.3
 ## Fixes
 - Modified the argument used for the identifier in the get_relation macro used in the does_table_exist macro from name to identifier. This avoids issues on snowflake where the name of a table defined in a source yaml may be in lowercase while in snowflake it is uppercased.

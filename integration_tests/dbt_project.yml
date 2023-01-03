@@ -14,7 +14,7 @@ vars:
     fivetran_log_schema: fivetrans_logs_integration_tests
     fivetran_log_account_identifier: "account"
     fivetran_log_account_membership_identifier: "account_membership"
-    fivetran_log_active_volume_identifier: "active_volume"
+    fivetran_log_incremental_mar_identifier: "incremental_mar"
     fivetran_log_connector_identifier: "connector"
     fivetran_log_credits_used_identifier: "credits_used"
     fivetran_log_usage_cost_identifier: "usage_cost"
@@ -41,10 +41,10 @@ seeds:
       +column_types:
         activated_at: timestamp
         joined_at: timestamp
-    active_volume:
+    incremental_mar:
       +column_types:
-        measured_at: timestamp
-        monthly_active_rows: "{{ 'int64' if target.type == 'bigquery' else 'bigint' }}"
+        measured_date: timestamp
+        incremental_rows: "{{ 'int64' if target.type == 'bigquery' else 'bigint' }}"
     connector:
       +column_types:
         signed_up: timestamp

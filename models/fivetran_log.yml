@@ -100,8 +100,14 @@ models:
       - name: last_measured_at
         description: Timestamp of when the last MAR measurement for the month was made.
 
-      - name: monthly_active_rows
-        description: The number of active rows measured in the table for the month.
+      - name: free_monthly_active_rows
+        description: The number of free active rows measured in the table for the month.
+
+      - name: paid_monthly_active_rows
+        description: The number of paid active rows measured in the table for the month.
+
+      - name: total_monthly_active_rows
+        description: The total number of active rows measured in the table for the month.
       
       - name: connector_type
         description: The kind of connector (ie google sheets, webhooks).
@@ -133,11 +139,14 @@ models:
       - name: destination_name
         description: Name of the destination as it appears in the UI.
 
-      - name: consumption
-        description: The number of credits or dollar amount used by the destination for the given month.
+      - name: free_monthly_active_rows
+        description: The number of free active rows measured in the destination for the month.
 
-      - name: monthly_active_rows
-        description: The number of total active rows measured in the destination for the month.
+      - name: paid_monthly_active_rows
+        description: The number of paid active rows measured in the destination for the month.
+
+      - name: total_monthly_active_rows
+        description: The total number of active rows measured in the destination for the month.
 
       - name: credits_spent_per_million_mar
         description: The ratio of credits spent that month per every million active rows synced.
@@ -151,6 +160,11 @@ models:
       - name: mar_per_amount_spent
         description: The ratio of the month's active volume to amount spent.
 
+      - name: credits_spent
+        description: The number of credits used by the destination for the given month.
+
+      - name: dollars_spent
+        description: The dollar amount used by the destination for the given month.
 
   - name: fivetran_log__transformation_status
     description: >

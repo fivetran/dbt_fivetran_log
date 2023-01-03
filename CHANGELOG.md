@@ -38,6 +38,14 @@
 - `dbt_utils.surrogate_key` has also been updated to `dbt_utils.generate_surrogate_key`. Since the method for creating surrogate keys differ, we suggest all users do a `full-refresh` for the most accurate data. For more information, please refer to dbt-utils [release notes](https://github.com/dbt-labs/dbt-utils/releases) for this update.
 - `packages.yml` has been updated to reflect new default `fivetran/fivetran_utils` version, previously `[">=0.3.0", "<0.4.0"]` now `[">=0.4.0", "<0.5.0"]`.
 
+[PR #68](https://github.com/fivetran/dbt_fivetran_log/pull/68) includes the following breaking changes:
+- The `active_volume` source (and accompanying `stg_fivetran_log__active_volume` model) has been deprecated from the Fivetran Log connector. In its place, the `incremental_mar` table (and accompanying `stg_fivetran_log__incremental_mar` model) has been added. This new source has been swapped within the package to reference the new source table.
+  - This new source table has enriched data behind the paid and free MAR across Fivetran connectors within your destinations.
+- Removed the `monthly_active_rows` field from the `fivetran_log__mar_table_history` and `fivetran_log__usage_mar_destination_history` models. In it's place the following fields have been added:
+  - `free_mothly_active_rows`: Detailing the total free MAR
+  - `paid_mothly_active_rows`: Detailing the total paid MAR
+  - `total_mothly_active_rows`: Detailing the total free and paid MAR
+
 # dbt_fivetran_log v0.6.4
 ## Fixes
 - Added second qualifying join clause to `fivetran_log__usage_mar_destination_history` in the `usage` cte. This join was failing this test to ensure each `destination_id` has a single `measured_month` :

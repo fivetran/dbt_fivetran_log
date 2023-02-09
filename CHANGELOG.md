@@ -1,3 +1,10 @@
+# dbt_fivetran_log v0.7.1
+## Bug Fixes
+- Modified the logic within the `fivetran_log__mar_table_history` model to no longer filter out previous historical MAR records. Previously, these fields were filtered out as the `active_volume` source (since deprecated and replaced with `incremental_mar`) produced a cumulative daily MAR total. However, the `incremental_mar` source is not cumulative and will need to include all historical records.
+
+## Contributors
+- [@pkanter](https://github.com/pkanter) ([#63](https://github.com/fivetran/dbt_fivetran_log/issues/63))
+
 # dbt_fivetran_log v0.7.0
 
 ## 🚨 Breaking Changes 🚨:

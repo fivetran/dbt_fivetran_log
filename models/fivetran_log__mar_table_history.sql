@@ -30,12 +30,12 @@ ordered_mar as (
         measured_date,
         measured_month,
         incremental_rows,
-        case when lower(free_type) = 'paid'
+        coalesce(case when lower(free_type) = 'paid'
             then incremental_rows
-        end as paid_monthly_active_rows,
-        case when lower(free_type) != 'paid'
+        end, 0) as paid_monthly_active_rows,
+        coalesce(case when lower(free_type) != 'paid'
             then incremental_rows
-        end as free_monthly_active_rows
+        end, 0) as free_monthly_active_rows
 
     from incremental_mar
 

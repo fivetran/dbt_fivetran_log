@@ -30,15 +30,12 @@ ordered_mar as (
         measured_date,
         measured_month,
         incremental_rows,
-        case when lower(free_type) = 'paid'
+        coalesce(case when lower(free_type) = 'paid'
             then incremental_rows
-        end as paid_monthly_active_rows,
-        case when lower(free_type) != 'paid'
+        end, 0) as paid_monthly_active_rows,
+        coalesce(case when lower(free_type) != 'paid'
             then incremental_rows
-        end as free_monthly_active_rows,
-
-        -- each measurement is cumulative for the month, so we'll only look at the latest date for each month
-        row_number() over(partition by table_name, connector_name, destination_id, measured_month order by measured_date desc) as n
+        end, 0) as free_monthly_active_rows
 
     from incremental_mar
 
@@ -57,7 +54,6 @@ latest_mar as (
         (free_monthly_active_rows + paid_monthly_active_rows) as total_monthly_active_rows
     
     from ordered_mar
-    where n = 1
 
 ),
 

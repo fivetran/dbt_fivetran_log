@@ -66,14 +66,15 @@ models:
     
   - name: fivetran_log__mar_table_history
     description: > 
-      Table of each table's monthly active rows (MAR) for all connectors and destinations, per month.
+      Table of each table's monthly active rows (MAR) for all connectors, destinations, and schemas, per month.
       Read more about how monthly active rows are defined and calculated 
       [here](https://fivetran.com/docs/getting-started/consumption-based-pricing).
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns: 
             - connector_id
-            - destination_id  
+            - destination_id
+            - schema_name
             - table_name
             - measured_month
     columns:

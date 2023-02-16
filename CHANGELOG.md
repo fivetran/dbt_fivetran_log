@@ -1,3 +1,13 @@
+# dbt_fivetran_log v0.7.2
+## Bug Fixes
+- Fixed duplicated rows in `fivetran_log__mar_table_history` and set the model back to a monthly granularity for each source, destination, and table. ([#74](https://github.com/fivetran/dbt_fivetran_log/pull/74))
+
+## Under the Hood
+- Adjusted the uniqueness test within the `fivetran_log__mar_table_history` to also include the `schema_name` as the same table may exist in multiple schemas within a connector/destination. ([#74](https://github.com/fivetran/dbt_fivetran_log/pull/74))
+
+## Contributors
+- [@simon-stepper](https://github.com/simon-stepper) ([#73](https://github.com/fivetran/dbt_fivetran_log/issues/73))
+
 # dbt_fivetran_log v0.7.1
 ## Bug Fixes
 - Modified the logic within the `fivetran_log__mar_table_history` model to no longer filter out previous historical MAR records. Previously, these fields were filtered out as the `active_volume` source (since deprecated and replaced with `incremental_mar`) produced a cumulative daily MAR total. However, the `incremental_mar` source is not cumulative and will need to include all historical records. ([#72](https://github.com/fivetran/dbt_fivetran_log/pull/72))
@@ -62,9 +72,9 @@
 
 ```
       - dbt_utils.unique_combination_of_columns:
-          combination_of_columns: 
+          combination_of_columns:
             - destination_id
-            - measured_month 
+            - measured_month
 ```
 
 ## Under the Hood

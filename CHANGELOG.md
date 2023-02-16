@@ -2,6 +2,9 @@
 ## Bug Fixes
 - Fixed duplicated rows in `fivetran_log__mar_table_history` and set the model back to a monthly granularity for each source, destination, and table. ([#74](https://github.com/fivetran/dbt_fivetran_log/pull/74))
 
+## Under the Hood
+- Adjusted the uniqueness test within the `fivetran_log__mar_table_history` to also include the `schema_name` as the same table may exist in multiple schemas within a connector/destination. ([#74](https://github.com/fivetran/dbt_fivetran_log/pull/74))
+
 ## Contributors
 - [@simon-stepper](https://github.com/simon-stepper) ([#73](https://github.com/fivetran/dbt_fivetran_log/issues/73))
 

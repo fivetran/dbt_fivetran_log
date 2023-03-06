@@ -1,3 +1,9 @@
+# dbt_fivetran_log v0.7.3
+## Bug Fixes
+- The logic within the `does_table_exist` macro would run the source_relation check across **all** nodes. This opened dbt compile to erroneous failures in other (non fivetran_log) sources. This macro logic has been updated to only check the source_relation for the specific source in question.
+
+## Contributors
+- [@dimoschi](https://github.com/dimoschi) for sharing the code applied within 
 # dbt_fivetran_log v0.7.2
 ## Bug Fixes
 - Fixed duplicated rows in `fivetran_log__mar_table_history` and set the model back to a monthly granularity for each source, destination, and table. ([#74](https://github.com/fivetran/dbt_fivetran_log/pull/74))

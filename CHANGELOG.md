@@ -1,9 +1,14 @@
 # dbt_fivetran_log v0.7.3
+PR [#77](https://github.com/fivetran/dbt_fivetran_log/pull/77) includes the following updates:
 ## Bug Fixes
 - The logic within the `does_table_exist` macro would run the source_relation check across **all** nodes. This opened dbt compile to erroneous failures in other (non fivetran_log) sources. This macro logic has been updated to only check the source_relation for the specific source in question.
+- Adjusted the enabled variable used within the `stg_fivetran_log__credits_used` model to the more appropriate `fivetran_log__credits_pricing` name as opposed to `fivetran_log__usage_pricing`. This ensures a user may override the respective model enablement in isolation of each other.
+
+## Documentation Updates
+- Added documentation to support the `fivetran_log__usage_pricing` and `fivetran_log__credits_pricing` variable behaviors within the package.
 
 ## Contributors
-- [@dimoschi](https://github.com/dimoschi) for sharing the code applied within 
+- [@dimoschi](https://github.com/dimoschi) for sharing the code applied within [#77](https://github.com/fivetran/dbt_fivetran_log/pull/77)
 # dbt_fivetran_log v0.7.2
 ## Bug Fixes
 - Fixed duplicated rows in `fivetran_log__mar_table_history` and set the model back to a monthly granularity for each source, destination, and table. ([#74](https://github.com/fivetran/dbt_fivetran_log/pull/74))

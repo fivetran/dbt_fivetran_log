@@ -5,7 +5,7 @@ PR [#77](https://github.com/fivetran/dbt_fivetran_log/pull/77) includes the foll
 - Adjusted the enabled variable used within the `stg_fivetran_log__credits_used` model to the more appropriate `fivetran_log__credits_pricing` name as opposed to `fivetran_log__usage_pricing`. This ensures a user may override the respective model enablement in isolation of each other.
 
 ## Documentation Updates
-- Added documentation to support the `fivetran_log__usage_pricing` and `fivetran_log__credits_pricing` variable behaviors within the package.
+- Added a DECISIONLOG to support the logic behind the `fivetran_log__usage_pricing` and `fivetran_log__credits_pricing` variable behaviors within the package.
 
 ## Contributors
 - [@dimoschi](https://github.com/dimoschi) for sharing the code applied within [#77](https://github.com/fivetran/dbt_fivetran_log/pull/77)

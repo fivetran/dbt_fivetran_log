@@ -1,3 +1,15 @@
+# dbt_fivetran_log v0.7.4
+Includes the following updates:
+
+## Enhancements
+- The `sync_id` field from the source `log` table is added to the `stg_fivetran_log__log` model for ease of grouping events by the sync that they are associated with.
+
+## Documentation Updates
+- The `sync_id` field is added to the documentation in the `fivetran_log.yml` file.
+
+## Contributors
+- [@camcyr-at-brzwy](https://github.com/camcyr-at-brzwy)
+
 # dbt_fivetran_log v0.7.3
 PR [#77](https://github.com/fivetran/dbt_fivetran_log/pull/77) includes the following updates:
 ## Bug Fixes

@@ -122,6 +122,8 @@ sources:
             description: The routine involved in the log, defined [here](https://fivetran.com/docs/logs#logevents).
           - name: transformation_id
             description: Foreign key referencing the `transformation` if the event refers to a transformation run.
+          - name: sync_id
+            description: Identifies which sync the event is associated with.
 
       - name: account
         identifier: "{{ var('fivetran_log_account_identifier', 'account')}}"

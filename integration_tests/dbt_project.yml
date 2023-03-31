@@ -1,5 +1,5 @@
 name: 'fivetran_log_integration_tests'
-version: '0.7.3'
+version: '0.7.4'
 
 config-version: 2
 profile: 'integration_tests'

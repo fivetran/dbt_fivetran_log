@@ -22,3 +22,4 @@ dbt run --vars '{fivetran_log__usage_pricing: true}' --target "$db" --full-refre
 dbt test --target "$db"
 dbt run --vars '{fivetran_log__usage_pricing: false, fivetran_log_using_account_membership: false, fivetran_log_using_destination_membership: false, fivetran_log_using_user: false}' --target "$db" --full-refresh
 dbt test --target "$db"
+dbt run-operation fivetran_utils.drop_schemas_automation --target "$db"

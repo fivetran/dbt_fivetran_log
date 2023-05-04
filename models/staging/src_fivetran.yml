@@ -1,9 +1,9 @@
 version: 2
 
 sources: 
-  - name: fivetran_log
-    database: "{% if target.type not in ('spark','databricks') %}{{ var('fivetran_log_database', target.database) }}{% endif %}" # add var config to dbt_project.yml
-    schema: "{{ var('fivetran_log_schema', 'fivetran_log')}}"
+  - name: fivetran
+    database: "{% if target.type not in ('spark','databricks') %}{{ var('fivetran_database', target.database) }}{% endif %}" # add var config to dbt_project.yml
+    schema: "{{ var('fivetran_schema', 'fivetran')}}"
 
     loader: fivetran
     loaded_at_field: _fivetran_synced
@@ -14,7 +14,7 @@ sources:
 
     tables:
       - name: incremental_mar
-        identifier: "{{ var('fivetran_log_incremental_mar_identifier', 'incremental_mar')}}"
+        identifier: "{{ var('fivetran_incremental_mar_identifier', 'incremental_mar')}}"
         description: >
           Table of **monthly active row (MAR)** measurements made by table per date. 
           Each measurement is calculated cumulatively for the month and includes all types of mar (paid, free, etc.)
@@ -41,7 +41,7 @@ sources:
             description: Timestamp of when the record was last synced.
 
       - name: connector
-        identifier: "{{ var('fivetran_log_connector_identifier', 'connector')}}"
+        identifier: "{{ var('fivetran_connector_identifier', 'connector')}}"
         description: >
           Table of all connectors loading data into warehouses. Note that deleted connectors 
           are not removed, but can be identified by having an older _fivetran_synced field relative 
@@ -64,7 +64,7 @@ sources:
             description: Timestamp of when the connection was set up.
 
       - name: credits_used
-        identifier: "{{ var('fivetran_log_credits_used_identifier', 'credits_used')}}"
+        identifier: "{{ var('fivetran_credits_used_identifier', 'credits_used')}}"
         freshness: null
         description: Table of the credits used by the customer per month within each destination.
         columns:
@@ -76,7 +76,7 @@ sources:
             description: The number of credits used by the destination for the given month.
 
       - name: usage_cost
-        identifier: "{{ var('fivetran_log_usage_cost_identifier', 'usage_cost')}}"
+        identifier: "{{ var('fivetran_usage_cost_identifier', 'usage_cost')}}"
         freshness: null
         description: Table of the credits used by the customer per month within each destination.
         columns:
@@ -88,7 +88,7 @@ sources:
             description: The dollar amount associated with the cost of your connector.
 
       - name: destination
-        identifier: "{{ var('fivetran_log_destination_identifier', 'destination')}}"
+        identifier: "{{ var('fivetran_destination_identifier', 'destination')}}"
         description: Table of the destinations that have data loaded into them. For each declared source, there will be just one record.
         columns:
           - name: id
@@ -103,7 +103,7 @@ sources:
             description: Geographical region of the destination.
       
       - name: log
-        identifier: "{{ var('fivetran_log_log_identifier', 'log')}}"
+        identifier: "{{ var('fivetran_log_identifier', 'log')}}"
         description: Table of logged events related to data syncs. More info on error logs [here](https://fivetran.com/docs/logs/fivetran-log#errorlogs).
         columns:
           - name: id 
@@ -126,7 +126,7 @@ sources:
             description: Identifies which sync the event is associated with.
 
       - name: account
-        identifier: "{{ var('fivetran_log_account_identifier', 'account')}}"
+        identifier: "{{ var('fivetran_account_identifier', 'account')}}"
         description: Table of information on this Fivetran account.
         columns:
           - name: id
@@ -141,10 +141,10 @@ sources:
             description: Status of the Fivetran account (ie trial, frozen).
 
       - name: account_membership
-        identifier: "{{ var('fivetran_log_account_membership_identifier', 'account_membership')}}"
+        identifier: "{{ var('fivetran_account_membership_identifier', 'account_membership')}}"
         description: Table of the users given access to this account.
         config:
-          enabled: "{{ var('fivetran_log_using_account_membership', true) }}"
+          enabled: "{{ var('fivetran_using_account_membership', true) }}"
         columns:
           - name: account_id
             description: Foreign key referencing the ID of the `account` that the user belongs to.
@@ -158,10 +158,10 @@ sources:
             description: The user's permissions for this account.
 
       - name: destination_membership
-        identifier: "{{ var('fivetran_log_destination_membership_identifier', 'destination_membership')}}"
+        identifier: "{{ var('fivetran_destination_membership_identifier', 'destination_membership')}}"
         description: Table of the users given access to this destination.
         config:
-          enabled: "{{ var('fivetran_log_using_destination_membership', true) }}"
+          enabled: "{{ var('fivetran_using_destination_membership', true) }}"
         columns:
           - name: destination_id
             description: Foreign key referencing the ID of the `destination` that the user is a member of.
@@ -175,10 +175,10 @@ sources:
             description: The user's permissions for this individual destination.
 
       - name: user
-        identifier: "{{ var('fivetran_log_user_identifier', 'user')}}"
+        identifier: "{{ var('fivetran_user_identifier', 'user')}}"
         description: Table of users given access to this Fivetran account.
         config:
-          enabled: "{{ var('fivetran_log_using_user', true) }}"
+          enabled: "{{ var('fivetran_using_user', true) }}"
         columns:
           - name: id
             description: Unique ID of the user's account.
@@ -198,13 +198,13 @@ sources:
             description: Boolean that indicates whether the user has verified their email address in the account creation process.
 
       - name: trigger_table
-        identifier: "{{ var('fivetran_log_trigger_table_identifier', 'trigger_table')}}"
+        identifier: "{{ var('fivetran_trigger_table_identifier', 'trigger_table')}}"
         description: >
           Table relating transformations to the connector source tables that trigger them. 
           Transformations on time schedules do not appear here. Note - this table is only created 
           once you have created a triggered transformation.
         config:
-          enabled: "{{ var('fivetran_log_using_triggers', true) }}"
+          enabled: "{{ var('fivetran_using_triggers', true) }}"
         freshness: null
         # transformation data tests are currently implemented at the staging level to accommodate schemas without this source table
         columns:
@@ -214,12 +214,12 @@ sources:
             description: Foreign key referencing the `transformation` that is triggered by new data.
 
       - name: transformation
-        identifier: "{{ var('fivetran_log_transformation_identifier', 'transformation')}}"
+        identifier: "{{ var('fivetran_transformation_identifier', 'transformation')}}"
         description: > 
           Table of [transformations](https://fivetran.com/docs/transformations) made and carried out in Fivetran.
           Note - this table is only created once you have created a transformation for the destination.
         config:
-          enabled: "{{ var('fivetran_log_using_transformations', true) }}"
+          enabled: "{{ var('fivetran_using_transformations', true) }}"
         freshness: null
         # transformation data tests are currently implemented at the staging level to accommodate schemas without this source table
         columns:

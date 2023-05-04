@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: stg_fivetran_log__incremental_mar
+  - name: stg_fivetran__incremental_mar
     description: >
       Table of **monthly active row (MAR)** measurements made by table per date. 
       Each measurement is calculated cumulatively for the month and includes all types of mar (paid, free, etc.)
@@ -27,7 +27,7 @@ models:
       - name: _fivetran_synced
         description: Timestamp of when the record was last synced.
 
-  - name: stg_fivetran_log__connector
+  - name: stg_fivetran__connector
     description: >
       Table of all connectors loading data into warehouses. Note that deleted connectors 
       are not removed, but can be identified by having an older _fivetran_synced field relative 
@@ -54,7 +54,7 @@ models:
       - name: set_up_at
         description: Timestamp of when the connection was set up.
 
-  - name: stg_fivetran_log__credits_used
+  - name: stg_fivetran__credits_used
     description: Table of the credits used by the customer per month for each destination.
     tests:
       - dbt_utils.unique_combination_of_columns:
@@ -69,7 +69,7 @@ models:
       - name: credits_spent
         description: The total credits used by the destination for the given month.
 
-  - name: stg_fivetran_log__usage_cost
+  - name: stg_fivetran__usage_cost
     description: Table of the amount spent by the customer per month for each destination. Amount is represented in USD.
     tests:
       - dbt_utils.unique_combination_of_columns:
@@ -84,7 +84,7 @@ models:
       - name: dollars_spent
         description: The total amount spent by the destination for the given month.
 
-  - name: stg_fivetran_log__destination
+  - name: stg_fivetran__destination
     description: Table of the destinations that have data loaded into them. For each declared source, there will be just one record.
     columns:
       - name: destination_id
@@ -101,7 +101,7 @@ models:
       - name: region
         description: Geographical region of the destination.
 
-  - name: stg_fivetran_log__log
+  - name: stg_fivetran__log
     description: > 
       Table of logged events related to data syncs. More info on error logs 
       [here](https://fivetran.com/docs/logs/fivetran-log#errorlogs)
@@ -130,7 +130,7 @@ models:
       - name: transformation_id
         description: Foreign key referencing the `transformation` if the event refers to a transformation run.
 
-  - name: stg_fivetran_log__account
+  - name: stg_fivetran__account
     description: Table of information on this Fivetran account.
     columns:
       - name: account_id
@@ -147,7 +147,7 @@ models:
       - name: status
         description: Status of the Fivetran account (ie trial, frozen).
 
-  - name: stg_fivetran_log__account_membership
+  - name: stg_fivetran__account_membership
     description: Table of the users given access to this account.
     tests:
       - dbt_utils.unique_combination_of_columns:
@@ -166,7 +166,7 @@ models:
       - name: account_role
         description: The user's permissions for this account.
 
-  - name: stg_fivetran_log__destination_membership
+  - name: stg_fivetran__destination_membership
     description: Table of the users given access to this destination.
     tests:
       - dbt_utils.unique_combination_of_columns:
@@ -185,7 +185,7 @@ models:
       - name: destination_role
         description: The user's permissions for this individual destination.
       
-  - name: stg_fivetran_log__transformation
+  - name: stg_fivetran__transformation
     description: > 
       Table of [transformations](https://fivetran.com/docs/transformations) made and carried out in Fivetran.
       Note - this table is only created once you have created a transformation for the destination.
@@ -216,7 +216,7 @@ models:
       - name: trigger_type
         description: The schedule type of the transformation (time schedule vs. new data in certain tables).
 
-  - name: stg_fivetran_log__trigger_table
+  - name: stg_fivetran__trigger_table
     description: >
       Table relating transformations to the connector source tables that trigger them. 
       Transformations on time schedules do not appear here. Note - this table is only created 
@@ -232,7 +232,7 @@ models:
       - name: transformation_id
         description: Foreign key referencing the `transformation` that is triggered by new data.
 
-  - name: stg_fivetran_log__user
+  - name: stg_fivetran__user
     description: Table of users given access to this Fivetran account.
     columns:
       - name: user_id

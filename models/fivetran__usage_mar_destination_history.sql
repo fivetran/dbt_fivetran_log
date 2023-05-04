@@ -1,19 +1,19 @@
 with table_mar as (
     
     select *
-    from {{ ref('fivetran_log__mar_table_history') }}
+    from {{ ref('fivetran__mar_table_history') }}
 ),
 
 credits_used as (
 
     select *
-    from {{ ref('stg_fivetran_log__credits_used') }}
+    from {{ ref('stg_fivetran__credits_used') }}
 ),
 
 useage_cost as (
 
     select *
-    from {{ ref('stg_fivetran_log__usage_cost') }}
+    from {{ ref('stg_fivetran__usage_cost') }}
 ),
 
 destination_mar as (

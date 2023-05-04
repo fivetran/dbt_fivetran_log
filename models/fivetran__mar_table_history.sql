@@ -4,19 +4,19 @@ with incremental_mar as (
         *,
         {{ dbt.date_trunc('month', 'measured_date') }} as measured_month
 
-    from {{ ref('stg_fivetran_log__incremental_mar') }}
+    from {{ ref('stg_fivetran__incremental_mar') }}
 ),
 
 connector as (
 
     select *
-    from {{ ref('stg_fivetran_log__connector') }}
+    from {{ ref('stg_fivetran__connector') }}
 ),
 
 destination as (
 
     select *
-    from {{ ref('stg_fivetran_log__destination') }}
+    from {{ ref('stg_fivetran__destination') }}
 ),
 
 ordered_mar as (

@@ -1,5 +1,7 @@
-# dbt_fivetran_log v0.UPDATE.UPDATE
+# dbt_fivetran_log v1.0.0
 
+- renaming package, yadda yadda 🚨 🚨
+- changing the default incremental strategy of the audit table model
  ## Under the Hood:
 
 - Incorporated the new `fivetran_utils.drop_schemas_automation` macro into the end of each Buildkite integration test job.

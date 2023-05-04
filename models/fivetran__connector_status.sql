@@ -1,7 +1,7 @@
 with transformation_removal as (
 
     select *
-    from {{ ref('stg_fivetran_log__log') }}
+    from {{ ref('stg_fivetran__log') }}
     where transformation_id is null
 
 ),
@@ -33,7 +33,7 @@ schema_changes as (
         connector_id,
         count(*) as number_of_schema_changes_last_month
 
-    from {{ ref('stg_fivetran_log__log') }}
+    from {{ ref('stg_fivetran__log') }}
 
     where 
         {{ dbt.datediff('created_at', dbt.current_timestamp_backcompat(), 'day') }} <= 30
@@ -46,14 +46,14 @@ schema_changes as (
 connector as (
 
     select *
-    from {{ ref('stg_fivetran_log__connector') }}
+    from {{ ref('stg_fivetran__connector') }}
 
 ),
 
 destination as (
 
     select * 
-    from {{ ref('stg_fivetran_log__destination') }}
+    from {{ ref('stg_fivetran__destination') }}
 ),
 
 connector_metrics as (
@@ -176,7 +176,7 @@ final as (
         connector_recent_logs.set_up_at,
         coalesce(schema_changes.number_of_schema_changes_last_month, 0) as number_of_schema_changes_last_month
         
-        {% if var('fivetran_log_using_sync_alert_messages', true) %}
+        {% if var('fivetran_using_sync_alert_messages', true) %}
         , {{ fivetran_utils.string_agg("distinct case when connector_recent_logs.event_type = 'SEVERE' then connector_recent_logs.message_data else null end", "'\\n'") }} as errors_since_last_completed_sync
         , {{ fivetran_utils.string_agg("distinct case when connector_recent_logs.event_type = 'WARNING' then connector_recent_logs.message_data else null end", "'\\n'") }} as warnings_since_last_completed_sync
         {% endif %}

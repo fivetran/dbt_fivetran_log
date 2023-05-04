@@ -16,10 +16,14 @@ echo `pwd`
 cd integration_tests
 dbt deps
 dbt seed --target "$db" --full-refresh
+dbt compile --target "$db"
 dbt run --target "$db" --full-refresh
+dbt run --target "$db"
 dbt test --target "$db"
 dbt run --vars '{fivetran__usage_pricing: true}' --target "$db" --full-refresh
+dbt run --vars '{fivetran__usage_pricing: true}' --target "$db"
 dbt test --target "$db"
 dbt run --vars '{fivetran__usage_pricing: false, fivetran_using_account_membership: false, fivetran_using_destination_membership: false, fivetran_using_user: false}' --target "$db" --full-refresh
+dbt run --vars '{fivetran__usage_pricing: false, fivetran_using_account_membership: false, fivetran_using_destination_membership: false, fivetran_using_user: false}' --target "$db"
 dbt test --target "$db"
 dbt run-operation fivetran_utils.drop_schemas_automation --target "$db"

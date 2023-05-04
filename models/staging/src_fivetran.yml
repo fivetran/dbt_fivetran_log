@@ -46,6 +46,7 @@ sources:
           Table of all connectors loading data into warehouses. Note that deleted connectors 
           are not removed, but can be identified by having an older _fivetran_synced field relative 
           to other connectors.
+        freshness: null
         columns: 
           - name: connector_id
             description: System generated unique ID of the connector. 
@@ -62,6 +63,8 @@ sources:
             description: Boolean that is true if the connector's sync is currently paused.
           - name: signed_up
             description: Timestamp of when the connection was set up.
+          - name: _fivetran_synced
+            description: Timestamp of when the record was last synced.
 
       - name: credits_used
         identifier: "{{ var('fivetran_credits_used_identifier', 'credits_used')}}"
@@ -74,6 +77,8 @@ sources:
             description: The month (yyyy-mm) in which the credits were consumed.
           - name: credits_consumed
             description: The number of credits used by the destination for the given month.
+          - name: _fivetran_synced
+            description: Timestamp of when the record was last synced.
 
       - name: usage_cost
         identifier: "{{ var('fivetran_usage_cost_identifier', 'usage_cost')}}"
@@ -86,9 +91,12 @@ sources:
             description: The month (yyyy-mm) in which the credits were consumed.
           - name: amount
             description: The dollar amount associated with the cost of your connector.
+          - name: _fivetran_synced
+            description: Timestamp of when the record was last synced.
 
       - name: destination
         identifier: "{{ var('fivetran_destination_identifier', 'destination')}}"
+        freshness: null
         description: Table of the destinations that have data loaded into them. For each declared source, there will be just one record.
         columns:
           - name: id
@@ -101,6 +109,8 @@ sources:
             description: Name of the destination warehouse.
           - name: region
             description: Geographical region of the destination.
+          - name: _fivetran_synced
+            description: Timestamp of when the record was last synced.
       
       - name: log
         identifier: "{{ var('fivetran_log_identifier', 'log')}}"
@@ -124,10 +134,13 @@ sources:
             description: Foreign key referencing the `transformation` if the event refers to a transformation run.
           - name: sync_id
             description: Identifies which sync the event is associated with.
+          - name: _fivetran_synced
+            description: Timestamp of when the record was last synced.
 
       - name: account
         identifier: "{{ var('fivetran_account_identifier', 'account')}}"
         description: Table of information on this Fivetran account.
+        freshness: null
         columns:
           - name: id
             description: Unique ID of the account.
@@ -139,10 +152,13 @@ sources:
             description: Name of the Fivetran account.
           - name: status
             description: Status of the Fivetran account (ie trial, frozen).
+          - name: _fivetran_synced
+            description: Timestamp of when the record was last synced.
 
       - name: account_membership
         identifier: "{{ var('fivetran_account_membership_identifier', 'account_membership')}}"
         description: Table of the users given access to this account.
+        freshness: null
         config:
           enabled: "{{ var('fivetran_using_account_membership', true) }}"
         columns:
@@ -156,10 +172,13 @@ sources:
             description: Timestamp when the user joined the account.
           - name: role
             description: The user's permissions for this account.
+          - name: _fivetran_synced
+            description: Timestamp of when the record was last synced.
 
       - name: destination_membership
         identifier: "{{ var('fivetran_destination_membership_identifier', 'destination_membership')}}"
         description: Table of the users given access to this destination.
+        freshness: null
         config:
           enabled: "{{ var('fivetran_using_destination_membership', true) }}"
         columns:
@@ -173,10 +192,13 @@ sources:
             description: Timestamp of when the user was added to the destination.
           - name: role
             description: The user's permissions for this individual destination.
+          - name: _fivetran_synced
+            description: Timestamp of when the record was last synced.
 
       - name: user
         identifier: "{{ var('fivetran_user_identifier', 'user')}}"
         description: Table of users given access to this Fivetran account.
+        freshness: null
         config:
           enabled: "{{ var('fivetran_using_user', true) }}"
         columns:
@@ -196,6 +218,8 @@ sources:
             description: Phone number associated with user.
           - name: verified 
             description: Boolean that indicates whether the user has verified their email address in the account creation process.
+          - name: _fivetran_synced
+            description: Timestamp of when the record was last synced.
 
       - name: trigger_table
         identifier: "{{ var('fivetran_trigger_table_identifier', 'trigger_table')}}"
@@ -212,6 +236,8 @@ sources:
             description: Connector source table whose new data triggers the transformation.
           - name: transformation_id
             description: Foreign key referencing the `transformation` that is triggered by new data.
+          - name: _fivetran_synced
+            description: Timestamp of when the record was last synced.
 
       - name: transformation
         identifier: "{{ var('fivetran_transformation_identifier', 'transformation')}}"
@@ -243,3 +269,5 @@ sources:
             description: The scheduled frequency of the transformation, if a time schedule is chosen as its trigger.
           - name: trigger_type
             description: The schedule type of the transformation (time schedule vs. new data in certain tables).
+          - name: _fivetran_synced
+            description: Timestamp of when the record was last synced.

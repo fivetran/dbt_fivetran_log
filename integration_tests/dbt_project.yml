@@ -78,3 +78,8 @@ seeds:
     user:
       +column_types:
         created_at: timestamp
+
+clean-targets:         # directories to be removed by `dbt clean`
+  - "target"
+  - "dbt_packages"
+  - "dbt_modules"

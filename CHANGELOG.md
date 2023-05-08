@@ -5,7 +5,7 @@
 To align with the connector, this package has been renamed from `fivetran_log` to `fivetran`. This a very breaking change! 🚨 🚨 🚨 🚨
 > **Note**: The name of the Github repository will not be changed. It will remain `dbt_fivetran_log`. The default source schema will also remain `fivetran_log`.
 
-PR # something introduced the following changes:
+[PR #81](https://github.com/fivetran/dbt_fivetran_log/pull/81) introduced the following changes:
 
 ##  🚨 Breaking Changes 🚨
 - Updated the prefixes of each model from `fivetran_log_*` or `stg_fivetran_log_*` to `fivetran_*` and `stg_fivetran_*`, respectively.

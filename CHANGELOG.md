@@ -1,9 +1,71 @@
 # dbt_fivetran_log v1.0.0
-<to finish>
-- renaming package, yadda yadda 🚨 🚨
-- changing the default incremental strategy of the audit table model 🚨 🚨 -- run a full refresh now and every so often
-- removed freshness tests from tables that will not necessarily be updated often
 
+![image](https://file%2B.vscode-resource.vscode-cdn.net/Users/jamie.rodriguez/Downloads/janelynch.jpeg?version%3D1683581052490)
+
+To align with the connector, this package has been renamed from `fivetran_log` to `fivetran`. This a very breaking change! 🚨 🚨 🚨 🚨
+> **Note**: The name of the Github repository will not be changed. It will remain `dbt_fivetran_log`. The default source schema will also remain `fivetran_log`.
+
+PR # something introduced the following changes:
+
+##  🚨 Breaking Changes 🚨
+- Updated the prefixes of each model from `fivetran_log_*` or `stg_fivetran_log_*` to `fivetran_*` and `stg_fivetran_*`, respectively.
+| Original model name   | New model name |
+| ----------------------- | ----------------------- |
+| fivetran_log__audit_table      | fivetran__audit_table       |
+| fivetran_log__connector_daily_events      | fivetran__connector_daily_events       |
+| fivetran_log__connector_status      | fivetran__connector_status       |
+| fivetran_log__mar_table_history      | fivetran__mar_table_history       |
+| fivetran_log__schema_changelog      | fivetran__schema_changelog       |
+| fivetran_log__transformation_status      | fivetran__transformation_status       |
+| fivetran_log__usage_mar_destination_history      | fivetran__usage_mar_destination_history       |
+| stg_fivetran_log__account_membership      | stg_fivetran__account_membership       |
+| stg_fivetran_log__account      | stg_fivetran__account       |
+| stg_fivetran_log__connector      | stg_fivetran__connector     |
+| stg_fivetran_log__credits_used      | stg_fivetran__credits_used       |
+| stg_fivetran_log__destination_membership      | stg_fivetran__destination_membership       |
+| stg_fivetran_log__destination      | stg_fivetran__destination       |
+| stg_fivetran_log__incremental_mar      | stg_fivetran__incremental_mar       |
+| stg_fivetran_log__log      | stg_fivetran__log       |
+| stg_fivetran_log__transformation      | stg_fivetran__transformation       |
+| stg_fivetran_log__trigger_table      | stg_fivetran__trigger_table       |
+| stg_fivetran_log__usage_cost      | stg_fivetran__usage_cost       |
+| stg_fivetran_log__user      | stg_fivetran__user       |
+
+- Updated the prefix of **all** package variables from `fivetran_log_*` to `fivetran_*`. 
+| Original variable name   | New variable name | Default value (consistent)  |
+| ----------------------- | ----------------------- | ----------------------- |
+| fivetran_log_schema      | fivetran_schema       | `fivetran_log` | 
+| fivetran_log_database      | fivetran_database       | `target.database` | 
+| fivetran_log_using_transformations      | fivetran_using_transformations       | `True` | 
+| fivetran_log_using_triggers      | fivetran_using_triggers       | `True` | 
+| fivetran_log_using_account_membership      | fivetran_using_account_membership       | `True` | 
+| fivetran_log_using_destination_membership      | fivetran_using_destination_membership       | `True` | 
+| fivetran_log_using_user      | fivetran_using_user       | `True` | 
+| fivetran_log_using_sync_alert_messages | fivetran_log_using_sync_alert_messages | `True` | 
+| fivetran_log_[default_table_name]\_identifier  |  fivetran_[default_table_name]_identifier | Default table name (ie `'connector'` for `fivetran_connector_identifier`) | 
+
+- Updated the default big schema suffixes of package models from `_stg_fivetran_log*` and `_fivetran_log` to `_stg_fivetran` and `_fivetran` respectively.
+> We recommend dropping the old schemas to eradicate the stale pre-name-change models from your destintation. 
+- Updated the name of the package's [source](models/staging/src_fivetran.yml) from `fivetran_log` to `fivetran`.
+- Updated the name of the packages' schema files:
+  - `src_fivetran_log.yml` -> `src_fivetran.yml`
+  - `stg_fivetran_log.yml` -> `stg_fivetran.yml`
+  - `fivetran_log.yml` -> `fivetran.yml`
+- Updated the freshness tests on the `fivetran` source to be less stringent and more realistic. The following source tables have had their default fresness tests removed, as they will not necessarily update frequently:
+  - `connector`
+  - `account`
+  - `account_membership`
+  - `destination`
+  - `destination_membership`
+  - `user`
+- Updated the incremental strategy of the audit table [model](models/fivetran__audit_table.sql) for BigQuery and Databricks users from `merge` to the more consistent `insert_overwrite` method.
+  - Run a full refresh to capture these new changes. We recommend running a full refresh every so often regardless. [add more here?]
+
+### Considerations
+- ⚠️ If you are [overriding](https://docs.getdbt.com/reference/resource-properties/overrides) the `fivetran_log` source, you will need to update the `overrides` property to match the new package name. 
+
+## Under the Hood
+- Added documentation for fields missing yml entries. 
 
  ## Under the Hood:
 

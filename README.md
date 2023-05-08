@@ -16,7 +16,7 @@
 # Fivetran dbt Package ([Docs](https://fivetran.github.io/dbt_fivetran_log/))
 # 📣 What does this dbt package do?
 - Generates a comprehensive data dictionary of your Fivetran log data via the [dbt docs site](https://fivetran.github.io/dbt_fivetran_log/)
-- Produces staging models in the format described by [this ERD WHOSE LINK I NEED TO CONFIRM AFTER THE DOCS ARE UPDATED](https://fivetran.com/docs/logs/fivetran#schemainformation) which clean, test, and prepare your Fivetran data from [Fivetran's free connector](https://fivetran.com/docs/applications/fivetran) and generates analysis ready end models.
+- Produces staging models in the format described by [this ERD](https://fivetran.com/docs/logs/fivetran-log#schemainformation) which clean, test, and prepare your Fivetran data from [Fivetran's free connector](https://fivetran.com/docs/applications/fivetran-log) and generates analysis ready end models.
 - The above mentioned models enable you to better understand how you are spending money in Fivetran according to our [consumption-based pricing model](https://fivetran.com/docs/getting-started/consumption-based-pricing) as well as providing details about the performance and status of your Fivetran connectors and transformations. This is achieved by:
     - Displaying consumption data at the table, connector, destination, and account levels
     - Providing a history of measured free and paid monthly active rows (MAR), credit consumption, and the relationship between the two
@@ -40,7 +40,7 @@ Refer to the table below for a detailed view of all models materialized by defau
 
 # 🎯 How do I use the dbt package?
 ## Step 1: Pre-Requisites
-- **Connector**: Have the Fivetran Fivetran Log connector syncing data into your warehouse. 
+- **Connector**: Have the Fivetran Fivetran connector syncing data into your warehouse. 
 - **Database support**: This package has been tested on **BigQuery**, **Snowflake**, **Redshift**, **Postgres**, and **Databricks**. Ensure you are using one of these supported databases.
 
 ### Databricks Dispatch Configuration
@@ -60,12 +60,12 @@ packages:
     version: [">=1.0.0", "<1.0.0"]
 ```
 ## Step 3: Define Database and Schema Variables
-By default, this package will run using your target database and the `fivetran_log` schema. If this is not where your Fivetran Log data is (perhaps your fivetran_log schema is `fivetran_log_fivetran`), add the following configuration to your root `dbt_project.yml` file:
+By default, this package will run using your target database and the `fivetran_log` schema. If this is not where your Fivetran Log data is (perhaps your fivetran schema is `fivetran`), add the following configuration to your root `dbt_project.yml` file:
 
 ```yml
 vars:
-    fivetran_log_database: your_database_name
-    fivetran_log_schema: your_schema_name 
+    fivetran_database: your_database_name # default is your target.database
+    fivetran_schema: your_schema_name # default is fivetran_log
 ```
 ## Step 4: Disable Models for Non Existent Sources
 If you have never created Fivetran-orchestrated [basic SQL transformations](https://fivetran.com/docs/transformations/basic-sql), your source data will not contain the `transformation` and `trigger_table` tables. Moreover, if you have only created *scheduled* basic transformations that are not triggered by table syncs, your source data will not contain the `trigger_table` table (though it will contain `transformation`). 
@@ -74,29 +74,29 @@ Additionally, if you do not leverage Fivetran RBAC, then you will not have the `
 
 ```yml
 vars:
-    fivetran_log_using_transformations: false # this will disable all transformation + trigger_table logic
-    fivetran_log_using_triggers: false # this will disable only trigger_table logic 
-    fivetran_log_using_account_membership: false # this will disable only the account membership logic
-    fivetran_log_using_destination_membership: false # this will disable only the destination membership logic
-    fivetran_log_using_user: false # this will disable only the user logic
+    fivetran_using_transformations: false # this will disable all transformation + trigger_table logic
+    fivetran_using_triggers: false # this will disable only trigger_table logic 
+    fivetran_using_account_membership: false # this will disable only the account membership logic
+    fivetran_using_destination_membership: false # this will disable only the destination membership logic
+    fivetran_using_user: false # this will disable only the user logic
 ```
 
 ## (Optional) Step 5: Additional Configurations
 <details><summary>Expand for configurations</summary>
 
 ### Configuring Fivetran Error and Warning Messages
-Some users may wish to exclude Fivetran error and warnings messages from the final `fivetran_log__connector_status` model due to the length of the message. To disable the `errors_since_last_completed_sync` and `warnings_since_last_completed_sync` fields from the final model you may add the following variable to you to your root `dbt_project.yml` file. By default, this variable is assumed to be `true`:
+Some users may wish to exclude Fivetran error and warnings messages from the final `fivetran__connector_status` model due to the length of the message. To disable the `errors_since_last_completed_sync` and `warnings_since_last_completed_sync` fields from the final model you may add the following variable to you to your root `dbt_project.yml` file. By default, this variable is assumed to be `true`:
 
 ```yml
 vars:
-    fivetran_log_using_sync_alert_messages: false # this will disable only the sync alert messages within the connector status model
+    fivetran_using_sync_alert_messages: false # this will disable only the sync alert messages within the connector status model
 ```
 ### Change the Build Schema
-By default this package will build the Fivetran Log staging models within a schema titled (<target_schema> + `_stg_fivetran_log`)  and the Fivetran Log final models within your <target_schema> + `_fivetran_log` in your target database. If this is not where you would like you Fivetran Log staging and final models to be written to, add the following configuration to your root `dbt_project.yml` file:
+By default this package will build the Fivetran staging models within a schema titled (<target_schema> + `_stg_fivetran`)  and the Fivetran Log final models within your <target_schema> + `_fivetran` in your target database. If this is not where you would like you Fivetran staging and final models to be written to, add the following configuration to your root `dbt_project.yml` file:
 
 ```yml
 models:
-  fivetran_log:
+  fivetran:
     +schema: my_new_final_models_schema # leave blank for just the target_schema
     staging:
       +schema: my_new_staging_models_schema # leave blank for just the target_schema
@@ -106,7 +106,7 @@ models:
 If an individual source table has a different name than expected (see this projects [dbt_project.yml](https://github.com/fivetran/dbt_fivetran_log/blob/main/dbt_project.yml) variable declarations for expected names), provide the name of the table as it appears in your warehouse to the respective variable as identified below:
 ```yml
 vars:
-    fivetran_log_<default_table_name>_identifier: your_table_name 
+    fivetran_<default_table_name>_identifier: your_table_name 
 ```
 
 ### Databricks Additional Configuration
@@ -143,7 +143,7 @@ packages:
           
 # 🙌 How is this package maintained and can I contribute?
 ## Package Maintenance
-The Fivetran team maintaining this package **only** maintains the latest version of the package. We highly recommend you stay consistent with the [latest version](https://hub.getdbt.com/fivetran/fivetran_log/latest/) of the package and refer to the [CHANGELOG](https://github.com/fivetran/dbt_fivetran_log/blob/main/CHANGELOG.md) and release notes for more information on changes across versions.
+The Fivetran team maintaining this package **only** maintains the latest version of the package. We highly recommend you stay consistent with the [latest version](https://hub.getdbt.com/fivetran/fivetran/latest/) of the package and refer to the [CHANGELOG](https://github.com/fivetran/dbt_fivetran/blob/main/CHANGELOG.md) and release notes for more information on changes across versions.
 
 ## Contributions
 These dbt packages are developed by a small team of analytics engineers at Fivetran. However, the packages are made better by community contributions! 
@@ -151,6 +151,6 @@ These dbt packages are developed by a small team of analytics engineers at Fivet
 We highly encourage and welcome contributions to this package. Check out [this post](https://discourse.getdbt.com/t/contributing-to-a-dbt-package/657) on the best workflow for contributing to a package!
 
 # 🏪 Are there any resources available?
-- If you encounter any questions or want to reach out for help, please refer to the [GitHub Issue](https://github.com/fivetran/dbt_fivetran_log/issues/new/choose) section to find the right avenue of support for you.
+- If you encounter any questions or want to reach out for help, please refer to the [GitHub Issue](https://github.com/fivetran/dbt_fivetran/issues/new/choose) section to find the right avenue of support for you.
 - If you would like to provide feedback to the dbt package team at Fivetran, or would like to request a future dbt package to be developed, then feel free to fill out our [Feedback Form](https://www.surveymonkey.com/r/DQ7K7WW).
 - Have questions or want to be part of the community discourse? Create a post in the [Fivetran community](https://community.fivetran.com/t5/user-group-for-dbt/gh-p/dbt-user-group) and our team along with the community can join in on the discussion!

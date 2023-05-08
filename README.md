@@ -57,7 +57,7 @@ Include the following fivetran package version in your `packages.yml`
 ```yaml
 packages:
   - package: fivetran/fivetran
-    version: [">=1.0.0", "<1.0.0"]
+    version: [">=1.0.0", "<1.1.0"]
 ```
 ## Step 3: Define Database and Schema Variables
 By default, this package will run using your target database and the `fivetran_log` schema. If this is not where your Fivetran Log data is (perhaps your fivetran schema is `fivetran`), add the following configuration to your root `dbt_project.yml` file:

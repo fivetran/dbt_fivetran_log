@@ -1,6 +1,6 @@
 # dbt_fivetran_log v1.0.0
 
-![image](https://file%2B.vscode-resource.vscode-cdn.net/Users/jamie.rodriguez/Downloads/janelynch.jpeg?version%3D1683581052490)
+![image](https://user-images.githubusercontent.com/65564846/236957050-a5ee484d-9b05-4207-a34a-22c3b8e5a0e6.png)
 
 To align with the connector, this package has been renamed from `fivetran_log` to `fivetran`. This a very breaking change! 🚨 🚨 🚨 🚨
 > **Note**: The name of the Github repository will not be changed. It will remain `dbt_fivetran_log`. The default source schema will also remain `fivetran_log`.
@@ -9,7 +9,8 @@ PR # something introduced the following changes:
 
 ##  🚨 Breaking Changes 🚨
 - Updated the prefixes of each model from `fivetran_log_*` or `stg_fivetran_log_*` to `fivetran_*` and `stg_fivetran_*`, respectively.
-| Original model name   | New model name |
+
+| **Original model name**  | **New model name** |
 | ----------------------- | ----------------------- |
 | fivetran_log__audit_table      | fivetran__audit_table       |
 | fivetran_log__connector_daily_events      | fivetran__connector_daily_events       |
@@ -32,7 +33,8 @@ PR # something introduced the following changes:
 | stg_fivetran_log__user      | stg_fivetran__user       |
 
 - Updated the prefix of **all** package variables from `fivetran_log_*` to `fivetran_*`. 
-| Original variable name   | New variable name | Default value (consistent)  |
+
+| **Original variable name**   | **New variable name** | **Default value (consistent)**  |
 | ----------------------- | ----------------------- | ----------------------- |
 | fivetran_log_schema      | fivetran_schema       | `fivetran_log` | 
 | fivetran_log_database      | fivetran_database       | `target.database` | 
@@ -66,11 +68,9 @@ PR # something introduced the following changes:
 
 ## Under the Hood
 - Added documentation for fields missing yml entries. 
-
- ## Under the Hood:
-
 - Incorporated the new `fivetran_utils.drop_schemas_automation` macro into the end of each Buildkite integration test job.
 - Updated the pull request [templates](/.github).
+
 # dbt_fivetran_log v0.7.4
 [PR #79](https://github.com/fivetran/dbt_fivetran_log/pull/79) includes the following updates:
 

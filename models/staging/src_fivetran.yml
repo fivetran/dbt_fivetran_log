@@ -2,7 +2,7 @@ version: 2
 
 sources: 
   - name: fivetran
-    database: "{% if target.type not in ('spark','databricks') %}{{ var('fivetran_database', target.database) }}{% endif %}" # add var config to dbt_project.yml
+    database: "{% if target.type not in ('spark') %}{{ var('fivetran_database', target.database) }}{% endif %}" # add var config to dbt_project.yml
     schema: "{{ var('fivetran_schema', 'fivetran_log')}}"
 
     loader: fivetran

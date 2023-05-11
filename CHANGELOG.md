@@ -43,7 +43,7 @@ To align with the connector, this package has been renamed from `fivetran_log` t
 | fivetran_log_using_account_membership      | fivetran_using_account_membership       | `True` | 
 | fivetran_log_using_destination_membership      | fivetran_using_destination_membership       | `True` | 
 | fivetran_log_using_user      | fivetran_using_user       | `True` | 
-| fivetran_log_using_sync_alert_messages | fivetran_log_using_sync_alert_messages | `True` | 
+| fivetran_log_using_sync_alert_messages | fivetran_using_sync_alert_messages | `True` | 
 | fivetran_log_[default_table_name]\_identifier  |  fivetran_[default_table_name]_identifier | Default table name (ie `'connector'` for `fivetran_connector_identifier`) | 
 
 - Updated the default big schema suffixes of package models from `_stg_fivetran_log*` and `_fivetran_log` to `_stg_fivetran` and `_fivetran` respectively.

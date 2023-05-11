@@ -1,10 +1,10 @@
 config-version: 2
-name: 'fivetran'
+name: 'fivetran_log'
 version: '1.0.0'
 require-dbt-version: [">=1.3.0", "<2.0.0"]
 
 models:
-  fivetran:
+  fivetran_log:
     +materialized: table
     +schema: fivetran
     staging:
@@ -13,7 +13,7 @@ models:
         +materialized: view
 
 vars:
-  fivetran:
+  fivetran_log:
     account: "{{ source('fivetran', 'account') }}"
     account_membership: "{{ source('fivetran', 'account_membership') }}"
     incremental_mar: "{{ source('fivetran', 'incremental_mar') }}"

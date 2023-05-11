@@ -1,4 +1,4 @@
-name: 'fivetran_integration_tests'
+name: 'fivetran_log_integration_tests'
 version: '1.0.0'
 
 config-version: 2
@@ -9,7 +9,7 @@ dispatch:
     search_order: ['spark_utils', 'dbt_utils']
 
 vars:
-  fivetran:
+  fivetran_log:
 
     fivetran_schema: fivetran_integration_tests
     fivetran_account_identifier: "account"
@@ -27,11 +27,11 @@ vars:
 
 
 models:
-  fivetran:
+  fivetran_log:
     +schema: fivetran
 
 seeds:
-  fivetran_integration_tests:
+  fivetran_log_integration_tests:
     +column_types:
       _fivetran_synced: timestamp
     account:

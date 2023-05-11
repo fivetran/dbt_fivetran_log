@@ -1,4 +1,3 @@
--- should we make this an append-strategy incremental model? 
 with base as (
 
     select * 

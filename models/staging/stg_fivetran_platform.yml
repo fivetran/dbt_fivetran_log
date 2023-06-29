@@ -147,25 +147,6 @@ models:
       - name: status
         description: Status of the Fivetran account (ie trial, frozen).
 
-  - name: stg_fivetran_platform__account_membership
-    description: Table of the users given access to this account.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns: 
-            - account_id
-            - user_id
-    columns:
-      - name: account_id
-        description: Foreign key referencing the ID of the `account` that the user belongs to.
-      - name: user_id
-        description: Foreign key referencing the ID of the `user` belonging to the account.
-      - name: activated_at
-        description: Timestamp of when the user was activated in the account.
-      - name: joined_at 
-        description: Timestamp when the user joined the account.
-      - name: account_role
-        description: The user's permissions for this account.
-
   - name: stg_fivetran_platform__destination_membership
     description: Table of the users given access to this destination.
     tests:

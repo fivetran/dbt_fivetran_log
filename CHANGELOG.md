@@ -12,6 +12,7 @@ The Fivetran Log connector has been renamed to the "Fivetran Platform" connector
 [PR #81](https://github.com/fivetran/dbt_fivetran_log/pull/81) introduced the following changes:
 
 ##  🚨 Breaking Changes 🚨
+- The `account_membership` source table (and any of its transformations) has been deprecated. Fivetran deprecated this table from the connector in [June 2023](https://fivetran.com/docs/logs/fivetran-log/changelog#june2023).
 - Updated the prefixes of each model from `fivetran_log_*` or `stg_fivetran_log_*` to `fivetran_platform_*` and `stg_fivetran_platform_*`, respectively.
 
 | **Original model name**  | **New model name** |
@@ -23,7 +24,6 @@ The Fivetran Log connector has been renamed to the "Fivetran Platform" connector
 | fivetran_log__schema_changelog      | fivetran_platform__schema_changelog       |
 | fivetran_log__transformation_status      | fivetran_platform__transformation_status       |
 | fivetran_log__usage_mar_destination_history      | fivetran_platform__usage_mar_destination_history       |
-| stg_fivetran_log__account_membership      | stg_fivetran_platform__account_membership       |
 | stg_fivetran_log__account      | stg_fivetran_platform__account       |
 | stg_fivetran_log__connector      | stg_fivetran_platform__connector     |
 | stg_fivetran_log__credits_used      | stg_fivetran_platform__credits_used       |
@@ -44,7 +44,6 @@ The Fivetran Log connector has been renamed to the "Fivetran Platform" connector
 | fivetran_log_database      | fivetran_platform_database       | `target.database` | 
 | fivetran_log_using_transformations      | fivetran_platform_using_transformations       | `True` | 
 | fivetran_log_using_triggers      | fivetran_platform_using_triggers       | `True` | 
-| fivetran_log_using_account_membership      | fivetran_platform_using_account_membership       | `True` | 
 | fivetran_log_using_destination_membership      | fivetran_platform_using_destination_membership       | `True` | 
 | fivetran_log_using_user      | fivetran_platform_using_user       | `True` | 
 | fivetran_log_using_sync_alert_messages | fivetran_platform_using_sync_alert_messages | `True` | 
@@ -60,7 +59,6 @@ The Fivetran Log connector has been renamed to the "Fivetran Platform" connector
 - Updated the freshness tests on the `fivetran_platform` source to be less stringent and more realistic. The following source tables have had their default fresness tests removed, as they will not necessarily update frequently:
   - `connector`
   - `account`
-  - `account_membership`
   - `destination`
   - `destination_membership`
   - `user`

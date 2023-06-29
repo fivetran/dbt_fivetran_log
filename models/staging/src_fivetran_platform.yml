@@ -155,26 +155,6 @@ sources:
           - name: _fivetran_synced
             description: Timestamp of when the record was last synced.
 
-      - name: account_membership
-        identifier: "{{ var('fivetran_platform_account_membership_identifier', 'account_membership')}}"
-        description: Table of the users given access to this account.
-        freshness: null
-        config:
-          enabled: "{{ var('fivetran_platform_using_account_membership', true) }}"
-        columns:
-          - name: account_id
-            description: Foreign key referencing the ID of the `account` that the user belongs to.
-          - name: user_id
-            description: Foreign key referencing the ID of the `user` belonging to the account.
-          - name: activated_at
-            description: Timestamp of when the user was activated in the account.
-          - name: joined_at 
-            description: Timestamp when the user joined the account.
-          - name: role
-            description: The user's permissions for this account.
-          - name: _fivetran_synced
-            description: Timestamp of when the record was last synced.
-
       - name: destination_membership
         identifier: "{{ var('fivetran_platform_destination_membership_identifier', 'destination_membership')}}"
         description: Table of the users given access to this destination.

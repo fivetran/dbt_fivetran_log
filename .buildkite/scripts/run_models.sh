@@ -23,7 +23,7 @@ dbt test --target "$db"
 dbt run --vars '{fivetran_platform__usage_pricing: true}' --target "$db" --full-refresh
 dbt run --vars '{fivetran_platform__usage_pricing: true}' --target "$db"
 dbt test --target "$db"
-dbt run --vars '{fivetran_platform__usage_pricing: false, fivetran_platform_using_account_membership: false, fivetran_platform_using_destination_membership: false, fivetran_platform_using_user: false}' --target "$db" --full-refresh
-dbt run --vars '{fivetran_platform__usage_pricing: false, fivetran_platform_using_account_membership: false, fivetran_platform_using_destination_membership: false, fivetran_platform_using_user: false}' --target "$db"
+dbt run --vars '{fivetran_platform__usage_pricing: false, fivetran_platform_using_destination_membership: false, fivetran_platform_using_user: false}' --target "$db" --full-refresh
+dbt run --vars '{fivetran_platform__usage_pricing: false, fivetran_platform_using_destination_membership: false, fivetran_platform_using_user: false}' --target "$db"
 dbt test --target "$db"
 dbt run-operation fivetran_utils.drop_schemas_automation --target "$db"

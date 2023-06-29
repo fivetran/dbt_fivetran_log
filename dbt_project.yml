@@ -15,7 +15,6 @@ models:
 vars:
   fivetran_log:
     account: "{{ source('fivetran_platform', 'account') }}"
-    account_membership: "{{ source('fivetran_platform', 'account_membership') }}"
     incremental_mar: "{{ source('fivetran_platform', 'incremental_mar') }}"
     connector: "{{ source('fivetran_platform', 'connector') }}"
     credits_used: "{{ source('fivetran_platform', 'credits_used') }}"

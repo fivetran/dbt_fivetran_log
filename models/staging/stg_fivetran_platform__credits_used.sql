@@ -1,4 +1,4 @@
-{% if var('fivetran__credits_pricing', does_table_exist('credits_used')) %}
+{% if var('fivetran_platform__credits_pricing', does_table_exist('credits_used')) %}
 
 with credits_used as (
 

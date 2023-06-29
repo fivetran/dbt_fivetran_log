@@ -1,4 +1,4 @@
-{{ config(enabled=var('fivetran_using_user', True)) }}
+{{ config(enabled=var('fivetran_platform_using_user', True)) }}
 
 with fivetran_user as (
 

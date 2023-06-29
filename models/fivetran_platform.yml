@@ -2,7 +2,7 @@ version: 2
 
 models:
 
-  - name: fivetran__connector_status
+  - name: fivetran_platform__connector_status
     description: > 
       Table of each destination's connector and details surrounding its 
       connection and data-sync status.
@@ -64,7 +64,7 @@ models:
           sync completion. 
 
     
-  - name: fivetran__mar_table_history
+  - name: fivetran_platform__mar_table_history
     description: > 
       Table of each table's monthly active rows (MAR) for all connectors, destinations, and schemas, per month.
       Read more about how monthly active rows are defined and calculated 
@@ -117,7 +117,7 @@ models:
         description: Name of the destination as it appears in the UI.
 
 
-  - name: fivetran__usage_mar_destination_history
+  - name: fivetran_platform__usage_mar_destination_history
     description: >
       Table of each destination's usage and active volume, per month. Includes the 
       usage per million MAR and MAR per usage. Usage either refers to a dollar or credit amount, depending on customer's pricing model.
@@ -167,7 +167,7 @@ models:
       - name: dollars_spent
         description: The dollar amount used by the destination for the given month.
 
-  - name: fivetran__transformation_status
+  - name: fivetran_platform__transformation_status
     description: >
       Table of transformations enriched with data regarding its run status and any tables 
       whose new data trigger the transformation to run.
@@ -223,7 +223,7 @@ models:
           Aggregated string list of the tables that trigger the transformation to run, if it is
           not on a time schedule.
 
-  - name: fivetran__connector_daily_events
+  - name: fivetran_platform__connector_daily_events
     description: >
       Table of each connector's daily history of the quantity of api calls, schema changes, and records modified,
       starting at the connector's setup date. 
@@ -264,7 +264,7 @@ models:
       - name: count_schema_changes
         description: The number of schema change events for this connector. 
 
-  - name: fivetran__audit_table
+  - name: fivetran_platform__audit_table
     description: >
       Table replacing the deprecated `fivetran_audit` table. For each table written to in a sync,
       captures timestamps and row quantities around table syncs. Each record represents a table being
@@ -302,7 +302,7 @@ models:
       - name: sum_rows_deleted
         description: Sum of the rows deleted from this table during a sync.
 
-  - name: fivetran__schema_changelog
+  - name: fivetran_platform__schema_changelog
     description: >
       Table capturing information around each kind of schema change made to a connector.
       Schema changes include altering and creating tables, changing the schema configuration, and creating schemas. 

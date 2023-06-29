@@ -10,25 +10,24 @@ dispatch:
 
 vars:
   fivetran_log:
-
-    fivetran_schema: fivetran_integration_tests
-    fivetran_account_identifier: "account"
-    fivetran_account_membership_identifier: "account_membership"
-    fivetran_incremental_mar_identifier: "incremental_mar"
-    fivetran_connector_identifier: "connector"
-    fivetran_credits_used_identifier: "credits_used"
-    fivetran_usage_cost_identifier: "usage_cost"
-    fivetran_destination_identifier: "destination"
-    fivetran_destination_membership_identifier: "destination_membership"
-    fivetran_log_identifier: "log"
-    fivetran_transformation_identifier: "transformation"
+    fivetran_platform_schema: fivetran_platform_integration_tests
+    fivetran_platform_account_identifier: "account"
+    fivetran_platform_account_membership_identifier: "account_membership"
+    fivetran_platform_incremental_mar_identifier: "incremental_mar"
+    fivetran_platform_connector_identifier: "connector"
+    fivetran_platform_credits_used_identifier: "credits_used"
+    fivetran_platform_usage_cost_identifier: "usage_cost"
+    fivetran_platform_destination_identifier: "destination"
+    fivetran_platform_destination_membership_identifier: "destination_membership"
+    fivetran_platform_log_identifier: "log"
+    fivetran_platform_transformation_identifier: "transformation"
     trigger_table: "{{ fivetran_utils.snowflake_seed_data('trigger_table') }}"
-    fivetran_user_identifier: "user"
+    fivetran_platform_user_identifier: "user"
 
 
 models:
   fivetran_log:
-    +schema: fivetran
+    +schema: fivetran_platform
 
 seeds:
   fivetran_log_integration_tests:

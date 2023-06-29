@@ -1,4 +1,4 @@
-{{ config(enabled=var('fivetran_using_destination_membership', True)) }}
+{{ config(enabled=var('fivetran_platform_using_destination_membership', True)) }}
 
 with destination_membership as (
     

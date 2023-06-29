@@ -6,23 +6,23 @@ require-dbt-version: [">=1.3.0", "<2.0.0"]
 models:
   fivetran_log:
     +materialized: table
-    +schema: fivetran
+    +schema: fivetran_platform
     staging:
-      +schema: stg_fivetran
+      +schema: stg_fivetran_platform
       tmp:
         +materialized: view
 
 vars:
   fivetran_log:
-    account: "{{ source('fivetran', 'account') }}"
-    account_membership: "{{ source('fivetran', 'account_membership') }}"
-    incremental_mar: "{{ source('fivetran', 'incremental_mar') }}"
-    connector: "{{ source('fivetran', 'connector') }}"
-    credits_used: "{{ source('fivetran', 'credits_used') }}"
-    destination: "{{ source('fivetran', 'destination') }}"
-    destination_membership: "{{ source('fivetran', 'destination_membership') }}"
-    log: "{{ source('fivetran', 'log') }}"
-    transformation: "{{ source('fivetran', 'transformation') }}"
-    trigger_table: "{{ source('fivetran', 'trigger_table') }}"
-    user: "{{ source('fivetran', 'user') }}"
-    usage_cost: "{{ source('fivetran', 'usage_cost') }}"
+    account: "{{ source('fivetran_platform', 'account') }}"
+    account_membership: "{{ source('fivetran_platform', 'account_membership') }}"
+    incremental_mar: "{{ source('fivetran_platform', 'incremental_mar') }}"
+    connector: "{{ source('fivetran_platform', 'connector') }}"
+    credits_used: "{{ source('fivetran_platform', 'credits_used') }}"
+    destination: "{{ source('fivetran_platform', 'destination') }}"
+    destination_membership: "{{ source('fivetran_platform', 'destination_membership') }}"
+    log: "{{ source('fivetran_platform', 'log') }}"
+    transformation: "{{ source('fivetran_platform', 'transformation') }}"
+    trigger_table: "{{ source('fivetran_platform', 'trigger_table') }}"
+    user: "{{ source('fivetran_platform', 'user') }}"
+    usage_cost: "{{ source('fivetran_platform', 'usage_cost') }}"

@@ -1,4 +1,4 @@
-{{ config(enabled=var('fivetran_using_triggers', True)) }}
+{{ config(enabled=var('fivetran_platform_using_triggers', True)) }}
 
 with trigger_table as (
 

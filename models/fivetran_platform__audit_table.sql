@@ -15,7 +15,7 @@ with sync_log as (
     select 
         *,
         {{ fivetran_utils.json_parse(string='message_data', string_path=['table']) }} as table_name
-    from {{ ref('stg_fivetran__log') }}
+    from {{ ref('stg_fivetran_platform__log') }}
     where event_subtype in ('sync_start', 'sync_end', 'write_to_table_start', 'write_to_table_end', 'records_modified')
 
     {% if is_incremental() %}
@@ -41,7 +41,7 @@ with sync_log as (
 connector as (
 
     select *
-    from {{ ref('fivetran__connector_status') }}
+    from {{ ref('fivetran_platform__connector_status') }}
 ),
 
 add_connector_info as (

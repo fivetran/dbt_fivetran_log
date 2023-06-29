@@ -1,4 +1,4 @@
-{{ config(enabled=var('fivetran_using_transformations', True)) }}
+{{ config(enabled=var('fivetran_platform_using_transformations', True)) }}
 
 with transformation as (
     

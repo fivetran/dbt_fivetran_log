@@ -13,7 +13,7 @@
         <img src="https://img.shields.io/badge/Fivetran_Quickstart_Compatible%3F-yes-green.svg" /></a>
 </p>
 
-# Fivetran dbt Package ([Docs](https://fivetran.github.io/dbt_fivetran_log/))
+# Fivetran Platform dbt Package ([Docs](https://fivetran.github.io/dbt_fivetran_log/))
 # 📣 What does this dbt package do?
 - Generates a comprehensive data dictionary of your Fivetran log data via the [dbt docs site](https://fivetran.github.io/dbt_fivetran_log/)
 - Produces staging models in the format described by [this ERD](https://fivetran.com/docs/logs/fivetran-log#schemainformation) which clean, test, and prepare your Fivetran data from [Fivetran's free connector](https://fivetran.com/docs/applications/fivetran-log) and generates analysis ready end models.
@@ -23,19 +23,19 @@
     - Creating a history of vital daily events for each connector
     - Surfacing an audit log of records inserted, deleted, an updated in each table during connector syncs
 
-<!--section="fivetran_transformation_model"-->
+<!--section="fivetran_platform_transformation_model"-->
 Refer to the table below for a detailed view of all models materialized by default within this package. Additionally, check out our [docs site](https://fivetran.github.io/dbt_fivetran_log/#!/overview/fivetran?g_v=1&g_e=seeds) for more details about these models. 
 ## Models
 
 | **model**                  | **description**                                                                                                                                               |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [fivetran__connector_status](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran.fivetran__connector_status)        | Each record represents a connector loading data into a destination, enriched with data about the connector's data sync status.                                          |
-| [fivetran__transformation_status](https://github.com/fivetran/dbt_fivetran_log/blob/main/models/fivetran__transformation_status.sql)     | Each record represents a transformation, enriched with data about the transformation's last sync and any tables whose new data triggers the transformation to run. |
-| [fivetran__mar_table_history](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran.fivetran__mar_table_history)     | Each record represents a table's free, paid, and total volume for a month, complete with data about its connector and destination.                             |
-| [fivetran__usage_mar_destination_history](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran.fivetran__usage_mar_destination_history)    | Table of each destination's usage and active volume, per month. Includes the usage per million MAR and MAR per usage. Usage either refers to a dollar or credit amount, depending on customer's pricing model. Read more about the relationship between usage and MAR [here](https://www.fivetran.com/legal/service-consumption-table).                             |
-| [fivetran__connector_daily_events](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran.fivetran__connector_daily_events)    | Each record represents a daily measurement of the API calls, schema changes, and record modifications made by a connector, starting from the date on which the connector was set up.                            |
-| [fivetran__schema_changelog](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran.fivetran__schema_changelog)    | Each record represents a schema change (altering/creating tables, creating schemas, and changing schema configurations) made to a connector and contains detailed information about the schema change event.                           |
-| [fivetran__audit_table](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran.fivetran__audit_table)    | Replaces the deprecated [`fivetran_audit` table](https://fivetran.com/docs/getting-started/system-columns-and-tables#audittables). Each record represents a table being written to during a connector sync. Contains timestamps related to the connector and table-level sync progress and the sum of records inserted/replaced, updated, and deleted in the table.                             |
+| [fivetran_platform__connector_status](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran.fivetran_platform__connector_status)        | Each record represents a connector loading data into a destination, enriched with data about the connector's data sync status.                                          |
+| [fivetran_platform__transformation_status](https://github.com/fivetran/dbt_fivetran_log/blob/main/models/fivetran_platform__transformation_status.sql)     | Each record represents a transformation, enriched with data about the transformation's last sync and any tables whose new data triggers the transformation to run. |
+| [fivetran_platform__mar_table_history](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran.fivetran_platform__mar_table_history)     | Each record represents a table's free, paid, and total volume for a month, complete with data about its connector and destination.                             |
+| [fivetran_platform__usage_mar_destination_history](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran.fivetran_platform__usage_mar_destination_history)    | Table of each destination's usage and active volume, per month. Includes the usage per million MAR and MAR per usage. Usage either refers to a dollar or credit amount, depending on customer's pricing model. Read more about the relationship between usage and MAR [here](https://www.fivetran.com/legal/service-consumption-table).                             |
+| [fivetran_platform__connector_daily_events](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran.fivetran_platform__connector_daily_events)    | Each record represents a daily measurement of the API calls, schema changes, and record modifications made by a connector, starting from the date on which the connector was set up.                            |
+| [fivetran_platform__schema_changelog](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran.fivetran_platform__schema_changelog)    | Each record represents a schema change (altering/creating tables, creating schemas, and changing schema configurations) made to a connector and contains detailed information about the schema change event.                           |
+| [fivetran_platform__audit_table](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran.fivetran_platform__audit_table)    | Replaces the deprecated [`fivetran_audit` table](https://fivetran.com/docs/getting-started/system-columns-and-tables#audittables). Each record represents a table being written to during a connector sync. Contains timestamps related to the connector and table-level sync progress and the sum of records inserted/replaced, updated, and deleted in the table.                             |
 <!--section-end-->
 
 # 🎯 How do I use the dbt package?
@@ -69,12 +69,12 @@ packages:
 ```
 
 ## Step 3: Define Database and Schema Variables
-By default, this package will run using your target database and the `fivetran_log` schema. If this is not where your Fivetran Log data is (perhaps your fivetran schema is `fivetran`), add the following configuration to your root `dbt_project.yml` file:
+By default, this package will run using your target database and the `fivetran_log` schema. If this is not where your Fivetran Log data is (perhaps your fivetran schema is `fivetran_platform`), add the following configuration to your root `dbt_project.yml` file:
 
 ```yml
 vars:
-    fivetran_database: your_database_name # default is your target.database
-    fivetran_schema: your_schema_name # default is fivetran_log
+    fivetran_platform_database: your_database_name # default is your target.database
+    fivetran_platform_schema: your_schema_name # default is fivetran_log
 ```
 
 ## Step 4: Disable Models for Non Existent Sources
@@ -84,22 +84,22 @@ Additionally, if you do not leverage Fivetran RBAC, then you will not have the `
 
 ```yml
 vars:
-    fivetran_using_transformations: false # this will disable all transformation + trigger_table logic
-    fivetran_using_triggers: false # this will disable only trigger_table logic 
-    fivetran_using_account_membership: false # this will disable only the account membership logic
-    fivetran_using_destination_membership: false # this will disable only the destination membership logic
-    fivetran_using_user: false # this will disable only the user logic
+    fivetran_platform_using_transformations: false # this will disable all transformation + trigger_table logic
+    fivetran_platform_using_triggers: false # this will disable only trigger_table logic 
+    fivetran_platform_using_account_membership: false # this will disable only the account membership logic
+    fivetran_platform_using_destination_membership: false # this will disable only the destination membership logic
+    fivetran_platform_using_user: false # this will disable only the user logic
 ```
 
 ## (Optional) Step 5: Additional Configurations
 <details><summary>Expand for configurations</summary>
 
 ### Configuring Fivetran Error and Warning Messages
-Some users may wish to exclude Fivetran error and warnings messages from the final `fivetran__connector_status` model due to the length of the message. To disable the `errors_since_last_completed_sync` and `warnings_since_last_completed_sync` fields from the final model you may add the following variable to you to your root `dbt_project.yml` file. By default, this variable is assumed to be `true`:
+Some users may wish to exclude Fivetran error and warnings messages from the final `fivetran_platform_platform__connector_status` model due to the length of the message. To disable the `errors_since_last_completed_sync` and `warnings_since_last_completed_sync` fields from the final model you may add the following variable to you to your root `dbt_project.yml` file. By default, this variable is assumed to be `true`:
 
 ```yml
 vars:
-    fivetran_using_sync_alert_messages: false # this will disable only the sync alert messages within the connector status model
+    fivetran_platform_using_sync_alert_messages: false # this will disable only the sync alert messages within the connector status model
 ```
 ### Change the Build Schema
 By default this package will build the Fivetran staging models within a schema titled (<target_schema> + `_stg_fivetran`)  and the Fivetran Log final models within your <target_schema> + `_fivetran` in your target database. If this is not where you would like you Fivetran staging and final models to be written to, add the following configuration to your root `dbt_project.yml` file:
@@ -116,7 +116,7 @@ models:
 If an individual source table has a different name than expected (see this projects [dbt_project.yml](https://github.com/fivetran/dbt_fivetran_log/blob/main/dbt_project.yml) variable declarations for expected names), provide the name of the table as it appears in your warehouse to the respective variable as identified below:
 ```yml
 vars:
-    fivetran_<default_table_name>_identifier: your_table_name 
+    fivetran_platform_<default_table_name>_identifier: your_table_name 
 ```
 
 ### Databricks Additional Configuration

@@ -3,7 +3,7 @@
 with connector as (
     
     select * 
-    from {{ ref('fivetran__connector_status') }}
+    from {{ ref('fivetran_platform__connector_status') }}
 ),
 
 -- grab api calls, schema changes, and record modifications
@@ -19,7 +19,7 @@ log_events as (
         sum(case when event_subtype = 'records_modified' then cast( {{ fivetran_utils.json_parse(string='message_data', string_path=['count']) }} as {{ dbt.type_int()}} )
         else 1 end) as count_events 
 
-    from {{ ref('stg_fivetran__log') }}
+    from {{ ref('stg_fivetran_platform__log') }}
 
     where event_subtype in ('api_call', 
                             'records_modified', 

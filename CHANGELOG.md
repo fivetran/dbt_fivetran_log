@@ -2,78 +2,78 @@
 
 ![image](https://user-images.githubusercontent.com/65564846/236957050-a5ee484d-9b05-4207-a34a-22c3b8e5a0e6.png)
 
-The Fivetran Log connector is now renamed as just the "Fivetran" connector. To align with this name change, this package is _largely_ being renamed from `fivetran_log` to `fivetran`. This a very breaking change! 🚨 🚨 🚨 🚨
+The Fivetran Log connector has been renamed to the "Fivetran Platform" connector. To align with this name change, this package is _largely_ being renamed from `fivetran_log` to `fivetran_platform`. This a very breaking change! 🚨 🚨 🚨 🚨
 
 **Note**: Things that are NOT changing in the package:
 - The name of the Github repository will not be changed. It will remain `dbt_fivetran_log`, and 
 - The packege's project name will remain `fivetran_log`. You will **not** need to update your `packages.yml` reference.
-- The default source schema will remain `fivetran_log`. The _name_ of the source schema variable has changed though (`fivetran_log_schema` -> `fivetran_schema`).
+- The default source schema will remain `fivetran_log`. The _name_ of the source schema variable has changed though (`fivetran_log_schema` -> `fivetran_platform_schema`).
 
 [PR #81](https://github.com/fivetran/dbt_fivetran_log/pull/81) introduced the following changes:
 
 ##  🚨 Breaking Changes 🚨
-- Updated the prefixes of each model from `fivetran_log_*` or `stg_fivetran_log_*` to `fivetran_*` and `stg_fivetran_*`, respectively.
+- Updated the prefixes of each model from `fivetran_log_*` or `stg_fivetran_log_*` to `fivetran_platform_*` and `stg_fivetran_platform_*`, respectively.
 
 | **Original model name**  | **New model name** |
 | ----------------------- | ----------------------- |
-| fivetran_log__audit_table      | fivetran__audit_table       |
-| fivetran_log__connector_daily_events      | fivetran__connector_daily_events       |
-| fivetran_log__connector_status      | fivetran__connector_status       |
-| fivetran_log__mar_table_history      | fivetran__mar_table_history       |
-| fivetran_log__schema_changelog      | fivetran__schema_changelog       |
-| fivetran_log__transformation_status      | fivetran__transformation_status       |
-| fivetran_log__usage_mar_destination_history      | fivetran__usage_mar_destination_history       |
-| stg_fivetran_log__account_membership      | stg_fivetran__account_membership       |
-| stg_fivetran_log__account      | stg_fivetran__account       |
-| stg_fivetran_log__connector      | stg_fivetran__connector     |
-| stg_fivetran_log__credits_used      | stg_fivetran__credits_used       |
-| stg_fivetran_log__destination_membership      | stg_fivetran__destination_membership       |
-| stg_fivetran_log__destination      | stg_fivetran__destination       |
-| stg_fivetran_log__incremental_mar      | stg_fivetran__incremental_mar       |
-| stg_fivetran_log__log      | stg_fivetran__log       |
-| stg_fivetran_log__transformation      | stg_fivetran__transformation       |
-| stg_fivetran_log__trigger_table      | stg_fivetran__trigger_table       |
-| stg_fivetran_log__usage_cost      | stg_fivetran__usage_cost       |
-| stg_fivetran_log__user      | stg_fivetran__user       |
+| fivetran_log__audit_table      | fivetran_platform__audit_table       |
+| fivetran_log__connector_daily_events      | fivetran_platform__connector_daily_events       |
+| fivetran_log__connector_status      | fivetran_platform__connector_status       |
+| fivetran_log__mar_table_history      | fivetran_platform__mar_table_history       |
+| fivetran_log__schema_changelog      | fivetran_platform__schema_changelog       |
+| fivetran_log__transformation_status      | fivetran_platform__transformation_status       |
+| fivetran_log__usage_mar_destination_history      | fivetran_platform__usage_mar_destination_history       |
+| stg_fivetran_log__account_membership      | stg_fivetran_platform__account_membership       |
+| stg_fivetran_log__account      | stg_fivetran_platform__account       |
+| stg_fivetran_log__connector      | stg_fivetran_platform__connector     |
+| stg_fivetran_log__credits_used      | stg_fivetran_platform__credits_used       |
+| stg_fivetran_log__destination_membership      | stg_fivetran_platform__destination_membership       |
+| stg_fivetran_log__destination      | stg_fivetran_platform__destination       |
+| stg_fivetran_log__incremental_mar      | stg_fivetran_platform__incremental_mar       |
+| stg_fivetran_log__log      | stg_fivetran_platform__log       |
+| stg_fivetran_log__transformation      | stg_fivetran_platform__transformation       |
+| stg_fivetran_log__trigger_table      | stg_fivetran_platform__trigger_table       |
+| stg_fivetran_log__usage_cost      | stg_fivetran_platform__usage_cost       |
+| stg_fivetran_log__user      | stg_fivetran_platform__user       |
 
-- Updated the prefix of **all** package variables from `fivetran_log_*` to `fivetran_*`. 
+- Updated the prefix of **all** package variables from `fivetran_log_*` to `fivetran_platform_*`. 
 
 | **Original variable name**   | **New variable name** | **Default value (consistent)**  |
 | ----------------------- | ----------------------- | ----------------------- |
-| fivetran_log_schema      | fivetran_schema       | `fivetran_log` | 
-| fivetran_log_database      | fivetran_database       | `target.database` | 
-| fivetran_log_using_transformations      | fivetran_using_transformations       | `True` | 
-| fivetran_log_using_triggers      | fivetran_using_triggers       | `True` | 
-| fivetran_log_using_account_membership      | fivetran_using_account_membership       | `True` | 
-| fivetran_log_using_destination_membership      | fivetran_using_destination_membership       | `True` | 
-| fivetran_log_using_user      | fivetran_using_user       | `True` | 
-| fivetran_log_using_sync_alert_messages | fivetran_using_sync_alert_messages | `True` | 
-| fivetran_log_[default_table_name]\_identifier  |  fivetran_[default_table_name]_identifier | Default table name (ie `'connector'` for `fivetran_connector_identifier`) | 
+| fivetran_log_schema      | fivetran_platform_schema       | `fivetran_log` | 
+| fivetran_log_database      | fivetran_platform_database       | `target.database` | 
+| fivetran_log_using_transformations      | fivetran_platform_using_transformations       | `True` | 
+| fivetran_log_using_triggers      | fivetran_platform_using_triggers       | `True` | 
+| fivetran_log_using_account_membership      | fivetran_platform_using_account_membership       | `True` | 
+| fivetran_log_using_destination_membership      | fivetran_platform_using_destination_membership       | `True` | 
+| fivetran_log_using_user      | fivetran_platform_using_user       | `True` | 
+| fivetran_log_using_sync_alert_messages | fivetran_platform_using_sync_alert_messages | `True` | 
+| fivetran_log_[default_table_name]\_identifier  |  fivetran_platform_[default_table_name]_identifier | Default table name (ie `'connector'` for `fivetran_platform_connector_identifier`) | 
 
-- Updated the default big schema suffixes of package models from `_stg_fivetran_log*` and `_fivetran_log` to `_stg_fivetran` and `_fivetran` respectively.
+- Updated the default [build schema](https://github.com/fivetran/dbt_fivetran_log#change-the-build-schema) suffixes of package models from `_stg_fivetran_log` and `_fivetran_log` to `_stg_fivetran_platform` and `_fivetran_platform` respectively.
 > We recommend dropping the old schemas to eradicate the stale pre-name-change models from your destintation. 
-- Updated the name of the package's [source](models/staging/src_fivetran.yml) from `fivetran_log` to `fivetran`.
+- Updated the name of the package's [source](models/staging/src_fivetran.yml) from `fivetran_log` to `fivetran_platform`.
 - Updated the name of the packages' schema files:
-  - `src_fivetran_log.yml` -> `src_fivetran.yml`
-  - `stg_fivetran_log.yml` -> `stg_fivetran.yml`
-  - `fivetran_log.yml` -> `fivetran.yml`
-- Updated the freshness tests on the `fivetran` source to be less stringent and more realistic. The following source tables have had their default fresness tests removed, as they will not necessarily update frequently:
+  - `src_fivetran_log.yml` -> `src_fivetran_platform.yml`
+  - `stg_fivetran_log.yml` -> `stg_fivetran_platform.yml`
+  - `fivetran_log.yml` -> `fivetran_platform.yml`
+- Updated the freshness tests on the `fivetran_platform` source to be less stringent and more realistic. The following source tables have had their default fresness tests removed, as they will not necessarily update frequently:
   - `connector`
   - `account`
   - `account_membership`
   - `destination`
   - `destination_membership`
   - `user`
-- Updated the incremental strategy of the audit table [model](models/fivetran__audit_table.sql) for BigQuery and Databricks users from `merge` to the more consistent `insert_overwrite` method.
+- Updated the incremental strategy of the audit table [model](models/fivetran_platform__audit_table.sql) for BigQuery and Databricks users from `merge` to the more consistent `insert_overwrite` method.
   - Run a full refresh to capture these new changes. We recommend running a full refresh every so often regardless. [add more here?]
 
 ### Considerations
-- ⚠️ If you are [overriding](https://docs.getdbt.com/reference/resource-properties/overrides) the `fivetran_log` source, you will need to update the `overrides` property to match the new package name. 
+- ⚠️ If you are [overriding](https://docs.getdbt.com/reference/resource-properties/overrides) the `fivetran_log` source, you will need to update the `overrides` property to match the new `source` name (`fivetran_platform`).
 
 ## Under the Hood
 - Added documentation for fields missing yml entries. 
-- Incorporated the new `fivetran_utils.drop_schemas_automation` macro into the end of each Buildkite integration test job.
-- Updated the pull request [templates](/.github).
+- Incorporated the new `fivetran_utils.drop_schemas_automation` macro into the end of each Buildkite integration test job ([PR #80](https://github.com/fivetran/dbt_fivetran_log/pull/80)).
+- Updated the pull request [templates](/.github) ([PR #80](https://github.com/fivetran/dbt_fivetran_log/pull/80)).
 
 # dbt_fivetran_log v0.7.4
 [PR #79](https://github.com/fivetran/dbt_fivetran_log/pull/79) includes the following updates:

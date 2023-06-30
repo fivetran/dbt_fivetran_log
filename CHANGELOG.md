@@ -9,10 +9,9 @@ The Fivetran Log connector has been renamed to the "Fivetran Platform" connector
 - The packege's project name will remain `fivetran_log`. You will **not** need to update your `packages.yml` reference.
 - The default source schema will remain `fivetran_log`. The _name_ of the source schema variable has changed though (`fivetran_log_schema` -> `fivetran_platform_schema`).
 
-[PR #81](https://github.com/fivetran/dbt_fivetran_log/pull/81) introduced the following changes:
+[PR #81](https://github.com/fivetran/dbt_fivetran_log/pull/81) introduced the following changes (some unrelated to the connector name change):
 
 ##  🚨 Breaking Changes 🚨
-- The `account_membership` source table (and any of its transformations) has been deprecated. Fivetran deprecated this table from the connector in [June 2023](https://fivetran.com/docs/logs/fivetran-log/changelog#june2023).
 - Updated the prefixes of each model from `fivetran_log_*` or `stg_fivetran_log_*` to `fivetran_platform_*` and `stg_fivetran_platform_*`, respectively.
 
 | **Original model name**  | **New model name** |
@@ -49,7 +48,6 @@ The Fivetran Log connector has been renamed to the "Fivetran Platform" connector
 | fivetran_log_using_triggers      | fivetran_platform_using_triggers       | `True` | 
 | fivetran_log_using_destination_membership      | fivetran_platform_using_destination_membership       | `True` | 
 | fivetran_log_using_user      | fivetran_platform_using_user       | `True` | 
-
 | fivetran_log_[default_table_name]\_identifier  |  fivetran_platform_[default_table_name]_identifier | Default table name (ie `'connector'` for `fivetran_platform_connector_identifier`) | 
 
 - Updated the default [build schema](https://github.com/fivetran/dbt_fivetran_log#change-the-build-schema) suffixes of package models from `_stg_fivetran_log` and `_fivetran_log` to `_stg_fivetran_platform` and `_fivetran_platform` respectively.
@@ -66,7 +64,8 @@ The Fivetran Log connector has been renamed to the "Fivetran Platform" connector
   - `destination_membership`
   - `user`
 - Updated the incremental strategy of the audit table [model](models/fivetran_platform__audit_table.sql) for BigQuery and Databricks users from `merge` to the more consistent `insert_overwrite` method.
-  - Run a full refresh to capture these new changes. We recommend running a full refresh every so often regardless. [add more here?]
+  - Run a full refresh to capture these new changes. We recommend running a full refresh every so often regardless.
+- The `account_membership` source table (and any of its transformations) has been deprecated. Fivetran deprecated this table from the connector in [June 2023](https://fivetran.com/docs/logs/fivetran-log/changelog#june2023).
 
 ### Considerations
 - ⚠️ If you are [overriding](https://docs.getdbt.com/reference/resource-properties/overrides) the `fivetran_log` source, you will need to update the `overrides` property to match the new `source` name (`fivetran_platform`).

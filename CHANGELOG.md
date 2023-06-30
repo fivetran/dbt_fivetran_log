@@ -42,11 +42,14 @@ The Fivetran Log connector has been renamed to the "Fivetran Platform" connector
 | ----------------------- | ----------------------- | ----------------------- |
 | fivetran_log_schema      | fivetran_platform_schema       | `fivetran_log` | 
 | fivetran_log_database      | fivetran_platform_database       | `target.database` | 
+| fivetran_log__usage_pricing      | fivetran_platform__usage_pricing       |  Dynamically checks the source at runtime to set as either `true` or `false`. May be overridden using this variable if desired. | 
+| fivetran_log__credits_pricing      | fivetran_platform__credits_pricing       |  Dynamically checks the source at runtime to set as either `true` or `false`. May be overridden using this variable if desired | 
+| fivetran_log_using_sync_alert_messages | fivetran_platform_using_sync_alert_messages | `True` | 
 | fivetran_log_using_transformations      | fivetran_platform_using_transformations       | `True` | 
 | fivetran_log_using_triggers      | fivetran_platform_using_triggers       | `True` | 
 | fivetran_log_using_destination_membership      | fivetran_platform_using_destination_membership       | `True` | 
 | fivetran_log_using_user      | fivetran_platform_using_user       | `True` | 
-| fivetran_log_using_sync_alert_messages | fivetran_platform_using_sync_alert_messages | `True` | 
+
 | fivetran_log_[default_table_name]\_identifier  |  fivetran_platform_[default_table_name]_identifier | Default table name (ie `'connector'` for `fivetran_platform_connector_identifier`) | 
 
 - Updated the default [build schema](https://github.com/fivetran/dbt_fivetran_log#change-the-build-schema) suffixes of package models from `_stg_fivetran_log` and `_fivetran_log` to `_stg_fivetran_platform` and `_fivetran_platform` respectively.

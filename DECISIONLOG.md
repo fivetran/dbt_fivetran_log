@@ -7,6 +7,6 @@ The below variables control the respective behaviors and may be overridden if de
 
 ```yml
 vars:
-  fivetran__usage_pricing: true ## Dynamically checks the source at runtime to set as either true or false. May be overridden using this variable if desired.
-  fivetran__credits_pricing: false ## Dynamically checks the source at runtime to set as either true or false. May be overridden using this variable if desired.
+  fivetran_platform__usage_pricing: true ## Dynamically checks the source at runtime to set as either true or false. May be overridden using this variable if desired.
+  fivetran_platform__credits_pricing: false ## Dynamically checks the source at runtime to set as either true or false. May be overridden using this variable if desired.
 ```

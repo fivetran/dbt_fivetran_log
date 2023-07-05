@@ -152,7 +152,7 @@ packages:
           
 # 🙌 How is this package maintained and can I contribute?
 ## Package Maintenance
-The Fivetran team maintaining this package **only** maintains the latest version of the package. We highly recommend you stay consistent with the [latest version](https://hub.getdbt.com/fivetran/fivetran/latest/) of the package and refer to the [CHANGELOG](https://github.com/fivetran/dbt_fivetran/blob/main/CHANGELOG.md) and release notes for more information on changes across versions.
+The Fivetran team maintaining this package **only** maintains the latest version of the package. We highly recommend you stay consistent with the [latest version](https://hub.getdbt.com/fivetran/fivetran_log/latest/) of the package and refer to the [CHANGELOG](https://github.com/fivetran/dbt_fivetran_log/blob/main/CHANGELOG.md) and release notes for more information on changes across versions.
 
 ## Contributions
 These dbt packages are developed by a small team of analytics engineers at Fivetran. However, the packages are made better by community contributions! 

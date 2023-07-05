@@ -40,7 +40,7 @@ Refer to the table below for a detailed view of all models materialized by defau
 
 # 🎯 How do I use the dbt package?
 ## Step 1: Pre-Requisites
-- **Connector**: Have the Fivetran Fivetran connector syncing data into your warehouse. 
+- **Connector**: Have the Fivetran Fivetran Platform connector syncing data into your warehouse. 
 - **Database support**: This package has been tested on **BigQuery**, **Snowflake**, **Redshift**, **Postgres**, and **Databricks**. Ensure you are using one of these supported databases.
 
 ### Databricks Dispatch Configuration

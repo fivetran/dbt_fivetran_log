@@ -15,7 +15,7 @@
 
 # Fivetran Platform dbt Package ([Docs](https://fivetran.github.io/dbt_fivetran_log/))
 # 📣 What does this dbt package do?
-- Generates a comprehensive data dictionary of your Fivetran log data via the [dbt docs site](https://fivetran.github.io/dbt_fivetran_log/)
+- Generates a comprehensive data dictionary of your Fivetran platform data via the [dbt docs site](https://fivetran.github.io/dbt_fivetran_log/)
 - Produces staging models in the format described by [this ERD](https://fivetran.com/docs/logs/fivetran-log#schemainformation) which clean, test, and prepare your Fivetran data from [Fivetran's free connector](https://fivetran.com/docs/applications/fivetran-log) and generates analysis ready end models.
 - The above mentioned models enable you to better understand how you are spending money in Fivetran according to our [consumption-based pricing model](https://fivetran.com/docs/getting-started/consumption-based-pricing) as well as providing details about the performance and status of your Fivetran connectors and transformations. This is achieved by:
     - Displaying consumption data at the table, connector, destination, and account levels
@@ -24,7 +24,7 @@
     - Surfacing an audit log of records inserted, deleted, an updated in each table during connector syncs
 
 <!--section="fivetran_platform_transformation_model"-->
-Refer to the table below for a detailed view of all models materialized by default within this package. Additionally, check out our [docs site](https://fivetran.github.io/dbt_fivetran_log/#!/overview/fivetran?g_v=1&g_e=seeds) for more details about these models. 
+Refer to the table below for a detailed view of all models materialized by default within this package. Additionally, check out our [docs site](https://fivetran.github.io/dbt_fivetran_log/#!/overview/fivetran_platform?g_v=1&g_e=seeds) for more details about these models. 
 ## Models
 
 | **model**                  | **description**                                                                                                                                               |
@@ -60,7 +60,7 @@ Some of the end models in this package are materialized incrementally. We have c
 > Because of this, we highly recommend that **Snowflake**, **Redshift**, and **Postgres** users periodically run a `--full-refresh` to ensure a high level of data quality and remove any possible duplicates.
 
 ## Step 2: Installing the Package
-Include the following fivetran package version in your `packages.yml`
+Include the following fivetran platform package version in your `packages.yml`
 > Check [dbt Hub](https://hub.getdbt.com/) for the latest installation instructions, or [read the dbt docs](https://docs.getdbt.com/docs/package-management) for more information on installing packages.
 ```yaml
 packages:
@@ -69,7 +69,7 @@ packages:
 ```
 
 ## Step 3: Define Database and Schema Variables
-By default, this package will run using your target database and the `fivetran_log` schema. If this is not where your Fivetran Log data is (perhaps your fivetran schema is `fivetran_platform`), add the following configuration to your root `dbt_project.yml` file:
+By default, this package will run using your target database and the `fivetran_log` schema. If this is not where your Fivetran Log data is (perhaps your fivetran platform schema is `fivetran_platform`), add the following configuration to your root `dbt_project.yml` file:
 
 ```yml
 vars:
@@ -94,14 +94,14 @@ vars:
 <details><summary>Expand for configurations</summary>
 
 ### Configuring Fivetran Error and Warning Messages
-Some users may wish to exclude Fivetran error and warnings messages from the final `fivetran_platform_platform__connector_status` model due to the length of the message. To disable the `errors_since_last_completed_sync` and `warnings_since_last_completed_sync` fields from the final model you may add the following variable to you to your root `dbt_project.yml` file. By default, this variable is assumed to be `true`:
+Some users may wish to exclude Fivetran error and warnings messages from the final `fivetran_platform__connector_status` model due to the length of the message. To disable the `errors_since_last_completed_sync` and `warnings_since_last_completed_sync` fields from the final model you may add the following variable to you to your root `dbt_project.yml` file. By default, this variable is assumed to be `true`:
 
 ```yml
 vars:
     fivetran_platform_using_sync_alert_messages: false # this will disable only the sync alert messages within the connector status model
 ```
 ### Change the Build Schema
-By default this package will build the Fivetran staging models within a schema titled (<target_schema> + `_stg_fivetran`)  and the Fivetran Log final models within your <target_schema> + `_fivetran` in your target database. If this is not where you would like you Fivetran staging and final models to be written to, add the following configuration to your root `dbt_project.yml` file:
+By default this package will build the Fivetran staging models within a schema titled (<target_schema> + `_stg_fivetran_platform`)  and the Fivetran Log final models within your <target_schema> + `_fivetran_platform` in your target database. If this is not where you would like you Fivetran staging and final models to be written to, add the following configuration to your root `dbt_project.yml` file:
 
 ```yml
 models:

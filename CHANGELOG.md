@@ -5,8 +5,8 @@
 The Fivetran Log connector has been renamed to the "Fivetran Platform" connector. To align with this name change, this package is _largely_ being renamed from `fivetran_log` to `fivetran_platform`. This a very breaking change! 🚨 🚨 🚨 🚨
 
 **Note**: Things that are NOT changing in the package:
-- The name of the Github repository will not be changed. It will remain `dbt_fivetran_log`, and 
-- The packege's project name will remain `fivetran_log`. You will **not** need to update your `packages.yml` reference.
+- The name of the Github repository will not be changed. It will remain `dbt_fivetran_log` 
+- The package's project name will remain `fivetran_log`. You will **not** need to update your `packages.yml` reference.
 - The default source schema will remain `fivetran_log`. The _name_ of the source schema variable has changed though (`fivetran_log_schema` -> `fivetran_platform_schema`).
 
 [PR #81](https://github.com/fivetran/dbt_fivetran_log/pull/81) introduced the following changes (some unrelated to the connector name change):

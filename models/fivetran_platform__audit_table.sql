@@ -7,7 +7,7 @@
         'granularity': 'day'
     } if target.type == 'bigquery' else none,
     incremental_strategy='insert_overwrite' if target.type in ('bigquery', 'spark', 'databricks') else 'delete+insert',
-    file_format = 'delta'
+    file_format='parquet'
 ) }}
 
 with sync_log as (

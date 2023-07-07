@@ -72,8 +72,8 @@ The Fivetran Log connector has been renamed to the "Fivetran Platform" connector
   - `destination`
   - `destination_membership`
   - `user`
-- Updated the incremental strategy of the audit table [model](models/fivetran_platform__audit_table.sql) for BigQuery and Databricks users from `merge` to the more consistent `insert_overwrite` method.
-  - Run a full refresh to capture these new changes. We recommend running a full refresh every so often regardless.
+- Updated the incremental strategy of the audit table [model](models/fivetran_platform__audit_table.sql) for BigQuery and Databricks users from `merge` to the more consistent `insert_overwrite` method. We have also updated the `file_format` to `parquet` and added a partition on a new `sync_start_day` field for Databricks. This field is merely a truncated version of `sync_start`.
+  - Run a full refresh to capture these new changes. We recommend running a full refresh every so often regardless. See README for more details.
 - The `account_membership` source table (and any of its transformations) has been deprecated. Fivetran deprecated this table from the connector in [June 2023](https://fivetran.com/docs/logs/fivetran-log/changelog#june2023).
 
 ### Considerations

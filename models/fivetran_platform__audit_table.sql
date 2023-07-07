@@ -5,7 +5,7 @@
         'field': 'sync_start',
         'data_type': 'timestamp',
         'granularity': 'day'
-    } if target.type == 'bigquery' else none,
+    } if target.type == 'bigquery' else ['sync_start_day'],
     incremental_strategy='insert_overwrite' if target.type in ('bigquery', 'spark', 'databricks') else 'delete+insert',
     file_format='parquet'
 ) }}
@@ -129,13 +129,14 @@ sum_records_modified as (
     {{ dbt_utils.group_by(n=9) }}
 ),
 
-surrogate_key as (
+final as (
 
     select 
         *,
-        {{ dbt_utils.generate_surrogate_key(['connector_id', 'destination_id', 'table_name', 'write_to_table_start']) }} as unique_table_sync_key
+        {{ dbt_utils.generate_surrogate_key(['connector_id', 'destination_id', 'table_name', 'write_to_table_start']) }} as unique_table_sync_key, -- for incremental materialization 
+        {{ dbt.date_trunc('day', 'sync_start') }} as sync_start_day -- for partitioning in databricks
     from sum_records_modified
 )
 
 select *
-from surrogate_key
+from final

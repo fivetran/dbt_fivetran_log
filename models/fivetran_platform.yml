@@ -301,6 +301,8 @@ models:
         description: Sum of the rows updated in this table during a sync.
       - name: sum_rows_deleted
         description: Sum of the rows deleted from this table during a sync.
+      - name: sync_start_day
+        description: The `sync_start` field truncated to the `day`. This field is used for partitioning in Databricks while using the `insert_overwrite` incremental method.
 
   - name: fivetran_platform__schema_changelog
     description: >

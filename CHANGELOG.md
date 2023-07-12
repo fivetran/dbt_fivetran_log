@@ -2,7 +2,7 @@
 
 ![image](https://user-images.githubusercontent.com/65564846/236957050-a5ee484d-9b05-4207-a34a-22c3b8e5a0e6.png)
 
-The Fivetran Log connector has been renamed to the "Fivetran Platform" connector. To align with this name change, this package is _largely_ being renamed from `fivetran_log` to `fivetran_platform`. This a very breaking change! 🚨 🚨 🚨 🚨
+The Fivetran Log connector has been renamed to the "Fivetran Platform" connector. To align with this name change, this package is _largely_ being renamed from `fivetran_log` to `fivetran_platform`. This is a very breaking change! 🚨 🚨 🚨 🚨
 
 **Bottom Line**: What you need to update and/or know:
 - If you are setting any variables for this package in your `dbt_project.yml`, update the name of the prefix of the variable(s) from `fivetran_log_*` to `fivetran_platform_*`. The default _values_ for variables have not changed.
@@ -82,7 +82,7 @@ The Fivetran Log connector has been renamed to the "Fivetran Platform" connector
 ## Under the Hood
 - Added documentation for fields missing yml entries. 
 - Incorporated the new `fivetran_utils.drop_schemas_automation` macro into the end of each Buildkite integration test job ([PR #80](https://github.com/fivetran/dbt_fivetran_log/pull/80)).
-- Updated the pull request [templates](/.github) ([PR #80](https://github.com/fivetran/dbt_fivetran_log/pull/80)).
+- Updated the pull request templates ([PR #80](https://github.com/fivetran/dbt_fivetran_log/pull/80)).
 
 # dbt_fivetran_log v0.7.4
 [PR #79](https://github.com/fivetran/dbt_fivetran_log/pull/79) includes the following updates:

@@ -23,3 +23,8 @@ intrinsic_departed,2021-12-09 14:26:29.814,2021-12-09 20:30:53.903,intrinsic_dep
 intrinsic_departed,2021-12-09 14:26:29.744,2021-12-09 20:30:53.901,intrinsic_departed,INFO,"{""table"":""user_history""}",write_to_table_start,123,456abc
 intrinsic_departed,2021-12-09 14:26:29.719,2021-12-09 20:30:53.878,intrinsic_departed,INFO,"{""table"":""media_insights""}",write_to_table_start,123,456abc
 intrinsic_departed,2021-12-09 14:26:05.907,2021-12-09 20:30:53.778,intrinsic_departed,INFO,,sync_start,123,456abc
+intrinsic_departed,2021-12-10 14:27:00.504,2021-12-10 20:30:53.959,intrinsic_departed,INFO,,sync_end,123,456abc
+intrinsic_departed,2021-12-10 14:26:41.875,2021-12-10 20:30:53.948,intrinsic_departed,INFO,"{""table"":""media_insights""}",write_to_table_end,123,456abc
+intrinsic_departed,2021-12-10 14:26:42.029,2021-12-10 20:30:53.949,intrinsic_departed,INFO,"{""schema"":""instagram_business"",""count"":5,""operationType"":""REPLACED_OR_INSERTED"",""table"":""media_insights""}",records_modified,123,456abc
+intrinsic_departed,2021-12-10 14:26:29.719,2021-12-10 20:30:53.878,intrinsic_departed,INFO,"{""table"":""media_insights""}",write_to_table_start,123,456abc
+intrinsic_departed,2021-12-10 14:26:05.907,2021-12-10 20:30:53.778,intrinsic_departed,INFO,,sync_start,123,456abc

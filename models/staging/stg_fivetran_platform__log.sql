@@ -1,14 +1,14 @@
 with base as (
 
     select * 
-    from {{ ref('stg_fivetran_log__log_tmp') }}
+    from {{ ref('stg_fivetran_platform__log_tmp') }}
 ),
 
 fields as (
     select
         {{
             fivetran_utils.fill_staging_columns(
-                source_columns=adapter.get_columns_in_relation(ref('stg_fivetran_log__log_tmp')),
+                source_columns=adapter.get_columns_in_relation(ref('stg_fivetran_platform__log_tmp')),
                 staging_columns=get_log_columns()
             )
         }}

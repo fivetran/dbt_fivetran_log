@@ -1,7 +1,7 @@
 with schema_changes as (
 
     select *
-    from {{ ref('stg_fivetran_log__log') }}
+    from {{ ref('stg_fivetran_platform__log') }}
 
     where event_subtype in ('create_table', 'alter_table', 'create_schema', 'change_schema_config')
 ),
@@ -9,7 +9,7 @@ with schema_changes as (
 connector as (
 
     select *
-    from {{ ref('fivetran_log__connector_status') }}
+    from {{ ref('fivetran_platform__connector_status') }}
 ),
 
 add_connector_info as (

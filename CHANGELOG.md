@@ -1,9 +1,89 @@
-# dbt_fivetran_log v0.UPDATE.UPDATE
+# dbt_fivetran_log v1.0.0
 
- ## Under the Hood:
+![image](https://user-images.githubusercontent.com/65564846/236957050-a5ee484d-9b05-4207-a34a-22c3b8e5a0e6.png)
 
-- Incorporated the new `fivetran_utils.drop_schemas_automation` macro into the end of each Buildkite integration test job.
-- Updated the pull request [templates](/.github).
+The Fivetran Log connector has been renamed to the "Fivetran Platform" connector. To align with this name change, this package is _largely_ being renamed from `fivetran_log` to `fivetran_platform`. This is a very breaking change! 🚨 🚨 🚨 🚨
+
+**Bottom Line**: What you need to update and/or know:
+- If you are setting any variables for this package in your `dbt_project.yml`, update the name of the prefix of the variable(s) from `fivetran_log_*` to `fivetran_platform_*`. The default _values_ for variables have not changed.
+- Similarly, any references to package models will need to be updated. The prefix of package models has been updated from `fivetran_log__*` to `fivetran_platform__*`.
+- If you are [overriding](https://docs.getdbt.com/reference/resource-properties/overrides) the `fivetran_log` source, you will need to update the `overrides` property to match the new `source` name (`fivetran_platform`).
+- Run a full refresh, as we have updated the incremental strategies across warehouses.
+- The default [build schema](https://github.com/fivetran/dbt_fivetran_log#change-the-build-schema) suffixes have been changed from `_stg_fivetran_log` and `_fivetran_log` to `_stg_fivetran_platform` and `_fivetran_platform` respectively. We recommend dropping the old schemas.
+
+**Note**: Things that are NOT changing in the package:
+- The name of the Github repository will not be changed. It will remain `dbt_fivetran_log` 
+- The package's project name will remain `fivetran_log`. You will **not** need to update your `packages.yml` reference.
+- The default source schema will remain `fivetran_log`. The _name_ of the source schema variable has changed though (`fivetran_log_schema` -> `fivetran_platform_schema`).
+
+**See details below!**
+
+[PR #81](https://github.com/fivetran/dbt_fivetran_log/pull/81) introduced the following changes (some unrelated to the connector name change):
+
+##  🚨 Breaking Changes 🚨
+- Updated the prefixes of each model from `fivetran_log_*` or `stg_fivetran_log_*` to `fivetran_platform_*` and `stg_fivetran_platform_*`, respectively.
+
+| **Original model name**  | **New model name** |
+| ----------------------- | ----------------------- |
+| fivetran_log__audit_table      | fivetran_platform__audit_table       |
+| fivetran_log__connector_daily_events      | fivetran_platform__connector_daily_events       |
+| fivetran_log__connector_status      | fivetran_platform__connector_status       |
+| fivetran_log__mar_table_history      | fivetran_platform__mar_table_history       |
+| fivetran_log__schema_changelog      | fivetran_platform__schema_changelog       |
+| fivetran_log__transformation_status      | fivetran_platform__transformation_status       |
+| fivetran_log__usage_mar_destination_history      | fivetran_platform__usage_mar_destination_history       |
+| stg_fivetran_log__account      | stg_fivetran_platform__account       |
+| stg_fivetran_log__connector      | stg_fivetran_platform__connector     |
+| stg_fivetran_log__credits_used      | stg_fivetran_platform__credits_used       |
+| stg_fivetran_log__destination_membership      | stg_fivetran_platform__destination_membership       |
+| stg_fivetran_log__destination      | stg_fivetran_platform__destination       |
+| stg_fivetran_log__incremental_mar      | stg_fivetran_platform__incremental_mar       |
+| stg_fivetran_log__log      | stg_fivetran_platform__log       |
+| stg_fivetran_log__transformation      | stg_fivetran_platform__transformation       |
+| stg_fivetran_log__trigger_table      | stg_fivetran_platform__trigger_table       |
+| stg_fivetran_log__usage_cost      | stg_fivetran_platform__usage_cost       |
+| stg_fivetran_log__user      | stg_fivetran_platform__user       |
+
+- Updated the prefix of **all** package variables from `fivetran_log_*` to `fivetran_platform_*`. 
+
+| **Original variable name**   | **New variable name** | **Default value (consistent)**  |
+| ----------------------- | ----------------------- | ----------------------- |
+| fivetran_log_schema      | fivetran_platform_schema       | `fivetran_log` | 
+| fivetran_log_database      | fivetran_platform_database       | `target.database` | 
+| fivetran_log__usage_pricing      | fivetran_platform__usage_pricing       |  Dynamically checks the source at runtime to set as either `true` or `false`. May be overridden using this variable if desired. | 
+| fivetran_log__credits_pricing      | fivetran_platform__credits_pricing       |  Dynamically checks the source at runtime to set as either `true` or `false`. May be overridden using this variable if desired | 
+| fivetran_log_using_sync_alert_messages | fivetran_platform_using_sync_alert_messages | `True` | 
+| fivetran_log_using_transformations      | fivetran_platform_using_transformations       | `True` | 
+| fivetran_log_using_triggers      | fivetran_platform_using_triggers       | `True` | 
+| fivetran_log_using_destination_membership      | fivetran_platform_using_destination_membership       | `True` | 
+| fivetran_log_using_user      | fivetran_platform_using_user       | `True` | 
+| fivetran_log_[default_table_name]\_identifier  |  fivetran_platform_[default_table_name]_identifier | Default table name (ie `'connector'` for `fivetran_platform_connector_identifier`) | 
+
+- Updated the default [build schema](https://github.com/fivetran/dbt_fivetran_log#change-the-build-schema) suffixes of package models from `_stg_fivetran_log` and `_fivetran_log` to `_stg_fivetran_platform` and `_fivetran_platform` respectively.
+> We recommend dropping the old schemas to eradicate the stale pre-name-change models from your destintation. 
+- Updated the name of the package's [source](models/staging/src_fivetran.yml) from `fivetran_log` to `fivetran_platform`.
+- Updated the name of the packages' schema files:
+  - `src_fivetran_log.yml` -> `src_fivetran_platform.yml`
+  - `stg_fivetran_log.yml` -> `stg_fivetran_platform.yml`
+  - `fivetran_log.yml` -> `fivetran_platform.yml`
+- Updated the freshness tests on the `fivetran_platform` source to be less stringent and more realistic. The following source tables have had their default fresness tests removed, as they will not necessarily update frequently:
+  - `connector`
+  - `account`
+  - `destination`
+  - `destination_membership`
+  - `user`
+- Updated the incremental strategy of the audit table [model](models/fivetran_platform__audit_table.sql) for BigQuery and Databricks users from `merge` to the more consistent `insert_overwrite` method. We have also updated the `file_format` to `parquet` and added a partition on a new `sync_start_day` field for Databricks. This field is merely a truncated version of `sync_start`.
+  - Run a full refresh to capture these new changes. We recommend running a full refresh every so often regardless. See README for more details.
+- The `account_membership` source table (and any of its transformations) has been deprecated. Fivetran deprecated this table from the connector in [June 2023](https://fivetran.com/docs/logs/fivetran-log/changelog#june2023).
+
+### Considerations
+- ⚠️ If you are [overriding](https://docs.getdbt.com/reference/resource-properties/overrides) the `fivetran_log` source, you will need to update the `overrides` property to match the new `source` name (`fivetran_platform`).
+
+## Under the Hood
+- Added documentation for fields missing yml entries. 
+- Incorporated the new `fivetran_utils.drop_schemas_automation` macro into the end of each Buildkite integration test job ([PR #80](https://github.com/fivetran/dbt_fivetran_log/pull/80)).
+- Updated the pull request templates ([PR #80](https://github.com/fivetran/dbt_fivetran_log/pull/80)).
+
 # dbt_fivetran_log v0.7.4
 [PR #79](https://github.com/fivetran/dbt_fivetran_log/pull/79) includes the following updates:
 

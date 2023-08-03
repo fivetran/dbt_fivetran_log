@@ -1,6 +1,6 @@
 {{ config(enabled=var('fivetran_log_using_user', True)) }}
 
-with fivetran_user as (
+with base as (
 
     select * 
     from {{ var('user') }}
@@ -17,7 +17,7 @@ fields as (
         given_name as first_name,
         phone,
         verified as is_verified
-    from fivetran_user
+    from base
 )
 
 select * 

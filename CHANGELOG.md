@@ -1,9 +1,13 @@
-# dbt_fivetran_log v0.UPDATE.UPDATE
+# dbt_fivetran_log v0.7.5
 
- ## Under the Hood:
+## Bugfix:
+- Update staging models to current standard used in our other packages (the base, fields, final approach) ([PR # ]())
+- Rename CTEs in staging models to avoid potential circular references ([PR # ]())
+
+## Under the Hood:
 
 - Incorporated the new `fivetran_utils.drop_schemas_automation` macro into the end of each Buildkite integration test job.
-- Updated the pull request [templates](/.github).
+- Updated the pull request [templates](/.github). ([PR # ]())
 # dbt_fivetran_log v0.7.4
 [PR #79](https://github.com/fivetran/dbt_fivetran_log/pull/79) includes the following updates:
 

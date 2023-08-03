@@ -1,6 +1,6 @@
-{{ config(enabled=var('fivetran_log_using_transformations', True)) }}
+{{ config(enabled=var('fivetran_log_using_base', True)) }}
 
-with transformation as (
+with base as (
     
     select * 
     from {{ var('transformation') }}
@@ -19,7 +19,7 @@ fields as (
         trigger_delay,
         trigger_interval,
         trigger_type
-    from transformation
+    from base
 )
 
 select * 

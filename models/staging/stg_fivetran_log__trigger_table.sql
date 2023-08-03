@@ -1,6 +1,6 @@
 {{ config(enabled=var('fivetran_log_using_triggers', True)) }}
 
-with trigger_table as (
+with base as (
 
     select * 
     from {{ var('trigger_table') }}
@@ -17,9 +17,9 @@ fields as (
         "TABLE" as trigger_table,
         {% endif %}
         transformation_id
-    from trigger_table
+    from base
 )
 
-select * 
+select *
 from fields
 where transformation_id is not null

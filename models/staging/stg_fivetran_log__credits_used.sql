@@ -1,6 +1,6 @@
 {% if var('fivetran_log__credits_pricing', does_table_exist('credits_used')) %}
 
-with credits_used as (
+with base as (
 
     select * 
     from {{ var('credits_used') }}
@@ -12,7 +12,7 @@ fields as (
         destination_id,
         measured_month,
         credits_consumed as credits_spent
-    from credits_used
+    from base
 )
 
 select * 

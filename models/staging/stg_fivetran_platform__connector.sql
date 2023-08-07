@@ -1,4 +1,4 @@
-with connector as (
+with base as (
 
     select * 
     from {{ ref('stg_fivetran_platform__connector_tmp') }}
@@ -13,7 +13,7 @@ fields as (
             )
         }}
         ,row_number() over ( partition by connector_name, destination_id order by _fivetran_synced desc ) as nth_last_record
-    from connector
+    from base
 ),
 
 final as (

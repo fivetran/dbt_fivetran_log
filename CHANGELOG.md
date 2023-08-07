@@ -1,8 +1,8 @@
 # dbt_fivetran_log v1.0.1
 
 ## Bugfix:
-- Update staging models to current standard used in our other packages (the base, fields, final approach) ([PR # ]())
-- Rename CTEs in staging models to avoid potential circular references ([PR # ]())
+- Update staging models to current standard used in our other packages (the base, fields, final approach) ([PR #85](https://github.com/fivetran/dbt_fivetran_log/pull/85))
+- Rename CTEs in staging models to avoid potential circular references ([PR #85](https://github.com/fivetran/dbt_fivetran_log/pull/85))
 
 # dbt_fivetran_log v1.0.0
 

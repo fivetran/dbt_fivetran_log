@@ -1,4 +1,4 @@
-with account as (
+with base as (
     
     select * 
     from {{ var('account') }}
@@ -12,7 +12,7 @@ fields as (
         cast(created_at as {{ dbt.type_timestamp() }}) as created_at,
         name as account_name,
         status
-    from account
+    from base
 )
 
 select * 

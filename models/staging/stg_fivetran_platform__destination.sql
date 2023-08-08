@@ -1,4 +1,4 @@
-with destination as (
+with base as (
 
     select * 
     from {{ var('destination') }}
@@ -12,7 +12,7 @@ fields as (
         cast(created_at as {{ dbt.type_timestamp() }}) as created_at,
         name as destination_name,
         region
-    from destination
+    from base
 )
 
 select * 

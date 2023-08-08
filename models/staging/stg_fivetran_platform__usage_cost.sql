@@ -1,5 +1,5 @@
 {% if var('fivetran_platform__usage_pricing', does_table_exist('usage_cost')) %}
-with usage as (
+with base as (
 
     select * 
     from {{ var('usage_cost') }}
@@ -11,7 +11,7 @@ fields as (
         destination_id,
         measured_month,
         amount as dollars_spent
-    from usage
+    from base
 )
 
 select * 

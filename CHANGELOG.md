@@ -1,3 +1,8 @@
+# dbt_fivetran_log v1.0.1
+
+## Bugfix:
+- Update staging models CTE names to current standard used in our other packages (the base, fields, final approach) to avoid potential circular references ([PR #85](https://github.com/fivetran/dbt_fivetran_log/pull/85))
+
 # dbt_fivetran_log v1.0.0
 
 ![image](https://user-images.githubusercontent.com/65564846/236957050-a5ee484d-9b05-4207-a34a-22c3b8e5a0e6.png)

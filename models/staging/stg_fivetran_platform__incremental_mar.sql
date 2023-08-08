@@ -1,4 +1,4 @@
-with incremental_mar as (
+with base as (
 
     select * 
     from {{ var('incremental_mar') }}
@@ -17,7 +17,7 @@ fields as (
         updated_at,
         _fivetran_synced,
         incremental_rows
-    from incremental_mar
+    from base
 )
 
 select * 

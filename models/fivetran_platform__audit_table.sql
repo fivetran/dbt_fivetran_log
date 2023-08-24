@@ -107,6 +107,7 @@ sum_records_modified as (
     select
         limit_to_table_starts.connector_id,
         limit_to_table_starts.connector_name,
+        coalesce(records_modified_log.schema_name, limit_to_table_starts.connector_name) as schema_name,
         limit_to_table_starts.table_name,
         limit_to_table_starts.destination_id,
         limit_to_table_starts.destination_name,
@@ -126,7 +127,7 @@ sum_records_modified as (
         and records_modified_log.created_at > limit_to_table_starts.sync_start 
         and records_modified_log.created_at < coalesce(limit_to_table_starts.sync_end, limit_to_table_starts.next_sync_start) 
 
-    {{ dbt_utils.group_by(n=9) }}
+    {{ dbt_utils.group_by(n=10) }}
 ),
 
 final as (

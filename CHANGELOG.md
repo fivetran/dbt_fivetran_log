@@ -1,9 +1,10 @@
 # dbt_fivetran_log v1.1.0
 
-PR # includes the following updates:
+[PR #87](https://github.com/fivetran/dbt_fivetran_log/pull/87) includes the following updates:
 ## 🚨 Feature Updates (Breaking Change) 🚨 
 The below change was made to an incremental model. As such, a `dbt run --full-refresh` will be required following an upgrade to capture the new column.
 -  Added `schema_name` to the `fivetran_platform__audit_table` end model. This schema name field is captured from the `message_data` JSON within the `log` source table. In cases where the schema_name is not provided a coalesce was added to replicate the `connector_name` as the `schema_name.
+> **Note**: This may change the row count of your `fivetran_platform__audit_table` model. However, this new row count is more correct, as it more accurately captures records from [database connectors](https://fivetran.com/docs/databases), which can write to multiple schemas.
 
 ## Documentation Updates
 - Fixed links in the README models section to properly redirect to the dbt hosted docs for the relevant models.

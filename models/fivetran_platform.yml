@@ -280,6 +280,8 @@ models:
         description: System generated unique ID of the connector.
       - name: connector_name
         description: Name of the connector.
+      - name: schema_name
+        description: Name of the schema. In cases when the schema is not provided the connector_name is used.
       - name: table_name
         description: Name of the table being written to. 
       - name: destination_id

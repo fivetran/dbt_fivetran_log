@@ -24,11 +24,11 @@ final as (
         connector_id, -- Note: the connector_id column used to erroneously equal the connector_name, NOT its id.
         case when transformation_id is not null and event is null then 'TRANSFORMATION'
         else event end as event_type, 
-        message_data,
+        cast(message_data as {{ dbt.type_string() }}) as message_data,
         case 
-        when transformation_id is not null and message_data like '%has succeeded%' then 'transformation run success'
-        when transformation_id is not null and message_data like '%has failed%' then 'transformation run failed'
-        else message_event end as event_subtype,
+        when transformation_id is not null and cast(message_data as {{ dbt.type_string() }})  like '%has succeeded%' then 'transformation run success'
+        when transformation_id is not null and cast(message_data as {{ dbt.type_string() }})  like '%has failed%' then 'transformation run failed'
+        else cast(message_data as {{ dbt.type_string() }})  end as event_subtype,
         transformation_id
     from fields
 )

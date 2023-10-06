@@ -28,7 +28,7 @@ final as (
         case 
         when transformation_id is not null and cast(message_data as {{ dbt.type_string() }})  like '%has succeeded%' then 'transformation run success'
         when transformation_id is not null and cast(message_data as {{ dbt.type_string() }})  like '%has failed%' then 'transformation run failed'
-        else cast(message_data as {{ dbt.type_string() }})  end as event_subtype,
+        else cast(message_event as {{ dbt.type_string() }})  end as event_subtype,
         transformation_id
     from fields
 )

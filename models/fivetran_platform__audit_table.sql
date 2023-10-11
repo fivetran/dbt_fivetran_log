@@ -93,14 +93,10 @@ records_modified_log as (
     select 
         connector_id,
         created_at,
-        "table_name" as table_name,
-        "schema_name" as schema_name,
-        "operation_type" as operation_type,
+        null as table_name,
+        null as schema_name,
+        null as operation_type,
         1 as row_count
-        -- {{ fivetran_utils.json_parse(string='message_data', string_path=['table']) }} as table_name,
-        -- {{ fivetran_utils.json_parse(string='message_data', string_path=['schema']) }} as schema_name,
-        -- {{ fivetran_utils.json_parse(string='message_data', string_path=['operationType']) }} as operation_type,
-        -- cast ({{ fivetran_utils.json_parse(string='message_data', string_path=['count']) }} as {{ dbt.type_int() }}) as row_count
     from sync_log 
     where event_subtype = 'records_modified'
 

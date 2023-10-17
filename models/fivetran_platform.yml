@@ -272,7 +272,7 @@ models:
       table completely, as `fivetran_audit` reported on pre-duplicated data loads.
     columns:
       - name: unique_table_sync_key
-        description: Primary key of this table, hashed on `connector_id`, `destination_id`, `table_name`, and `unique_table_sync_key`.
+        description: Primary key of this table, hashed on `schema_name`, `connector_id`, `destination_id`, `table_name`, and `unique_table_sync_key`.
         tests:
           - unique
           - not_null

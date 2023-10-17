@@ -1,3 +1,13 @@
+# dbt_fivetran_log v1.2.0
+
+[PR #92](https://github.com/fivetran/dbt_fivetran_log/pull/92) includes the following updates:
+## Bug Fixes
+- The `unique_table_sync_key` surrogate key which is created within the `fivetran_platform__audit_table` has been updated to also be comprised of the `schema_name` in addition to the `connector_id`, `destination_id`, `table_name`, `write_to_table_start` fields. This update will also ensure the uniqueness test on this record is accurately testing the true grain of the model.
+  - 🚨 Please be aware that as the `fivetran_platform__audit_table` model is an incremental model a `--full-refresh` will be needed following the package upgrade in order for this change to properly be applied to all records in the end model. 🚨
+
+## Contributors
+- [@JustMaris](https://github.com/JustMaris) ([#92](https://github.com/fivetran/dbt_fivetran_log/pull/92))
+
 # dbt_fivetran_log v1.1.0
 
 [PR #87](https://github.com/fivetran/dbt_fivetran_log/pull/87) includes the following updates:

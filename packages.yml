@@ -2,7 +2,7 @@ packages:
 # - package: fivetran/fivetran_utils
 #   version: [">=0.4.0", "<0.5.0"]
 - git: https://github.com/fivetran/dbt_fivetran_utils.git
-  revision: test/collect-freshness
+  revision: feature/collect-freshness
   warn-unpinned: false
 
 - package: dbt-labs/spark_utils

@@ -1,3 +1,8 @@
+# dbt_fivetran_log v1.3.0
+
+## Breaking Changes
+- Deprecated the `transformation` and `trigger_table` source tables and any downstream transforms. These tables only housed information on Fivetran Basic SQL Transformations, which were sunset last year.
+
 # dbt_fivetran_log v1.2.0
 
 [PR #92](https://github.com/fivetran/dbt_fivetran_log/pull/92) includes the following updates:

@@ -3,7 +3,7 @@ with logs as (
     select 
         *,
         {{ fivetran_utils.json_parse(string='message_data', string_path=['actor']) }} as actor_email
-    from {{ var('log') }}
+    from {{ ref('stg_fivetran_platform__log') }}
 ),
 
 user_logs as (
@@ -16,27 +16,27 @@ user_logs as (
 connector as (
 
     select *
-    from {{ var('connector') }}
+    from {{ ref('stg_fivetran_platform__connector') }}
 ),
 
 destination as (
 
     select *
-    from {{ var('destination') }}
+    from {{ ref('stg_fivetran_platform__destination') }}
 ),
 
 {%- if var('fivetran_platform_using_user', true) %}
 user as (
 
     select *
-    from {{ var('user') }}
+    from {{ ref('stg_fivetran_platform__user') }}
 ),
 
     {%- if var('fivetran_platform_using_destination_membership', true) %}
     destination_membership as (
 
         select *
-        from {{ var('destination_membership') }}
+        from {{ ref('stg_fivetran_platform__destination_membership') }}
     ),
     {% endif -%}
 

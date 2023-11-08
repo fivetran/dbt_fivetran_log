@@ -1,3 +1,9 @@
+# dbt_fivetran_log v1.3.0
+
+## Bug Fixes
+- Tightened incremental logic in `fivetran_platform__audit_table`, which was seeing duplicates on incremental runs. 
+  - If you are seeing uniqueness test failures on the `unique_table_sync_key` field, please run a full refresh before upgrading to this version of the package.
+
 # dbt_fivetran_log v1.2.0
 
 [PR #92](https://github.com/fivetran/dbt_fivetran_log/pull/92) includes the following updates:

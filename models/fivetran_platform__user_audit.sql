@@ -10,7 +10,8 @@ user_logs as (
 
     select *
     from logs
-    where actor_email is not null
+    where actor_email is not null 
+        and lower(actor_email) != 'fivetran'
 ),
 
 connector as (
@@ -26,7 +27,7 @@ destination as (
 ),
 
 {%- if var('fivetran_platform_using_user', true) %}
-user as (
+users as (
 
     select *
     from {{ ref('stg_fivetran_platform__user') }}
@@ -55,15 +56,15 @@ final as (
         connector.connector_id,
         user_logs.actor_email as email,
 {%- if var('fivetran_platform_using_user', true) %}
-        user.first_name,
-        user.last_name,
-        user.user_id,
+        users.first_name,
+        users.last_name,
+        users.user_id,
     {%- if var('fivetran_platform_using_destination_membership', true) %}
         destination_membership.destination_role,
     {% endif -%}
 {% endif -%}
 
-        user_logs.event_type, -- should always be INFO for user-triggered actions
+        user_logs.event_type, -- should always be INFO for user-triggered actions but include just in case
         user_logs.event_subtype,
         user_logs.message_data,
         user_logs.log_id
@@ -75,13 +76,13 @@ final as (
         on connector.destination_id = destination.destination_id
 
 {%- if var('fivetran_platform_using_user', true) %}
-    left join user 
-        on lower(user.email) = lower(user_logs.actor_email)
+    left join users 
+        on lower(users.email) = lower(user_logs.actor_email)
 
     {%- if var('fivetran_platform_using_destination_membership', true) %}
     left join destination_membership
         on destination.destination_id = destination_membership.destination_id
-        and user.user_id = destination_membership.user_id
+        and users.user_id = destination_membership.user_id
 
     {% endif -%}
 {% endif -%}

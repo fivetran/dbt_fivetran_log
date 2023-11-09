@@ -347,7 +347,7 @@ models:
       - name: date_day
         description: Date on which the user action occurred.
       - name: day_name
-        description: Weekday name of the date on which this user action occurred (e.g. Monday)
+        description: Abbreviated weekday name of the date on which this user action occurred (e.g. Mon, Tues, Wed)
       - name: day_of_month
         description: Day of the month on which this user action occurred (e.g. 2022-03-06 --> 6).
       - name: occurred_at
@@ -380,3 +380,6 @@ models:
         description: The details of the event in JSON format.
       - name: log_id
         description: Unique ID of the log record.
+        tests:
+          - unique
+          - not_null

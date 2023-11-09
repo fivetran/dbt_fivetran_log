@@ -337,3 +337,46 @@ models:
         description: Name of the table, if a table is being altered or created. 
       - name: schema_name
         description: Name of the schema, if a schema or table is being created. 
+
+  - name: fivetran_platform__user_audit
+    description: >
+      Each record represents a user-triggered action in your Fivetran instance.This model is intended for audit-trail purposes, as it can be very helpful
+      when trying to trace a user action to a [log event](https://fivetran.com/docs/logs#logeventlist) such as a schema change, sync frequency update, 
+      manual update, broken connection, etc.
+    columns:
+      - name: date_day
+        description: Date on which the user action occurred.
+      - name: day_name
+        description: Weekday name of the date on which this user action occurred (e.g. Monday)
+      - name: day_of_month
+        description: Day of the month on which this user action occurred (e.g. 2022-03-06 --> 6).
+      - name: occurred_at
+        description: Timestamp of when the event was logged.
+      - name: destination_name
+        description: UI-facing name of the destination on which the user action was made.
+      - name: destination_id
+        description: Foreign key referencing the `destination` on which the user action was made.
+      - name: connector_name
+        description: Name of the connector that the user acted upon.
+      - name: connector_id 
+        description: Foreign key referencing the `connector` that the user acted upon.
+      - name: email
+        description: Account email of the user who triggered the action.
+      - name: first_name
+        description: Given name of the user who triggered the action.
+      - name: last_name
+        description: Surname of the user who triggered the action.
+      - name: user_id
+        description: Foreign key referencing the `user` who triggered the action.
+      - name: destination_role
+        description: The acting user's permissions for this individual destination.
+      - name: event_type 
+        description: > 
+          The umbrella event type. Events can be classified as a warning, an error, or just an information log.
+          Typically = 'INFO' for user-triggered actions.
+      - name: event_subtype
+        description: The routine involved in the log event, defined [here](https://fivetran.com/docs/logs#logevents).
+      - name: message_data
+        description: The details of the event in JSON format.
+      - name: log_id
+        description: Unique ID of the log record.

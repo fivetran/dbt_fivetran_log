@@ -112,9 +112,7 @@ models:
             - created_at
     columns: 
       - name: log_id
-        description: >
-          Contains either `connector_name` (for app/api logs), `transformation_id` (for transformation logs), 
-          or the value `"system"` (for system generated logs).
+        description: Unique ID of the log record.
       - name: sync_id
         description: Identifies which sync the event is associated with.
       - name: created_at

@@ -1,3 +1,10 @@
+# dbt_fivetran_log v1.3.0
+
+## New Model Alert 👶🏽
+- We have added a new model, `fivetran_platform__user_audit` ([source](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__user_audit)):
+  - Each record represents a user-triggered action in your Fivetran instance. This model is intended for audit-trail purposes, as it can be very helpful when trying to trace a user action to a [log event](https://fivetran.com/docs/logs#logeventlist) such as a schema change, sync frequency update, manual update, broken connection, etc.
+  - This model builds off of this [sample query](https://fivetran.com/docs/logs/fivetran-platform/sample-queries#audituseractionswithinconnector) from Fivetran's docs.
+
 # dbt_fivetran_log v1.2.0
 
 [PR #92](https://github.com/fivetran/dbt_fivetran_log/pull/92) includes the following updates:

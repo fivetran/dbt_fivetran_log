@@ -1,9 +1,9 @@
 env/
 target/
 dbt_modules/
-dbt_packages/
-integration_tests/.DS_Store
 logs/
 .gitignore
 .DS_Store
 dbt_packages/
+integration_tests/.DS_Store
+integration_tests/seeds/.DS_Store

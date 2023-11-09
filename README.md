@@ -67,7 +67,7 @@ Include the following Fivetran Platform package version range in your `packages.
 ```yaml
 packages:
   - package: fivetran/fivetran_log
-    version: [">=1.2.0", "<1.3.0"]
+    version: [">=1.3.0", "<1.4.0"]
 ```
 
 > Note that altough the source connector is now "Fivetran Platform", the package retains the old name of "fivetran_log".
@@ -95,7 +95,6 @@ vars:
 ```
 
 ## (Optional) Step 5: Additional Configurations
-<details><summary>Expand for configurations</summary>
 
 ### Configuring Fivetran Error and Warning Messages
 Some users may wish to exclude Fivetran error and warnings messages from the final `fivetran_platform__connector_status` model due to the length of the message. To disable the `errors_since_last_completed_sync` and `warnings_since_last_completed_sync` fields from the final model you may add the following variable to you to your root `dbt_project.yml` file. By default, this variable is assumed to be `true`:
@@ -129,8 +128,6 @@ dispatch:
   - macro_namespace: dbt_utils
     search_order: ['spark_utils', 'dbt_utils']
 ```
-
-</details>
 
 ## (Optional) Step 6: Orchestrate your models with Fivetran Transformations for dbt Core™
 <details><summary>Expand for details</summary>

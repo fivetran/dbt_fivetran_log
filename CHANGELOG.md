@@ -1,11 +1,17 @@
 # dbt_fivetran_log v1.3.0
 
 ## New Model Alert 👶🏽
-[PR #98](https://github.com/fivetran/dbt_fivetran_log/pull/98) includes the following update:
-- We have added a new model, `fivetran_platform__audit_user_activity` ([source](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_user_activity)):
+- We have added a new model, [`fivetran_platform__audit_user_activity`](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_user_activity) ([PR #98](https://github.com/fivetran/dbt_fivetran_log/pull/98)):
   - Each record represents a user-triggered action in your Fivetran instance. This model is intended for audit-trail purposes, as it can be very helpful when trying to trace a user action to a [log event](https://fivetran.com/docs/logs#logeventlist) such as a schema change, sync frequency update, manual update, broken connection, etc.
   - This model builds off of this [sample query](https://fivetran.com/docs/logs/fivetran-platform/sample-queries#audituseractionswithinconnector) from Fivetran's docs.
 
+
+## Under the Hood
+- Added a dependency on the `dbt_date` package ([PR #98](https://github.com/fivetran/dbt_fivetran_log/pull/98)):
+```yml
+- package: calogica/dbt_date
+  version: [">=0.9.0", "<1.0.0"]
+```
 # dbt_fivetran_log v1.2.0
 
 [PR #92](https://github.com/fivetran/dbt_fivetran_log/pull/92) includes the following updates:

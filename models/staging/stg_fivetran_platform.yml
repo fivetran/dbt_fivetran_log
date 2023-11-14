@@ -112,9 +112,7 @@ models:
             - created_at
     columns: 
       - name: log_id
-        description: >
-          Contains either `connector_name` (for app/api logs), `transformation_id` (for transformation logs), 
-          or the value `"system"` (for system generated logs).
+        description: Unique ID of the log record.
       - name: sync_id
         description: Identifies which sync the event is associated with.
       - name: created_at
@@ -165,53 +163,6 @@ models:
         description: Timestamp when the user was added to the destination.
       - name: destination_role
         description: The user's permissions for this individual destination.
-      
-  - name: stg_fivetran_platform__transformation
-    description: > 
-      Table of [transformations](https://fivetran.com/docs/transformations) made and carried out in Fivetran.
-      Note - this table is only created once you have created a transformation for the destination.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns: 
-            - transformation_id
-            - destination_id
-    columns:
-      - name: transformation_id
-        description: Destination-unique ID of the transformation.
-      - name: created_at
-        description: Timestamp of when the transformation was created.
-      - name: created_by_user_id
-        description: Foreign key referencing the `user` who created the transformation.
-      - name: destination_id
-        description: Foreign key referenencing the `destination` whose data is being transformed.
-      - name: transformation_name
-        description: Name given to the transformation.
-      - name: is_paused
-        description: Boolean of whether the data transformation is currently paused.
-      - name: script
-        description: The code content of the transformation.
-      - name: trigger_delay 
-        description: The delay in triggering transformation.
-      - name: trigger_interval
-        description: The scheduled frequency of the transformation, if a time schedule is chosen as its trigger.
-      - name: trigger_type
-        description: The schedule type of the transformation (time schedule vs. new data in certain tables).
-
-  - name: stg_fivetran_platform__trigger_table
-    description: >
-      Table relating transformations to the connector source tables that trigger them. 
-      Transformations on time schedules do not appear here. Note - this table is only created 
-      once you have created a triggered transformation.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns: 
-            - trigger_table
-            - transformation_id
-    columns:
-      - name: trigger_table
-        description: Connector source table whose new data triggers the transformation.
-      - name: transformation_id
-        description: Foreign key referencing the `transformation` that is triggered by new data.
 
   - name: stg_fivetran_platform__user
     description: Table of users given access to this Fivetran account.

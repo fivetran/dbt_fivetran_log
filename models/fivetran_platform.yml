@@ -167,62 +167,6 @@ models:
       - name: dollars_spent
         description: The dollar amount used by the destination for the given month.
 
-  - name: fivetran_platform__transformation_status
-    description: >
-      Table of transformations enriched with data regarding its run status and any tables 
-      whose new data trigger the transformation to run.
-    
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns: 
-            - destination_id
-            - transformation_id 
-
-    columns:
-      - name: transformation_id
-        description: Unique ID of the transformation.
-
-      - name: created_at
-        description: Timestamp of when the transformation was created.
-
-      - name: created_by_user_id
-        description: Foreign key referencing the `user` who created the transformation.
-
-      - name: destination_id
-        description: Foreign key referenencing the `destination` whose data is being transformed.
-
-      - name: transformation_name
-        description: Name given to the transformation.
-
-      - name: is_paused
-        description: Boolean of whether the data transformation is currently paused.
-
-      - name: script
-        description: The code content of the transformation.
-
-      - name: trigger_delay 
-        description: The delay in triggering transformation.
-
-      - name: trigger_interval
-        description: The scheduled frequency of the transformation, if a time schedule is chosen as its trigger.
-
-      - name: trigger_type
-        description: The schedule type of the transformation (time schedule vs. new data in certain tables).
-      
-      - name: destination_name
-        description: Name of the destination in which the destination is run.
-      
-      - name: last_successful_run_at
-        description: Timestamp of when the transformation was last run successfully.
-      
-      - name: last_run_attempt
-        description: Outcome of the last run attempt (`"success"` or `"failure"`).
-      
-      - name: trigger_tables
-        description: >
-          Aggregated string list of the tables that trigger the transformation to run, if it is
-          not on a time schedule.
-
   - name: fivetran_platform__connector_daily_events
     description: >
       Table of each connector's daily history of the quantity of api calls, schema changes, and records modified,
@@ -337,3 +281,49 @@ models:
         description: Name of the table, if a table is being altered or created. 
       - name: schema_name
         description: Name of the schema, if a schema or table is being created. 
+
+  - name: fivetran_platform__audit_user_activity
+    description: >
+      Each record represents a user-triggered action in your Fivetran instance.This model is intended for audit-trail purposes, as it can be very helpful
+      when trying to trace a user action to a [log event](https://fivetran.com/docs/logs#logeventlist) such as a schema change, sync frequency update, 
+      manual update, broken connection, etc.
+    columns:
+      - name: date_day
+        description: Date on which the user action occurred.
+      - name: day_name
+        description: Abbreviated weekday name of the date on which this user action occurred (e.g. Mon, Tues, Wed)
+      - name: day_of_month
+        description: Day of the month on which this user action occurred (e.g. 2022-03-06 --> 6).
+      - name: occurred_at
+        description: Timestamp of when the event was logged.
+      - name: destination_name
+        description: UI-facing name of the destination on which the user action was made.
+      - name: destination_id
+        description: Foreign key referencing the `destination` on which the user action was made.
+      - name: connector_name
+        description: Name of the connector that the user acted upon.
+      - name: connector_id 
+        description: Foreign key referencing the `connector` that the user acted upon.
+      - name: email
+        description: Account email of the user who triggered the action.
+      - name: first_name
+        description: Given name of the user who triggered the action.
+      - name: last_name
+        description: Surname of the user who triggered the action.
+      - name: user_id
+        description: Foreign key referencing the `user` who triggered the action.
+      - name: destination_role
+        description: The acting user's permissions for this individual destination.
+      - name: event_type 
+        description: > 
+          The umbrella event type. Events can be classified as a warning, an error, or just an information log.
+          Typically = 'INFO' for user-triggered actions.
+      - name: event_subtype
+        description: The routine involved in the log event, defined [here](https://fivetran.com/docs/logs#logevents).
+      - name: message_data
+        description: The details of the event in JSON format.
+      - name: log_id
+        description: Unique ID of the log record.
+        tests:
+          - unique
+          - not_null

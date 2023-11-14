@@ -1,3 +1,26 @@
+# dbt_fivetran_log v1.3.0
+
+## 🚨 Breaking Changes 🚨
+- Deprecated the `transformation` and `trigger_table` source tables and any downstream transforms. These tables only housed information on Fivetran Basic SQL Transformations, which were sunset last year ([PR #96](https://github.com/fivetran/dbt_fivetran_log/pull/96)).
+  - The entire `fivetran_platform__transformation_status` end model has therefore been removed.
+  - As they are now obsolete, the `fivetran_platform_using_transformations` and `fivetran_platform_using_triggers` variables have been removed.
+
+## 👶🏽 New Model Alert 👶🏽
+- We have added a new model, [`fivetran_platform__audit_user_activity`](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_user_activity) ([PR #98](https://github.com/fivetran/dbt_fivetran_log/pull/98)):
+  - Each record represents a user-triggered action in your Fivetran instance. This model is intended for audit-trail purposes, as it can be very helpful when trying to trace a user action to a [log event](https://fivetran.com/docs/logs#logeventlist) such as a schema change, sync frequency update, manual update, broken connection, etc.
+  - This model builds off of this [sample query](https://fivetran.com/docs/logs/fivetran-platform/sample-queries#audituseractionswithinconnector) from Fivetran's docs.
+
+## 🪲 Bug Fixes 🪲
+- Tightened incremental logic in `fivetran_platform__audit_table`, which was seeing duplicates on incremental runs ([PR #97](https://github.com/fivetran/dbt_fivetran_log/pull/97)).
+  - If you are seeing uniqueness test failures on the `unique_table_sync_key` field, please run a full refresh before upgrading to this version of the package.
+
+## 🛠 Under the Hood 🛠
+- Added a dependency on the `dbt_date` package ([PR #98](https://github.com/fivetran/dbt_fivetran_log/pull/98)):
+```yml
+- package: calogica/dbt_date
+  version: [">=0.9.0", "<1.0.0"]
+```
+
 # dbt_fivetran_log v1.2.0
 
 [PR #92](https://github.com/fivetran/dbt_fivetran_log/pull/92) includes the following updates:

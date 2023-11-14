@@ -22,6 +22,7 @@
     - Providing a history of measured free and paid monthly active rows (MAR), credit consumption, and the relationship between the two
     - Creating a history of vital daily events for each connector
     - Surfacing an audit log of records inserted, deleted, an updated in each table during connector syncs
+    - Keeping an audit log of user-triggered actions across your Fivetran instance
 
 <!--section="fivetran_platform_transformation_model"-->
 Refer to the table below for a detailed view of all models materialized by default within this package. Additionally, check out our [docs site](https://fivetran.github.io/dbt_fivetran_log/#!/overview/fivetran_platform?g_v=1&g_e=seeds) for more details about these models. 

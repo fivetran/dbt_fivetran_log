@@ -1,5 +1,5 @@
 name: 'fivetran_log_integration_tests'
-version: '1.2.0'
+version: '1.3.0'
 
 config-version: 2
 profile: 'integration_tests'
@@ -19,8 +19,6 @@ vars:
     fivetran_platform_destination_identifier: "destination"
     fivetran_platform_destination_membership_identifier: "destination_membership"
     fivetran_platform_log_identifier: "log"
-    fivetran_platform_transformation_identifier: "transformation"
-    trigger_table: "{{ fivetran_utils.snowflake_seed_data('trigger_table') }}"
     fivetran_platform_user_identifier: "user"
 
 
@@ -57,18 +55,6 @@ seeds:
       +column_types:
         time_stamp: timestamp
         transformation_id:  "{{ 'string' if target.type in ('bigquery', 'spark', 'databricks') else 'varchar' }}"
-    transformation:
-      +column_types:
-        created_at: timestamp
-        destination_id: "{{ 'string' if target.type in ('bigquery', 'spark', 'databricks') else 'varchar' }}"
-        id:  "{{ 'string' if target.type in ('bigquery', 'spark', 'databricks') else 'varchar' }}"
-    trigger_table:
-      +quote_columns: "{{ true if target.type in ('redshift', 'postgres') else false }}"
-      +enabled: "{{ true if target.type != 'snowflake' else false }}"
-      +column_types:
-        transformation_id:  "{{ 'string' if target.type in ('bigquery', 'spark', 'databricks') else 'varchar' }}"
-    trigger_table_snowflake:
-      +enabled: "{{ true if target.type == 'snowflake' else false }}"
     user:
       +column_types:
         created_at: timestamp

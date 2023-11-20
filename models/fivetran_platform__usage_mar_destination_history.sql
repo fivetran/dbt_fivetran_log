@@ -19,14 +19,14 @@ useage_cost as (
 destination_mar as (
 
     select 
-        measured_month,
+        cast(measured_month as date) as measured_month,
         destination_id,
         destination_name,
         sum(free_monthly_active_rows) as free_monthly_active_rows,
         sum(paid_monthly_active_rows) as paid_monthly_active_rows,
         sum(total_monthly_active_rows) as total_monthly_active_rows
     from table_mar
-    group by 1,2,3
+    group by measured_month, destination_id, destination_name
 ),
 
 usage as (
@@ -61,10 +61,12 @@ join_usage_mar as (
         round( cast(nullif(destination_mar.total_monthly_active_rows,0) * 1.0 as {{ dbt.type_numeric() }}) / cast(nullif(usage.dollars_spent,0) as {{ dbt.type_numeric() }}), 0) as mar_per_amount_spent
     from destination_mar 
     left join usage 
-        on destination_mar.measured_month = cast(usage.measured_month as timestamp)
+        on destination_mar.measured_month = cast(usage.measured_month as date)
         and destination_mar.destination_id = usage.destination_id
 )
 
 select * 
 from join_usage_mar
+{% if target.type != 'sqlserver' %} -- sql server doesn't support ordering CTEs
 order by measured_month desc
+{% endif %}

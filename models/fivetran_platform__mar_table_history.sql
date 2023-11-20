@@ -37,7 +37,7 @@ ordered_mar as (
         end, 0)) as free_monthly_active_rows
 
     from incremental_mar
-    {{dbt_utils.group_by(5)}}
+    group by connector_name, schema_name, table_name, destination_id, measured_month
 ),
 
 latest_mar as (
@@ -47,7 +47,7 @@ latest_mar as (
         table_name,
         destination_id,
         measured_month,
-        date(last_measured_at) as last_measured_at,
+        cast(last_measured_at as date) as last_measured_at,
         free_monthly_active_rows,
         paid_monthly_active_rows,
         (free_monthly_active_rows + paid_monthly_active_rows) as total_monthly_active_rows
@@ -71,5 +71,7 @@ mar_join as (
 )
 
 select * from mar_join
+{% if target.type != 'sqlserver' %} -- can't order CTEs in sqlserver
 order by measured_month desc, destination_id, connector_name
+{% endif %}
 

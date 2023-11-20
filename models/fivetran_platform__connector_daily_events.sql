@@ -27,7 +27,7 @@ log_events as (
                             
         and connector_id is not null
 
-    group by 1,2,3
+    group by connector_id, date_day, event_subtype
 ),
 
 pivot_out_events as (
@@ -40,7 +40,7 @@ pivot_out_events as (
         max(case when event_subtype = 'schema_change' then count_events else 0 end) as count_schema_changes
 
     from log_events
-    group by 1,2
+    group by connector_id, date_day
 ),
 
 connector_event_counts as (
@@ -75,7 +75,7 @@ spine as (
     {{ dbt_utils.date_spine(
         datepart = "day", 
         start_date =  "cast('" ~ first_date[0:10] ~ "' as date)", 
-        end_date = dbt.dateadd("week", 1, dbt.date_trunc('day', dbt.current_timestamp_backcompat())) 
+        end_date = dbt.dateadd("week", 1, dbt.date_trunc('day', dbt.current_timestamp_backcompat() if target.type != 'sqlserver' else dbt.current_timestamp())) 
         ) 
     }} 
 ),
@@ -105,7 +105,7 @@ connector_event_history as (
     spine join connector_event_counts
         on spine.date_day  >= cast( {{ dbt.date_trunc('day', 'connector_event_counts.set_up_at') }} as date)
 
-    group by 1,2,3,4,5,6
+    group by spine.date_day, connector_name, connector_id, connector_type, destination_name, destination_id
 ),
 
 -- now rejoin spine to get a complete calendar
@@ -126,7 +126,7 @@ join_event_history as (
     spine left join connector_event_history
         on cast(spine.date_day as date) = connector_event_history.date_day
 
-    group by 1,2,3,4,5,6
+    group by spine.date_day, connector_name, connector_id, connector_type, destination_name, destination_id
 ),
 
 final as (
@@ -134,9 +134,11 @@ final as (
     select *
     from join_event_history
 
-    where cast(date_day as timestamp) <= {{ dbt.current_timestamp_backcompat() }}
+    where cast(date_day as timestamp) <= {{ dbt.current_timestamp_backcompat() if target.type != 'sqlserver' else dbt.current_timestamp() }}
 
+    {% if target.type != 'sqlserver' %} -- sql server cant order CTEs
     order by date_day desc
+    {% endif %}
 )
 
 select *

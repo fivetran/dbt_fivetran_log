@@ -27,7 +27,7 @@ log_events as (
                             
         and connector_id is not null
 
-    group by connector_id, date_day, event_subtype
+    group by connector_id, cast( {{ dbt.date_trunc('day', 'created_at') }} as date), event_subtype
 ),
 
 pivot_out_events as (
@@ -72,7 +72,7 @@ spine as (
     {% else %} {% set first_date = "2016-01-01" %}
     {% endif %}
 
-    {{ dbt_utils.date_spine(
+    {{ fivetran_utils.date_spine(
         datepart = "day", 
         start_date =  "cast('" ~ first_date[0:10] ~ "' as date)", 
         end_date = dbt.dateadd("week", 1, dbt.date_trunc('day', dbt.current_timestamp_backcompat() if target.type != 'sqlserver' else dbt.current_timestamp())) 
@@ -103,7 +103,7 @@ connector_event_history as (
         end) as count_schema_changes
     from
     spine join connector_event_counts
-        on spine.date_day  >= cast( {{ dbt.date_trunc('day', 'connector_event_counts.set_up_at') }} as date)
+        on spine.date_day  >= {{ dbt.date_trunc('day', 'cast(connector_event_counts.set_up_at as date)') }}
 
     group by spine.date_day, connector_name, connector_id, connector_type, destination_name, destination_id
 ),
@@ -134,7 +134,7 @@ final as (
     select *
     from join_event_history
 
-    where cast(date_day as timestamp) <= {{ dbt.current_timestamp_backcompat() if target.type != 'sqlserver' else dbt.current_timestamp() }}
+    where date_day <= cast({{ dbt.current_timestamp_backcompat() if target.type != 'sqlserver' else dbt.current_timestamp() }} as date)
 
     {% if target.type != 'sqlserver' %} -- sql server cant order CTEs
     order by date_day desc

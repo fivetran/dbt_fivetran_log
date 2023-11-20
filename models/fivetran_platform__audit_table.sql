@@ -32,7 +32,7 @@ with sync_log as (
     {%- set max_sync_start = query_result['data'][0][0] -%}
 
     -- compare the new batch of data to the latest sync already stored in this model
-    and case(created_at as date) > '{{ max_sync_start }}'
+    and cast(created_at as date) > '{{ max_sync_start }}'
 
     {% endif %}
 ),

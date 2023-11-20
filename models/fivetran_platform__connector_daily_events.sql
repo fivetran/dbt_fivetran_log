@@ -72,33 +72,36 @@ spine as (
     {% else %} {% set first_date = "2016-01-01" %}
     {% endif %}
 
-    {{ fivetran_utils.date_spine(
-        datepart = "day", 
-        start_date =  "cast('" ~ first_date[0:10] ~ "' as date)", 
-        end_date = dbt.dateadd("week", 1, dbt.date_trunc('day', dbt.current_timestamp_backcompat() if target.type != 'sqlserver' else dbt.current_timestamp())) 
-        ) 
-    }} 
+    select cast(date_day as date) as date_day
+    from (
+        {{ fivetran_utils.date_spine(
+            datepart = "day", 
+            start_date =  "cast('" ~ first_date[0:10] ~ "' as date)", 
+            end_date = dbt.dateadd("week", 1, dbt.date_trunc('day', dbt.current_timestamp_backcompat() if target.type != 'sqlserver' else dbt.current_timestamp())) 
+            ) 
+        }} 
+    ) as date_spine
 ),
 
 connector_event_history as (
 
     select
-        cast(spine.date_day as date) as date_day,
+        spine.date_day as date_day,
         connector_event_counts.connector_name,
         connector_event_counts.connector_id,
         connector_event_counts.connector_type,
         connector_event_counts.destination_name,
         connector_event_counts.destination_id,
         max(case 
-            when cast(spine.date_day as date) = connector_event_counts.date_day then connector_event_counts.count_api_calls
+            when spine.date_day = connector_event_counts.date_day then connector_event_counts.count_api_calls
             else 0
         end) as count_api_calls,
         max(case 
-            when cast(spine.date_day as date) = connector_event_counts.date_day then connector_event_counts.count_record_modifications
+            when spine.date_day = connector_event_counts.date_day then connector_event_counts.count_record_modifications
             else 0
         end) as count_record_modifications,
         max(case 
-            when cast(spine.date_day as date) = connector_event_counts.date_day then connector_event_counts.count_schema_changes
+            when spine.date_day = connector_event_counts.date_day then connector_event_counts.count_schema_changes
             else 0
         end) as count_schema_changes
     from

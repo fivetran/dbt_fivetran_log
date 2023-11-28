@@ -1,4 +1,4 @@
--- depends_on: {{ var('connector') }}
+{# -- depends_on: {{ var('connector') }}
 
 with connector as (
     
@@ -41,7 +41,7 @@ pivot_out_events as (
 
     from log_events
     group by connector_id, date_day
-),
+), 
 
 connector_event_counts as (
 
@@ -61,7 +61,8 @@ connector_event_counts as (
         on pivot_out_events.connector_id = connector.connector_id
 ),
 
-spine as (
+#}
+with spine as (
 
     {% if execute %}
     {% set first_date_query %}
@@ -74,19 +75,20 @@ spine as (
 
     select cast(date_day as date) as date_day
     from (
-        {{ fivetran_utils.date_spine(
+        {{ dbt_utils.date_spine(
             datepart = "day", 
             start_date =  "cast('" ~ first_date[0:10] ~ "' as date)", 
-            end_date = dbt.dateadd("week", 1, dbt.date_trunc('day', dbt.current_timestamp_backcompat() if target.type != 'sqlserver' else dbt.current_timestamp())) 
+            end_date = dbt.dateadd("week", 1, dbt.date_trunc('day', dbt.current_timestamp_backcompat())) 
             ) 
         }} 
     ) as date_spine
-),
+) select * from spine
 
+{#
 connector_event_history as (
 
     select
-        spine.date_day as date_day,
+        spine.date_day,
         connector_event_counts.connector_name,
         connector_event_counts.connector_id,
         connector_event_counts.connector_type,
@@ -145,4 +147,4 @@ final as (
 )
 
 select *
-from final
+from final #}

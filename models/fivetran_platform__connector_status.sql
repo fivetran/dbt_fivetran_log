@@ -95,7 +95,7 @@ connector_metrics as (
     group by connector.connector_id, connector.connector_name, connector.connector_type, connector.destination_id, connector.is_paused, connector.set_up_at
 ),
 
-connector_health as (
+connector_health_status as (
 
     select
         *,
@@ -130,24 +130,24 @@ connector_health as (
 connector_recent_logs as (
 
     select 
-        connector_health.connector_id,
-        connector_health.connector_name,
-        connector_health.connector_type,
-        connector_health.destination_id,
-        connector_health.connector_health,
-        connector_health.last_successful_sync_completed_at,
-        connector_health.last_sync_started_at,
-        connector_health.last_sync_completed_at,
-        connector_health.set_up_at,
+        connector_health_status.connector_id,
+        connector_health_status.connector_name,
+        connector_health_status.connector_type,
+        connector_health_status.destination_id,
+        connector_health_status.connector_health,
+        connector_health_status.last_successful_sync_completed_at,
+        connector_health_status.last_sync_started_at,
+        connector_health_status.last_sync_completed_at,
+        connector_health_status.set_up_at,
         connector_log.event_subtype,
         connector_log.event_type,
         connector_log.message_data
 
-    from connector_health 
+    from connector_health_status 
     left join connector_log 
-        on connector_log.connector_id = connector_health.connector_id
+        on connector_log.connector_id = connector_health_status.connector_id
         -- limiting relevance to since the last successful sync completion (if there has been one)
-        and connector_log.created_at > coalesce(connector_health.last_sync_completed_at, connector_health.last_priority_first_sync_completed_at, '2000-01-01') 
+        and connector_log.created_at > coalesce(connector_health_status.last_sync_completed_at, connector_health_status.last_priority_first_sync_completed_at, '2000-01-01') 
         -- only looking at errors and warnings (excluding syncs - both normal and priority first)
         and connector_log.event_type != 'INFO' 
         -- need to explicitly avoid priority first statuses because they are of event_type WARNING
@@ -156,15 +156,15 @@ connector_recent_logs as (
             and {{ fivetran_utils.json_parse(string="connector_log.message_data", string_path=["reason"]) }} like '%intended behavior%')
 
     group by -- remove duplicates
-        connector_health.connector_id,
-        connector_health.connector_name,
-        connector_health.connector_type,
-        connector_health.destination_id,
-        connector_health.connector_health,
-        connector_health.last_successful_sync_completed_at,
-        connector_health.last_sync_started_at,
-        connector_health.last_sync_completed_at,
-        connector_health.set_up_at,
+        connector_health_status.connector_id,
+        connector_health_status.connector_name,
+        connector_health_status.connector_type,
+        connector_health_status.destination_id,
+        connector_health_status.connector_health,
+        connector_health_status.last_successful_sync_completed_at,
+        connector_health_status.last_sync_started_at,
+        connector_health_status.last_sync_completed_at,
+        connector_health_status.set_up_at,
         connector_log.event_subtype,
         connector_log.event_type,
         connector_log.message_data

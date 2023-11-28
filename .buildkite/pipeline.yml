@@ -72,3 +72,18 @@ steps:
             - "CI_DATABRICKS_DBT_CATALOG"
     commands: |
       bash .buildkite/scripts/run_models.sh databricks
+
+  - label: ":azure: Run Tests - SQLServer"
+    key: "run_dbt_sqlserver"
+    plugins:
+      - docker#v3.13.0:
+          image: "python:3.8"
+          shell: [ "/bin/bash", "-e", "-c" ]
+          environment:
+            - "BASH_ENV=/tmp/.bashrc"
+            - "CI_SQLSERVER_DBT_SERVER"
+            - "CI_SQLSERVER_DBT_DATABASE"
+            - "CI_SQLSERVER_DBT_USER"
+            - "CI_SQLSERVER_DBT_PASS"
+    commands: |
+      bash .buildkite/scripts/run_models.sh sqlserver

@@ -52,3 +52,13 @@ integration_tests:
       threads: 2
       token: "{{ env_var('CI_DATABRICKS_DBT_TOKEN') }}"
       type: databricks
+    sqlserver:
+      type: sqlserver
+      driver: 'ODBC Driver 18 for SQL Server'
+      server: "{{ env_var('CI_SQLSERVER_DBT_SERVER') }}"
+      port: 1433
+      database: "{{ env_var('CI_SQLSERVER_DBT_DATABASE') }}"
+      schema: fivetran_platform_integration_tests
+      user: "{{ env_var('CI_SQLSERVER_DBT_USER') }}"
+      password: "{{ env_var('CI_SQLSERVER_DBT_PASS') }}"
+      threads: 8

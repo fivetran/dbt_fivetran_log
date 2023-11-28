@@ -7,7 +7,10 @@ apt-get install libsasl2-dev
 python3 -m venv venv
 . venv/bin/activate
 pip install --upgrade pip setuptools
-pip install -r integration_tests/requirements.txt
+if [ "$1" = "sqlserver" ]; then
+    pip install -r integration_tests/requirements_sqlserver.txt
+else
+    pip install -r integration_tests/requirements.txt
 mkdir -p ~/.dbt
 cp integration_tests/ci/sample.profiles.yml ~/.dbt/profiles.yml
 

@@ -8,7 +8,7 @@ python3 -m venv venv
 . venv/bin/activate
 pip install --upgrade pip setuptools
 if [ "$1" == "sqlserver" ]; then
-    apt install lsb-core
+    apt install lsb-base lsb-release
     curl https://packages.microsoft.com/keys/microsoft.asc | tee /etc/apt/trusted.gpg.d/microsoft.asc
     curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list | tee /etc/apt/sources.list.d/mssql-release.list
     apt-get update

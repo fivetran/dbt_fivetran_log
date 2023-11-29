@@ -74,10 +74,10 @@ spine as (
 
     select cast(date_day as date) as date_day
     from (
-        {{ dbt_utils.date_spine(
+        {{ fivetran_utils.date_spine(
             datepart = "day", 
             start_date =  "cast('" ~ first_date[0:10] ~ "' as date)", 
-            end_date = dbt.dateadd("week", 1, dbt.date_trunc('day', dbt.current_timestamp_backcompat())) 
+            end_date = dbt.dateadd("week", 1, dbt.date_trunc('day', dbt.current_timestamp_backcompat() if target.type != 'sqlserver' else dbt.current_timestamp())) 
             ) 
         }} 
     ) as date_spine

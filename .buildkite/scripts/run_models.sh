@@ -9,7 +9,7 @@ python3 -m venv venv
 pip install --upgrade pip setuptools
 if [ "$1" == "sqlserver" ]; then
     pip install -r integration_tests/requirements_sqlserver.txt
-    curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh
+    CI=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
     brew install unixodbc
     # curl https://packages.microsoft.com/keys/microsoft.asc | tee /etc/apt/trusted.gpg.d/microsoft.asc
     # curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list | tee /etc/apt/sources.list.d/mssql-release.list

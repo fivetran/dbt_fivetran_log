@@ -8,6 +8,7 @@ python3 -m venv venv
 . venv/bin/activate
 pip install --upgrade pip setuptools
 if [ "$1" == "sqlserver" ]; then
+    apt-get install unixodbc-dev
     pip install -r integration_tests/requirements_sqlserver.txt
 else
     pip install -r integration_tests/requirements.txt

@@ -1,4 +1,4 @@
-{# -- depends_on: {{ var('connector') }}
+-- depends_on: {{ var('connector') }}
 
 with connector as (
     
@@ -61,8 +61,7 @@ connector_event_counts as (
         on pivot_out_events.connector_id = connector.connector_id
 ),
 
-#}
-with spine as (
+spine as (
 
     {% if execute %}
     {% set first_date_query %}
@@ -82,9 +81,8 @@ with spine as (
             ) 
         }} 
     ) as date_spine
-) select * from spine
+),
 
-{#
 connector_event_history as (
 
     select
@@ -147,4 +145,4 @@ final as (
 )
 
 select *
-from final #}
+from final

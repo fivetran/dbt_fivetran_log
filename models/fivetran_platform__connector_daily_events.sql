@@ -106,7 +106,7 @@ connector_event_history as (
         end) as count_schema_changes
     from
     spine join connector_event_counts
-        on spine.date_day  >= {{ dbt.date_trunc('day', 'cast(connector_event_counts.set_up_at as date)') }}
+        on spine.date_day  >= cast({{ dbt.date_trunc('day', 'cast(connector_event_counts.set_up_at as date)') }} as date)
 
     group by spine.date_day, connector_name, connector_id, connector_type, destination_name, destination_id
 ),
@@ -127,7 +127,7 @@ join_event_history as (
 
     from
     spine left join connector_event_history
-        on cast(spine.date_day as date) = connector_event_history.date_day
+        on spine.date_day = connector_event_history.date_day
 
     group by spine.date_day, connector_name, connector_id, connector_type, destination_name, destination_id
 ),

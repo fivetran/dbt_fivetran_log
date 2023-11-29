@@ -14,6 +14,8 @@ if [ "$1" == "sqlserver" ]; then
     # brew install unixodbc
     brew install gcc
     brew tap microsoft/mssql-release https://github.com/Microsoft/homebrew-mssql-release
+    brew update
+    HOMEBREW_ACCEPT_EULA=Y brew install msodbcsql18 mssql-tools18
     apt-get update
     apt-get -y install unixodbc-dev unixodbc
     pip uninstall -y pyodbc

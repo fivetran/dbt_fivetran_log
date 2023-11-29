@@ -8,7 +8,11 @@ python3 -m venv venv
 . venv/bin/activate
 pip install --upgrade pip setuptools
 if [ "$1" == "sqlserver" ]; then
+    curl https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc
+    curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
+    apt-get update
     apt-get --assume-yes install unixodbc-dev
+    ACCEPT_EULA=Y apt-get install -y msodbcsql18
     pip install -r integration_tests/requirements_sqlserver.txt
 else
     pip install -r integration_tests/requirements.txt

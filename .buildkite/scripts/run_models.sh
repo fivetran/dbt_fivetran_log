@@ -8,13 +8,17 @@ python3 -m venv venv
 . venv/bin/activate
 pip install --upgrade pip setuptools
 if [ "$1" == "sqlserver" ]; then
-    apt install lsb-base lsb-release
-    curl https://packages.microsoft.com/keys/microsoft.asc | tee /etc/apt/trusted.gpg.d/microsoft.asc
-    curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list | tee /etc/apt/sources.list.d/mssql-release.list
-    apt-get update
-    ACCEPT_EULA=Y apt-get install -y msodbcsql18
-    apt-get --assume-yes install unixodbc-dev
     pip install -r integration_tests/requirements_sqlserver.txt
+    curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh
+    brew install unixodbc
+    # curl https://packages.microsoft.com/keys/microsoft.asc | tee /etc/apt/trusted.gpg.d/microsoft.asc
+    # curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list | tee /etc/apt/sources.list.d/mssql-release.list
+    brew tap microsoft/mssql-release https://github.com/Microsoft/homebrew-mssql-release
+    pip uninstall pyodbc
+    pip install --no-cache-dir --no-binary :all: pyodbc==4.0.39 
+    # apt-get update
+    # ACCEPT_EULA=Y apt-get install -y msodbcsql18
+    # apt-get --assume-yes install unixodbc-dev
 else
     pip install -r integration_tests/requirements.txt
 fi

@@ -19,7 +19,7 @@ if [ "$1" == "sqlserver" ]; then
     apt-get update
     # brew install unixodbc
     pip uninstall -y pyodbc
-    pip install --no-cache-dir --no-binary :all: pyodbc==4.0.34
+    pip install --no-cache-dir --no-binary :all: pyodbc==4.0.39
 else
     pip install -r integration_tests/requirements.txt
 fi

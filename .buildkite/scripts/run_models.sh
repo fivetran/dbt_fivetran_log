@@ -11,16 +11,15 @@ if [ "$1" == "sqlserver" ]; then
     pip install -r integration_tests/requirements_sqlserver.txt
     CI=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-    # brew install unixodbc
     brew update
     brew install gcc
     brew tap microsoft/mssql-release https://github.com/Microsoft/homebrew-mssql-release
-    HOMEBREW_ACCEPT_EULA=Y brew install msodbcsql17 mssql-tools
-    apt-get update
-    apt-get -y install unixodbc-dev
+    HOMEBREW_ACCEPT_EULA=Y brew install msodbcsql18 mssql-tools18
+    # apt-get update
+    # apt-get -y install unixodbc-dev
+    brew install unixodbc
     pip uninstall -y pyodbc
-    pip install --no-cache-dir --no-binary :all: pyodbc==4.0.39 
-    cat /etc/odbc.ini
+    pip install --no-cache-dir --no-binary :all: pyodbc==4.0.34
 else
     pip install -r integration_tests/requirements.txt
 fi

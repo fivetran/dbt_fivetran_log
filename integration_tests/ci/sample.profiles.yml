@@ -54,7 +54,7 @@ integration_tests:
       type: databricks
     sqlserver:
       type: sqlserver
-      driver: 'ODBC Driver 18 for SQL Server'
+      driver: 'ODBC Driver 17 for SQL Server'
       server: "{{ env_var('CI_SQLSERVER_DBT_SERVER') }}"
       port: 1433
       database: "{{ env_var('CI_SQLSERVER_DBT_DATABASE') }}"

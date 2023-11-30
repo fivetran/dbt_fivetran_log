@@ -12,10 +12,10 @@ if [ "$1" == "sqlserver" ]; then
     CI=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
     # brew install unixodbc
+    brew update
     brew install gcc
     brew tap microsoft/mssql-release https://github.com/Microsoft/homebrew-mssql-release
-    brew update
-    HOMEBREW_ACCEPT_EULA=Y brew install msodbcsql18 mssql-tools18
+    HOMEBREW_ACCEPT_EULA=Y brew install msodbcsql17 mssql-tools
     apt-get update
     apt-get -y install unixodbc-dev
     pip uninstall -y pyodbc

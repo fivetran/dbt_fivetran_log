@@ -20,12 +20,11 @@ if [ "$1" == "sqlserver" ]; then
     # brew install unixodbc
 
     ## debian 12
-    curl https://packages.microsoft.com/keys/microsoft.asc | tee /etc/apt/trusted.gpg.d/microsoft.asc
+    # curl https://packages.microsoft.com/keys/microsoft.asc | tee /etc/apt/trusted.gpg.d/microsoft.asc
+    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /usr/share/keyrings/packages.microsoft.gpg
     curl https://packages.microsoft.com/config/debian/12/prod.list | tee /etc/apt/sources.list.d/mssql-release.list
     echo "CURLing MS packages"
-    apt-get install debian-archive-keyring
-    apt-key update
-    echo "apt-KEY updated after CURLing stuff"
+    # apt-get install debian-archive-keyring
     apt-get update
     echo "apt-GET updated after CURLing stuff"
     ACCEPT_EULA=Y apt-get install -y msodbcsql18

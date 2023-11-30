@@ -20,6 +20,7 @@ if [ "$1" == "sqlserver" ]; then
     apt-get -y install unixodbc-dev
     pip uninstall -y pyodbc
     pip install --no-cache-dir --no-binary :all: pyodbc==4.0.39 
+    cat /etc/odbc.ini
 else
     pip install -r integration_tests/requirements.txt
 fi

@@ -23,8 +23,11 @@ if [ "$1" == "sqlserver" ]; then
     curl https://packages.microsoft.com/keys/microsoft.asc | tee /etc/apt/trusted.gpg.d/microsoft.asc
     curl https://packages.microsoft.com/config/debian/12/prod.list | tee /etc/apt/sources.list.d/mssql-release.list
     echo "CURLing MS packages"
+    apt-get install debian-archive-keyring
+    apt-key update
+    echo "apt-KEY updated after CURLing stuff"
     apt-get update
-    echo "apt-get updated after CURLing stuff"
+    echo "apt-GET updated after CURLing stuff"
     ACCEPT_EULA=Y apt-get install -y msodbcsql18
     ACCEPT_EULA=Y apt-get install -y mssql-tools18
     echo "installed MS packages"
@@ -34,7 +37,7 @@ if [ "$1" == "sqlserver" ]; then
     echo "installed UnixODBC"
     apt-get update
     echo "apt-get updated after installing stuff"
-    
+
     # works i think
     pip uninstall -y pyodbc
     pip install --no-cache-dir --no-binary :all: pyodbc==4.0.39

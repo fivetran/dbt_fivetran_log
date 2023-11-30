@@ -20,6 +20,8 @@ if [ "$1" == "sqlserver" ]; then
     # brew install unixodbc
     pip uninstall -y pyodbc
     pip install --no-cache-dir --no-binary :all: pyodbc==4.0.39
+    which odbcinst
+    odbcinst -j
 else
     pip install -r integration_tests/requirements.txt
 fi

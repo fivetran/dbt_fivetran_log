@@ -22,7 +22,8 @@ if [ "$1" == "sqlserver" ]; then
     pip install --no-cache-dir --no-binary :all: pyodbc==4.0.39
     which odbcinst
     odbcinst -j
-    cat /home/linuxbrew/.linuxbrew/etc/odbc.ini
+    # cat /home/linuxbrew/.linuxbrew/etc/odbc.ini
+    lsb_release -a
 else
     pip install -r integration_tests/requirements.txt
 fi

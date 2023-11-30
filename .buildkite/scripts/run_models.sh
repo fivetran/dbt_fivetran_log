@@ -9,21 +9,34 @@ python3 -m venv venv
 pip install --upgrade pip setuptools
 if [ "$1" == "sqlserver" ]; then
     pip install -r integration_tests/requirements_sqlserver.txt
-    CI=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-    brew update
-    brew install gcc
-    brew tap microsoft/mssql-release https://github.com/Microsoft/homebrew-mssql-release
-    HOMEBREW_ACCEPT_EULA=Y brew install msodbcsql18 mssql-tools18
+
+    ## brew 
+    # CI=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+    # eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    # brew update
+    # brew install gcc
+    # brew tap microsoft/mssql-release https://github.com/Microsoft/homebrew-mssql-release
+    # HOMEBREW_ACCEPT_EULA=Y brew install msodbcsql18 mssql-tools18
+    # brew install unixodbc
+
+    ## debian 12
+    curl https://packages.microsoft.com/keys/microsoft.asc | tee /etc/apt/trusted.gpg.d/microsoft.asc
+    curl https://packages.microsoft.com/config/debian/12/prod.list | tee /etc/apt/sources.list.d/mssql-release.list
+    apt-get update
+    ACCEPT_EULA=Y apt-get install -y msodbcsql18
+    ACCEPT_EULA=Y apt-get install -y mssql-tools18
+    echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc
+    source ~/.bashrc
     apt-get -y install unixodbc-dev
     apt-get update
-    # brew install unixodbc
+    
+    # works i think
     pip uninstall -y pyodbc
     pip install --no-cache-dir --no-binary :all: pyodbc==4.0.39
-    which odbcinst
-    odbcinst -j
-    # cat /home/linuxbrew/.linuxbrew/etc/odbc.ini
-    lsb_release -a
+    
+    # which odbcinst
+    # odbcinst -j
+
 else
     pip install -r integration_tests/requirements.txt
 fi

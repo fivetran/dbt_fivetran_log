@@ -1,3 +1,7 @@
+# dbt_fivetran_log v1.3.1
+
+This release introduces compatibility with **SQL Server** 🥳  🎆  🍾
+
 # dbt_fivetran_log v1.3.0
 
 ## 🚨 Breaking Changes 🚨

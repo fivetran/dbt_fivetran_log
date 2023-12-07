@@ -10,41 +10,21 @@ pip install --upgrade pip setuptools
 if [ "$1" == "sqlserver" ]; then
     pip install -r integration_tests/requirements_sqlserver.txt
 
-    ## brew 
-    # CI=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-    # eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-    # brew update
-    # brew install gcc
-    # brew tap microsoft/mssql-release https://github.com/Microsoft/homebrew-mssql-release
-    # HOMEBREW_ACCEPT_EULA=Y brew install msodbcsql18 mssql-tools18
-    # brew install unixodbc
-
-    ## debian 12
-    # curl https://packages.microsoft.com/keys/microsoft.asc | tee /etc/apt/trusted.gpg.d/microsoft.asc
-    # curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /usr/share/keyrings/packages.microsoft.gpg
     curl -sSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /usr/share/keyrings/microsoft-prod.gpg
     curl -sSL https://packages.microsoft.com/config/debian/12/prod.list > /etc/apt/sources.list.d/mssql-release.list
-    # curl https://packages.microsoft.com/config/debian/12/prod.list | tee /etc/apt/sources.list.d/mssql-release.list
-    echo "CURLing MS packages"
-    # apt-get install debian-archive-keyring
+
     apt-get update
-    echo "apt-GET updated after CURLing stuff"
     ACCEPT_EULA=Y apt-get install -y msodbcsql18
     ACCEPT_EULA=Y apt-get install -y mssql-tools18
-    echo "installed MS packages"
     echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc
     source ~/.bashrc
     apt-get -y install unixodbc-dev
-    echo "installed UnixODBC"
     apt-get update
-    echo "apt-get updated after installing stuff"
 
-    # works i think
     pip uninstall -y pyodbc
     pip install --no-cache-dir --no-binary :all: pyodbc==4.0.39
 
-    which odbcinst
-    odbcinst -j
+    # odbcinst -j
 
 else
     pip install -r integration_tests/requirements.txt

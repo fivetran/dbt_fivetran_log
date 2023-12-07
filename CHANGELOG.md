@@ -2,9 +2,8 @@
 
 ## Bug Fixes
 [PR #102](https://github.com/fivetran/dbt_fivetran_log/pull/102) applies the following update:
-- Adjusts the uniqueness test on the recently introduced `fivetran_platform__audit_user_activity` model.
+- Adjusts the uniqueness test on the recently introduced `fivetran_platform__audit_user_activity` model to test on `log_id` and `occurred_at`.
   - Previously, the `log_id` was erroneously considered the primary key of this model.
-  - Now, the model tests for unique combinations of `log_id` and `occurred_at`.
 
 # dbt_fivetran_log v1.3.0
 

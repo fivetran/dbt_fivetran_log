@@ -29,35 +29,35 @@ models:
 seeds:
   fivetran_log_integration_tests:
     +column_types:
-      _fivetran_synced: "{{ 'datetime' if target.type == 'sqlserver' else 'timestamp' }}"
+      _fivetran_synced: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
     account:
       +column_types:
-        created_at: "{{ 'datetime' if target.type == 'sqlserver' else 'timestamp' }}"
+        created_at: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
     incremental_mar:
       +column_types:
-        measured_date: "{{ 'datetime' if target.type == 'sqlserver' else 'timestamp' }}"
+        measured_date: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
         incremental_rows: "{{ 'int64' if target.type == 'bigquery' else 'bigint' }}"
     connector:
       +column_types:
-        signed_up: "{{ 'datetime' if target.type == 'sqlserver' else 'timestamp' }}"
+        signed_up: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
     credits_used:
       +column_types:
         credits_consumed: "{{ 'int64' if target.type == 'bigquery' else 'bigint' }}"
     destination:
       +column_types:
-        created_at: "{{ 'datetime' if target.type == 'sqlserver' else 'timestamp' }}"
-        id: "{{ 'string' if target.type in ('bigquery', 'spark', 'databricks') else 'varchar' }}"
+        created_at: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
+        id: "{{ 'string' if target.type in ('bigquery', 'spark', 'databricks') else 'varchar' if target.type != 'sqlserver' else 'varchar(256)' }}"
     destination_membership:
       +column_types:
-        activated_at: "{{ 'datetime' if target.type == 'sqlserver' else 'timestamp' }}"
-        joined_at: "{{ 'datetime' if target.type == 'sqlserver' else 'timestamp' }}"
+        activated_at: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
+        joined_at: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
     log:
       +column_types:
-        time_stamp: "{{ 'datetime' if target.type == 'sqlserver' else 'timestamp' }}"
-        transformation_id:  "{{ 'string' if target.type in ('bigquery', 'spark', 'databricks') else 'varchar' }}"
+        time_stamp: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
+        transformation_id:  "{{ 'string' if target.type in ('bigquery', 'spark', 'databricks') else 'varchar' if target.type != 'sqlserver' else 'varchar(256)' }}"
     user:
       +column_types:
-        created_at: "{{ 'datetime' if target.type == 'sqlserver' else 'timestamp' }}"
+        created_at: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
 
 clean-targets:         # directories to be removed by `dbt clean`
   - "target"

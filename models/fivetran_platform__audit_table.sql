@@ -127,6 +127,7 @@ sum_records_modified as (
         and records_modified_log.created_at > limit_to_table_starts.sync_start 
         and records_modified_log.created_at < coalesce(limit_to_table_starts.sync_end, limit_to_table_starts.next_sync_start) 
 
+    -- explicit group by needed for SQL Server
     group by 
         limit_to_table_starts.connector_id,
         limit_to_table_starts.connector_name,

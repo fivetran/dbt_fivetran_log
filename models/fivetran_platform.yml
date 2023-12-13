@@ -56,12 +56,14 @@ models:
       - name: errors_since_last_completed_sync
         description: >
           Aggregated line-separated list of error messages (in JSON format) raised synce the last 
-          sync completion. 
+          sync completion. Included by default for non-SQL Server targets, but can be disabled by setting
+          the `fivetran_platform_using_sync_alert_messages` var to False.
 
       - name: warnings_since_last_completed_sync
         description: >
           Aggregated line-separated list of warning messages (in JSON format) raised synce the last 
-          sync completion. 
+          sync completion. Included by default for non-SQL Server targets, but can be disabled by setting
+          the `fivetran_platform_using_sync_alert_messages` var to False.
 
     
   - name: fivetran_platform__mar_table_history

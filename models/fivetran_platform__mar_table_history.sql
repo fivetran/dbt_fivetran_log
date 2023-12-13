@@ -71,7 +71,3 @@ mar_join as (
 )
 
 select * from mar_join
-{% if target.type != 'sqlserver' %} -- can't order CTEs in sqlserver
-order by measured_month desc, destination_id, connector_name
-{% endif %}
-

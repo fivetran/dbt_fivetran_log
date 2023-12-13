@@ -72,7 +72,8 @@ spine as (
     {% else %} {% set first_date = "2016-01-01" %}
     {% endif %}
 
-    select cast(date_day as date) as date_day
+    select 
+        cast(date_day as date) as date_day
     from (
         {{ fivetran_utils.fivetran_date_spine(
             datepart = "day", 
@@ -138,10 +139,6 @@ final as (
     from join_event_history
 
     where date_day <= cast({{ dbt.current_timestamp_backcompat() if target.type != 'sqlserver' else dbt.current_timestamp() }} as date)
-
-    {% if target.type != 'sqlserver' %} -- sql server cant order CTEs
-    order by date_day desc
-    {% endif %}
 )
 
 select *

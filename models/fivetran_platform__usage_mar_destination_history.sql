@@ -67,6 +67,3 @@ join_usage_mar as (
 
 select * 
 from join_usage_mar
-{% if target.type != 'sqlserver' %} -- sql server doesn't support ordering CTEs
-order by measured_month desc
-{% endif %}

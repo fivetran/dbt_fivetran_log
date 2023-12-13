@@ -1,4 +1,4 @@
-# dbt_fivetran_log v1.3.1
+# dbt_fivetran_log v1.4.0
 
 ## Feature Updates
 - This release introduces compatibility with **SQL Server** 🥳  🎆  🍾 ([PR #101](https://github.com/fivetran/dbt_fivetran_log/pull/101))
@@ -6,6 +6,9 @@
 ## Bug Fixes
 - Adjusts the uniqueness test on the recently introduced `fivetran_platform__audit_user_activity` model to test on `log_id` and `occurred_at` ([PR #102](https://github.com/fivetran/dbt_fivetran_log/pull/102)).
   - Previously, the `log_id` was erroneously considered the primary key of this model.
+
+## Under the Hood
+- Removed `order by` from the final `select` statement in each model. This was done to reduce compute costs from the models ([PR #101](https://github.com/fivetran/dbt_fivetran_log/pull/101)).
 
 # dbt_fivetran_log v1.3.0
 

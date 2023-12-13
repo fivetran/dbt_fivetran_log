@@ -48,6 +48,3 @@ final as (
 )
 
 select * from final
-{% if target.type != 'sqlserver' %}
-order by created_at desc, connector_id
-{% endif %}

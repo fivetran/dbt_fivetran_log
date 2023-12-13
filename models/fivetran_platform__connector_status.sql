@@ -101,7 +101,7 @@ connector_health_status as (
         *,
         case 
             -- connector is paused
-            when is_paused {{ ' = 1' if target.type == 'sqlserver' else '' }} then 'paused'
+            when is_paused {{ ' = 1' if target.type == 'sqlserver' }} then 'paused'
 
             -- a sync has never been attempted
             when last_sync_started_at is null then 'incomplete'
@@ -155,7 +155,7 @@ connector_recent_logs as (
             and {{ fivetran_utils.json_parse(string="connector_log.message_data", string_path=["status"]) }} ='RESCHEDULED'
             and {{ fivetran_utils.json_parse(string="connector_log.message_data", string_path=["reason"]) }} like '%intended behavior%')
 
-    group by -- remove duplicates
+    group by -- remove duplicates, need explicit group by for SQL Server
         connector_health_status.connector_id,
         connector_health_status.connector_name,
         connector_health_status.connector_type,
@@ -186,9 +186,9 @@ final as (
         connector_recent_logs.set_up_at,
         coalesce(schema_changes.number_of_schema_changes_last_month, 0) as number_of_schema_changes_last_month
         
-        {% if var('fivetran_platform_using_sync_alert_messages', true) %}
-        , {{ fivetran_utils.string_agg("case when connector_recent_logs.event_type = 'SEVERE' then connector_recent_logs.message_data else null end", "'\\n'") }} as errors_since_last_completed_sync
-        , {{ fivetran_utils.string_agg("case when connector_recent_logs.event_type = 'WARNING' then connector_recent_logs.message_data else null end", "'\\n'") }} as warnings_since_last_completed_sync
+        {% if var('fivetran_platform_using_sync_alert_messages', true) and target.type != 'sqlserver' %}
+        , {{ fivetran_utils.string_agg("distinct case when connector_recent_logs.event_type = 'SEVERE' then connector_recent_logs.message_data else null end", "'\\n'") }} as errors_since_last_completed_sync
+        , {{ fivetran_utils.string_agg("distinct case when connector_recent_logs.event_type = 'WARNING' then connector_recent_logs.message_data else null end", "'\\n'") }} as warnings_since_last_completed_sync
         {% endif %}
 
     from connector_recent_logs
@@ -196,6 +196,8 @@ final as (
         on connector_recent_logs.connector_id = schema_changes.connector_id 
 
     join destination on destination.destination_id = connector_recent_logs.destination_id
+
+    -- need explicit group bys for SQL Server
     group by 
         connector_recent_logs.connector_id, 
         connector_recent_logs.connector_name, 

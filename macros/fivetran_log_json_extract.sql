@@ -1,6 +1,6 @@
 {% macro fivetran_log_json_extract(string, string_path) -%}
 
-{{ adapter.dispatch('fivetran_log_json_extract', 'fivetran_utils') (string, string_path) }}
+{{ adapter.dispatch('fivetran_log_json_extract', 'fivetran_log') (string, string_path) }}
 
 {%- endmacro %}
 

@@ -47,8 +47,15 @@ final as (
 
     select
         {{ dbt.date_trunc('day', 'user_logs.created_at') }} as date_day,
-        {{ dbt_date.day_name('user_logs.created_at') }} as day_name,
-        {{ dbt_date.day_of_month('user_logs.created_at') }} as day_of_month,
+        
+        {% if target.type != 'sqlserver' -%}
+            {{ dbt_date.day_name('user_logs.created_at') }} as day_name,
+            {{ dbt_date.day_of_month('user_logs.created_at') }} as day_of_month,
+        {% else -%} 
+            format(cast(user_logs.created_at as date), 'ddd') as day_name,
+            day(user_logs.created_at) as day_of_month,
+        {% endif -%} 
+        
         user_logs.created_at as occurred_at,
         destination.destination_name,
         destination.destination_id,

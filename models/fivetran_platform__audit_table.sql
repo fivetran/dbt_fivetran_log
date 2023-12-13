@@ -22,7 +22,7 @@ with sync_log as (
 
     -- Capture the latest timestamp in a call statement instead of a subquery for optimizing BQ costs on incremental runs
     {%- call statement('max_sync_start', fetch_result=True) -%}
-        select date(max(sync_start)) from {{ this }}
+        select cast(max(sync_start) as date) from {{ this }}
     {%- endcall -%}
 
     -- load the result from the above query into a new variable
@@ -32,7 +32,7 @@ with sync_log as (
     {%- set max_sync_start = query_result['data'][0][0] -%}
 
     -- compare the new batch of data to the latest sync already stored in this model
-    and date(created_at) > '{{ max_sync_start }}'
+    and cast(created_at as date) > '{{ max_sync_start }}'
 
     {% endif %}
 ),
@@ -127,7 +127,18 @@ sum_records_modified as (
         and records_modified_log.created_at > limit_to_table_starts.sync_start 
         and records_modified_log.created_at < coalesce(limit_to_table_starts.sync_end, limit_to_table_starts.next_sync_start) 
 
-    {{ dbt_utils.group_by(n=10) }}
+    -- explicit group by needed for SQL Server
+    group by 
+        limit_to_table_starts.connector_id,
+        limit_to_table_starts.connector_name,
+        coalesce(records_modified_log.schema_name, limit_to_table_starts.connector_name),
+        limit_to_table_starts.table_name,
+        limit_to_table_starts.destination_id,
+        limit_to_table_starts.destination_name,
+        limit_to_table_starts.write_to_table_start,
+        limit_to_table_starts.write_to_table_end,
+        limit_to_table_starts.sync_start,
+        case when limit_to_table_starts.sync_end > limit_to_table_starts.next_sync_start then null else limit_to_table_starts.sync_end end
 ),
 
 final as (

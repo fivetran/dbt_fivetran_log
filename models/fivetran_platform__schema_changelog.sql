@@ -20,7 +20,8 @@ add_connector_info as (
         connector.destination_id,
         connector.destination_name
 
-    from schema_changes join connector using(connector_id)
+    from schema_changes join connector 
+        on schema_changes.connector_id = connector.connector_id
 ),
 
 final as (
@@ -47,4 +48,3 @@ final as (
 )
 
 select * from final
-order by created_at desc, connector_id

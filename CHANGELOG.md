@@ -9,6 +9,7 @@
 
 ## Under the Hood
 - Removed `order by` from the final `select` statement in each model. This was done to reduce compute costs from the models ([PR #101](https://github.com/fivetran/dbt_fivetran_log/pull/101)).
+- Converted all `group by`'s to explicitly reference the names of columns we are grouping by, instead of grouping by column number. This was necessary for SQL Server compatibility, as implicit groupings are not supported ([PR #101](https://github.com/fivetran/dbt_fivetran_log/pull/101)).
 
 # dbt_fivetran_log v1.3.0
 

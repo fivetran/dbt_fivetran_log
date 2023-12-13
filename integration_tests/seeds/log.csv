@@ -1,5 +1,5 @@
 id,time_stamp,_fivetran_synced,connector_id,event,message_data,message_event,transformation_id,sync_id
-9Gktalz7uFZbVYKR7zlDeUd4nSM=,2021-02-13 13:34:03.343,2021-02-16 21:11:07.065,legislative_lazy,WARNING,"{""type"":""table_excluded_by_system"",""message"":""salesforce.affectlayer__AffectLayer_User_Setting__ChangeEvent has been Excluded by system. Reason : Not queryable""}",warning,123,456abc
+9Gktalz7uFZbVYKR7zlDeUd4nSM=,2021-02-13 13:34:03.343,2021-02-16 21:11:07.065,legislative_lazy,WARNING,"not_a_json_string",warning,123,456abc
 f7EVPLOIMhuOs45jlXWN3lutVEc=,2021-02-12 08:15:05.555,2021-02-16 21:48:51.493,paint_wedges,INFO,"{""method"":""GET"",""uri"":""https://google.com""}",api_call,123,456abc
 fJk+tL6p9gQE83WaCPdevLs9FXU=,2021-12-09 14:27:00.504,2021-12-09 20:30:53.959,intrinsic_departed,INFO,,sync_end,123,456abc
 f7UkkDoGwEVnG7M2tFQFy7FSoDM=,2021-12-09 14:26:52.433,2021-12-09 20:30:53.957,intrinsic_departed,INFO,"{""schema"":""instagram_business"",""count"":4,""operationType"":""REPLACED_OR_INSERTED"",""table"":""fivetran_audit""}",records_modified,123,456abc

@@ -16,10 +16,10 @@
 
 {% endmacro %}
 
-{% macro postgres__fivetran_log_json_extract(string, string_path) %}
+{# {% macro postgres__fivetran_log_json_extract(string, string_path) %}
 
-  case when {{ string }} like '%"{"%":"%"}"%' 
+  case when {{ string }} like '%"\{"%"\}"%' escape '\'
     then {{ fivetran_utils.json_extract(string=string, string_path=string_path) }}
     else null end
 
-{% endmacro %}
+{% endmacro %} #}

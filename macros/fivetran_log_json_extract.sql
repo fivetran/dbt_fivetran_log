@@ -15,3 +15,11 @@
   {{ fivetran_utils.json_parse(string=string, string_path=string_path) }}
 
 {% endmacro %}
+
+{% macro postgres__fivetran_log_json_extract(string, string_path) %}
+
+  case when {{ string }} like '{"%"}'
+  then {{ fivetran_utils.json_extract(string=string, string_path=string_path) }}
+  else null end
+
+{% endmacro %}

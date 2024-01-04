@@ -87,6 +87,8 @@ If you do not leverage Fivetran RBAC, then you will not have the `user` or `dest
 vars:
     fivetran_platform_using_destination_membership: false # this will disable only the destination membership logic
     fivetran_platform_using_user: false # this will disable only the user logic
+    fivetran_platform__credits_pricing: false #this will disable only the credits used logic
+    fivetran_platform__usage_pricing: false #this will disable only the usage cost logic
 ```
 
 ## (Optional) Step 5: Additional Configurations

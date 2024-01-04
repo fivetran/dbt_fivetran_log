@@ -23,5 +23,6 @@ select
     cast(null as {{ dbt.type_string() }}) as destination_id,
     cast(null as {{ dbt.type_string() }}) as measured_month,
     cast(null as {{ dbt.type_int() }}) as dollars_spent
+limit 0
 
 {% endif %}

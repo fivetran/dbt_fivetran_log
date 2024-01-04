@@ -1,3 +1,25 @@
+
+# dbt_fivetran_log v1.4.2
+[PR #109](https://github.com/fivetran/dbt_fivetran_log/pull/109) includes the following updates:
+
+## Bug Fixes
+- Adjusted staging models `stg_fivetran_platform__credits_used` and `stg_fivetran_platform__usage_cost` to return empty tables if the respective `fivetran_platform__credits_pricing` and the `fivetran_platform__usage_pricing` variables for each model are disabled to avoid Postgres data type errors if those tables are null.  
+
+## Under the Hood
+- Added additional scripts to `run_models.sh` for the package with the variables `fivetran_platform__credits_pricing` set to false and `fivetran_platform__usage_pricing` set to true to recreate the error.
+- Updated seed files to ensure downstream models properly populate into `fivetran_platform__usage_mar_destination_history` for validating this PR.
+
+# dbt_fivetran_log v1.4.1
+
+[PR #107](https://github.com/fivetran/dbt_fivetran_log/pull/107) includes the following updates:
+## Bug Fixes
+- Adjusted the `fivetran_platform__audit_user_activity` model to parse the `message_data` json field to obtain the actor_email information **only** if the field contains `actor`.
+  - This ensures the JSON parsing is only happening on the fields that are relevant. This will help reduce compute and avoid potential parsing errors from malformed JSON objects.
+
+## Under the Hood
+- Included auto-releaser GitHub Actions workflow to automate future releases.
+- Updated the maintainer PR template to resemble the most up to date format.
+
 # dbt_fivetran_log v1.4.0
 
 ## Feature Updates

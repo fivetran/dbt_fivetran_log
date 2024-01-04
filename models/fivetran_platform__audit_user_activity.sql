@@ -4,6 +4,7 @@ with logs as (
         *,
         {{ fivetran_utils.json_parse(string='message_data', string_path=['actor']) }} as actor_email
     from {{ ref('stg_fivetran_platform__log') }}
+    where lower(message_data) like '%actor%'
 ),
 
 user_logs as (

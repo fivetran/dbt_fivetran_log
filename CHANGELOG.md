@@ -1,3 +1,15 @@
+# dbt_fivetran_log v1.4.1
+
+[PR #107](https://github.com/fivetran/dbt_fivetran_log/pull/107) includes the following updates:
+## Bug Fixes
+- Adjusted the `fivetran_platform__audit_user_activity` model to parse the `message_data` json field to obtain the actor_email information **only** if the field contains `actor`.
+  - This ensures the JSON parsing is only happening on the fields that are relevant. This will help reduce compute and avoid potential parsing errors from malformed JSON objects.
+
+## Under the Hood
+- Included auto-releaser GitHub Actions workflow to automate future releases.
+- Updated the maintainer PR template to resemble the most up to date format.
+- Included a `quickstart.yml` file to allow for automated Quickstart data model deployments.
+
 # dbt_fivetran_log v1.4.0
 
 ## Feature Updates

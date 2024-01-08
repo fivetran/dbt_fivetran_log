@@ -18,6 +18,8 @@
 ## Under the Hood
 - Included auto-releaser GitHub Actions workflow to automate future releases.
 - Updated the maintainer PR template to resemble the most up to date format.
+- Included a `quickstart.yml` file to allow for automated Quickstart data model deployments.
+
 
 # dbt_fivetran_log v1.4.0
 

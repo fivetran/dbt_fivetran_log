@@ -1,13 +1,12 @@
-
 # dbt_fivetran_log v1.4.2
 [PR #109](https://github.com/fivetran/dbt_fivetran_log/pull/109) includes the following updates:
 
 ## Bug Fixes
-- Adjusted staging models `stg_fivetran_platform__credits_used` and `stg_fivetran_platform__usage_cost` to return empty tables if the respective `fivetran_platform__credits_pricing` and the `fivetran_platform__usage_pricing` variables for each model are disabled to avoid Postgres data type errors if those tables are null.  
+- Adjusted the `stg_fivetran_platform__credits_used` and `stg_fivetran_platform__usage_cost` models to return empty tables (via a `limit 0`) if the respective `fivetran_platform__credits_pricing` and/or `fivetran_platform__usage_pricing` variables are disabled. This is to avoid Postgres data type errors if those tables are null. 
 
 ## Under the Hood
-- Added additional scripts to `run_models.sh` for the package with the variables `fivetran_platform__credits_pricing` set to false and `fivetran_platform__usage_pricing` set to true to recreate the error.
-- Updated seed files to ensure downstream models properly populate into `fivetran_platform__usage_mar_destination_history` for validating this PR.
+- Included an additional test case within the integration tests where the `fivetran_platform__credits_pricing` variable is set to false and the `fivetran_platform__usage_pricing` variable is set to true in order to effectively test this scenario.
+- Updated seed files to ensure downstream models properly populate into `fivetran_platform__usage_mar_destination_history`.
 
 # dbt_fivetran_log v1.4.1
 

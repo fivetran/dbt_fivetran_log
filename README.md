@@ -81,14 +81,12 @@ vars:
 ```
 
 ## Step 4: Disable Models for Non Existent Sources
-If you do not leverage Fivetran RBAC, then you will not have the `user` or `destination_membership` sources. To disable the corresponding functionality in the package, you must add the following variable(s) to your root `dbt_project.yml` file. By default, all variables are assumed to be `true`:
+If you do not leverage Fivetran RBAC, then you will not have the `user` or `destination_membership` sources. It's also possible you might not have any To disable the corresponding functionality in the package, you must add the following variable(s) to your root `dbt_project.yml` file. By default, all variables are assumed to be `true`:
 
 ```yml
 vars:
     fivetran_platform_using_destination_membership: false # this will disable only the destination membership logic
     fivetran_platform_using_user: false # this will disable only the user logic
-    fivetran_platform__credits_pricing: false #this will disable only the credits used logic
-    fivetran_platform__usage_pricing: false #this will disable only the usage cost logic
 ```
 
 ## (Optional) Step 5: Additional Configurations

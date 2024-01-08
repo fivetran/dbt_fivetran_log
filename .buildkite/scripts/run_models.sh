@@ -44,7 +44,6 @@ dbt test --target "$db"
 dbt run --vars '{fivetran_platform__usage_pricing: true}' --target "$db" --full-refresh
 dbt run --vars '{fivetran_platform__usage_pricing: true}' --target "$db"
 dbt test --target "$db"
-
 dbt run --vars '{fivetran_platform__credits_pricing: false, fivetran_platform__usage_pricing: true}' --target "$db" --full-refresh
 dbt run --vars '{fivetran_platform__credits_pricing: false, fivetran_platform__usage_pricing: true}' --target "$db"
 dbt test --target "$db"

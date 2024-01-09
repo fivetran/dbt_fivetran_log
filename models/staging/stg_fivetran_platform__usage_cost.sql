@@ -20,20 +20,17 @@ from fields
 {% else %}
 
 select
+   
+    {% if target.type in ('sqlserver') %}
+    top 0
+    {% endif %}
+
     cast(null as {{ dbt.type_string() }}) as destination_id,
     cast(null as {{ dbt.type_string() }}) as measured_month,
     cast(null as {{ dbt.type_int() }}) as dollars_spent
 
-    {% if target.type in ('sqlserver') %}
-    
-    order by destination_id
-    offset 0 rows 
-    fetch next 0 rows only
-
-    {% else %}
-
+    {% if target.type not in ('sqlserver') %}
     limit 0
-
     {% endif %}
 
 {% endif %}

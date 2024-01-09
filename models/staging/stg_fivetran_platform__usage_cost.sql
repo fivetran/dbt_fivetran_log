@@ -25,7 +25,8 @@ select
     cast(null as {{ dbt.type_int() }}) as dollars_spent
 
     {% if target.type in ('sqlserver') %}
-
+    
+    order by destination_id
     offset 0 rows 
     fetch next 0 rows only
 

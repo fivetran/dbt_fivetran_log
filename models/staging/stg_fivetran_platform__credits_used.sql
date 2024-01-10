@@ -21,8 +21,16 @@ from fields
 {% else %}
 
 select
+    {% if target.type in ('sqlserver') %}
+    top 0
+    {% endif %}
+
     cast(null as {{ dbt.type_string() }}) as destination_id,
     cast(null as {{ dbt.type_string() }}) as measured_month,
     cast(null as {{ dbt.type_int() }}) as credits_spent
+
+    {% if target.type not in ('sqlserver') %}
+    limit 0
+    {% endif %}
 
 {% endif %}

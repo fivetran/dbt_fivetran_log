@@ -1,3 +1,13 @@
+# dbt_fivetran_log v1.4.2
+[PR #109](https://github.com/fivetran/dbt_fivetran_log/pull/109) includes the following updates:
+
+## Bug Fixes
+- Adjusted the `stg_fivetran_platform__credits_used` and `stg_fivetran_platform__usage_cost` models to return empty tables (via a `limit 0`) if the respective `fivetran_platform__credits_pricing` and/or `fivetran_platform__usage_pricing` variables are disabled. This is to avoid Postgres data type errors if those tables are null. 
+
+## Under the Hood
+- Included an additional test case within the integration tests where the `fivetran_platform__credits_pricing` variable is set to false and the `fivetran_platform__usage_pricing` variable is set to true in order to effectively test this scenario.
+- Updated seed files to ensure downstream models properly populate into `fivetran_platform__usage_mar_destination_history`.
+
 # dbt_fivetran_log v1.4.1
 
 [PR #107](https://github.com/fivetran/dbt_fivetran_log/pull/107) includes the following updates:
@@ -9,6 +19,7 @@
 - Included auto-releaser GitHub Actions workflow to automate future releases.
 - Updated the maintainer PR template to resemble the most up to date format.
 - Included a `quickstart.yml` file to allow for automated Quickstart data model deployments.
+
 
 # dbt_fivetran_log v1.4.0
 

@@ -1,8 +1,15 @@
+# dbt_fivetran_log v1.4.3
+[PR #112](https://github.com/fivetran/dbt_fivetran_log/pull/112) includes the following updates:
+
+## Feature Updates
+- Updated logic for `connector_health` dimension in `fivetran_platform__connector_status` to show `deleted` for connectors that had been removed. Previously the connector would report the last known status before deletion, which is inaccurate based on the definition of this measure. 
+- Brought in the `is_deleted` dimension (based on the `_fivetran_deleted` value) to `stg_fivetran__platform__connector` to capture connectors that are deleted in the downstream `fivetran_platform__connector_status` model.
+
 # dbt_fivetran_log v1.4.2
 [PR #109](https://github.com/fivetran/dbt_fivetran_log/pull/109) includes the following updates:
 
 ## Bug Fixes
-- Adjusted the `stg_fivetran_platform__credits_used` and `stg_fivetran_platform__usage_cost` models to return empty tables (via a `limit 0`) if the respective `fivetran_platform__credits_pricing` and/or `fivetran_platform__usage_pricing` variables are disabled. This is to avoid Postgres data type errors if those tables are null. 
+- Adjusted the `stg_fivetran_platform__credits_used` and `stg_fivetran_platform__usage_cost` models to return empty tables (via a `limit 0` function, or `fetch/offset` function for SQL Server) if the respective `fivetran_platform__credits_pricing` and/or `fivetran_platform__usage_pricing` variables are disabled. This is to avoid Postgres data type errors if those tables are null. 
 
 ## Under the Hood
 - Included an additional test case within the integration tests where the `fivetran_platform__credits_pricing` variable is set to false and the `fivetran_platform__usage_pricing` variable is set to true in order to effectively test this scenario.
@@ -18,8 +25,6 @@
 ## Under the Hood
 - Included auto-releaser GitHub Actions workflow to automate future releases.
 - Updated the maintainer PR template to resemble the most up to date format.
-- Included a `quickstart.yml` file to allow for automated Quickstart data model deployments.
-
 
 # dbt_fivetran_log v1.4.0
 

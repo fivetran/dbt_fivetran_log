@@ -5,6 +5,9 @@
 - Updated logic for `connector_health` dimension in `fivetran_platform__connector_status` to show `deleted` for connectors that had been removed. Previously the connector would report the last known status before deletion, which is inaccurate based on the definition of this measure. 
 - Brought in the `is_deleted` dimension (based on the `_fivetran_deleted` value) to `stg_fivetran__platform__connector` to capture connectors that are deleted in the downstream `fivetran_platform__connector_status` model.
 
+## Under The Hood
+- Renamed `get_brand_columns` macro file to `get_connector_columns` to maintain consistency with the actual macro function within the file, and the `connector` source that the macro is drawing columns from. 
+
 # dbt_fivetran_log v1.4.2
 [PR #109](https://github.com/fivetran/dbt_fivetran_log/pull/109) includes the following updates:
 

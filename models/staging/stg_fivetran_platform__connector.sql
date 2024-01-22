@@ -26,7 +26,11 @@ final as (
         connecting_user_id,
         paused as is_paused,
         signed_up as set_up_at,
+        {% if target.type in ('sqlserver') %}
+        coalesce(_fivetran_deleted, 0) as is_deleted
+        {% else %}
         coalesce(_fivetran_deleted, false) as is_deleted
+        {% endif %}
     from fields
 
     -- Only look at the most recent one

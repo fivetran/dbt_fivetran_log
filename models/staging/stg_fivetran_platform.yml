@@ -53,6 +53,8 @@ models:
         description: Boolean that is true if the connector's sync is currently paused.
       - name: set_up_at
         description: Timestamp of when the connection was set up.
+      - name: is_deleted
+        description: Boolean that is true if the connector has been deleted.
 
   - name: stg_fivetran_platform__credits_used
     description: Table of the credits used by the customer per month for each destination.

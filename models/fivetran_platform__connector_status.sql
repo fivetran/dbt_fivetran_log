@@ -65,6 +65,7 @@ connector_metrics as (
         connector.destination_id,
         connector.is_paused,
         connector.set_up_at,
+        connector.is_deleted,
         max(case when connector_log.event_subtype = 'sync_start' then connector_log.created_at else null end) as last_sync_started_at,
 
         max(case when connector_log.event_subtype = 'sync_end' 
@@ -92,7 +93,7 @@ connector_metrics as (
     from connector 
     left join connector_log 
         on connector_log.connector_id = connector.connector_id
-    group by connector.connector_id, connector.connector_name, connector.connector_type, connector.destination_id, connector.is_paused, connector.set_up_at
+    group by connector.connector_id, connector.connector_name, connector.connector_type, connector.destination_id, connector.is_paused, connector.set_up_at, connector.is_deleted
 ),
 
 connector_health_status as (
@@ -100,6 +101,9 @@ connector_health_status as (
     select
         *,
         case 
+            -- connector is deleted
+            when is_deleted {{ ' = 1' if target.type == 'sqlserver' }} then 'deleted'
+
             -- connector is paused
             when is_paused {{ ' = 1' if target.type == 'sqlserver' }} then 'paused'
 

@@ -25,7 +25,8 @@ final as (
         destination_id,
         connecting_user_id,
         paused as is_paused,
-        signed_up as set_up_at
+        signed_up as set_up_at,
+        coalesce(_fivetran_deleted,{{ ' 0 ' if target.type == 'sqlserver' else ' false'}}) as is_deleted
     from fields
 
     -- Only look at the most recent one

@@ -17,12 +17,12 @@ connector_log as (
         or event_type = 'WARNING'
         or event_subtype like 'sync%'
         or (event_subtype = 'status' 
-            and {{ fivetran_utils.json_parse(string="message_data", string_path=["status"]) }} = 'RESCHEDULED'
+            and {{ fivetran_log.fivetran_log_json_extract(string="message_data", string_path=["status"]) }} = 'RESCHEDULED'
             
-            and {{ fivetran_utils.json_parse(string="message_data", string_path=["reason"]) }} like '%intended behavior%'
+            and {{ fivetran_log.fivetran_log_json_extract(string="message_data", string_path=["reason"]) }} like '%intended behavior%'
             ) -- for priority-first syncs. these should be captured by event_type = 'WARNING' but let's make sure
         or (event_subtype = 'status' 
-            and {{ fivetran_utils.json_parse(string="message_data", string_path=["status"]) }} = 'SUCCESSFUL'
+            and {{ fivetran_log.fivetran_log_json_extract(string="message_data", string_path=["status"]) }} = 'SUCCESSFUL'
         )
         -- whole reason is "We have rescheduled the connector to force flush data from the forward sync into your destination. This is intended behavior and means that the connector is working as expected."
 ),
@@ -36,10 +36,10 @@ schema_changes as (
     from {{ ref('stg_fivetran_platform__log') }}
 
     where 
-        {{ dbt.datediff('created_at', dbt.current_timestamp_backcompat() if target.type != 'sqlserver' else dbt.current_timestamp(), 'day') }} <= 30
+        {{ dbt.datediff('created_at', dbt.current_timestamp_backcompat(), 'day') }} <= 30
         and event_subtype in ('create_table', 'alter_table', 'create_schema', 'change_schema_config')
 
-    group by connector_id
+    group by 1
 
 ),
 
@@ -65,14 +65,13 @@ connector_metrics as (
         connector.destination_id,
         connector.is_paused,
         connector.set_up_at,
-        connector.is_deleted,
         max(case when connector_log.event_subtype = 'sync_start' then connector_log.created_at else null end) as last_sync_started_at,
 
         max(case when connector_log.event_subtype = 'sync_end' 
             then connector_log.created_at else null end) as last_sync_completed_at,
 
         max(case when connector_log.event_subtype in ('status', 'sync_end')
-                and {{ fivetran_utils.json_parse(string="connector_log.message_data", string_path=["status"]) }} ='SUCCESSFUL'
+                and {{ fivetran_log.fivetran_log_json_extract(string="connector_log.message_data", string_path=["status"]) }} ='SUCCESSFUL'
             then connector_log.created_at else null end) as last_successful_sync_completed_at,
 
 
@@ -80,8 +79,8 @@ connector_metrics as (
             then connector_log.sync_batch_id else null end) as last_sync_batch_id,
 
         max(case when connector_log.event_subtype in ('status', 'sync_end')
-                and {{ fivetran_utils.json_parse(string="connector_log.message_data", string_path=["status"]) }} ='RESCHEDULED'
-                and {{ fivetran_utils.json_parse(string="connector_log.message_data", string_path=["reason"]) }} like '%intended behavior%'
+                and {{ fivetran_log.fivetran_log_json_extract(string="connector_log.message_data", string_path=["status"]) }} ='RESCHEDULED'
+                and {{ fivetran_log.fivetran_log_json_extract(string="connector_log.message_data", string_path=["reason"]) }} like '%intended behavior%'
             then connector_log.created_at else null end) as last_priority_first_sync_completed_at,
                 
 
@@ -93,19 +92,17 @@ connector_metrics as (
     from connector 
     left join connector_log 
         on connector_log.connector_id = connector.connector_id
-    group by connector.connector_id, connector.connector_name, connector.connector_type, connector.destination_id, connector.is_paused, connector.set_up_at, connector.is_deleted
+    {{ dbt_utils.group_by(n=6) }}
+
 ),
 
-connector_health_status as (
+connector_health as (
 
     select
         *,
         case 
-            -- connector is deleted
-            when is_deleted {{ ' = 1' if target.type == 'sqlserver' }} then 'deleted'
-
             -- connector is paused
-            when is_paused {{ ' = 1' if target.type == 'sqlserver' }} then 'paused'
+            when is_paused then 'paused'
 
             -- a sync has never been attempted
             when last_sync_started_at is null then 'incomplete'
@@ -134,44 +131,33 @@ connector_health_status as (
 connector_recent_logs as (
 
     select 
-        connector_health_status.connector_id,
-        connector_health_status.connector_name,
-        connector_health_status.connector_type,
-        connector_health_status.destination_id,
-        connector_health_status.connector_health,
-        connector_health_status.last_successful_sync_completed_at,
-        connector_health_status.last_sync_started_at,
-        connector_health_status.last_sync_completed_at,
-        connector_health_status.set_up_at,
+        connector_health.connector_id,
+        connector_health.connector_name,
+        connector_health.connector_type,
+        connector_health.destination_id,
+        connector_health.connector_health,
+        connector_health.last_successful_sync_completed_at,
+        connector_health.last_sync_started_at,
+        connector_health.last_sync_completed_at,
+        connector_health.set_up_at,
         connector_log.event_subtype,
         connector_log.event_type,
         connector_log.message_data
 
-    from connector_health_status 
+    from connector_health 
     left join connector_log 
-        on connector_log.connector_id = connector_health_status.connector_id
+        on connector_log.connector_id = connector_health.connector_id
         -- limiting relevance to since the last successful sync completion (if there has been one)
-        and connector_log.created_at > coalesce(connector_health_status.last_sync_completed_at, connector_health_status.last_priority_first_sync_completed_at, '2000-01-01') 
+        and connector_log.created_at > coalesce(connector_health.last_sync_completed_at, connector_health.last_priority_first_sync_completed_at, '2000-01-01') 
         -- only looking at errors and warnings (excluding syncs - both normal and priority first)
         and connector_log.event_type != 'INFO' 
         -- need to explicitly avoid priority first statuses because they are of event_type WARNING
         and not (connector_log.event_subtype = 'status' 
-            and {{ fivetran_utils.json_parse(string="connector_log.message_data", string_path=["status"]) }} ='RESCHEDULED'
-            and {{ fivetran_utils.json_parse(string="connector_log.message_data", string_path=["reason"]) }} like '%intended behavior%')
+            and {{ fivetran_log.fivetran_log_json_extract(string="connector_log.message_data", string_path=["status"]) }} ='RESCHEDULED'
+            and {{ fivetran_log.fivetran_log_json_extract(string="connector_log.message_data", string_path=["reason"]) }} like '%intended behavior%')
 
-    group by -- remove duplicates, need explicit group by for SQL Server
-        connector_health_status.connector_id,
-        connector_health_status.connector_name,
-        connector_health_status.connector_type,
-        connector_health_status.destination_id,
-        connector_health_status.connector_health,
-        connector_health_status.last_successful_sync_completed_at,
-        connector_health_status.last_sync_started_at,
-        connector_health_status.last_sync_completed_at,
-        connector_health_status.set_up_at,
-        connector_log.event_subtype,
-        connector_log.event_type,
-        connector_log.message_data
+    {{ dbt_utils.group_by(n=12) }} -- de-duping error messages
+    
 
 ),
 
@@ -190,7 +176,7 @@ final as (
         connector_recent_logs.set_up_at,
         coalesce(schema_changes.number_of_schema_changes_last_month, 0) as number_of_schema_changes_last_month
         
-        {% if var('fivetran_platform_using_sync_alert_messages', true) and target.type != 'sqlserver' %}
+        {% if var('fivetran_platform_using_sync_alert_messages', true) %}
         , {{ fivetran_utils.string_agg("distinct case when connector_recent_logs.event_type = 'SEVERE' then connector_recent_logs.message_data else null end", "'\\n'") }} as errors_since_last_completed_sync
         , {{ fivetran_utils.string_agg("distinct case when connector_recent_logs.event_type = 'WARNING' then connector_recent_logs.message_data else null end", "'\\n'") }} as warnings_since_last_completed_sync
         {% endif %}
@@ -200,20 +186,7 @@ final as (
         on connector_recent_logs.connector_id = schema_changes.connector_id 
 
     join destination on destination.destination_id = connector_recent_logs.destination_id
-
-    -- need explicit group bys for SQL Server
-    group by 
-        connector_recent_logs.connector_id, 
-        connector_recent_logs.connector_name, 
-        connector_recent_logs.connector_type, 
-        connector_recent_logs.destination_id, 
-        destination.destination_name, 
-        connector_recent_logs.connector_health, 
-        connector_recent_logs.last_successful_sync_completed_at, 
-        connector_recent_logs.last_sync_started_at, 
-        connector_recent_logs.last_sync_completed_at, 
-        connector_recent_logs.set_up_at, 
-        number_of_schema_changes_last_month
+    {{ dbt_utils.group_by(n=11) }}
 )
-
-select * from final
+select * from connector_log
+{# select * from final #}

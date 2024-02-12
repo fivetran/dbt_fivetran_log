@@ -2,7 +2,7 @@ with logs as (
 
     select 
         *,
-        {{ fivetran_log.fivetran_log_json_extract(string='message_data', string_path='actor') }} as actor_email
+        {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path='actor') }} as actor_email
     from {{ ref('stg_fivetran_platform__log') }}
     where lower(message_data) like '%actor%'
 ),

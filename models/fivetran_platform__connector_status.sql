@@ -188,5 +188,5 @@ final as (
     join destination on destination.destination_id = connector_recent_logs.destination_id
     {{ dbt_utils.group_by(n=11) }}
 )
-select * from connector_log
-{# select * from final #}
+
+select * from final

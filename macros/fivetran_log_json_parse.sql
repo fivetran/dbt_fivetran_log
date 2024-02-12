@@ -12,16 +12,18 @@
 
 {% macro snowflake__json_extract(string, string_path) %}
 
-  case when try_parse_json({{ string }}) is not null
-  then {{ fivetran_log.fivetran_log_json_parse(string=string, string_path=string_path) }}
-  else null end
+  try_parse_json( {{string}} ) {%- for s in string_path -%}{% if s is number %}[{{ s }}]{% else %}['{{ s }}']{% endif %}{%- endfor -%}
 
 {% endmacro %}
 
 {% macro redshift__fivetran_log_json_parse(string, string_path) %}
 
-  case when is_valid_json({{ string }}) 
+  {# case when is_valid_json({{ string }}) 
   then {{ fivetran_log.fivetran_log_json_parse(string=string, string_path=string_path) }}
-  else null end
+  else null end #}
+  json_extract_path_text(
+    {{string}}, 
+    {%- for s in string_path -%}'{{ s }}'{%- if not loop.last -%},{%- endif -%}{%- endfor -%}, 
+    true ) -- this means null_if_invalid=true
 
 {% endmacro %}

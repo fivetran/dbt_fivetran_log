@@ -28,7 +28,17 @@
 {% macro postgres__fivetran_log_json_parse(string, string_path) %}
 
   {% if fromjson(string, none) is not none %}
-    {{ fivetran_utils.json_parse(string=string, string_path=string_path) }}
+    {{string}}::json #>> '{ {%- for s in string_path -%}{{ s }}{%- if not loop.last -%},{%- endif -%}{%- endfor -%} }'
+  {% else %}
+    null
+  {% endif %}
+
+{% endmacro %}
+
+{% macro sqlserver__json_parse(string, string_path) %}
+
+  {% if fromjson(string, none) is not none %}
+    json_value({{string}}, '$.{%- for s in string_path -%}{{ s }}{%- if not loop.last -%}.{%- endif -%}{%- endfor -%} ')
   {% else %}
     null
   {% endif %}

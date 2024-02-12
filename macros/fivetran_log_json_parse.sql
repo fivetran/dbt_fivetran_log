@@ -6,7 +6,7 @@
 
 {% macro default__fivetran_log_json_parse(string, string_path) %}
 
-  {{ fivetran_log.fivetran_log_json_parse(string=string, string_path=string_path) }}
+  {{ fivetran_utils.json_parse(string=string, string_path=string_path) }}
 
 {% endmacro %}
 

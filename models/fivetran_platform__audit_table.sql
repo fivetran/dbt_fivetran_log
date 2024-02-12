@@ -2,8 +2,9 @@
     materialized='incremental',
     unique_key='unique_table_sync_key',
     partition_by={
-        'field': 'sync_start_day',
-        'data_type': 'date'
+        'field': 'sync_start',
+        'data_type': 'timestamp',
+        'granularity': 'day'
     } if target.type == 'bigquery' else ['sync_start_day'],
     incremental_strategy='insert_overwrite' if target.type in ('bigquery', 'spark', 'databricks') else 'delete+insert',
     file_format='parquet'
@@ -13,7 +14,7 @@ with sync_log as (
     
     select 
         *,
-        {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['table']) }} as table_name
+        {{ fivetran_utils.json_parse(string='message_data', string_path=['table']) }} as table_name
     from {{ ref('stg_fivetran_platform__log') }}
     where event_subtype in ('sync_start', 'sync_end', 'write_to_table_start', 'write_to_table_end', 'records_modified')
 
@@ -21,12 +22,7 @@ with sync_log as (
 
     -- Capture the latest timestamp in a call statement instead of a subquery for optimizing BQ costs on incremental runs
     {%- call statement('max_sync_start', fetch_result=True) -%}
-        {# {{ fivetran_utils.lookback(from_date='cast(max(sync_start) as date)', datepart='day', interval=7) }} #}
-        {# coalesce( #}
-            (select {{ dbt.dateadd(datepart='day', interval=-7, from_date_or_timestamp='cast(max(sync_start) as date)') }} 
-                from {{ this }})
-            {# , {{ "'" ~ default_start_date ~ "'" }}
-            ) #}
+        select {{ dbt.dateadd(datepart='day', interval=-7, from_date_or_timestamp='cast(max(sync_start) as date)') }} from {{ this }}
     {%- endcall -%}
 
     -- load the result from the above query into a new variable
@@ -97,10 +93,10 @@ records_modified_log as (
     select 
         connector_id,
         created_at,
-        {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['table']) }} as table_name,
-        {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['schema']) }} as schema_name,
-        {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['operationType']) }} as operation_type,
-        cast ({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['count']) }} as {{ dbt.type_int() }}) as row_count
+        {{ fivetran_utils.json_parse(string='message_data', string_path=['table']) }} as table_name,
+        {{ fivetran_utils.json_parse(string='message_data', string_path=['schema']) }} as schema_name,
+        {{ fivetran_utils.json_parse(string='message_data', string_path=['operationType']) }} as operation_type,
+        cast ({{ fivetran_utils.json_parse(string='message_data', string_path=['count']) }} as {{ dbt.type_int() }}) as row_count
     from sync_log 
     where event_subtype = 'records_modified'
 

@@ -20,19 +20,7 @@ with sync_log as (
 
     {% if is_incremental() %}
 
-    -- Capture the latest timestamp in a call statement instead of a subquery for optimizing BQ costs on incremental runs
-    {%- call statement('max_sync_start', fetch_result=True) -%}
-        select cast(max(sync_start) as date) from {{ this }}
-    {%- endcall -%}
-
-    -- load the result from the above query into a new variable
-    {%- set query_result = load_result('max_sync_start') -%}
-
-    -- the query_result is stored as a dataframe. Therefore, we want to now store it as a singular value.
-    {%- set max_sync_start = query_result['data'][0][0] -%}
-
-    -- compare the new batch of data to the latest sync already stored in this model
-    and cast(created_at as date) > {{ dbt.dateadd(datepart='day', interval=-7, from_date_or_timestamp="'" ~ max_sync_start ~ "'") }}
+    and cast(created_at as date) > {{ fivetran_log.lookback(from_date='cast(max(sync_start) as date)') }}
 
     {% endif %}
 ),

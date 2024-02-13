@@ -8,7 +8,7 @@
 
     -- Capture the latest timestamp in a call statement instead of a subquery for optimizing BQ costs on incremental runs
     {%- call statement('max_date', fetch_result=True) -%}
-        select from_date from {{ this }}
+        select {{ from_date }} from {{ this }}
     {%- endcall -%}
 
     -- load the result from the above query into a new variable

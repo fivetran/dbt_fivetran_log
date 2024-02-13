@@ -15,10 +15,9 @@
     {%- set query_result = load_result('max_date') -%}
 
     -- the query_result is stored as a dataframe. Therefore, we want to now store it as a singular value.
-    {%- set max_date = query_result['data'][0][0] -%}
+    {%- set max_date = query_result['data'][0][0] %}
 
-    coalesce(
-        {{ dbt.dateadd(datepart='day', interval=-7, from_date_or_timestamp="'" ~ max_date ~ "'") }}, 
+    coalesce({{ dbt.dateadd(datepart='day', interval=-7, from_date_or_timestamp="'" ~ max_date ~ "'") }}, 
         {{ "'" ~ default_start_date ~ "'" }}
         )
 

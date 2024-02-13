@@ -37,7 +37,7 @@
 
 {% macro sqlserver__fivetran_log_json_parse(string, string_path) %}
 
-  {% if isjson(string) == 1 %}
+  {% if fromjson(string, none) is not none %}
     json_value({{string}}, '$.{%- for s in string_path -%}{{ s }}{%- if not loop.last -%}.{%- endif -%}{%- endfor -%} ')
   {% else %}
     null

@@ -6,20 +6,10 @@ with transformation_removal as (
 
 ),
 
-message_data as (
-    select 
-        *,
-        case when lower(event_subtype) in ('status', 'sync_end')
-            then message_data else null
-            end as message_data
-    from transformation_removal
-
-),
-
 connector_log as (
     select 
         *,
-        sum( case when event_subtype in ('sync_start') then 1 else 0 end) over ( partition by connector_id 
+        sum( case when event_subtype = 'sync_start' then 1 else 0 end) over ( partition by connector_id 
             order by created_at rows unbounded preceding) as sync_batch_id
     from transformation_removal
     -- only looking at errors, warnings, and syncs here
@@ -49,7 +39,7 @@ schema_changes as (
         {{ dbt.datediff('created_at', dbt.current_timestamp_backcompat() if target.type != 'sqlserver' else dbt.current_timestamp(), 'day') }} <= 30
         and event_subtype in ('create_table', 'alter_table', 'create_schema', 'change_schema_config')
 
-    group by 1
+    group by connector_id
 
 ),
 
@@ -112,7 +102,7 @@ connector_health as (
         *,
         case 
             -- connector is paused
-            when is_paused then 'paused'
+            when is_paused {{ ' = 1' if target.type == 'sqlserver' }} then 'paused'
 
             -- a sync has never been attempted
             when last_sync_started_at is null then 'incomplete'
@@ -188,7 +178,7 @@ final as (
         
         {% if var('fivetran_platform_using_sync_alert_messages', true) %}
         , {{ fivetran_utils.string_agg("distinct case when connector_recent_logs.event_type = 'SEVERE' then connector_recent_logs.message_data else null end", "'\\n'") }} as errors_since_last_completed_sync
-        , {{ fivetran_utils.string_agg("distinct case when connector_recent_logs.event_type = 'WARNING' then connector_recent_logs.message_data else null end", "'\\n'") }} as warnings_since_last_completed_sync
+        {# , {{ fivetran_utils.string_agg("distinct case when connector_recent_logs.event_type = 'WARNING' then connector_recent_logs.message_data else null end", "'\\n'") }} as warnings_since_last_completed_sync #}
         {% endif %}
 
     from connector_recent_logs

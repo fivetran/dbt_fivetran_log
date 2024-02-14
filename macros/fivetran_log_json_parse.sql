@@ -21,26 +21,22 @@
   json_extract_path_text(
     {{string}}, 
     {%- for s in string_path -%}'{{ s }}'{%- if not loop.last -%},{%- endif -%}{%- endfor -%}, 
-    true ) -- flag for null_if_invalid=true
+    true ) -- this flag sets null_if_invalid=true
 
 {% endmacro %}
 
 {% macro postgres__fivetran_log_json_parse(string, string_path) %}
 
-  {% if fromjson(string, none) is not none %}
-    {{string}}::json #>> '{ {%- for s in string_path -%}{{ s }}{%- if not loop.last -%},{%- endif -%}{%- endfor -%} }'
-  {% else %}
-    null
-  {% endif %}
+  case when {{ string }} like '^\s*[\[\{].*[\]\}]?\s*$' -- Postgres has no native json check, so this will check the string for indicators of a JSON array or object
+    then {{string}}::json #>> '{ {%- for s in string_path -%}{{ s }}{%- if not loop.last -%},{%- endif -%}{%- endfor -%} }'
+    else null end
 
 {% endmacro %}
 
 {% macro sqlserver__fivetran_log_json_parse(string, string_path) %}
 
-  {% if fromjson(string, none) is not none %}
-    json_value({{string}}, '$.{%- for s in string_path -%}{{ s }}{%- if not loop.last -%}.{%- endif -%}{%- endfor -%} ')
-  {% else %}
-    null
-  {% endif %}
+  case when isjson({{string}}) is not null -- check is json string is valid
+    then json_value({{string}}, '$.{%- for s in string_path -%}{{ s }}{%- if not loop.last -%}.{%- endif -%}{%- endfor -%} ')
+    else null end
 
 {% endmacro %}

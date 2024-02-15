@@ -10,23 +10,30 @@ with transformation_removal as (
 
 ),
 
+parse_json as (
+    select
+        *,
+        {{ fivetran_log.fivetran_log_json_parse(string="filtered_message_data", string_path=["status"]) }} as log_status,
+        {{ fivetran_log.fivetran_log_json_parse(string="filtered_message_data", string_path=["reason"]) }} as log_reason,
+    from transformation_removal
+),
+
 connector_log as (
     select 
         *,
         sum( case when event_subtype in ('sync_start') then 1 else 0 end) over ( partition by connector_id 
             order by created_at rows unbounded preceding) as sync_batch_id
-    from transformation_removal
+    from parse_json
     -- only looking at errors, warnings, and syncs here
     where event_type = 'SEVERE'
         or event_type = 'WARNING'
         or event_subtype like 'sync%'
         or (event_subtype = 'status' 
-            and {{ fivetran_log.fivetran_log_json_parse(string="filtered_message_data", string_path=["status"]) }} = 'RESCHEDULED'
-            
-            and {{ fivetran_log.fivetran_log_json_parse(string="filtered_message_data", string_path=["reason"]) }} like '%intended behavior%'
+            and log_status = 'RESCHEDULED'
+            and log_reason like '%intended behavior%'
             ) -- for priority-first syncs. these should be captured by event_type = 'WARNING' but let's make sure
         or (event_subtype = 'status' 
-            and {{ fivetran_log.fivetran_log_json_parse(string="filtered_message_data", string_path=["status"]) }} = 'SUCCESSFUL'
+            and log_status = 'SUCCESSFUL'
         )
         -- whole reason is "We have rescheduled the connector to force flush data from the forward sync into your destination. This is intended behavior and means that the connector is working as expected."
 ),
@@ -76,7 +83,7 @@ connector_metrics as (
             then connector_log.created_at else null end) as last_sync_completed_at,
 
         max(case when connector_log.event_subtype in ('status', 'sync_end')
-                and {{ fivetran_log.fivetran_log_json_parse(string="connector_log.filtered_message_data", string_path=["status"]) }} ='SUCCESSFUL'
+                and connector_log.log_status = 'SUCCESSFUL'
             then connector_log.created_at else null end) as last_successful_sync_completed_at,
 
 
@@ -84,8 +91,8 @@ connector_metrics as (
             then connector_log.sync_batch_id else null end) as last_sync_batch_id,
 
         max(case when connector_log.event_subtype in ('status', 'sync_end')
-                and {{ fivetran_log.fivetran_log_json_parse(string="connector_log.filtered_message_data", string_path=["status"]) }} ='RESCHEDULED'
-                and {{ fivetran_log.fivetran_log_json_parse(string="connector_log.filtered_message_data", string_path=["reason"]) }} like '%intended behavior%'
+                and connector_log.log_status = 'RESCHEDULED'
+                and connector_log.log_reason like '%intended behavior%'
             then connector_log.created_at else null end) as last_priority_first_sync_completed_at,
                 
 
@@ -160,8 +167,8 @@ connector_recent_logs as (
         and connector_log.event_type != 'INFO' 
         -- need to explicitly avoid priority first statuses because they are of event_type WARNING
         and not (connector_log.event_subtype = 'status' 
-            and {{ fivetran_log.fivetran_log_json_parse(string="connector_log.filtered_message_data", string_path=["status"]) }} ='RESCHEDULED'
-            and {{ fivetran_log.fivetran_log_json_parse(string="connector_log.filtered_message_data", string_path=["reason"]) }} like '%intended behavior%')
+            and connector_log.log_status = 'RESCHEDULED'
+            and connector_log.log_reason like '%intended behavior%')
 
     group by -- remove duplicates, need explicit group by for SQL Server
         connector_health_status.connector_id,

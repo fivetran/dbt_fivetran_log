@@ -1,3 +1,13 @@
+# dbt_fivetran_log v1.5.0
+[PR #114](https://github.com/fivetran/dbt_fivetran_log/pull/114) includes the following updates:
+
+## Breaking Changes
+- Updated logic of json parse
+- Added lookback for `fivetran_platform__audit_table`
+
+## Under The Hood
+- Added macros fivetran_log_lookback and fivetran_log_json_parse. These are candidates for adding to/updating fivetran_utils.
+
 # dbt_fivetran_log v1.4.3
 [PR #112](https://github.com/fivetran/dbt_fivetran_log/pull/112) includes the following updates:
 

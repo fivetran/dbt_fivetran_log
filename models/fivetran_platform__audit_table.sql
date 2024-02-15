@@ -2,10 +2,10 @@
     materialized='incremental',
     unique_key='unique_table_sync_key',
     partition_by={
-        'field': 'sync_start',
-        'data_type': 'timestamp',
-        'granularity': 'day'
+        'field': 'sync_start_day',
+        'data_type': 'date'
     } if target.type == 'bigquery' else ['sync_start_day'],
+    cluster_by = ['sync_start_day'],
     incremental_strategy='insert_overwrite' if target.type in ('bigquery', 'spark', 'databricks') else 'delete+insert',
     file_format='parquet'
 ) }}
@@ -20,11 +20,10 @@ with sync_log as (
 
     {% if is_incremental() %}
 
-    and cast(created_at as date) > {{ fivetran_log.lookback(from_date='cast(max(sync_start) as date)') }}
+    and cast(created_at as date) > {{ fivetran_log.fivetran_log_lookback(from_date='max(sync_start_day)', interval=7) }}
 
     {% endif %}
 ),
-
 
 connector as (
 
@@ -134,7 +133,7 @@ final as (
     select 
         *,
         {{ dbt_utils.generate_surrogate_key(['schema_name','connector_id', 'destination_id', 'table_name', 'write_to_table_start']) }} as unique_table_sync_key, -- for incremental materialization 
-        {{ dbt.date_trunc('day', 'sync_start') }} as sync_start_day -- for partitioning in databricks
+        cast({{ dbt.date_trunc('day', 'sync_start') }} as date) as sync_start_day -- for partitioning
     from sum_records_modified
 )
 

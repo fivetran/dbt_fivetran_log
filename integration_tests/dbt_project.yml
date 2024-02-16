@@ -10,7 +10,7 @@ dispatch:
 
 vars:
   fivetran_log:
-    fivetran_platform_schema: fivetran_platform_integration_tests_02
+    fivetran_platform_schema: fivetran_platform_integration_tests
     fivetran_platform_account_identifier: "account"
     fivetran_platform_incremental_mar_identifier: "incremental_mar"
     fivetran_platform_connector_identifier: "connector"

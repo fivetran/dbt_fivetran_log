@@ -7,7 +7,6 @@ with transformation_removal as (
             else null end as filtered_message_data
     from {{ ref('stg_fivetran_platform__log') }}
     where transformation_id is null
-
 ),
 
 parse_json as (
@@ -156,7 +155,7 @@ connector_recent_logs as (
         connector_health_status.set_up_at,
         connector_log.event_subtype,
         connector_log.event_type,
-        connector_log.filtered_message_data
+        connector_log.message_data
 
     from connector_health_status 
     left join connector_log 
@@ -182,8 +181,7 @@ connector_recent_logs as (
         connector_health_status.set_up_at,
         connector_log.event_subtype,
         connector_log.event_type,
-        connector_log.filtered_message_data
-
+        connector_log.message_data
 ),
 
 final as (
@@ -202,8 +200,8 @@ final as (
         coalesce(schema_changes.number_of_schema_changes_last_month, 0) as number_of_schema_changes_last_month
         
         {% if var('fivetran_platform_using_sync_alert_messages', true) and target.type != 'sqlserver' %}
-        , {{ fivetran_utils.string_agg("distinct case when connector_recent_logs.event_type = 'SEVERE' then connector_recent_logs.filtered_message_data else null end", "'\\n'") }} as errors_since_last_completed_sync
-        , {{ fivetran_utils.string_agg("distinct case when connector_recent_logs.event_type = 'WARNING' then connector_recent_logs.filtered_message_data else null end", "'\\n'") }} as warnings_since_last_completed_sync
+        , {{ fivetran_utils.string_agg("distinct case when connector_recent_logs.event_type = 'SEVERE' then connector_recent_logs.message_data else null end", "'\\n'") }} as errors_since_last_completed_sync
+        , {{ fivetran_utils.string_agg("distinct case when connector_recent_logs.event_type = 'WARNING' then connector_recent_logs.message_data else null end", "'\\n'") }} as warnings_since_last_completed_sync
         {% endif %}
 
     from connector_recent_logs
@@ -224,7 +222,7 @@ final as (
         connector_recent_logs.last_sync_started_at, 
         connector_recent_logs.last_sync_completed_at, 
         connector_recent_logs.set_up_at, 
-        number_of_schema_changes_last_month
+        schema_changes.number_of_schema_changes_last_month
 )
 
 select * from final

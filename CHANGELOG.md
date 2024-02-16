@@ -2,11 +2,18 @@
 [PR #114](https://github.com/fivetran/dbt_fivetran_log/pull/114) includes the following updates:
 
 ## Breaking Changes
-- Updated logic of json parse
-- Added lookback for `fivetran_platform__audit_table`
+- For Bigquery and Databricks users, updated the `partition_by` config to coordinate with the filter used in the incremental logic. This is marked as a breaking change out of caution, as a full refresh may be required if you are experiencing issues after the update.
+
+## Feature Updates
+- Updated incremental logic for `fivetran_platform__audit_table` so that it looks back 7 days to catch any late arriving records.
+- Updated json parsing logic to prevent run failures when incoming json-like strings are invalid. 
+- Added filter to `fivetran_platform__connector_status` so only necessary log records will be parsed.
 
 ## Under The Hood
-- Added macros fivetran_log_lookback and fivetran_log_json_parse. These are candidates for adding to/updating fivetran_utils.
+- Added macros:
+  - `fivetran_log_json_parse` to handle the updated json parsing.
+  - `fivetran_log_lookback` for use in `fivetran_platform__audit_table`.
+- Updated testing of invalid json strings.
 
 # dbt_fivetran_log v1.4.3
 [PR #112](https://github.com/fivetran/dbt_fivetran_log/pull/112) includes the following updates:

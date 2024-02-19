@@ -8,7 +8,12 @@
 
 ## Feature Updates
 - Updated incremental logic for `fivetran_platform__audit_table` so that it looks back 7 days to catch any late arriving records.
-- Updated json parsing logic to prevent run failures when incoming json-like strings are invalid. 
+- Updated json parsing logic in the following models to prevent run failures when incoming json-like strings are invalid. 
+  - fivetran_platform__audit_table
+  - fivetran_platform__audit_user_activity
+  - fivetran_platform__connector_daily_events
+  - fivetran_platform__connector_status
+  - fivetran_platform__schema_changelog
 - Added filter to `fivetran_platform__connector_status` so only necessary log records will be parsed.
 
 ## Under The Hood

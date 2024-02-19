@@ -2,7 +2,7 @@
 [PR #114](https://github.com/fivetran/dbt_fivetran_log/pull/114) includes the following updates:
 
 ## Breaking Changes
-> [!IMPORTANT] Since the following changes are breaking, we recommend running a `--full_refresh` after upgrading to this version.
+> ⚠️ Since the following changes are breaking, we recommend running a `--full_refresh` after upgrading to this version.
 - For Bigquery and Databricks destinations, updated the `partition_by` config to coordinate with the filter used in the incremental logic.
 - For Snowflake destinations, added a `cluster_by` config for performance. 
 

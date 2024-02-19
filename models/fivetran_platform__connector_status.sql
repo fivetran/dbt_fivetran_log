@@ -4,7 +4,8 @@ with transformation_removal as (
         *,
         case when event_subtype in ('status', 'sync_end')
             then message_data
-            else null end as filtered_message_data
+            else null 
+        end as filtered_message_data
     from {{ ref('stg_fivetran_platform__log') }}
     where transformation_id is null
 ),

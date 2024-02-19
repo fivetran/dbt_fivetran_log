@@ -3,8 +3,8 @@
 
 ## Breaking Changes
 - The following changes are marked as a breaking change out of caution, as a full refresh may be required if you are experiencing issues after the update.
-- For Bigquery and Databricks users, updated the `partition_by` config to coordinate with the filter used in the incremental logic.
-- For Snowflake users, added a `cluster_by` config for performance. 
+- For Bigquery and Databricks destinations, updated the `partition_by` config to coordinate with the filter used in the incremental logic.
+- For Snowflake destinations, added a `cluster_by` config for performance. 
 
 ## Feature Updates
 - Updated incremental logic for `fivetran_platform__audit_table` so that it looks back 7 days to catch any late arriving records.

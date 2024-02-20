@@ -14,7 +14,7 @@
   - `fivetran_platform__connector_daily_events`
   - `fivetran_platform__connector_status`
   - `fivetran_platform__schema_changelog`
-- Added filter to `fivetran_platform__connector_status` so only necessary log records will be parsed.
+- Updated `fivetran_platform__connector_status` to parse only a subset of the `message_data` field to improve compute.
 
 ## Under The Hood
 - Added macros:

@@ -8,7 +8,7 @@
 
 ## Feature Updates
 - Updated incremental logic for `fivetran_platform__audit_table` so that it looks back 7 days to catch any late arriving records.
-- Updated json parsing logic in the following models to prevent run failures when incoming json-like strings are invalid. 
+- Updated JSON parsing logic in the following models to prevent run failures when incoming JSON-like strings are invalid. 
   - `fivetran_platform__audit_table`
   - `fivetran_platform__audit_user_activity`
   - `fivetran_platform__connector_daily_events`
@@ -18,9 +18,9 @@
 
 ## Under The Hood
 - Added macros:
-  - `fivetran_log_json_parse` to handle the updated json parsing.
+  - `fivetran_log_json_parse` to handle the updated JSON parsing.
   - `fivetran_log_lookback` for use in `fivetran_platform__audit_table`.
-- Updated testing of invalid json strings.
+- Updated seeds to test handling of invalid JSON strings.
 
 # dbt_fivetran_log v1.4.3
 [PR #112](https://github.com/fivetran/dbt_fivetran_log/pull/112) includes the following updates:

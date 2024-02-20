@@ -1,3 +1,27 @@
+# dbt_fivetran_log v1.5.0
+[PR #114](https://github.com/fivetran/dbt_fivetran_log/pull/114) includes the following updates:
+
+## Breaking Changes
+> ⚠️ Since the following changes are breaking, we recommend running a `--full-refresh` after upgrading to this version.
+- For Bigquery and Databricks destinations, updated the `partition_by` config to coordinate with the filter used in the incremental logic.
+- For Snowflake destinations, added a `cluster_by` config for performance. 
+
+## Feature Updates
+- Updated incremental logic for `fivetran_platform__audit_table` so that it looks back 7 days to catch any late arriving records.
+- Updated JSON parsing logic in the following models to prevent run failures when incoming JSON-like strings are invalid. 
+  - `fivetran_platform__audit_table`
+  - `fivetran_platform__audit_user_activity`
+  - `fivetran_platform__connector_daily_events`
+  - `fivetran_platform__connector_status`
+  - `fivetran_platform__schema_changelog`
+- Updated `fivetran_platform__connector_status` to parse only a subset of the `message_data` field to improve compute.
+
+## Under The Hood
+- Added macros:
+  - `fivetran_log_json_parse` to handle the updated JSON parsing.
+  - `fivetran_log_lookback` for use in `fivetran_platform__audit_table`.
+- Updated seeds to test handling of invalid JSON strings.
+
 # dbt_fivetran_log v1.4.3
 [PR #112](https://github.com/fivetran/dbt_fivetran_log/pull/112) includes the following updates:
 

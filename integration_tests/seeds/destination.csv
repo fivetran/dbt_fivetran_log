@@ -1,3 +1,4 @@
 id,_fivetran_synced,account_id,created_at,name,region
 ups_trampoline,2021-03-12 20:20:40.650,1k56c2c4xlti6_acct,2019-07-09 07:21:03.935607,s_test,us-test
 television_trace,2021-03-12 20:20:40.624,1k56c2c4xlti6_acct,2019-07-10 08:07:48.374015,s_gcp,us-test
+obtained_willow,2023-05-18 15:55:02.025000,1k56c2c4xlti6_acc,2020-05-18 17:28:42.535908,dbt_package_testing_bigquery,us-test

@@ -2,10 +2,10 @@
     materialized='incremental',
     unique_key='unique_table_sync_key',
     partition_by={
-        'field': 'sync_start',
-        'data_type': 'timestamp',
-        'granularity': 'day'
+        'field': 'sync_start_day',
+        'data_type': 'date'
     } if target.type == 'bigquery' else ['sync_start_day'],
+    cluster_by = ['sync_start_day'],
     incremental_strategy='insert_overwrite' if target.type in ('bigquery', 'spark', 'databricks') else 'delete+insert',
     file_format='parquet'
 ) }}
@@ -14,29 +14,16 @@ with sync_log as (
     
     select 
         *,
-        {{ fivetran_utils.json_parse(string='message_data', string_path=['table']) }} as table_name
+        {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['table']) }} as table_name
     from {{ ref('stg_fivetran_platform__log') }}
     where event_subtype in ('sync_start', 'sync_end', 'write_to_table_start', 'write_to_table_end', 'records_modified')
 
     {% if is_incremental() %}
 
-    -- Capture the latest timestamp in a call statement instead of a subquery for optimizing BQ costs on incremental runs
-    {%- call statement('max_sync_start', fetch_result=True) -%}
-        select cast(max(sync_start) as date) from {{ this }}
-    {%- endcall -%}
-
-    -- load the result from the above query into a new variable
-    {%- set query_result = load_result('max_sync_start') -%}
-
-    -- the query_result is stored as a dataframe. Therefore, we want to now store it as a singular value.
-    {%- set max_sync_start = query_result['data'][0][0] -%}
-
-    -- compare the new batch of data to the latest sync already stored in this model
-    and cast(created_at as date) > '{{ max_sync_start }}'
+    and cast(created_at as date) > {{ fivetran_log.fivetran_log_lookback(from_date='max(sync_start_day)', interval=7) }}
 
     {% endif %}
 ),
-
 
 connector as (
 
@@ -93,10 +80,10 @@ records_modified_log as (
     select 
         connector_id,
         created_at,
-        {{ fivetran_utils.json_parse(string='message_data', string_path=['table']) }} as table_name,
-        {{ fivetran_utils.json_parse(string='message_data', string_path=['schema']) }} as schema_name,
-        {{ fivetran_utils.json_parse(string='message_data', string_path=['operationType']) }} as operation_type,
-        cast ({{ fivetran_utils.json_parse(string='message_data', string_path=['count']) }} as {{ dbt.type_int() }}) as row_count
+        {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['table']) }} as table_name,
+        {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['schema']) }} as schema_name,
+        {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['operationType']) }} as operation_type,
+        cast ({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['count']) }} as {{ dbt.type_int() }}) as row_count
     from sync_log 
     where event_subtype = 'records_modified'
 
@@ -146,7 +133,7 @@ final as (
     select 
         *,
         {{ dbt_utils.generate_surrogate_key(['schema_name','connector_id', 'destination_id', 'table_name', 'write_to_table_start']) }} as unique_table_sync_key, -- for incremental materialization 
-        {{ dbt.date_trunc('day', 'sync_start') }} as sync_start_day -- for partitioning in databricks
+        cast({{ dbt.date_trunc('day', 'sync_start') }} as date) as sync_start_day -- for partitioning
     from sum_records_modified
 )
 

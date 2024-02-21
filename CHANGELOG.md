@@ -1,3 +1,9 @@
+# dbt_fivetran_log X.X
+
+## Under The Hood
+- Updated macro `bigquery__fivetran_log_lookback` to use variable values.
+- Update README incremental model section. 
+
 # dbt_fivetran_log v1.5.0
 [PR #114](https://github.com/fivetran/dbt_fivetran_log/pull/114) includes the following updates:
 

@@ -1,3 +1,12 @@
+# dbt_fivetran_log v1.6.0
+
+## Bug Fixes
+- It was observed that the `fivetran_platform__audit_table` model could potentially introduce duplicates for database like connectors. To address this issue, the join logic in the end model was adjusted to no longer be determined by date ranges and instead be defined via model generated indexes. This ensures true uniqueness in the end model.
+
+## Testing Updates
+- Addition of the `tests/` folder which includes various custom validation tests to ensure the the output of the end models are matching our expectations.
+  - These tests are disabled by default as they are not necessary to run after every execution of the models. If you would like to enabled these tests you may activate them by defining the `fivetran_validation_tests_enabled` variable as `true`.
+
 # dbt_fivetran_log v1.5.0
 [PR #114](https://github.com/fivetran/dbt_fivetran_log/pull/114) includes the following updates:
 

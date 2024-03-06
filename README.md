@@ -124,8 +124,15 @@ dispatch:
   - macro_namespace: dbt_utils
     search_order: ['spark_utils', 'dbt_utils']
 ```
+## (Optional) Step 6: Run Model Validation Tests
+All end models in this package include a suite of singular validation tests located within the `tests/` folder of this project. These validation tests are designed to ensure the end models are matching the expected outcomes. By default these singular tests are not necessary to be executed after every `dbt run`; therefore, these tests are disabled by default. If you would like to run these tests as part of your own validation efforts you may define the `fivetran_validation_tests_enabled` variable as `true`.
 
-## (Optional) Step 6: Orchestrate your models with Fivetran Transformations for dbt Core™
+Further, all these singular validation tests utilize the `validations` tag. Therefore, if you would like to run these validation tests one-off you may run the following command to run **only** these validation tests and not the other generic schema tests already included in the base package.
+```zsh
+dbt test --select tag:validations --vars '{fivetran_validation_tests_enabled: true}'
+```
+
+## (Optional) Step 7: Orchestrate your models with Fivetran Transformations for dbt Core™
 <details><summary>Expand for details</summary>
 <br>
     

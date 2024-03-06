@@ -70,7 +70,9 @@ sync_timestamps as (
 -- this will be the base for every record in the final CTE
 limit_to_table_starts as (
 
-    select *
+    select 
+        *,
+        row_number() over (partition by connector_id, table_name order by write_to_table_start) as index
     from sync_timestamps 
     where event_subtype = 'write_to_table_start'
 ),
@@ -83,7 +85,8 @@ records_modified_log as (
         {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['table']) }} as table_name,
         {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['schema']) }} as schema_name,
         {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['operationType']) }} as operation_type,
-        cast ({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['count']) }} as {{ dbt.type_int() }}) as row_count
+        cast ({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['count']) }} as {{ dbt.type_int() }}) as row_count,
+        row_number() over (partition by connector_id, table_name order by created_at) as index
     from sync_log 
     where event_subtype = 'records_modified'
 
@@ -109,10 +112,8 @@ sum_records_modified as (
     left join records_modified_log on 
         limit_to_table_starts.connector_id = records_modified_log.connector_id
         and limit_to_table_starts.table_name = records_modified_log.table_name
-
-        -- confine it to one sync
-        and records_modified_log.created_at > limit_to_table_starts.sync_start 
-        and records_modified_log.created_at < coalesce(limit_to_table_starts.sync_end, limit_to_table_starts.next_sync_start) 
+        -- Each `write_to_table_start` log event should be matched with a corresponding `records_modified` event. Therefore, the generated index will be how we match these up and ensure a complete and accurate join.
+        and limit_to_table_starts.index = records_modified_log.index
 
     -- explicit group by needed for SQL Server
     group by 

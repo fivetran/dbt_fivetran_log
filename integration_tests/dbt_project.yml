@@ -1,5 +1,5 @@
 name: 'fivetran_log_integration_tests'
-version: '1.5.0'
+version: '1.6.0'
 
 config-version: 2
 profile: 'integration_tests'
@@ -9,6 +9,7 @@ dispatch:
     search_order: ['spark_utils', 'dbt_utils']
 
 vars:
+  fivetran_validation_tests_enabled: true
   fivetran_log:
     fivetran_platform_schema: fivetran_platform_integration_tests
     fivetran_platform_account_identifier: "account"

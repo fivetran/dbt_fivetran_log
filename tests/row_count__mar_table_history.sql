@@ -24,7 +24,7 @@ staging_model as (
         {{ dbt.date_trunc('month', 'measured_date') }} as measured_month,
         sum(incremental_rows) as mar_count
     from {{ ref('stg_fivetran_platform__incremental_mar') }}
-    group by connector_name, schema_name, table_name, destination_id, {{ dbt.date_trunc('month', 'measured_date') }} as measured_month
+    group by connector_name, schema_name, table_name, destination_id, {{ dbt.date_trunc('month', 'measured_date') }}
 )
 
 select 

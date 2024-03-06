@@ -23,7 +23,7 @@ staging_model as (
         count(*) as row_count
     from {{ ref('stg_fivetran_platform__log') }}
     where event_subtype in ('create_table', 'alter_table', 'create_schema', 'change_schema_config')
-    group by connector_id, table_name
+    group by connector_id, case when event_subtype = 'alter_table' then {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['table']) }} when event_subtype = 'create_table' then {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['name']) }} end
 )
 
 select 

@@ -18,7 +18,7 @@ staging_model as (
         cast({{ dbt.date_trunc('month', 'measured_date') }} as date) as measured_month,
         destination_id
     from {{ ref('stg_fivetran_platform__incremental_mar') }}
-    group by cast({{ dbt.date_trunc('month', 'measured_date') }} as date) as measured_month, destination_id
+    group by cast({{ dbt.date_trunc('month', 'measured_date') }} as date), destination_id
 ),
 
 staging_cleanup as (

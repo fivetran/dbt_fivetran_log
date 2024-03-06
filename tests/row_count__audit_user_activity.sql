@@ -1,3 +1,4 @@
+
 {{ config(
     tags="validations",
     enabled=var('fivetran_validation_tests_enabled', false)

@@ -7,6 +7,9 @@
 - Addition of the `tests/` folder which includes various custom validation tests to ensure the the output of the end models are matching our expectations.
   - These tests are disabled by default as they are not necessary to run after every execution of the models. If you would like to enabled these tests you may activate them by defining the `fivetran_validation_tests_enabled` variable as `true`.
 
+## Documentation Updates
+- Updated the incremental strategy documentation in the README to be more accurate.
+
 # dbt_fivetran_log v1.5.0
 [PR #114](https://github.com/fivetran/dbt_fivetran_log/pull/114) includes the following updates:
 

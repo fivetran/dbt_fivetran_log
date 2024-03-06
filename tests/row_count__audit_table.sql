@@ -4,8 +4,6 @@
     enabled=var('fivetran_validation_tests_enabled', false)
 ) }}
 
--- Description: This test ensures the fivetran_platform__audit_table matches the same row count of the staging model with the appropriate filter.
--- This should be run both on a --full-refresh and a normal dbt run in order to ensure the incremental logic is behaving as expected.
 with end_model as (
     select 
         connector_id, 

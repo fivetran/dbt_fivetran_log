@@ -72,7 +72,7 @@ limit_to_table_starts as (
 
     select 
         *,
-        row_number() over (partition by connector_id, table_name order by write_to_table_start) as index
+        row_number() over (partition by connector_id, table_name order by write_to_table_start) as row_match
     from sync_timestamps 
     where event_subtype = 'write_to_table_start'
 ),
@@ -86,7 +86,7 @@ records_modified_log as (
         {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['schema']) }} as schema_name,
         {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['operationType']) }} as operation_type,
         cast ({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['count']) }} as {{ dbt.type_int() }}) as row_count,
-        row_number() over (partition by connector_id, table_name order by created_at) as index
+        row_number() over (partition by connector_id, table_name order by created_at) as row_match
     from sync_log 
     where event_subtype = 'records_modified'
 
@@ -113,7 +113,7 @@ sum_records_modified as (
         limit_to_table_starts.connector_id = records_modified_log.connector_id
         and limit_to_table_starts.table_name = records_modified_log.table_name
         -- Each `write_to_table_start` log event should be matched with a corresponding `records_modified` event. Therefore, the generated index will be how we match these up and ensure a complete and accurate join.
-        and limit_to_table_starts.index = records_modified_log.index
+        and limit_to_table_starts.row_match = records_modified_log.row_match
 
     -- explicit group by needed for SQL Server
     group by 

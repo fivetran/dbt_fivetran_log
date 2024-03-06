@@ -10,7 +10,7 @@ with end_model as (
         destination_id,
         count(*) as row_count
     from {{ ref('fivetran_platform__usage_mar_destination_history') }}
-    group by 1, 2
+    group by measured_month, destination_id
 ),
 
 staging_model as (
@@ -18,7 +18,7 @@ staging_model as (
         cast({{ dbt.date_trunc('month', 'measured_date') }} as date) as measured_month,
         destination_id
     from {{ ref('stg_fivetran_platform__incremental_mar') }}
-    group by 1, 2
+    group by cast({{ dbt.date_trunc('month', 'measured_date') }} as date) as measured_month, destination_id
 ),
 
 staging_cleanup as (
@@ -27,7 +27,7 @@ staging_cleanup as (
         destination_id,
         count(*) as row_count
     from staging_model
-    group by 1, 2
+    group by measured_month, destination_id
 )
 
 select 

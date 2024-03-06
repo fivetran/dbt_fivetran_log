@@ -11,7 +11,7 @@ with end_model as (
         destination_id,
         count(*) as row_count
     from {{ ref('fivetran_platform__connector_daily_events') }}
-    group by 1, 2, 3
+    group by date_day, connector_id, destination_id
 ),
 
 staging_model as (
@@ -52,7 +52,7 @@ staging_cleanup as (
     from spine
     left join staging_model
         on spine.date_day >= cast({{ dbt.date_trunc('day', 'cast(staging_model.set_up_at as date)') }} as date)
-    group by 1, 2, 3
+    group by spine.date_day, staging_model.connector_id, staging_model.destination_id
 )
 
 select 

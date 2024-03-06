@@ -10,7 +10,7 @@ with end_model as (
         table_name,
         count(*) as row_count
     from {{ ref('fivetran_platform__schema_changelog') }}
-    group by 1, 2
+    group by connector_id, table_name
 ),
 
 staging_model as (
@@ -23,7 +23,7 @@ staging_model as (
         count(*) as row_count
     from {{ ref('stg_fivetran_platform__log') }}
     where event_subtype in ('create_table', 'alter_table', 'create_schema', 'change_schema_config')
-    group by 1, 2
+    group by connector_id, table_name
 )
 
 select 

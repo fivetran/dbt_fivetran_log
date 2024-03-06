@@ -10,7 +10,7 @@ with end_model as (
         table_name, 
         count(*) as row_count
     from {{ ref('fivetran_platform__audit_table') }}
-    group by 1, 2
+    group by connector_id, table_name
 ),
 
 staging_model as (
@@ -20,7 +20,7 @@ staging_model as (
         count(*) as row_count
     from {{ ref('stg_fivetran_platform__log') }}
     where event_subtype in ('write_to_table_start')
-    group by 1, 2
+    group by connector_id, {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['table']) }}
 )
 
 select 

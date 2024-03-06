@@ -11,7 +11,7 @@ with end_model as (
         date_day,
         count(*) as row_count
     from {{ ref('fivetran_platform__audit_user_activity') }}
-    group by 1, 2, 3
+    group by connector_id, email, date_day
 ),
 
 staging_model as (
@@ -33,7 +33,7 @@ staging_cleanup as (
     from staging_model
     where email is not null 
         and lower(email) != 'fivetran'
-    group by 1,2,3
+    group by connector_id, email, {{ dbt.date_trunc('day', 'created_at') }}
 )
 
 select 

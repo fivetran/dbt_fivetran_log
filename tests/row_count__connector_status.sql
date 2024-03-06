@@ -13,7 +13,7 @@ with end_model as (
         set_up_at,
         count(*) as row_count
     from {{ ref('fivetran_platform__connector_status') }}
-    group by 1,2,3,4,5
+    group by connector_id, connector_name, connector_type, destination_id, set_up_at
 ),
 
 staging_model as (
@@ -25,7 +25,7 @@ staging_model as (
         set_up_at,
         count(*) as row_count
     from {{ ref('stg_fivetran_platform__connector') }}
-    group by 1,2,3,4,5
+    group by connector_id, connector_name, connector_type, destination_id, set_up_at
 )
 
 select 

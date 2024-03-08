@@ -66,7 +66,7 @@ Include the following Fivetran Platform package version range in your `packages.
 ```yaml
 packages:
   - package: fivetran/fivetran_log
-    version: [">=1.5.0", "<1.6.0"]
+    version: [">=1.6.0", "<1.7.0"]
 ```
 
 > Note that altough the source connector is now "Fivetran Platform", the package retains the old name of "fivetran_log".

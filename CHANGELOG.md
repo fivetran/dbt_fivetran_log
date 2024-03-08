@@ -2,7 +2,7 @@
 [PR #117](https://github.com/fivetran/dbt_fivetran_log/pull/117) includes the following updates as a result of users encountering numeric counts exceeding the limit of a standard integer. Therefore, the fields were required to be updated to a bigint in order to avoid integer out of range errors:
 
 ## Breaking Changes
-> ⚠️ Since the following changes result in a field changing datatype, we recommend running a `--full-refresh` after upgrading to this version to avoid possibly incremental failures.
+> ⚠️ Since the following changes result in a field changing datatype, we recommend running a `--full-refresh` after upgrading to this version to avoid possible incremental failures.
 - The following fields in the `fivetran_platform__audit_table` model have been updated to be cast as `dbt.type_bigint()` (previously was `dbt.type_int()`)
   - `sum_rows_replaced_or_inserted`
   - `sum_rows_updated`

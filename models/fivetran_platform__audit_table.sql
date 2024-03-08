@@ -83,7 +83,7 @@ records_modified_log as (
         {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['table']) }} as table_name,
         {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['schema']) }} as schema_name,
         {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['operationType']) }} as operation_type,
-        cast ({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['count']) }} as {{ dbt.type_int() }}) as row_count
+        cast ({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['count']) }} as {{ dbt.type_bigint() }}) as row_count
     from sync_log 
     where event_subtype = 'records_modified'
 

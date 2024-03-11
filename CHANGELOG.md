@@ -15,7 +15,7 @@
   - `count_schema_changes`
 
 ## Under the Hood
-- Modified `log` seed data within the integration tests folder to ensure a large integers are being tested as part of our integration tests.
+- Modified `log` seed data within the integration tests folder to ensure that large integers are being tested as part of our integration tests.
 
 # dbt_fivetran_log v1.5.0
 [PR #114](https://github.com/fivetran/dbt_fivetran_log/pull/114) includes the following updates:

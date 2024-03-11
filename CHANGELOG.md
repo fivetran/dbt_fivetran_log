@@ -1,5 +1,5 @@
 # dbt_fivetran_log v1.6.0
-[PR #117](https://github.com/fivetran/dbt_fivetran_log/pull/117) includes the following updates as a result of users encountering numeric counts exceeding the limit of a standard integer. Therefore, the fields were required to be updated to a bigint in order to avoid integer out of range errors:
+[PR #117](https://github.com/fivetran/dbt_fivetran_log/pull/117) includes the following updates as a result of users encountering numeric counts exceeding the limit of a standard integer. Therefore, these fields were required to be cast as `bigint` in order to avoid "integer out of range" errors:
 
 ## Breaking Changes
 > ⚠️ Since the following changes result in a field changing datatype, we recommend running a `--full-refresh` after upgrading to this version to avoid possible incremental failures.

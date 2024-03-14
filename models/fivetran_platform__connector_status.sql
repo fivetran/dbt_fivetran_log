@@ -198,12 +198,9 @@ final as (
         connector_recent_logs.last_sync_started_at,
         connector_recent_logs.last_sync_completed_at,
         connector_recent_logs.set_up_at,
-        coalesce(schema_changes.number_of_schema_changes_last_month, 0) as number_of_schema_changes_last_month
-        
-        {% if var('fivetran_platform_using_sync_alert_messages', true) and target.type != 'sqlserver' %}
-        , {{ fivetran_utils.string_agg("distinct case when connector_recent_logs.event_type = 'SEVERE' then connector_recent_logs.message_data else null end", "'\\n'") }} as errors_since_last_completed_sync
-        , {{ fivetran_utils.string_agg("distinct case when connector_recent_logs.event_type = 'WARNING' then connector_recent_logs.message_data else null end", "'\\n'") }} as warnings_since_last_completed_sync
-        {% endif %}
+        coalesce(schema_changes.number_of_schema_changes_last_month, 0) as number_of_schema_changes_last_month,
+        count(distinct case when connector_recent_logs.event_type = 'SEVERE' then connector_recent_logs.message_data else null end) as num_errors_since_last_completed_sync,
+        count(distinct case when connector_recent_logs.event_type = 'WARNING' then connector_recent_logs.message_data else null end) as num_warnings_since_last_completed_sync
 
     from connector_recent_logs
     left join schema_changes 
@@ -226,4 +223,5 @@ final as (
         schema_changes.number_of_schema_changes_last_month
 )
 
-select * from final
+select * 
+from final

@@ -53,17 +53,11 @@ models:
         description: > 
           The number of schema changes (creating tables or schemas and altering tables) in the past 30 days.
 
-      - name: errors_since_last_completed_sync
-        description: >
-          Aggregated line-separated list of error messages (in JSON format) raised synce the last 
-          sync completion. Included by default for non-SQL Server targets, but can be disabled by setting
-          the `fivetran_platform_using_sync_alert_messages` var to False.
+      - name: num_errors_since_last_completed_sync
+        description: Numeric metric indicating the number of error messages raised sync the last sync completion.
 
-      - name: warnings_since_last_completed_sync
-        description: >
-          Aggregated line-separated list of warning messages (in JSON format) raised synce the last 
-          sync completion. Included by default for non-SQL Server targets, but can be disabled by setting
-          the `fivetran_platform_using_sync_alert_messages` var to False.
+      - name: num_warnings_since_last_completed_sync
+        description: Numeric metric indicating the number of warning messages raised sync the last sync completion.
 
     
   - name: fivetran_platform__mar_table_history

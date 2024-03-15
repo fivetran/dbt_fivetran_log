@@ -69,7 +69,7 @@ packages:
     version: [">=1.7.0", "<1.8.0"]
 ```
 
-> Note that altough the source connector is now "Fivetran Platform", the package retains the old name of "fivetran_log".
+> Note that although the source connector is now "Fivetran Platform", the package retains the old name of "fivetran_log".
 
 ## Step 3: Define Database and Schema Variables
 By default, this package will run using your target database and the `fivetran_log` schema. If this is not where your Fivetran Platform data is (perhaps your fivetran platform schema is `fivetran_platform`), add the following configuration to your root `dbt_project.yml` file:

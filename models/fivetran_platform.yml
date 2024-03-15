@@ -54,10 +54,10 @@ models:
           The number of schema changes (creating tables or schemas and altering tables) in the past 30 days.
 
       - name: number_errors_since_last_completed_sync
-        description: Numeric metric indicating the number of error messages raised sync the last sync completion.
+        description: Numeric metric indicating the number of error messages raised since the last sync completion.
 
       - name: number_warnings_since_last_completed_sync
-        description: Numeric metric indicating the number of warning messages raised sync the last sync completion.
+        description: Numeric metric indicating the number of warning messages raised since the last sync completion.
 
     
   - name: fivetran_platform__mar_table_history

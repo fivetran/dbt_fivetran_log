@@ -1,5 +1,5 @@
 # dbt_fivetran_log v1.7.0
-[PR #](https://github.com/fivetran/dbt_fivetran_log/pull/) includes the following updates:
+[PR #119](https://github.com/fivetran/dbt_fivetran_log/pull/119) includes the following updates:
 
 ## 🚨 Breaking Changes 🚨: Bug Fixes
 - The following fields have been deprecated (removed) as these fields proved to be problematic across warehouses due to the end size of the fields.
@@ -10,8 +10,8 @@
 
 ## Feature Updates
 - The following fields have been added to display the number of error/warning messages sync last completed sync. These fields are intended to substitute the information from deprecated fields listed above.
-  - `num_errors_since_last_completed_sync`
-  - `num_warnings_since_last_completed_sync`
+  - `number_errors_since_last_completed_sync`
+  - `number_warnings_since_last_completed_sync`
 
 # dbt_fivetran_log v1.6.0
 [PR #117](https://github.com/fivetran/dbt_fivetran_log/pull/117) includes the following updates as a result of users encountering numeric counts exceeding the limit of a standard integer. Therefore, these fields were required to be cast as `bigint` in order to avoid "integer out of range" errors:

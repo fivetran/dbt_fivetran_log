@@ -53,10 +53,10 @@ models:
         description: > 
           The number of schema changes (creating tables or schemas and altering tables) in the past 30 days.
 
-      - name: num_errors_since_last_completed_sync
+      - name: number_errors_since_last_completed_sync
         description: Numeric metric indicating the number of error messages raised sync the last sync completion.
 
-      - name: num_warnings_since_last_completed_sync
+      - name: number_warnings_since_last_completed_sync
         description: Numeric metric indicating the number of warning messages raised sync the last sync completion.
 
     

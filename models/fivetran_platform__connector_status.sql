@@ -199,8 +199,8 @@ final as (
         connector_recent_logs.last_sync_completed_at,
         connector_recent_logs.set_up_at,
         coalesce(schema_changes.number_of_schema_changes_last_month, 0) as number_of_schema_changes_last_month,
-        count(distinct case when connector_recent_logs.event_type = 'SEVERE' then connector_recent_logs.message_data else null end) as number_errors_since_last_completed_sync,
-        count(distinct case when connector_recent_logs.event_type = 'WARNING' then connector_recent_logs.message_data else null end) as number_warnings_since_last_completed_sync
+        count(case when connector_recent_logs.event_type = 'SEVERE' then connector_recent_logs.message_data else null end) as number_errors_since_last_completed_sync,
+        count(case when connector_recent_logs.event_type = 'WARNING' then connector_recent_logs.message_data else null end) as number_warnings_since_last_completed_sync
 
     from connector_recent_logs
     left join schema_changes 

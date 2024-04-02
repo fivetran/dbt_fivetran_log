@@ -74,7 +74,7 @@ steps:
       bash .buildkite/scripts/run_models.sh databricks
 
   - label: ":databricks: :database: Run Tests - Databricks SQL Warehouse"
-    key: "run_dbt_databricks"
+    key: "run_dbt_databricks_sql"
     plugins:
       - docker#v3.13.0:
           image: "python:3.8"

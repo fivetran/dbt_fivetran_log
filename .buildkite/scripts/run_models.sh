@@ -36,7 +36,7 @@ db=$1
 echo `pwd`
 cd integration_tests
 dbt deps
-if [ "$1" != "databricks-sql" ]; then
+if [ "$1" = "databricks-sql" ]; then
 dbt seed --vars '{fivetran_platform_schema: fivetran_platform_integration_tests_sqlw}' --target "$db" --full-refresh
 dbt compile --vars '{fivetran_platform_schema: fivetran_platform_integration_tests_sqlw}' --target "$db"
 dbt run --vars '{fivetran_platform_schema: fivetran_platform_integration_tests_sqlw}' --target "$db" --full-refresh

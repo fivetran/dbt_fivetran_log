@@ -4,7 +4,8 @@
 ## Bug Fixes
 - Users leveraging the Databricks SQL Warehouse runtime were previously unable to run the `fivetran_platform__audit_table` model due to an incompatible incremental strategy. As such, the following updates have been made:
   - A new macro `is_databricks_sql_warehouse()` has been added to determine if a databricks runtime is a SQL Warehouse runtime for Databricks. This macro will return a boolean of `true` if the runtime is determined to be SQL Warehouse and `false` if it is any other runtime or destination.
-  - The above macro is used in determining the incremental strategy within the `fivetran_platform__audit_table`. For Databricks SQL Warehouses, the incremental strategy will now be `merge`. No other destinations or runtime strategies are impacted with this change.
+  - The above macro is used in determining the incremental strategy within the `fivetran_platform__audit_table`. For Databricks SQL Warehouses, there will be **no** incremental strategy used. All other destination runtime strategies are not impacted with this change.
+    - For the SQL Warehouse runtime, the best incremental strategy we could elect to use is the `merge` strategy. However, we do not have full confidence in the resulting data integrity of the output model when leveraging this strategy. Therefore, we opted for the model to replicate a full create or replace behavior for the time being.
 
 ## Under the Hood
 - Added integration testing pipeline for Databricks SQL Warehouse.

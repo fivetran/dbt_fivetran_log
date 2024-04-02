@@ -24,7 +24,7 @@ vars:
 
 models:
   fivetran_log:
-    +schema: "{{ 'fivetran_platform_sqlw' if target.name == 'databricks-sql' else 'fivetran_platform' }}"
+    +schema: "{{ 'sqlw_tests' if target.name == 'databricks-sql' else 'fivetran_platform' }}"
 
 seeds:
   fivetran_log_integration_tests:

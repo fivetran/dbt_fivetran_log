@@ -37,20 +37,20 @@ echo `pwd`
 cd integration_tests
 dbt deps
 if [ "$1" = "databricks-sql" ]; then
-dbt seed --vars '{fivetran_platform_schema: fivetran_platform_integration_tests_sqlw}' --target "$db" --full-refresh
-dbt compile --vars '{fivetran_platform_schema: fivetran_platform_integration_tests_sqlw}' --target "$db"
-dbt run --vars '{fivetran_platform_schema: fivetran_platform_integration_tests_sqlw}' --target "$db" --full-refresh
-dbt run --vars '{fivetran_platform_schema: fivetran_platform_integration_tests_sqlw}' --target "$db"
-dbt test --vars '{fivetran_platform_schema: fivetran_platform_integration_tests_sqlw}' --target "$db"
-dbt run --vars '{fivetran_platform_schema: fivetran_platform_integration_tests_sqlw, fivetran_platform__usage_pricing: true}' --target "$db" --full-refresh
-dbt run --vars '{fivetran_platform_schema: fivetran_platform_integration_tests_sqlw, fivetran_platform__usage_pricing: true}' --target "$db"
+dbt seed --vars '{fivetran_platform_schema: sqlw_tests}' --target "$db" --full-refresh
+dbt compile --vars '{fivetran_platform_schema: sqlw_tests}' --target "$db"
+dbt run --vars '{fivetran_platform_schema: sqlw_tests}' --target "$db" --full-refresh
+dbt run --vars '{fivetran_platform_schema: sqlw_tests}' --target "$db"
+dbt test --vars '{fivetran_platform_schema: sqlw_tests}' --target "$db"
+dbt run --vars '{fivetran_platform_schema: sqlw_tests, fivetran_platform__usage_pricing: true}' --target "$db" --full-refresh
+dbt run --vars '{fivetran_platform_schema: sqlw_tests, fivetran_platform__usage_pricing: true}' --target "$db"
 dbt test --target "$db"
-dbt run --vars '{fivetran_platform_schema: fivetran_platform_integration_tests_sqlw, fivetran_platform__credits_pricing: false, fivetran_platform__usage_pricing: true}' --target "$db" --full-refresh
+dbt run --vars '{fivetran_platform_schema: sqlw_tests, fivetran_platform__credits_pricing: false, fivetran_platform__usage_pricing: true}' --target "$db" --full-refresh
 dbt run --vars '{fivetran_platform__credits_pricing: false, fivetran_platform__usage_pricing: true}' --target "$db"
-dbt test --vars '{fivetran_platform_schema: fivetran_platform_integration_tests_sqlw}'  --target "$db"
-dbt run --vars '{fivetran_platform_schema: fivetran_platform_integration_tests_sqlw, fivetran_platform__usage_pricing: false, fivetran_platform_using_destination_membership: false, fivetran_platform_using_user: false}' --target "$db" --full-refresh
-dbt run --vars '{fivetran_platform_schema: fivetran_platform_integration_tests_sqlw, fivetran_platform__usage_pricing: false, fivetran_platform_using_destination_membership: false, fivetran_platform_using_user: false}' --target "$db"
-dbt test --vars '{fivetran_platform_schema: fivetran_platform_integration_tests_sqlw}'  --target "$db"
+dbt test --vars '{fivetran_platform_schema: sqlw_tests}'  --target "$db"
+dbt run --vars '{fivetran_platform_schema: sqlw_tests, fivetran_platform__usage_pricing: false, fivetran_platform_using_destination_membership: false, fivetran_platform_using_user: false}' --target "$db" --full-refresh
+dbt run --vars '{fivetran_platform_schema: sqlw_tests, fivetran_platform__usage_pricing: false, fivetran_platform_using_destination_membership: false, fivetran_platform_using_user: false}' --target "$db"
+dbt test --vars '{fivetran_platform_schema: sqlw_tests}'  --target "$db"
 else
 dbt seed --target "$db" --full-refresh
 dbt compile --target "$db"

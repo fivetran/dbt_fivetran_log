@@ -1,5 +1,5 @@
 # dbt_fivetran_log v1.7.1
-[PR #](https://github.com/fivetran/dbt_fivetran_log/pull/) includes the following updates:
+[PR #121](https://github.com/fivetran/dbt_fivetran_log/pull/121) includes the following updates:
 
 ## Bug Fixes
 - Users leveraging the Databricks SQL Warehouse runtime were previously unable to run the `fivetran_platform__audit_table` model due to an incompatible incremental strategy. As such, the following updates have been made:

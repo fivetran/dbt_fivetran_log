@@ -6,8 +6,8 @@
         'data_type': 'date'
     } if target.type == 'bigquery' else ['sync_start_day'],
     cluster_by = ['sync_start_day'],
-    incremental_strategy='insert_overwrite' if target.type in ('bigquery', 'spark', 'databricks') else 'delete+insert',
-    file_format='parquet'
+    incremental_strategy='insert_overwrite' if target.type in ('bigquery') or not is_databricks_sql_warehouse(target) else ('merge' if is_databricks_sql_warehouse(target) else 'delete+insert'),
+    file_format='parquet' if not is_databricks_sql_warehouse(target) else 'delta'
 ) }}
 
 with sync_log as (

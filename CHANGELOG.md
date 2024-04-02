@@ -9,6 +9,7 @@
 
 ## Under the Hood
 - Added integration testing pipeline for Databricks SQL Warehouse.
+- Applied modifications to the integration testing pipeline to account for jobs being run on both Databricks All Purpose Cluster and SQL Warehouse runtimes.
 
 # dbt_fivetran_log v1.7.0
 [PR #119](https://github.com/fivetran/dbt_fivetran_log/pull/119) includes the following updates:

@@ -1,12 +1,12 @@
 {{ config(
-    materialized='incremental',
+    materialized='table' if is_databricks_sql_warehouse(target) else 'incremental',
     unique_key='unique_table_sync_key',
     partition_by={
         'field': 'sync_start_day',
         'data_type': 'date'
     } if target.type == 'bigquery' else ['sync_start_day'],
     cluster_by = ['sync_start_day'],
-    incremental_strategy='insert_overwrite' if target.type in ('bigquery','databricks','spark') and not is_databricks_sql_warehouse(target) else (none if is_databricks_sql_warehouse(target) else 'delete+insert'),
+    incremental_strategy='insert_overwrite' if target.type in ('bigquery','databricks','spark') else 'delete+insert',
     file_format='parquet' if not is_databricks_sql_warehouse(target) else 'delta'
 ) }}
 

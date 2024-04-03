@@ -7,6 +7,9 @@
   - The above macro is used in determining the incremental strategy within the `fivetran_platform__audit_table`. For Databricks SQL Warehouses, there will be **no** incremental strategy used. All other destination runtime strategies are not impacted with this change.
     - For the SQL Warehouse runtime, the best incremental strategy we could elect to use is the `merge` strategy. However, we do not have full confidence in the resulting data integrity of the output model when leveraging this strategy. Therefore, we opted for the model to replicate a full create or replace behavior for the time being.
 
+## Features
+- Updated README incremental model section to revise descriptions and add information for Databricks SQL Warehouse.
+
 ## Under the Hood
 - Added integration testing pipeline for Databricks SQL Warehouse.
 - Applied modifications to the integration testing pipeline to account for jobs being run on both Databricks All Purpose Cluster and SQL Warehouse runtimes.

@@ -55,7 +55,7 @@ dispatch:
 ### Database Incremental Strategies 
 For models in this package that are materialized incrementally, they are configured to work with the different strategies available to each supported warehouse.
 
-For **BigQuery** and **Databricks Runtime** destinations, we have chosen `insert_overwrite` as the default strategy, which benefits from the partitioning capability. 
+For **BigQuery** and **Databricks All Purpose Cluster runtime** destinations, we have chosen `insert_overwrite` as the default strategy, which benefits from the partitioning capability. 
 > For Databricks SQL Warehouse destinations, models are materialized as tables without support for incremental models.
 
 For **Snowflake**, **Redshift**, and **Postgres** databases, we have chosen `delete+insert` as the default strategy.  

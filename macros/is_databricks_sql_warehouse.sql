@@ -1,5 +1,5 @@
 {% macro is_databricks_sql_warehouse(target) %}
-    {% if target.type in ('databricks','spark') %}
+    {% if target.type in ('databricks') %}
         {% set re = modules.re %}
         {% set path_match = target.http_path %}
         {% set regex_pattern = "/sql/.+/warehouses/" %}

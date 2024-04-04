@@ -44,9 +44,9 @@ dbt run --vars '{fivetran_platform_schema: sqlw_tests}' --target "$db"
 dbt test --vars '{fivetran_platform_schema: sqlw_tests}' --target "$db"
 dbt run --vars '{fivetran_platform_schema: sqlw_tests, fivetran_platform__usage_pricing: true}' --target "$db" --full-refresh
 dbt run --vars '{fivetran_platform_schema: sqlw_tests, fivetran_platform__usage_pricing: true}' --target "$db"
-dbt test --target "$db"
+dbt test --target '{fivetran_platform_schema: sqlw_tests}'  "$db"
 dbt run --vars '{fivetran_platform_schema: sqlw_tests, fivetran_platform__credits_pricing: false, fivetran_platform__usage_pricing: true}' --target "$db" --full-refresh
-dbt run --vars '{fivetran_platform__credits_pricing: false, fivetran_platform__usage_pricing: true}' --target "$db"
+dbt run --vars '{fivetran_platform_schema: sqlw_tests, fivetran_platform__credits_pricing: false, fivetran_platform__usage_pricing: true}' --target "$db"
 dbt test --vars '{fivetran_platform_schema: sqlw_tests}'  --target "$db"
 dbt run --vars '{fivetran_platform_schema: sqlw_tests, fivetran_platform__usage_pricing: false, fivetran_platform_using_destination_membership: false, fivetran_platform_using_user: false}' --target "$db" --full-refresh
 dbt run --vars '{fivetran_platform_schema: sqlw_tests, fivetran_platform__usage_pricing: false, fivetran_platform_using_destination_membership: false, fivetran_platform_using_user: false}' --target "$db"

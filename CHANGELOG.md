@@ -1,3 +1,20 @@
+# dbt_fivetran_log v1.7.1
+[PR #121](https://github.com/fivetran/dbt_fivetran_log/pull/121) includes the following updates:
+
+## Bug Fixes
+- Users leveraging the Databricks SQL Warehouse runtime were previously unable to run the `fivetran_platform__audit_table` model due to an incompatible incremental strategy. As such, the following updates have been made:
+  - A new macro `is_databricks_sql_warehouse()` has been added to determine if a SQL Warehouse runtime for Databricks is being used. This macro will return a boolean of `true` if the runtime is determined to be SQL Warehouse and `false` if it is any other runtime or a non-Databricks destination.
+  - The above macro is used in determining the incremental strategy within the `fivetran_platform__audit_table`. For Databricks SQL Warehouses, there will be **no** incremental strategy used. All other destinations and runtime strategies are not impacted with this change.
+    - For the SQL Warehouse runtime, the best incremental strategy we could elect to use is the `merge` strategy. However, we do not have full confidence in the resulting data integrity of the output model when leveraging this strategy. Therefore, we opted for the model to be materialized as a non-incremental `table` for the time being.
+  - The file format of the model has changed to `delta` for SQL Warehouse users. For all other destinations the `parquet` file format is still used.
+
+## Features
+- Updated README incremental model section to revise descriptions and add information for Databricks SQL Warehouse.
+
+## Under the Hood
+- Added integration testing pipeline for Databricks SQL Warehouse.
+- Applied modifications to the integration testing pipeline to account for jobs being run on both Databricks All Purpose Cluster and SQL Warehouse runtimes.
+
 # dbt_fivetran_log v1.7.0
 [PR #119](https://github.com/fivetran/dbt_fivetran_log/pull/119) includes the following updates:
 

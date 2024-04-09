@@ -1,3 +1,10 @@
+# dbt_fivetran_log v1.7.2
+[PR #](https://github.com/fivetran/dbt_fivetran_log/pull/) includes the following updates:
+
+## Bug Fixes
+- Removal of the leading `/` from the `target.http_path` regex search within the `is_databricks_sql_warehouse()` macro to accurately identify SQL Warehouse Databricks destinations in Quickstart.
+  - The macro above initially worked as expected in dbt core environments; however, in Quickstart implementations this data model was not working. This was due to Quickstart removing the leading `/` from the `target.http_path`. Thus resulting in the regex search to always fail. 
+
 # dbt_fivetran_log v1.7.1
 [PR #121](https://github.com/fivetran/dbt_fivetran_log/pull/121) includes the following updates:
 

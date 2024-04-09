@@ -2,7 +2,7 @@
     {% if target.type in ('databricks') %}
         {% set re = modules.re %}
         {% set path_match = target.http_path %}
-        {% set regex_pattern = "/sql/.+/warehouses/" %}
+        {% set regex_pattern = "sql/.+/warehouses/" %}
         {% set match_result = re.search(regex_pattern, path_match) %}
         {% if match_result %}
             {{ return(True) }}

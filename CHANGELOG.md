@@ -1,5 +1,5 @@
 # dbt_fivetran_log v1.7.2
-[PR #](https://github.com/fivetran/dbt_fivetran_log/pull/) includes the following updates:
+[PR #123](https://github.com/fivetran/dbt_fivetran_log/pull/123) includes the following updates:
 
 ## Bug Fixes
 - Removal of the leading `/` from the `target.http_path` regex search within the `is_databricks_sql_warehouse()` macro to accurately identify SQL Warehouse Databricks destinations in Quickstart.

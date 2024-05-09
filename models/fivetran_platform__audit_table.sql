@@ -10,14 +10,38 @@
     file_format='delta' if is_databricks_sql_warehouse(target) else 'parquet'
 ) }}
 
-with sync_log as (
+with base as (
     
     select *
-    from {{ ref('int_fivetran_platform__audit_table') }}
+    {# from {{ ref('int_fivetran_platform__audit_table') }} #}
+    from {{ ref('stg_fivetran_platform__log') }}
+    where event_subtype in ('sync_start', 'sync_end', 'write_to_table_start', 'write_to_table_end', 'records_modified')
 
     {% if is_incremental() %}
-    where cast(created_at as date) > {{ fivetran_log.fivetran_log_lookback(from_date='max(sync_start_day)', interval=7) }}
+    and cast(created_at as date) > {{ fivetran_log.fivetran_log_lookback(from_date='max(sync_start_day)', interval=7) }}
     {% endif %}
+),
+
+sync_log as (
+    select 
+        *,
+        {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['table']) }} as table_name,
+        cast(null as {{ dbt.type_string() }}) as schema_name,
+        cast(null as {{ dbt.type_string() }}) as operation_type,
+        cast(null as {{ dbt.type_bigint() }}) as row_count
+    from base
+    where event_subtype in ('sync_start', 'sync_end', 'write_to_table_start', 'write_to_table_end')
+
+    union all
+
+    select 
+        *,
+        {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['table']) }} as table_name,
+        {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['schema']) }} as schema_name,
+        {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['operationType']) }} as operation_type,
+        cast ({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['count']) }} as {{ dbt.type_bigint() }}) as row_count
+    from base
+    where event_subtype = 'records_modified'
 ),
 
 connector as (

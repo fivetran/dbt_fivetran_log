@@ -13,7 +13,6 @@
 with base as (
     
     select *
-    {# from {{ ref('int_fivetran_platform__audit_table') }} #}
     from {{ ref('stg_fivetran_platform__log') }}
     where event_subtype in ('sync_start', 'sync_end', 'write_to_table_start', 'write_to_table_end', 'records_modified')
 

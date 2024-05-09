@@ -12,16 +12,11 @@
 
 with sync_log as (
     
-    select 
-        *,
-        {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['table']) }} as table_name
-    from {{ ref('stg_fivetran_platform__log') }}
-    where event_subtype in ('sync_start', 'sync_end', 'write_to_table_start', 'write_to_table_end', 'records_modified')
+    select *
+    from {{ ref('int_fivetran_platform__audit_table') }}
 
     {% if is_incremental() %}
-
-    and cast(created_at as date) > {{ fivetran_log.fivetran_log_lookback(from_date='max(sync_start_day)', interval=7) }}
-
+    where cast(created_at as date) > {{ fivetran_log.fivetran_log_lookback(from_date='max(sync_start_day)', interval=7) }}
     {% endif %}
 ),
 
@@ -80,10 +75,10 @@ records_modified_log as (
     select 
         connector_id,
         created_at,
-        {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['table']) }} as table_name,
-        {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['schema']) }} as schema_name,
-        {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['operationType']) }} as operation_type,
-        cast ({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['count']) }} as {{ dbt.type_bigint() }}) as row_count
+        table_name,
+        schema_name,
+        operation_type,
+        row_count
     from sync_log 
     where event_subtype = 'records_modified'
 

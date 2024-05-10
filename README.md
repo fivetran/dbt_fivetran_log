@@ -16,7 +16,7 @@
 # Fivetran Platform dbt Package ([Docs](https://fivetran.github.io/dbt_fivetran_log/))
 # 📣 What does this dbt package do?
 - Generates a comprehensive data dictionary of your Fivetran Platform connector (previously called Fivetran Log) data via the [dbt docs site](https://fivetran.github.io/dbt_fivetran_log/)
-- Produces staging models in the format described by [this ERD](https://fivetran.com/docs/logs/fivetran-log#schemainformation) which clean, test, and prepare your Fivetran data from [Fivetran's free connector](https://fivetran.com/docs/applications/fivetran-log) and generates analysis ready end models.
+- Produces staging models in the format described by [this ERD](https://fivetran.com/docs/logs/fivetran-platform#schemainformation) which clean, test, and prepare your Fivetran data from our free [Fivetran Platform connector](/docs/logs/fivetran-platform) and generates analysis ready end models.
 - The above mentioned models enable you to better understand how you are spending money in Fivetran according to our [consumption-based pricing model](https://fivetran.com/docs/getting-started/consumption-based-pricing) as well as providing details about the performance and status of your Fivetran connectors. This is achieved by:
     - Displaying consumption data at the table, connector, destination, and account levels
     - Providing a history of measured free and paid monthly active rows (MAR), credit consumption, and the relationship between the two

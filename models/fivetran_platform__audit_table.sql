@@ -104,7 +104,6 @@ records_modified_log as (
         row_count
     from sync_log 
     where event_subtype = 'records_modified'
-
 ),
 
 sum_records_modified as (

@@ -35,4 +35,3 @@ final as (
 
 select * 
 from final
-limit 5000000

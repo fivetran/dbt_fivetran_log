@@ -1,3 +1,15 @@
+# dbt_fivetran_log v1.7.3
+[PR #126](https://github.com/fivetran/dbt_fivetran_log/pull/126) includes the following updates:
+
+## Performance Improvements
+- Updated the sequence of JSON parsing for model `fivetran_platform__audit_table` to reduce runtime. 
+
+## Bug Fixes
+- Updated model `fivetran_platform__audit_user_activity` to correct the JSON parsing used to determine column `email`.  
+
+## Under the hood
+- Updated logic for macro `fivetran_log_lookback` to align with logic used in similar macros in other packages. 
+
 # dbt_fivetran_log v1.7.2
 [PR #123](https://github.com/fivetran/dbt_fivetran_log/pull/123) includes the following updates:
 

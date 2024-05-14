@@ -5,7 +5,7 @@
 - Updated the sequence of JSON parsing for model `fivetran_platform__audit_table` to reduce runtime. 
 
 ## Bug Fixes
-- Updated model `fivetran_platform__audit_user_activity` to correct the JSON parsing used to determine column `email`.  
+- Updated model `fivetran_platform__audit_user_activity` to correct the JSON parsing used to determine column `email`. This fixes an issue where `fivetran_platform__audit_user_activity` could potentially have 0 rows.
 
 ## Under the hood
 - Updated logic for macro `fivetran_log_lookback` to align with logic used in similar macros in other packages. 

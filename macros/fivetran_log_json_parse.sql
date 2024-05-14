@@ -28,7 +28,7 @@
 {% macro postgres__fivetran_log_json_parse(string, string_path) %}
 
   case when {{ string }} ~ '^\s*[\{].*[\}]?\s*$' -- Postgres has no native json check, so this will check the string for indicators of a JSON object
-    then {{ string }}::json #>> '{ {%- for s in string_path -%}{{ s }}{%- if not loop.last -%},{%- endif -%}{%- endfor -%} }'
+    then {{ string }}::jsonb #>> '{ {%- for s in string_path -%}{{ s }}{%- if not loop.last -%},{%- endif -%}{%- endfor -%} }'
     else null end
 
 {% endmacro %}

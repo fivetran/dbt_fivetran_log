@@ -1,8 +1,73 @@
-# dbt_fivetran_log X.X
+# dbt_fivetran_log v1.7.3
+[PR #126](https://github.com/fivetran/dbt_fivetran_log/pull/126) includes the following updates:
 
-## Under The Hood
-- Updated macro `bigquery__fivetran_log_lookback` to use variable values.
+## Performance Improvements
+- Updated the sequence of JSON parsing for model `fivetran_platform__audit_table` to reduce runtime. 
+
+## Bug Fixes
+- Updated model `fivetran_platform__audit_user_activity` to correct the JSON parsing used to determine column `email`.  
+
+## Under the hood
+- Updated logic for macro `fivetran_log_lookback` to align with logic used in similar macros in other packages. 
 - Update README incremental model section. 
+
+# dbt_fivetran_log v1.7.2
+[PR #123](https://github.com/fivetran/dbt_fivetran_log/pull/123) includes the following updates:
+
+## Bug Fixes
+- Removal of the leading `/` from the `target.http_path` regex search within the `is_databricks_sql_warehouse()` macro to accurately identify SQL Warehouse Databricks destinations in Quickstart.
+  - The macro above initially worked as expected in dbt core environments; however, in Quickstart implementations this data model was not working. This was due to Quickstart removing the leading `/` from the `target.http_path`. Thus resulting in the regex search to always fail. 
+
+# dbt_fivetran_log v1.7.1
+[PR #121](https://github.com/fivetran/dbt_fivetran_log/pull/121) includes the following updates:
+
+## Bug Fixes
+- Users leveraging the Databricks SQL Warehouse runtime were previously unable to run the `fivetran_platform__audit_table` model due to an incompatible incremental strategy. As such, the following updates have been made:
+  - A new macro `is_databricks_sql_warehouse()` has been added to determine if a SQL Warehouse runtime for Databricks is being used. This macro will return a boolean of `true` if the runtime is determined to be SQL Warehouse and `false` if it is any other runtime or a non-Databricks destination.
+  - The above macro is used in determining the incremental strategy within the `fivetran_platform__audit_table`. For Databricks SQL Warehouses, there will be **no** incremental strategy used. All other destinations and runtime strategies are not impacted with this change.
+    - For the SQL Warehouse runtime, the best incremental strategy we could elect to use is the `merge` strategy. However, we do not have full confidence in the resulting data integrity of the output model when leveraging this strategy. Therefore, we opted for the model to be materialized as a non-incremental `table` for the time being.
+  - The file format of the model has changed to `delta` for SQL Warehouse users. For all other destinations the `parquet` file format is still used.
+
+## Features
+- Updated README incremental model section to revise descriptions and add information for Databricks SQL Warehouse.
+
+## Under the Hood
+- Added integration testing pipeline for Databricks SQL Warehouse.
+- Applied modifications to the integration testing pipeline to account for jobs being run on both Databricks All Purpose Cluster and SQL Warehouse runtimes.
+
+# dbt_fivetran_log v1.7.0
+[PR #119](https://github.com/fivetran/dbt_fivetran_log/pull/119) includes the following updates:
+
+## 🚨 Breaking Changes 🚨: Bug Fixes
+- The following fields have been deprecated (removed) as these fields proved to be problematic across warehouses due to the end size of the fields.
+  - `errors_since_last_completed_sync`
+  - `warnings_since_last_completed_sync`
+> Note: If you found these fields to be relevant, you may still reference the error/warning messages from within the underlying `log` table.
+- The `fivetran_platform_using_sync_alert_messages` variable has been removed as it is no longer necessary due to the above changes.
+
+## Feature Updates
+- The following fields have been added to display the number of error/warning messages sync last completed sync. These fields are intended to substitute the information from deprecated fields listed above.
+  - `number_errors_since_last_completed_sync`
+  - `number_warnings_since_last_completed_sync`
+
+# dbt_fivetran_log v1.6.0
+[PR #117](https://github.com/fivetran/dbt_fivetran_log/pull/117) includes the following updates as a result of users encountering numeric counts exceeding the limit of a standard integer. Therefore, these fields were required to be cast as `bigint` in order to avoid "integer out of range" errors:
+
+## Breaking Changes
+> ⚠️ Since the following changes result in a field changing datatype, we recommend running a `--full-refresh` after upgrading to this version to avoid possible incremental failures.
+- The following fields in the `fivetran_platform__audit_table` model have been updated to be cast as `dbt.type_bigint()` (previously was `dbt.type_int()`)
+  - `sum_rows_replaced_or_inserted`
+  - `sum_rows_updated`
+  - `sum_rows_deleted`
+
+## Bug Fixes
+- The following fields in the `fivetran_platform__connector_daily_events` model have been updated to be cast as `dbt.type_bigint()` (previously was `dbt.type_int()`)
+  - `count_api_calls`
+  - `count_record_modifications`
+  - `count_schema_changes`
+
+## Under the Hood
+- Modified `log` seed data within the integration tests folder to ensure that large integers are being tested as part of our integration tests.
 
 # dbt_fivetran_log v1.5.0
 [PR #114](https://github.com/fivetran/dbt_fivetran_log/pull/114) includes the following updates:

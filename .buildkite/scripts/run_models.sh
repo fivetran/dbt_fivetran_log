@@ -36,6 +36,22 @@ db=$1
 echo `pwd`
 cd integration_tests
 dbt deps
+if [ "$db" = "databricks-sql" ]; then
+dbt seed --vars '{fivetran_platform_schema: sqlw_tests}' --target "$db" --full-refresh
+dbt compile --vars '{fivetran_platform_schema: sqlw_tests}' --target "$db"
+dbt run --vars '{fivetran_platform_schema: sqlw_tests}' --target "$db" --full-refresh
+dbt run --vars '{fivetran_platform_schema: sqlw_tests}' --target "$db"
+dbt test --vars '{fivetran_platform_schema: sqlw_tests}' --target "$db"
+dbt run --vars '{fivetran_platform_schema: sqlw_tests, fivetran_platform__usage_pricing: true}' --target "$db" --full-refresh
+dbt run --vars '{fivetran_platform_schema: sqlw_tests, fivetran_platform__usage_pricing: true}' --target "$db"
+dbt test --vars '{fivetran_platform_schema: sqlw_tests}' --target "$db"
+dbt run --vars '{fivetran_platform_schema: sqlw_tests, fivetran_platform__credits_pricing: false, fivetran_platform__usage_pricing: true}' --target "$db" --full-refresh
+dbt run --vars '{fivetran_platform_schema: sqlw_tests, fivetran_platform__credits_pricing: false, fivetran_platform__usage_pricing: true}' --target "$db"
+dbt test --vars '{fivetran_platform_schema: sqlw_tests}'  --target "$db"
+dbt run --vars '{fivetran_platform_schema: sqlw_tests, fivetran_platform__usage_pricing: false, fivetran_platform_using_destination_membership: false, fivetran_platform_using_user: false}' --target "$db" --full-refresh
+dbt run --vars '{fivetran_platform_schema: sqlw_tests, fivetran_platform__usage_pricing: false, fivetran_platform_using_destination_membership: false, fivetran_platform_using_user: false}' --target "$db"
+dbt test --vars '{fivetran_platform_schema: sqlw_tests}'  --target "$db"
+else
 dbt seed --target "$db" --full-refresh
 dbt compile --target "$db"
 dbt run --target "$db" --full-refresh
@@ -50,6 +66,7 @@ dbt test --target "$db"
 dbt run --vars '{fivetran_platform__usage_pricing: false, fivetran_platform_using_destination_membership: false, fivetran_platform_using_user: false}' --target "$db" --full-refresh
 dbt run --vars '{fivetran_platform__usage_pricing: false, fivetran_platform_using_destination_membership: false, fivetran_platform_using_user: false}' --target "$db"
 dbt test --target "$db"
+fi
 if [ "$1" != "sqlserver" ]; then
 dbt run-operation fivetran_utils.drop_schemas_automation --target "$db"
 fi

@@ -9,6 +9,7 @@
 
 ## Under the hood
 - Updated logic for macro `fivetran_log_lookback` to align with logic used in similar macros in other packages. 
+- Updated logic for the postgres dispatch of macro `fivetran_log_json_parse` to utilize `jsonb` instead of `json` or performance.
 
 # dbt_fivetran_log v1.7.2
 [PR #123](https://github.com/fivetran/dbt_fivetran_log/pull/123) includes the following updates:

@@ -23,7 +23,6 @@ with base as (
     {% if is_incremental() %}
     and cast(created_at as date) > {{ fivetran_log.fivetran_log_lookback(from_date='max(sync_start_day)', interval=var('lookback_window', 3)) }}
     {% endif %}
-    {# and cast(created_at as date) < '2022-01-01'  #}
 ),
 
 sync_log as (

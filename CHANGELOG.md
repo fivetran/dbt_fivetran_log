@@ -1,7 +1,8 @@
 # dbt_fivetran_log v1.8.0
-[PR #](https://github.com/fivetran/dbt_fivetran_log/pull/) includes the following updates:
+[PR #130](https://github.com/fivetran/dbt_fivetran_log/pull/130) includes the following updates:
 
 ## 🚨 Breaking Changes 🚨
+> ⚠️ Since the following changes result in the table format changing, we recommend running a `--full-refresh` after upgrading to this version to avoid possible incremental failures.
 - For Databricks All Purpose clusters the `fivetran_platform__audit_table` model will now be materialized using the delta table format (previously parquet). 
   - Delta tables are generally more performant than parquet and are also more widely available for Databricks users. Previously, the parquet file format was causing compilation issues on customers managed tables.
 

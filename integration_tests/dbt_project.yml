@@ -1,5 +1,5 @@
 name: 'fivetran_log_integration_tests'
-version: '1.7.3'
+version: '1.8.0'
 
 config-version: 2
 profile: 'integration_tests'
@@ -9,22 +9,25 @@ dispatch:
     search_order: ['spark_utils', 'dbt_utils']
 
 vars:
-  fivetran_log:
-    fivetran_platform_schema: "fivetran_platform_integration_tests"
-    fivetran_platform_account_identifier: "account"
-    fivetran_platform_incremental_mar_identifier: "incremental_mar"
-    fivetran_platform_connector_identifier: "connector"
-    fivetran_platform_credits_used_identifier: "credits_used"
-    fivetran_platform_usage_cost_identifier: "usage_cost"
-    fivetran_platform_destination_identifier: "destination"
-    fivetran_platform_destination_membership_identifier: "destination_membership"
-    fivetran_platform_log_identifier: "log"
-    fivetran_platform_user_identifier: "user"
+  # fivetran_log:
+  #   fivetran_platform_schema: "fivetran_platform_integration_tests"
+  #   fivetran_platform_account_identifier: "account"
+  #   fivetran_platform_incremental_mar_identifier: "incremental_mar"
+  #   fivetran_platform_connector_identifier: "connector"
+  #   fivetran_platform_credits_used_identifier: "credits_used"
+  #   fivetran_platform_usage_cost_identifier: "usage_cost"
+  #   fivetran_platform_destination_identifier: "destination"
+  #   fivetran_platform_destination_membership_identifier: "destination_membership"
+  #   fivetran_platform_log_identifier: "log"
+  #   fivetran_platform_user_identifier: "user"
 
+  fivetran_platform_schema: fivetran_platform_catherine_test
+  fivetran_platform_using_destination_membership: false
 
 models:
   fivetran_log:
-    +schema: "{{ 'sqlw_tests' if target.name == 'databricks-sql' else 'fivetran_platform' }}"
+    # +schema: "{{ 'sqlw_tests' if target.name == 'databricks-sql' else 'fivetran_platform' }}"
+    +schema: "fivetran_platform_{{ var('directed_schema','dev') }}"
 
 seeds:
   fivetran_log_integration_tests:

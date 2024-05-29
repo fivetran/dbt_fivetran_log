@@ -1,5 +1,5 @@
 {{ config(
-    materialized='table' if is_databricks_sql_warehouse(target) else 'incremental',
+    materialized='incremental' if is_databricks_all_purpose(target) else 'table',
     unique_key='unique_table_sync_key',
     partition_by={
         'field': 'sync_start_day',
@@ -7,7 +7,7 @@
     } if target.type == 'bigquery' else ['sync_start_day'],
     cluster_by = ['sync_start_day'],
     incremental_strategy='insert_overwrite' if target.type in ('bigquery','spark', 'databricks') else 'delete+insert',
-    file_format='delta' if is_databricks_sql_warehouse(target) else 'parquet'
+    file_format='delta'
 ) }}
 
 with base as (

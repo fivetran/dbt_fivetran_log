@@ -14,7 +14,6 @@
   - This update was applied as there have been other Databricks runtimes discovered (ie. an endpoint and external runtime) which do not support the `insert-overwrite` incremental strategy used in the `fivetran_platform__audit_table` model. 
 - In addition to the above, for Databricks users the `fivetran_platform__audit_table` model will now leverage the incremental strategy only if the Databricks runtime is all purpose. Otherwise, all other Databricks runtimes will not leverage an incremental strategy.
 
-
 # dbt_fivetran_log v1.7.3
 [PR #126](https://github.com/fivetran/dbt_fivetran_log/pull/126) includes the following updates:
 

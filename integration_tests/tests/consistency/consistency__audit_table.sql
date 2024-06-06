@@ -41,7 +41,7 @@ consistency_check as (
     where prod_total != dev_total
 ),
 
--- The current release changes the row count of the audit table model intentionally.
+-- For use when the current release changes the row count of the audit table model intentionally.
 -- The below queries prove the records that do not match are still accurate by checking the source.
 verification_staging_setup as (
     select

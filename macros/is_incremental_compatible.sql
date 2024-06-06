@@ -1,4 +1,4 @@
-{% macro is_databricks_all_purpose(target) %}
+{% macro is_incremental_compatible(target) %}
     {% if target.type in ('databricks') %}
         {% set re = modules.re %}
         {% set path_match = target.http_path %}
@@ -10,6 +10,6 @@
             {{ return(False) }}
         {% endif %}
     {% else %}
-        {{ return(False) }}
+        {{ return(True) }}
     {% endif %}
 {% endmacro %}

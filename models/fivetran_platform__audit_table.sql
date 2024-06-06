@@ -1,5 +1,5 @@
 {{ config(
-    materialized='incremental' if is_databricks_all_purpose(target) else 'table',
+    materialized='incremental' if is_incremental_compatible(target) else 'table',
     unique_key='unique_table_sync_key',
     partition_by={
         'field': 'sync_start_day',

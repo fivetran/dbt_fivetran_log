@@ -1,3 +1,2 @@
 packages:
-  - package: fivetran/fivetran_log
-    version: '>=0.0.0'
+  - local: ../

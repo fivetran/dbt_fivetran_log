@@ -12,7 +12,7 @@
 - Removed duplicate Databricks dispatch instructions listed in the README.
 
 ## Under the Hood
-- The `is_databricks_sql_warehouse` macro has been renamed to `is_incremental_compatible` and has been modified to return `true` if the Databricks runtime being used is an all-purpose cluster (previously this macro checked if a sql warehouse runtime was used) **or** if any other non Databricks supported destination is being used.
+- The `is_databricks_sql_warehouse` macro has been renamed to `is_incremental_compatible` and has been modified to return `true` if the Databricks runtime being used is an all-purpose cluster (previously this macro checked if a sql warehouse runtime was used) **or** if any other non-Databricks supported destination is being used.
   - This update was applied as there have been other Databricks runtimes discovered (ie. an endpoint and external runtime) which do not support the `insert_overwrite` incremental strategy used in the `fivetran_platform__audit_table` model. 
 - In addition to the above, for Databricks users the `fivetran_platform__audit_table` model will now leverage the incremental strategy only if the Databricks runtime is all-purpose. Otherwise, all other Databricks runtimes will not leverage an incremental strategy.
 

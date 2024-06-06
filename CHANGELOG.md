@@ -8,6 +8,8 @@
 
 ## Documentation Updates
 - Updated the `sync_start` and `sync_end` field descriptions for the `fivetran_platform__audit_table` to explicitly define that these fields only represent the sync start/end times for when the connector wrote new or modified existing records to the specified table.
+- Addition of integrity and consistency validation tests within integration tests for every end model.
+- Removed duplicate Databricks dispatch instructions listed in the README.
 
 ## Under the Hood
 - The `is_databricks_sql_warehouse` macro has been renamed to `is_databricks_all_purpose` and has been modified to return `true` if the Databricks runtime being used is an all-purpose cluster (previously this macro checked if a sql warehouse runtime was used).

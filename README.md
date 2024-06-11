@@ -69,7 +69,7 @@ Include the following Fivetran Platform package version range in your `packages.
 ```yaml
 packages:
   - package: fivetran/fivetran_log
-    version: [">=1.7.0", "<1.8.0"]
+    version: [">=1.8.0", "<1.9.0"]
 ```
 
 > Note that although the source connector is now "Fivetran Platform", the package retains the old name of "fivetran_log".
@@ -110,14 +110,6 @@ If an individual source table has a different name than expected (see this proje
 ```yml
 vars:
     fivetran_platform_<default_table_name>_identifier: your_table_name 
-```
-
-### Databricks Additional Configuration
-If you are using a Databricks destination with this package you will need to add the below (or a variation of the below) dispatch configuration within your root `dbt_project.yml`. This is required in order for the package to accurately search for macros within the `dbt-labs/spark_utils` then the `dbt-labs/dbt_utils` packages respectively.
-```yml
-dispatch:
-  - macro_namespace: dbt_utils
-    search_order: ['spark_utils', 'dbt_utils']
 ```
 
 ## (Optional) Step 6: Orchestrate your models with Fivetran Transformations for dbt Core™

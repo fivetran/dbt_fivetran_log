@@ -1,3 +1,21 @@
+# dbt_fivetran_log v1.8.0
+[PR #130](https://github.com/fivetran/dbt_fivetran_log/pull/130) includes the following updates:
+
+## 🚨 Breaking Changes 🚨
+> ⚠️ Since the following changes result in the table format changing, we recommend running a `--full-refresh` after upgrading to this version to avoid possible incremental failures.
+- For Databricks All-Purpose clusters, the `fivetran_platform__audit_table` model will now be materialized using the delta table format (previously parquet). 
+  - Delta tables are generally more performant than parquet and are also more widely available for Databricks users. Previously, the parquet file format was causing compilation issues on customers' managed tables.
+
+## Documentation Updates
+- Updated the `sync_start` and `sync_end` field descriptions for the `fivetran_platform__audit_table` to explicitly define that these fields only represent the sync start/end times for when the connector wrote new or modified existing records to the specified table.
+- Addition of integrity and consistency validation tests within integration tests for every end model.
+- Removed duplicate Databricks dispatch instructions listed in the README.
+
+## Under the Hood
+- The `is_databricks_sql_warehouse` macro has been renamed to `is_incremental_compatible` and has been modified to return `true` if the Databricks runtime being used is an all-purpose cluster (previously this macro checked if a sql warehouse runtime was used) **or** if any other non-Databricks supported destination is being used.
+  - This update was applied as there have been other Databricks runtimes discovered (ie. an endpoint and external runtime) which do not support the `insert_overwrite` incremental strategy used in the `fivetran_platform__audit_table` model. 
+- In addition to the above, for Databricks users the `fivetran_platform__audit_table` model will now leverage the incremental strategy only if the Databricks runtime is all-purpose. Otherwise, all other Databricks runtimes will not leverage an incremental strategy.
+
 # dbt_fivetran_log v1.7.3
 [PR #126](https://github.com/fivetran/dbt_fivetran_log/pull/126) includes the following updates:
 

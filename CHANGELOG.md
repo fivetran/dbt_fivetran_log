@@ -1,5 +1,5 @@
 # dbt_fivetran_log v1.9.0
-[PR #131](https://github.com/fivetran/dbt_fivetran_log/pull/131) includes the following updates:
+[PR #132](https://github.com/fivetran/dbt_fivetran_log/pull/132) includes the following updates:
 
 ## 🚨 Schema Changes 🚨
 - Following the [July 2024 Fivetran Platform connector update](https://fivetran.com/docs/logs/fivetran-platform/changelog#july2024), the `connector_name` field has been added to the `incremental_mar` source table. As a result, the following changes have been applied:

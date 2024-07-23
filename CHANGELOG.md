@@ -1,3 +1,13 @@
+# dbt_fivetran_log v1.9.0
+[PR #131](https://github.com/fivetran/dbt_fivetran_log/pull/131) includes the following updates:
+
+## 🚨 Schema Changes 🚨
+- Following the [July 2024 Fivetran Platform connector update](https://fivetran.com/docs/logs/fivetran-platform/changelog#july2024), the `connector_name` field has been added to the `incremental_mar` source table. As a result, the following changes have been applied:
+  - A new tmp model `stg_fivetran_platform__incremental_mar_tmp` has been created. This is necessary to ensure column consistency in downstream `incremental_mar` models.
+  - The `get_incremental_mar_columns()` macro has been added to ensure all required columns are present in the `stg_fivetran_platform__incremental_mar` model.
+  - The `stg_fivetran_platform__incremental_mar` has been updated to reference both the aforementioned tmp model and macro to fill empty fields if any required field is not present in the source.
+  - The `connector_name` field in the `stg_fivetran_platform__incremental_mar` model is now defined by: `coalesce(connector_name, connector_id)`. This ensures the data model will use the appropriate field to define the `connector_name`.
+
 # dbt_fivetran_log v1.8.0
 [PR #130](https://github.com/fivetran/dbt_fivetran_log/pull/130) includes the following updates:
 

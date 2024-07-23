@@ -20,7 +20,9 @@ sources:
           Each measurement is calculated cumulatively for the month and includes all types of mar (paid, free, etc.)
         columns:
           - name: connector_id
-            description: The *name* of the connector being measured. Note - this is erroneously named and will be fixed soon by Fivetran.
+            description: The *name* of the connector being measured. This may still be present in older Fivetran Platform connectors. However, all connectors setup after July 2024 will not have this field as it has been replaced with connector_name.
+          - name: connector_name
+            description: The name of the connector being measured.
           - name: destination_id
             description: Foreign key referencing the `destination` whose table is being measured.
           - name: free_type

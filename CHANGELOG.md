@@ -8,6 +8,9 @@
   - The `stg_fivetran_platform__incremental_mar` has been updated to reference both the aforementioned tmp model and macro to fill empty fields if any required field is not present in the source.
   - The `connector_name` field in the `stg_fivetran_platform__incremental_mar` model is now defined by: `coalesce(connector_name, connector_id)`. This ensures the data model will use the appropriate field to define the `connector_name`.
 
+## Under the Hood
+- Updated integration test seed data within `integration_tests/seeds/incremental_mar.csv` to ensure new code updates are working as expected.
+
 # dbt_fivetran_log v1.8.0
 [PR #130](https://github.com/fivetran/dbt_fivetran_log/pull/130) includes the following updates:
 

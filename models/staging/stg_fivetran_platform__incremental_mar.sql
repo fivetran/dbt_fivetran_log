@@ -1,13 +1,24 @@
 with base as (
 
     select * 
-    from {{ var('incremental_mar') }}
+    from {{ ref('stg_fivetran_platform__incremental_mar_tmp') }}
 ),
 
 fields as (
+    select
+        {{
+            fivetran_utils.fill_staging_columns(
+                source_columns=adapter.get_columns_in_relation(ref('stg_fivetran_platform__incremental_mar_tmp')),
+                staging_columns=get_incremental_mar_columns()
+            )
+        }}
+    from base
+),
+
+final as (
 
     select
-        connector_id as connector_name,
+        coalesce(connector_name, connector_id) as connector_name,
         destination_id,
         free_type,
         cast(measured_date as {{ dbt.type_timestamp() }}) as measured_date,
@@ -17,8 +28,8 @@ fields as (
         updated_at,
         _fivetran_synced,
         incremental_rows
-    from base
+    from fields
 )
 
 select * 
-from fields
+from final

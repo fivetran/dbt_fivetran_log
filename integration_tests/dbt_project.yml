@@ -8,18 +8,33 @@ dispatch:
   - macro_namespace: dbt_utils
     search_order: ['spark_utils', 'dbt_utils']
 
+# vars:
+#   fivetran_log:
+#     fivetran_platform_schema: "fivetran_platform_integration_tests_super"
+#     fivetran_platform_account_identifier: "account"
+#     fivetran_platform_incremental_mar_identifier: "incremental_mar"
+#     fivetran_platform_connector_identifier: "connector"
+#     fivetran_platform_credits_used_identifier: "credits_used"
+#     fivetran_platform_usage_cost_identifier: "usage_cost"
+#     fivetran_platform_destination_identifier: "destination"
+#     fivetran_platform_destination_membership_identifier: "destination_membership"
+#     fivetran_platform_log_identifier: "log"
+#     fivetran_platform_user_identifier: "user"
+
 vars:
   fivetran_log:
-    fivetran_platform_schema: "fivetran_platform_integration_tests_5"
-    fivetran_platform_account_identifier: "account"
-    fivetran_platform_incremental_mar_identifier: "incremental_mar"
-    fivetran_platform_connector_identifier: "connector"
-    fivetran_platform_credits_used_identifier: "credits_used"
-    fivetran_platform_usage_cost_identifier: "usage_cost"
-    fivetran_platform_destination_identifier: "destination"
-    fivetran_platform_destination_membership_identifier: "destination_membership"
-    fivetran_platform_log_identifier: "log"
-    fivetran_platform_user_identifier: "user"
+    fivetran_platform_schema: "super_test"
+    fivetran_platform_account_identifier: "account_super"
+    fivetran_platform_incremental_mar_identifier: "incremental_mar_super"
+    fivetran_platform_connector_identifier: "connector_super"
+    # fivetran_platform_credits_used_identifier: "credits_used"
+    # fivetran_platform_usage_cost_identifier: "usage_cost"
+    fivetran_platform_destination_identifier: "destination_super"
+    # fivetran_platform_destination_membership_identifier: "destination_membership"
+    fivetran_platform_log_identifier: "log_super"
+    fivetran_platform_user_identifier: "user_super"
+
+  fivetran_platform_using_destination_membership: false
 
 models:
   fivetran_log:
@@ -30,32 +45,33 @@ seeds:
   fivetran_log_integration_tests:
     +column_types:
       _fivetran_synced: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
-    account:
+    account_super:
       +column_types:
         created_at: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
-    incremental_mar:
+    incremental_mar_super:
       +column_types:
         measured_date: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
         incremental_rows: "{{ 'int64' if target.type == 'bigquery' else 'bigint' }}"
-    connector:
+    connector_super:
       +column_types:
         signed_up: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
-    credits_used:
-      +column_types:
-        credits_consumed: "{{ 'int64' if target.type == 'bigquery' else 'bigint' }}"
-    destination:
+    # credits_used:
+    #   +column_types:
+    #     credits_consumed: "{{ 'int64' if target.type == 'bigquery' else 'bigint' }}"
+    destination_super:
       +column_types:
         created_at: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
         id: "{{ 'string' if target.type in ('bigquery', 'spark', 'databricks') else 'varchar' if target.type != 'sqlserver' else 'varchar(256)' }}"
-    destination_membership:
-      +column_types:
-        activated_at: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
+    # destination_membership:
+    #   +column_types:
+    #     activated_at: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
         joined_at: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
-    log:
+    log_super:
       +column_types:
         time_stamp: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
         transformation_id:  "{{ 'string' if target.type in ('bigquery', 'spark', 'databricks') else 'varchar' if target.type != 'sqlserver' else 'varchar(256)' }}"
-    user:
+        message_data: "{{ 'super' if target.type in 'redshift' }}"
+    user_super:
       +column_types:
         created_at: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
 

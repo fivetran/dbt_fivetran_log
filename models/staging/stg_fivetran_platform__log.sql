@@ -26,14 +26,7 @@ final as (
             when transformation_id is not null and event is null then 'TRANSFORMATION'
             else event 
         end as event_type, 
-        {% if target.type in ('redshift') %}
-        case 
-            when json_size(message_data) < 65535 then json_serialize(message_data)
-            else null
-        end as message_data,
-        {% else %} 
         message_data,
-        {% endif %} 
         case 
             when transformation_id is not null and message_data like '%has succeeded%' then 'transformation run success'
             when transformation_id is not null and message_data like '%has failed%' then 'transformation run failed'

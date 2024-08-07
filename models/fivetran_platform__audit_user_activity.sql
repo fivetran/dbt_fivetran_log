@@ -2,9 +2,13 @@ with logs as (
 
     select 
         *,
+        {% if var('fivetran_platform_using_super', true) %}
+        message_data.actor as actor_email
+        {% else %}
         {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['actor']) }} as actor_email
+        {% endif %}
     from {{ ref('stg_fivetran_platform__log') }}
-    where lower(message_data) like '%actor%'
+    -- where message_data.actor is not null
 ),
 
 user_logs as (
@@ -12,7 +16,7 @@ user_logs as (
     select *
     from logs
     where actor_email is not null 
-        and lower(actor_email) != 'fivetran'
+        and lower(json_serialize(actor_email)) != 'fivetran'
 ),
 
 connector as (
@@ -85,7 +89,7 @@ final as (
 
 {%- if var('fivetran_platform_using_user', true) %}
     left join users 
-        on lower(users.email) = lower(user_logs.actor_email)
+        on lower(users.email) = lower(json_serialize(user_logs.actor_email))
 
     {%- if var('fivetran_platform_using_destination_membership', true) %}
     left join destination_membership

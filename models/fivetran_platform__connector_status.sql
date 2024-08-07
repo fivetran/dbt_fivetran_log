@@ -2,10 +2,11 @@ with transformation_removal as (
 
     select 
         *,
-        case when event_subtype in ('status', 'sync_end')
-            then message_data
-            else null 
-        end as filtered_message_data
+        -- case when event_subtype in ('status', 'sync_end')
+        --     then message_data
+        --     else null 
+        -- end as 
+        message_data as filtered_message_data
     from {{ ref('stg_fivetran_platform__log') }}
     where transformation_id is null
 ),
@@ -13,8 +14,13 @@ with transformation_removal as (
 parse_json as (
     select
         *,
+        {% if var('fivetran_platform_using_super', true) %}
+        filtered_message_data.method as log_status,
+        filtered_message_data.uri as log_reason
+        {% else %}
         {{ fivetran_log.fivetran_log_json_parse(string="filtered_message_data", string_path=["status"]) }} as log_status,
         {{ fivetran_log.fivetran_log_json_parse(string="filtered_message_data", string_path=["reason"]) }} as log_reason
+        {% endif %}
     from transformation_removal
 ),
 

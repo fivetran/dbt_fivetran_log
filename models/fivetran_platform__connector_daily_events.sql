@@ -15,10 +15,16 @@ log_events as (
         case 
             when event_subtype in ('create_table', 'alter_table', 'create_schema', 'change_schema_config') then 'schema_change' 
             else event_subtype end as event_subtype,
-
-        sum(case when event_subtype = 'records_modified' then cast( {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['count']) }} as {{ dbt.type_bigint()}} )
+        {% if var('fivetran_platform_using_super', true) %}
+        sum(case when event_subtype = 'records_modified' then 
+            cast( message_data.count as {{ dbt.type_bigint()}} )
         else 1 end) as count_events 
-
+        {% else %}
+        sum(case when event_subtype = 'records_modified' then 
+        
+            cast( {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['count']) }} as {{ dbt.type_bigint()}} )
+        else 1 end) as count_events 
+        {% endif %}
     from {{ ref('stg_fivetran_platform__log') }}
 
     where event_subtype in ('api_call', 

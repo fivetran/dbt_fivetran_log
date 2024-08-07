@@ -35,10 +35,12 @@ vars:
     fivetran_platform_user_identifier: "user_super"
 
   fivetran_platform_using_destination_membership: false
+  fivetran_platform_using_super: true 
 
 models:
   fivetran_log:
-    +schema: "{{ 'sqlw_tests' if target.name == 'databricks-sql' else 'fivetran_platform' }}"
+    +schema: super_dev
+    # +schema: "{{ 'sqlw_tests' if target.name == 'databricks-sql' else 'fivetran_platform' }}"
     # +schema: "fivetran_platform_{{ var('directed_schema','dev') }}"
 
 seeds:

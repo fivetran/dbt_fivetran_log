@@ -14,7 +14,7 @@ with base as (
     
     select *
     from {{ ref('stg_fivetran_platform__log') }}
-    where event_subtype in ('sync_start', 'sync_end', 'write_to_table_start', 'write_to_table_end', 'records_modified')
+    -- where event_subtype in ('sync_start', 'sync_end', 'write_to_table_start', 'write_to_table_end', 'records_modified')
 
     {% if is_incremental() %}
     and cast(created_at as date) > {{ fivetran_log.fivetran_log_lookback(from_date='max(sync_start_day)', interval=7) }}
@@ -24,23 +24,34 @@ with base as (
 sync_log as (
     select 
         *,
+        {% if var('fivetran_platform_using_super', true) %}
+        message_data.table as table_name,
+        {% else %}
         {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['table']) }} as table_name,
+        {% endif %}
         cast(null as {{ dbt.type_string() }}) as schema_name,
         cast(null as {{ dbt.type_string() }}) as operation_type,
         cast(null as {{ dbt.type_bigint() }}) as row_count
     from base
-    where event_subtype in ('sync_start', 'sync_end', 'write_to_table_start', 'write_to_table_end')
+    -- where event_subtype in ('sync_start', 'sync_end', 'write_to_table_start', 'write_to_table_end')
 
     union all
 
     select 
         *,
+        {% if var('fivetran_platform_using_super', true) %}
+        message_data.table as table_name,
+        message_data.schema as schema_name,
+        message_data.operationType as operation_type,
+        cast(message_data.count as {{ dbt.type_bigint() }}) as row_count
+        {% else %}
         {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['table']) }} as table_name,
         {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['schema']) }} as schema_name,
         {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['operationType']) }} as operation_type,
         cast ({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['count']) }} as {{ dbt.type_bigint() }}) as row_count
+        {% endif %}
     from base
-    where event_subtype = 'records_modified'
+    -- where event_subtype = 'records_modified'
 ),
 
 connector as (

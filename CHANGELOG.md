@@ -1,3 +1,10 @@
+# dbt_fivetran_log v1.9.1
+
+[PR #134](https://github.com/fivetran/dbt_fivetran_log/pull/134) includes the following updates:
+
+## Under the Hood
+- Updated `tests` to `data_tests` in the project, following dbt 1.8 syntax change here: https://docs.getdbt.com/docs/build/data-tests#new-data_tests-syntax
+
 # dbt_fivetran_log v1.9.0
 [PR #132](https://github.com/fivetran/dbt_fivetran_log/pull/132) includes the following updates:
 

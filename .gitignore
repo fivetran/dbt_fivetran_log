@@ -5,6 +5,4 @@ logs/
 .gitignore
 .DS_Store
 dbt_packages/
-integration_tests/.DS_Store
-integration_tests/seeds/.DS_Store
-integration_tests/package-lock.yml
+package-lock.yml

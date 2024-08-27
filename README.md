@@ -26,10 +26,10 @@
     - Keeping an audit log of user-triggered actions across your Fivetran instance
 
 <!--section="fivetran_platform_transformation_model"-->
-Refer to the table below for a detailed view of all models materialized by default within this package. Additionally, check out our [docs site](https://fivetran.github.io/dbt_fivetran_log/#!/overview/fivetran_platform?g_v=1&g_e=seeds) for more details about these models.
-### Models
+Refer to the table below for a detailed view of all tables materialized by default within this package. Additionally, check out our [docs site](https://fivetran.github.io/dbt_fivetran_log/#!/overview/fivetran_platform?g_v=1&g_e=seeds) for more details about these tables.
+### Tables
 
-| **model**                  | **description**                                                                                                                                               |
+| **Table**                  | **Description**                                                                                                                                               |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [fivetran_platform__connector_status](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__connector_status)        | Each record represents a connector loading data into a destination, enriched with data about the connector's data sync status.                                          |
 | [fivetran_platform__mar_table_history](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__mar_table_history)     | Each record represents a table's free, paid, and total volume for a month, complete with data about its connector and destination.                             |

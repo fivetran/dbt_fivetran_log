@@ -7,7 +7,7 @@ models:
       Table of each destination's connector and details surrounding its 
       connection and data-sync status.
 
-    tests:
+    data_tests
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns: 
             - connector_id
@@ -65,7 +65,7 @@ models:
       Table of each table's monthly active rows (MAR) for all connectors, destinations, and schemas, per month.
       Read more about how monthly active rows are defined and calculated 
       [here](https://fivetran.com/docs/getting-started/consumption-based-pricing).
-    tests:
+    data_tests
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns: 
             - connector_id
@@ -119,7 +119,7 @@ models:
       usage per million MAR and MAR per usage. Usage either refers to a dollar or credit amount, depending on customer's pricing model.
       Read more about the relationship between usage and MAR [here](https://www.fivetran.com/legal/service-consumption-table).
 
-    tests:
+    data_tests
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns: 
             - destination_id
@@ -168,7 +168,7 @@ models:
       Table of each connector's daily history of the quantity of api calls, schema changes, and records modified,
       starting at the connector's setup date. 
     
-    tests:
+    data_tests
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns: 
             - connector_id
@@ -213,7 +213,7 @@ models:
     columns:
       - name: unique_table_sync_key
         description: Primary key of this table, hashed on `schema_name`, `connector_id`, `destination_id`, `table_name`, and `unique_table_sync_key`.
-        tests:
+        data_tests
           - unique
           - not_null
       - name: connector_id
@@ -250,7 +250,7 @@ models:
     description: >
       Table capturing information around each kind of schema change made to a connector.
       Schema changes include altering and creating tables, changing the schema configuration, and creating schemas. 
-    tests:
+    data_tests
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns: 
             - connector_id
@@ -283,7 +283,7 @@ models:
       Each record represents a user-triggered action in your Fivetran instance.This model is intended for audit-trail purposes, as it can be very helpful
       when trying to trace a user action to a [log event](https://fivetran.com/docs/logs#logeventlist) such as a schema change, sync frequency update, 
       manual update, broken connection, etc.
-    tests:
+    data_tests
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns: 
             - log_id

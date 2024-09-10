@@ -32,7 +32,7 @@ models:
       Table of all connectors loading data into warehouses. Note that deleted connectors 
       are not removed, but can be identified by having an older _fivetran_synced field relative 
       to other connectors.
-    tests:
+    data_tests
       # This combo will be used to join with other tables lacking `connector_id`
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns: 
@@ -58,7 +58,7 @@ models:
 
   - name: stg_fivetran_platform__credits_used
     description: Table of the credits used by the customer per month for each destination.
-    tests:
+    data_tests
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns: 
             - measured_month
@@ -73,7 +73,7 @@ models:
 
   - name: stg_fivetran_platform__usage_cost
     description: Table of the amount spent by the customer per month for each destination. Amount is represented in USD.
-    tests:
+    data_tests
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns: 
             - measured_month
@@ -91,7 +91,7 @@ models:
     columns:
       - name: destination_id
         description: Unique ID of the destination warehouse
-        tests:
+        data_tests
           - unique
           - not_null
       - name: account_id
@@ -107,7 +107,7 @@ models:
     description: > 
       Table of logged events related to data syncs. More info on error logs 
       [here](https://fivetran.com/docs/logs/fivetran-log#errorlogs)
-    tests:
+    data_tests
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns: 
             - log_id
@@ -135,7 +135,7 @@ models:
     columns:
       - name: account_id
         description: Unique ID of the account.
-        tests:
+        data_tests
           - unique
           - not_null
       - name: country
@@ -149,7 +149,7 @@ models:
 
   - name: stg_fivetran_platform__destination_membership
     description: Table of the users given access to this destination.
-    tests:
+    data_tests
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns: 
             - destination_id
@@ -171,7 +171,7 @@ models:
     columns:
       - name: user_id
         description: Unique ID of the user's account
-        tests:
+        data_tests
           - unique
           - not_null
       - name: created_at

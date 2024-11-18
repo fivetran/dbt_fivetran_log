@@ -44,7 +44,7 @@ agg_log_events as (
             then cast(
                 {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['total_queries']) }}
                 as {{ dbt.type_bigint()}})
-            ) as sum_total_queries
+            end) as sum_total_queries
 
     from log_events
 

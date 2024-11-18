@@ -1,3 +1,10 @@
+# dbt_fivetran_log v1.7.4
+[PR #138](https://github.com/fivetran/dbt_fivetran_log/pull/138) includes the following updates:
+
+## Features
+- For Fivetran Platform Connectors created after November 2024, Fivetran has deprecated the `api_call` event in favor of `extract_summary` ([release notes](https://fivetran.com/docs/logs/changelog)).
+- Accordingly, we have updated the `fivetran_platform__connector_daily_events` model to support the new `extract_summary` event while maintaining backward compatibility with the `api_call` event for connectors created before November 2024. 
+
 # dbt_fivetran_log v1.7.3
 [PR #126](https://github.com/fivetran/dbt_fivetran_log/pull/126) includes the following updates:
 

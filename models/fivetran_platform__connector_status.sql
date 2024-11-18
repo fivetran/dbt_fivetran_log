@@ -47,7 +47,7 @@ schema_changes as (
     from {{ ref('stg_fivetran_platform__log') }}
 
     where 
-        {{ dbt.datediff('created_at', dbt.current_timestamp_backcompat() if target.type != 'sqlserver' else dbt.current_timestamp(), 'day') }} <= 30
+        {{ dbt.datediff('created_at', dbt.current_timestamp(), 'day') }} <= 30
         and event_subtype in ('create_table', 'alter_table', 'create_schema', 'change_schema_config')
 
     group by connector_id

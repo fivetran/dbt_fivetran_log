@@ -33,21 +33,16 @@ agg_log_events as (
             when event_subtype in ('create_table', 'alter_table', 'create_schema', 'change_schema_config') then 'schema_change' 
             else event_subtype end as event_subtype,
 
-        sum(case when event_subtype = 'records_modified' 
-                then cast(
-                    {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['count']) }}
-                    as {{ dbt.type_bigint()}} )
-                else 1 end
-            ) as count_events,
-
-        sum(case when event_subtype = 'extract_summary'
-            then cast(
-                {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['total_queries']) }}
-                as {{ dbt.type_bigint()}})
-            end) as sum_total_queries
+        sum(case 
+                when event_subtype = 'records_modified' 
+                then cast({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['count']) }} as {{ dbt.type_bigint()}} )
+                when event_subtype = 'extract_summary'
+                then cast({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['total_queries']) }} as {{ dbt.type_bigint()}})
+                else 1
+                end
+            ) as count_events
 
     from log_events
-
     group by connector_id, date_day, event_subtype
 ),
 
@@ -56,9 +51,7 @@ pivot_out_events as (
     select
         connector_id,
         date_day,
-        max(case when event_subtype = 'api_call' or  event_subtype = 'extract_summary' 
-            then coalesce(sum_total_queries, count_events) 
-            else 0 end) as count_api_calls,
+        max(case when event_subtype = 'api_call' or event_subtype = 'extract_summary' then count_events else 0 end) as count_api_calls,
         max(case when event_subtype = 'records_modified' then count_events else 0 end) as count_record_modifications,
         max(case when event_subtype = 'schema_change' then count_events else 0 end) as count_schema_changes
 

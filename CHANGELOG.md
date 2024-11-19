@@ -1,4 +1,4 @@
-# dbt_fivetran_log v1.9.0
+# dbt_fivetran_log v1.9.1
 [PR #138](https://github.com/fivetran/dbt_fivetran_log/pull/138) includes the following updates:
 
 ## Features

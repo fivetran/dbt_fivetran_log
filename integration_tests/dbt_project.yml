@@ -1,5 +1,9 @@
 name: 'fivetran_log_integration_tests'
+<<<<<<< HEAD
 version: '1.7.4'
+=======
+version: '1.9.0'
+>>>>>>> main
 
 config-version: 2
 profile: 'integration_tests'
@@ -10,7 +14,7 @@ dispatch:
 
 vars:
   fivetran_log:
-    fivetran_platform_schema: "fivetran_platform_integration_tests"
+    fivetran_platform_schema: "fivetran_platform_integration_tests_5"
     fivetran_platform_account_identifier: "account"
     fivetran_platform_incremental_mar_identifier: "incremental_mar"
     fivetran_platform_connector_identifier: "connector"
@@ -21,10 +25,10 @@ vars:
     fivetran_platform_log_identifier: "log"
     fivetran_platform_user_identifier: "user"
 
-
 models:
   fivetran_log:
     +schema: "{{ 'sqlw_tests' if target.name == 'databricks-sql' else 'fivetran_platform' }}"
+    # +schema: "fivetran_platform_{{ var('directed_schema','dev') }}"
 
 seeds:
   fivetran_log_integration_tests:

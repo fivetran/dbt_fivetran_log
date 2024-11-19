@@ -234,9 +234,9 @@ models:
       - name: write_to_table_end
         description: Timestamp of when Fivetran finished writing to this table.
       - name: sync_start
-        description: Timestamp of when this connector-level sync began. 
+        description: Timestamp of when this connector-level sync began and wrote or modified records to the table.
       - name: sync_end
-        description: Timestamp of when this connector-level sync finished, if successful. 
+        description: Timestamp of when this connector-level sync finished, if successful, and wrote or modified records to the table. 
       - name: sum_rows_replaced_or_inserted
         description: Sum of the rows replaced or inserted into this table during a sync. 
       - name: sum_rows_updated

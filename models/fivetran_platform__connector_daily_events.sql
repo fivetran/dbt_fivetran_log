@@ -33,7 +33,8 @@ agg_log_events as (
             when event_subtype in ('create_table', 'alter_table', 'create_schema', 'change_schema_config') then 'schema_change' 
             else event_subtype end as event_subtype,
 
-        sum(case 
+        sum(
+            case 
                 when event_subtype = 'records_modified' 
                 then cast({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['count']) }} as {{ dbt.type_bigint()}} )
                 when event_subtype = 'extract_summary'

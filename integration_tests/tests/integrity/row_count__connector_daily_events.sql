@@ -37,7 +37,7 @@ spine as (
         {{ fivetran_utils.fivetran_date_spine(
             datepart = "day", 
             start_date =  "cast('" ~ first_date[0:10] ~ "' as date)", 
-            end_date = dbt.dateadd("week", 1, dbt.date_trunc('day', dbt.current_timestamp_backcompat() if target.type != 'sqlserver' else dbt.current_timestamp())) 
+            end_date = dbt.dateadd("week", 1, dbt.date_trunc('day', dbt.current_timestamp())) 
             ) 
         }} 
     ) as date_spine

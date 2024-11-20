@@ -7,6 +7,7 @@
 
 ## Under the Hood
 - Replaced the deprecated `dbt.current_timestamp_backcompat()` function with `dbt.current_timestamp()` to ensure all timestamps are captured in UTC.
+- Updated `fivetran_platform__connector_daily_events` to support running `dbt compile` prior to the initial `dbt run` on a new schema.
 
 # dbt_fivetran_log v1.9.0
 [PR #132](https://github.com/fivetran/dbt_fivetran_log/pull/132) includes the following updates:

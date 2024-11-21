@@ -20,7 +20,7 @@ log_events as (
 
     where event_subtype in (
         'api_call', 'extract_summary', 'records_modified', 'create_table', 'alter_table',
-        'create_schema', 'change_schema_config') -- all schema changes
+        'create_schema', 'change_schema_config') -- all relevant event subtypes
         and connector_id is not null
 ),
 

@@ -1,4 +1,6 @@
-<p align="center">
+# Fivetran Platform dbt Package ([Docs](https://fivetran.github.io/dbt_fivetran_log/))
+
+<p align="left">
     <a alt="License"
         href="https://github.com/fivetran/dbt_fivetran_log/blob/main/LICENSE">
         <img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" /></a>
@@ -13,7 +15,6 @@
         <img src="https://img.shields.io/badge/Fivetran_Quickstart_Compatible%3F-yes-green.svg" /></a>
 </p>
 
-# Fivetran Platform dbt Package ([Docs](https://fivetran.github.io/dbt_fivetran_log/))
 ## What does this dbt package do?
 - Generates a comprehensive data dictionary of your Fivetran Platform connector (previously called Fivetran Log) data via the [dbt docs site](https://fivetran.github.io/dbt_fivetran_log/)
 

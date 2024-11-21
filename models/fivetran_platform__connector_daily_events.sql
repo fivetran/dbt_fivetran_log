@@ -7,27 +7,44 @@ with connector as (
 ),
 
 -- grab api calls, schema changes, and record modifications
+
 log_events as (
 
     select 
         connector_id,
         cast( {{ dbt.date_trunc('day', 'created_at') }} as date) as date_day,
+        event_subtype,
+        message_data
+
+    from {{ ref('stg_fivetran_platform__log') }}
+
+    where event_subtype in (
+        'api_call', 'extract_summary', 'records_modified', 'create_table', 'alter_table',
+        'create_schema', 'change_schema_config') -- all relevant event subtypes
+        and connector_id is not null
+),
+
+agg_log_events as (
+
+    select 
+        connector_id,
+        date_day,
         case 
             when event_subtype in ('create_table', 'alter_table', 'create_schema', 'change_schema_config') then 'schema_change' 
             else event_subtype end as event_subtype,
 
-        sum(case when event_subtype = 'records_modified' then cast( {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['count']) }} as {{ dbt.type_bigint()}} )
-        else 1 end) as count_events 
+        sum(
+            case 
+                when event_subtype = 'records_modified' 
+                then cast({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['count']) }} as {{ dbt.type_bigint()}} )
+                when event_subtype = 'extract_summary'
+                then cast({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['total_queries']) }} as {{ dbt.type_bigint()}})
+                else 1
+                end
+            ) as count_events
 
-    from {{ ref('stg_fivetran_platform__log') }}
-
-    where event_subtype in ('api_call', 
-                            'records_modified', 
-                            'create_table', 'alter_table', 'create_schema', 'change_schema_config') -- all schema changes
-                            
-        and connector_id is not null
-
-    group by connector_id, cast( {{ dbt.date_trunc('day', 'created_at') }} as date), event_subtype
+    from log_events
+    group by connector_id, date_day, event_subtype
 ),
 
 pivot_out_events as (
@@ -35,11 +52,11 @@ pivot_out_events as (
     select
         connector_id,
         date_day,
-        max(case when event_subtype = 'api_call' then count_events else 0 end) as count_api_calls,
+        max(case when event_subtype = 'api_call' or event_subtype = 'extract_summary' then count_events else 0 end) as count_api_calls,
         max(case when event_subtype = 'records_modified' then count_events else 0 end) as count_record_modifications,
         max(case when event_subtype = 'schema_change' then count_events else 0 end) as count_schema_changes
 
-    from log_events
+    from agg_log_events
     group by connector_id, date_day
 ), 
 
@@ -63,7 +80,7 @@ connector_event_counts as (
 
 spine as (
 
-    {% if execute %}
+    {% if execute and flags.WHICH in ('run', 'build') %}
     {% set first_date_query %}
         select  min( signed_up ) as min_date from {{ var('connector') }}
     {% endset %}
@@ -78,7 +95,7 @@ spine as (
         {{ fivetran_utils.fivetran_date_spine(
             datepart = "day", 
             start_date =  "cast('" ~ first_date[0:10] ~ "' as date)", 
-            end_date = dbt.dateadd("week", 1, dbt.date_trunc('day', dbt.current_timestamp_backcompat() if target.type != 'sqlserver' else dbt.current_timestamp())) 
+            end_date = dbt.dateadd("week", 1, dbt.date_trunc('day', dbt.current_timestamp())) 
             ) 
         }} 
     ) as date_spine
@@ -138,7 +155,7 @@ final as (
     select *
     from join_event_history
 
-    where date_day <= cast({{ dbt.current_timestamp_backcompat() if target.type != 'sqlserver' else dbt.current_timestamp() }} as date)
+    where date_day <= cast({{ dbt.current_timestamp() }} as date)
 )
 
 select *

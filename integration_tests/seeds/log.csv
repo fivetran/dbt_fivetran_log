@@ -30,3 +30,5 @@ D7UqnKYn6OT04HkUcPNjXA95ttI=,2021-12-10 14:26:29.719,2021-12-10 20:30:53.878,thi
 V3H62Gj5c6nB8bY+OdxMHvp/hNs=,2021-12-10 14:26:05.907,2021-12-10 20:30:53.778,this_connector,INFO,,sync_start,123,456abc
 jkLxnPUfQ/9mHaWCmxUQEhul8ZA=,2023-11-09 11:31:31.579000,2023-11-09 15:55:12.560000,protestations_mourned,INFO,"{""actor"":""me@me.com"",""properties"":{""endpoint"":""************"",""apiKey"":""************"",""customEvents"":[],""syncMode"":""AllEvents"",""isE2ETest"":false,""events"":[],""customEventSyncMode"":""AllEvents""},""id"":""iterable""}",create_connector,,
 R7UqnKYn6OT04HkUcPNjXA95qqI=,2021-12-10 16:26:29.719,2021-12-10 20:30:53.878,intrinsic_departed,INFO,says actor but not a json,status,,456abc
+D7UqnKYn6OT04HkUcPNjXA95qqp=,2024-11-18 16:26:29.719,2024-11-19 20:30:53.878,aft_gleeful,INFO,"{""total_queries"":15,""total_rows"":4810}",extract_summary,,456abc
+h7UqnKYn6OT04HkUcPNjXA95qlp=,2024-11-19 16:26:29.719,2024-11-19 20:30:53.878,aft_gleeful,INFO,"{""total_queries"":5,""total_rows"":4810}",extract_summary,,456abc

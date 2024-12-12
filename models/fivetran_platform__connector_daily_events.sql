@@ -14,7 +14,7 @@ log_events as (
         connector_id,
         cast( {{ dbt.date_trunc('day', 'created_at') }} as date) as date_day,
         event_subtype,
-        message_data
+        replace('message_data', 'totalQueries', 'total_queries') as message_data
 
     from {{ ref('stg_fivetran_platform__log') }}
 
@@ -38,7 +38,7 @@ agg_log_events as (
                 when event_subtype = 'records_modified' 
                 then cast({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['count']) }} as {{ dbt.type_bigint()}} )
                 when event_subtype = 'extract_summary'
-                then cast({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['total_queries']) }} as {{ dbt.type_bigint()}})
+                then cast(nullif({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['total_queries']) }}, '') as {{ dbt.type_bigint()}})
                 else 1
                 end
             ) as count_events

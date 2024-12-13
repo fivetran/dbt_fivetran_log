@@ -1,3 +1,15 @@
+# dbt_fivetran_log v1.10.0
+[PR #140](https://github.com/fivetran/dbt_fivetran_log/pull/140) includes the following updates:
+
+## Breaking Changes
+> A `--full-refresh` is recommended after upgrading to ensure historical records in incremental models are refreshed.
+- Updated the `fivetran_log_json_parse` macro for Redshift to return `NULL` instead of an empty string when a JSON path is not found. This resolves errors caused by casting empty strings to integers in Redshift.
+- Standardized the `message_data` field from the `LOG` source, in which JSON key names can appear in both camelCase (e.g., `{"totalQueries":5}`) and snake_case (e.g., `{"total_queries":5}`) formats, depending on the Fivetran connector version. The `fivetran_platform__audit_table` and `fivetran_platform__connector_daily_events` models now convert all key names to snake_case for consistency.
+- These changes are considered breaking because the standardization of key names (e.g., `totalQueries` to `total_queries`) may impact downstream reporting by including previously ignored values.
+
+## Under the Hood (Maintainers Only)
+- Enhanced seed data for integration testing to include the different spellings and ensure compatibility with Redshift.
+
 # dbt_fivetran_log v1.9.1
 [PR #138](https://github.com/fivetran/dbt_fivetran_log/pull/138) includes the following updates:
 

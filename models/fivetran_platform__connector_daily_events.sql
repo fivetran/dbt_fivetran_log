@@ -14,7 +14,7 @@ log_events as (
         connector_id,
         cast( {{ dbt.date_trunc('day', 'created_at') }} as date) as date_day,
         event_subtype,
-        replace('message_data', 'totalQueries', 'total_queries') as message_data
+        replace(message_data, 'totalQueries', 'total_queries') as message_data
 
     from {{ ref('stg_fivetran_platform__log') }}
 

@@ -16,7 +16,7 @@ with base as (
         connector_id,
         created_at,
         event_subtype, 
-        replace('message_data', 'operationType', 'operation_type') as message_data
+        replace(message_data, 'operationType', 'operation_type') as message_data
     from {{ ref('stg_fivetran_platform__log') }}
     where event_subtype in ('sync_start', 'sync_end', 'write_to_table_start', 'write_to_table_end', 'records_modified')
 

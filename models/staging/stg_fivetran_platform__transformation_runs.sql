@@ -23,14 +23,13 @@ fields as (
 
 final as (
     
-    select 
-        source_relation, 
+    select
         _fivetran_synced,
         destination_id,
         free_type,
         job_id,
         job_name,
-        measured_date,
+        cast(measured_date as {{ dbt.type_timestamp() }}) as measured_date,
         model_runs,
         project_type,
         updated_at

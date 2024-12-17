@@ -10,7 +10,7 @@ credits_used as (
     from {{ ref('stg_fivetran_platform__credits_used') }}
 ),
 
-useage_cost as (
+usage_cost as (
 
     select *
     from {{ ref('stg_fivetran_platform__usage_cost') }}
@@ -32,14 +32,14 @@ destination_mar as (
 usage as (
 
     select 
-        coalesce(credits_used.destination_id, useage_cost.destination_id) as destination_id,
+        coalesce(credits_used.destination_id, usage_cost.destination_id) as destination_id,
         credits_used.credits_spent,
-        useage_cost.dollars_spent,
-        cast(concat(coalesce(credits_used.measured_month,useage_cost.measured_month), '-01') as date) as measured_month -- match date format to join with MAR table
+        usage_cost.dollars_spent,
+        cast(concat(coalesce(credits_used.measured_month,usage_cost.measured_month), '-01') as date) as measured_month -- match date format to join with MAR table
     from credits_used
-    full outer join useage_cost
-        on useage_cost.measured_month = credits_used.measured_month
-        and useage_cost.destination_id = credits_used.destination_id
+    full outer join usage_cost
+        on usage_cost.measured_month = credits_used.measured_month
+        and usage_cost.destination_id = credits_used.destination_id
 ),
 
 join_usage_mar as (

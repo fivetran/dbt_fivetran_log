@@ -23,3 +23,4 @@ vars:
     log: "{{ source('fivetran_platform', 'log') }}"
     user: "{{ source('fivetran_platform', 'user') }}"
     usage_cost: "{{ source('fivetran_platform', 'usage_cost') }}"
+    transformation_runs: "{{ source('fivetran_platform','transformation_runs') }}"

@@ -1,0 +1,3 @@
+destination_id,job_id,measured_date,project_type,free_type,job_name,updated_at,model_runs,_fivetran_synced
+egg_shell,formosa,2024-12-15 00:00:00.000000,QUICKSTART,PAID,Github/staging,2024-12-15 18:13:59.840000,6,2024-12-16 00:11:52.792000
+egg_shell,macau,2024-12-08 00:00:00.000000,QUICKSTART,PROMOTION,Github/staging,2024-12-09 15:21:02.278000,6,2024-12-09 18:11:46.905000

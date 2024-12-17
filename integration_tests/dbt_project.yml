@@ -1,5 +1,5 @@
 name: 'fivetran_log_integration_tests'
-version: '1.9.1'
+version: '1.10.0'
 
 config-version: 2
 profile: 'integration_tests'
@@ -20,6 +20,8 @@ vars:
     fivetran_platform_destination_membership_identifier: "destination_membership"
     fivetran_platform_log_identifier: "log"
     fivetran_platform_user_identifier: "user"
+    fivetran_platform_transformation_runs_identifier: "transformation_runs"
+
 
 models:
   fivetran_log:

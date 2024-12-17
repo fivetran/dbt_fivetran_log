@@ -20,7 +20,7 @@ vars:
     fivetran_platform_destination_membership_identifier: "destination_membership"
     fivetran_platform_log_identifier: "log"
     fivetran_platform_user_identifier: "user"
-    fivetran_log_transformation_runs_identifier: "transformation_runs"
+    fivetran_platform_transformation_runs_identifier: "transformation_runs"
 
 
 models:

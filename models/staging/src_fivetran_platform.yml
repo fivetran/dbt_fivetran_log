@@ -205,9 +205,7 @@ sources:
 
       - name: transformation_runs
         identifier: '{{ var("fivetran_log_transformation_runs_identifier", "transformation_runs") }}'
-        description: >
-          Table of all transformation runs that have been executed by Fivetran. 
-          This table is only available for customers who have enabled the transformation feature.
+        description: Table of all transformation runs that have been executed by Fivetran.
         columns:
           - name: destination_id
             description: Foreign key referencing the `destination` warehouse that the transformation was run on.

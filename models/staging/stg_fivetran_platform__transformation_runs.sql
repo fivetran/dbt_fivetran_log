@@ -36,5 +36,7 @@ final as (
     from fields
 )
 
-select *
+select
+    *,
+    {{ dbt.date_trunc('month', 'measured_date') }} as measured_month
 from final

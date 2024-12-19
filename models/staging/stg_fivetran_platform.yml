@@ -198,6 +198,8 @@ models:
         description: Foreign key referencing the job affiliated with the transformation run.
       - name: measured_date
         description: The date in UTC format of when models were run.
+      - name: measured_month
+        description: The month (yyyy-mm) of the usage activity.
       - name: project_type
         description: The type of transformation project that was run (ie DBT_CORE, QUICKSTART).
       - name: free_type

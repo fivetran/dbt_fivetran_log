@@ -18,10 +18,12 @@
 
 {% macro redshift__fivetran_log_json_parse(string, string_path) %}
 
-  json_extract_path_text(
-    {{ string }}, 
-    {%- for s in string_path -%}'{{ s }}'{%- if not loop.last -%},{%- endif -%}{%- endfor -%}, 
-    true ) -- this flag sets null_if_invalid=true
+  nullif(
+    json_extract_path_text(
+      {{ string }}, 
+      {%- for s in string_path -%}'{{ s }}'{%- if not loop.last -%},{%- endif -%}{%- endfor -%}, 
+      true ) -- this flag sets null_if_invalid=true
+    , '')
 
 {% endmacro %}
 

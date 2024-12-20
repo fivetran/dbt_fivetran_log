@@ -20,7 +20,7 @@ transformation_runs as (
 
     select
         destination_id,
-        measured_month,
+        cast(measured_month as date) as measured_month,
         sum(case when free_type = 'PAID' then model_runs else 0 end) as paid_model_runs,
         sum(case when free_type != 'PAID' then model_runs else 0 end) as free_model_runs,
         sum(model_runs) as total_model_runs

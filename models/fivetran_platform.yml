@@ -163,6 +163,15 @@ models:
       - name: dollars_spent
         description: The dollar amount used by the destination for the given month.
 
+      - name: paid_model_runs
+        description: The number of paid model runs for the destination for the given month.
+
+      - name: free_model_runs
+        description: The number of free model runs for the destination for the given month.
+
+      - name: total_model_runs
+        description: The total number of model runs for the destination for the given month.
+
   - name: fivetran_platform__connector_daily_events
     description: >
       Table of each connector's daily history of the quantity of api calls, schema changes, and records modified,

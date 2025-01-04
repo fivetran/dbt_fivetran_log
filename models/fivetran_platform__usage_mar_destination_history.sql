@@ -76,7 +76,7 @@ join_usage_mar as (
         round( cast(nullif(destination_mar.total_monthly_active_rows,0) * 1.0 as {{ dbt.type_numeric() }}) / cast(nullif(usage.dollars_spent,0) as {{ dbt.type_numeric() }}), 0) as mar_per_amount_spent
     from destination_mar 
     left join usage 
-        on destination_mar.measured_month = cast(usage.measured_month as date)
+        on destination_mar.measured_month = usage.measured_month
         and destination_mar.destination_id = usage.destination_id
     left join transformation_runs
         on destination_mar.measured_month = transformation_runs.measured_month

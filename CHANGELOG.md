@@ -3,7 +3,8 @@
 
 ## Schema Changes: Adding the transformation_runs table
 - We have added the `transformation_runs` source table. This includes the following updates:
-  - Added a new staging `stg_fivetran_platform__transformation_runs` model. Additionally, a new tmp model `stg_fivetran_platform__transformation_runs_tmp` and `get_transformation_runs_columns()` macro to ensure all required columns are present in the new staging model.
+  - Added a new staging `stg_fivetran_platform__transformation_runs` model. 
+    - We have also added new tmp model `stg_fivetran_platform__transformation_runs_tmp` and `get_transformation_runs_columns()` macro to ensure all required columns are present.
   - Added the following fields to the `fivetran_platform__usage_mar_destination_history` end model for each destination and month:
     - `paid_model_runs`
     - `free_model_runs`

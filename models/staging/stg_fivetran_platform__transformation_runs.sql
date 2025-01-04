@@ -22,7 +22,7 @@ final as (
     select
         _fivetran_synced,
         destination_id,
-        free_type,
+        upper(free_type) as free_type,
         job_id,
         job_name,
         cast(measured_date as {{ dbt.type_timestamp() }}) as measured_date,

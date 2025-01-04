@@ -199,7 +199,7 @@ models:
       - name: measured_date
         description: The date in UTC format of when models were run.
       - name: measured_month
-        description: The month (yyyy-mm) of the usage activity.
+        description: The month (yyyy-mm) of the transformation activity.
       - name: project_type
         description: The type of transformation project that was run (ie DBT_CORE, QUICKSTART).
       - name: free_type

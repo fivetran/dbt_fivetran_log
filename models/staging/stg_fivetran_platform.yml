@@ -191,6 +191,15 @@ models:
 
   - name: stg_fivetran_platform__transformation_runs
     description: Table of all transformation runs that have been executed by Fivetran.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: 
+            - destination_id
+            - job_id
+            - project_type
+            - free_type
+            - updated_at
+            - measured_date
     columns:
       - name: destination_id
         description: Foreign key referencing the destination for which model runs is calculated.

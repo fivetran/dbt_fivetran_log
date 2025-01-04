@@ -3,9 +3,9 @@
 
 ## Schema Changes: Adding the transformation_runs table
 - We have added the `transformation_runs` source table. This includes the following updates:
-  - Added a new staging `stg_fivetran_platform__transformation_runs` model. 
+  - Added a new staging [`stg_fivetran_platform__transformation_runs`](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.stg_fivetran_platform__transformation_runs) model. 
     - We have also added new tmp model `stg_fivetran_platform__transformation_runs_tmp` and `get_transformation_runs_columns()` macro to ensure all required columns are present.
-  - Added the following fields to the `fivetran_platform__usage_mar_destination_history` end model for each destination and month:
+  - Added the following fields to the [`fivetran_platform__usage_mar_destination_history`](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__usage_mar_destination_history) end model for each destination and month:
     - `paid_model_runs`
     - `free_model_runs`
     - `total_model_runs`
@@ -13,6 +13,7 @@
 
 ## Under the Hood
 - Added `transformation_runs` seed data in `integration_tests/seeds/`.
+- Added a `run_count__usage_mar_destination_history` validation test to check model run counts across staging and end model.
 
 # dbt_fivetran_log v1.10.0
 [PR #140](https://github.com/fivetran/dbt_fivetran_log/pull/140) includes the following updates:

@@ -203,7 +203,7 @@ models:
       - name: project_type
         description: The type of transformation project that was run (ie DBT_CORE, QUICKSTART).
       - name: free_type
-        description: If it is free MAR, the value indicates the type of free MAR. For paid MAR, the value is `PAID`.
+        description: If it is a free model run, the value indicates the type of free run. For paid model runs, the value is `PAID`.
       - name: job_name
         description: The name of the transformation job that was run.
       - name: updated_at

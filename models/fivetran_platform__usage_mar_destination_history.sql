@@ -20,10 +20,10 @@ transformation_runs as (
 
     select
         destination_id,
-        cast(measured_month as date) as measured_month,
+        measured_month,
         sum(case when free_type = 'PAID' then model_runs else 0 end) as paid_model_runs,
         sum(case when free_type != 'PAID' then model_runs else 0 end) as free_model_runs,
-        sum(model_runs) as total_model_runs
+        sum(coalesce(model_runs, 0)) as total_model_runs
     from {{ ref('stg_fivetran_platform__transformation_runs') }}
     group by destination_id, measured_month
 ),
@@ -79,7 +79,7 @@ join_usage_mar as (
         on destination_mar.measured_month = cast(usage.measured_month as date)
         and destination_mar.destination_id = usage.destination_id
     left join transformation_runs
-        on destination_mar.measured_month = cast(transformation_runs.measured_month as date)
+        on destination_mar.measured_month = transformation_runs.measured_month
         and destination_mar.destination_id = transformation_runs.destination_id
 )
 

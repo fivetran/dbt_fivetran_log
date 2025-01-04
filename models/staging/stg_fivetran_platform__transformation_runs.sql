@@ -14,10 +14,6 @@ fields as (
                 staging_columns=get_transformation_runs_columns()
             )
         }}
-        {{ fivetran_utils.source_relation(
-            union_schema_variable='fivetran_platform_union_schemas', 
-            union_database_variable='fivetran_platform_union_databases') 
-        }}
     from base
 ),
 
@@ -38,5 +34,5 @@ final as (
 
 select
     *,
-    {{ dbt.date_trunc('month', 'measured_date') }} as measured_month
+    cast({{ dbt.date_trunc('month', 'measured_date') }} as date) as measured_month
 from final

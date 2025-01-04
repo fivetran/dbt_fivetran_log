@@ -195,7 +195,7 @@ models:
       - name: destination_id
         description: Foreign key referencing the destination for which model runs is calculated.
       - name: job_id
-        description: Foreign key referencing the job affiliated with the transformation run.
+        description: Unique key referencing the job affiliated with the transformation run.
       - name: measured_date
         description: The date in UTC format of when models were run.
       - name: measured_month

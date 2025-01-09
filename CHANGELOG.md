@@ -9,7 +9,10 @@
     - `paid_model_runs`
     - `free_model_runs`
     - `total_model_runs`
-  - Included documentation about the respective fields in the `transformation_runs` source table and the aggregated `*_model_run` fields.
+- *NOTE*: Not all customers will have the `transformation_runs` source table, particularly if they are not using Fivetran Transformations. Therefore, the `transformation_runs` table is disabled by default. You may enable the table by leveraging the `fivetran_platform_using_transformations` variable. For more information on enabling the `transformation_runs` and its downstream logic, refer to the [README](https://github.com/fivetran/dbt_fivetran_log#step-4-disable-models-for-non-existent-sources). 
+
+## Documentation Updates
+  - Included documentation about the `transformation_runs` source table and the aggregated `*_model_run` fields. Updated the README with information on configuring the `fivetran_platform_using_transformations` variable.
 
 ## Under the Hood
 - Added `transformation_runs` seed data in `integration_tests/seeds/`.

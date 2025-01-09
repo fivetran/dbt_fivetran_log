@@ -85,12 +85,13 @@ vars:
 ```
 
 ### Step 4: Disable Models for Non Existent Sources
-If you do not leverage Fivetran RBAC, then you will not have the `user` or `destination_membership` sources. It's also possible you might not have any To disable the corresponding functionality in the package, you must add the following variable(s) to your root `dbt_project.yml` file. By default, all variables are assumed to be `true`:
+If you do not leverage Fivetran RBAC, then you will not have the `user` or `destination_membership` source tables. Similarly, if you are not using Fivetran Transformations, you may not have the `transformation_runs` table. While the `transformation_runs` table is disabled by default, the `user` and `destination_membership` are enabled by default. Therefore in order to switch the default configurations, you must add the following variable(s) to your root `dbt_project.yml` file for the respective source tables you wish to disable or enable:
 
 ```yml
 vars:
-    fivetran_platform_using_destination_membership: false # this will disable only the destination membership logic
-    fivetran_platform_using_user: false # this will disable only the user logic
+    fivetran_platform_using_destination_membership: false # Default is true. This will disable only the destination membership logic
+    fivetran_platform_using_user: false # Default is true. This will disable only the user logic
+    fivetran_platform_using_transformations: true # Default is false. This will enable only the transformation_runs logic
 ```
 
 ### (Optional) Step 5: Additional Configurations

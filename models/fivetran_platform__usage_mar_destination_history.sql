@@ -16,8 +16,6 @@ usage_cost as (
     from {{ ref('stg_fivetran_platform__usage_cost') }}
 ),
 
-{% if var('fivetran_platform_using_transformations', False) %}
-
 transformation_runs as (
 
     select
@@ -29,8 +27,6 @@ transformation_runs as (
     from {{ ref('stg_fivetran_platform__transformation_runs') }}
     group by destination_id, measured_month
 ),
-
-{% endif %}
 
 destination_mar as (
 
@@ -69,12 +65,9 @@ join_usage_mar as (
         destination_mar.free_monthly_active_rows,
         destination_mar.paid_monthly_active_rows,
         destination_mar.total_monthly_active_rows,
-
-        {% if var('fivetran_platform_using_transformations', False) %}
         transformation_runs.paid_model_runs,
         transformation_runs.free_model_runs,
         transformation_runs.total_model_runs,
-        {% endif %}
 
         -- credit and usage mar calculations
         round( cast(nullif(usage.credits_spent,0) * 1000000.0 as {{ dbt.type_numeric() }}) / cast(nullif(destination_mar.total_monthly_active_rows,0) as {{ dbt.type_numeric() }}), 2) as credits_spent_per_million_mar,
@@ -85,12 +78,9 @@ join_usage_mar as (
     left join usage 
         on destination_mar.measured_month = usage.measured_month
         and destination_mar.destination_id = usage.destination_id
-
-    {% if var('fivetran_platform_using_transformations', False) %}
     left join transformation_runs
         on destination_mar.measured_month = transformation_runs.measured_month
         and destination_mar.destination_id = transformation_runs.destination_id
-    {% endif %}
 
 )
 

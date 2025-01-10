@@ -1,26 +1,14 @@
 -- If you have the transformation_runs and wish to enable this model, set the fivetran_platform_using_transformations variable within your dbt_project.yml file to True.
-{{ config(enabled=var('fivetran_platform_using_transformations', False)) }}
+{% if var('fivetran_platform_using_transformations', does_table_exist('transformation_runs')) %}
 
 with base as (
 
     select * 
-    from {{ ref('stg_fivetran_platform__transformation_runs_tmp') }}
+    from {{ var('transformation_runs') }}
 ),
 
 fields as (
 
-    select
-        {{
-            fivetran_utils.fill_staging_columns(
-                source_columns=adapter.get_columns_in_relation(ref('stg_fivetran_platform__transformation_runs_tmp')),
-                staging_columns=get_transformation_runs_columns()
-            )
-        }}
-    from base
-),
-
-final as (
-    
     select
         _fivetran_synced,
         destination_id,
@@ -31,10 +19,35 @@ final as (
         model_runs,
         project_type,
         updated_at
-    from fields
+    from base
 )
 
 select
     *,
     cast({{ dbt.date_trunc('month', 'measured_date') }} as date) as measured_month
-from final
+from fields
+
+{% else %}
+
+select
+
+    {% if target.type in ('sqlserver') %}
+    top 0
+    {% endif %}
+
+    cast(null as {{ dbt.type_timestamp() }}) as _fivetran_synced,
+    cast(null as {{ dbt.type_string() }}) as destination_id,
+    cast(null as {{ dbt.type_string() }}) as free_type,
+    cast(null as {{ dbt.type_string() }}) as job_id,
+    cast(null as {{ dbt.type_string() }}) as job_name,
+    cast(null as {{ dbt.type_timestamp() }}) as measured_date,
+    cast(null as {{ dbt.type_int() }}) as model_runs,
+    cast(null as {{ dbt.type_string() }}) as project_type,
+    cast(null as {{ dbt.type_timestamp() }}) as updated_at,
+    cast(null as date) as measured_month
+
+    {% if target.type not in ('sqlserver') %}
+    limit 0
+    {% endif %}
+
+{% endif %}

@@ -206,8 +206,6 @@ sources:
       - name: transformation_runs
         identifier: '{{ var("fivetran_log_transformation_runs_identifier", "transformation_runs") }}'
         description: Table of all transformation runs that have been executed by Fivetran.
-        config:
-          enabled: "{{ var('fivetran_platform_using_transformations', False) }}"
         columns:
           - name: destination_id
             description: Foreign key referencing the destination for which model runs is calculated.

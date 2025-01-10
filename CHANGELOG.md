@@ -12,7 +12,7 @@
 - *NOTE*: Not all customers will have the `transformation_runs` source table, particularly if they are not using Fivetran Transformations. Therefore, the `transformation_runs` table will only populate if the table exists in your schema. If the table doesn't exist, the staging `stg_fivetran_platform__transformation_runs` model will persist as an empty model and respective downstream fields will be null.
 
 ## Documentation Updates
-  - Included documentation about the `transformation_runs` source table and the aggregated `*_model_run` fields. Updated the README with information on configuring the `fivetran_platform_using_transformations` variable.
+  - Included documentation about the `transformation_runs` source table and the aggregated `*_model_run` fields.
 
 ## Under the Hood
 - Added `transformation_runs` seed data in `integration_tests/seeds/`.

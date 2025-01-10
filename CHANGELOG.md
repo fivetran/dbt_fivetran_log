@@ -4,12 +4,12 @@
 ## Schema Changes: Adding the transformation_runs table
 - We have added the `transformation_runs` source table. This includes the following updates:
   - Added a new staging [`stg_fivetran_platform__transformation_runs`](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.stg_fivetran_platform__transformation_runs) model. 
-    - We have also added new tmp model `stg_fivetran_platform__transformation_runs_tmp` and `get_transformation_runs_columns()` macro to ensure all required columns are present.
+    - We have also added the `get_transformation_runs_columns()` macro to ensure all required columns are present.
   - Added the following fields to the [`fivetran_platform__usage_mar_destination_history`](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__usage_mar_destination_history) end model for each destination and month:
     - `paid_model_runs`
     - `free_model_runs`
     - `total_model_runs`
-- *NOTE*: Not all customers will have the `transformation_runs` source table, particularly if they are not using Fivetran Transformations. Therefore, the `transformation_runs` table is disabled by default. You may enable the table by leveraging the `fivetran_platform_using_transformations` variable. For more information on enabling the `transformation_runs` and its downstream logic, refer to the [README](https://github.com/fivetran/dbt_fivetran_log#step-4-disable-models-for-non-existent-sources). 
+- *NOTE*: Not all customers will have the `transformation_runs` source table, particularly if they are not using Fivetran Transformations. Therefore, the `transformation_runs` table will only populate if the table exists in your schema. If the table doesn't exist, the staging `stg_fivetran_platform__transformation_runs` model will persist as an empty model and respective downstream fields will be null.
 
 ## Documentation Updates
   - Included documentation about the `transformation_runs` source table and the aggregated `*_model_run` fields. Updated the README with information on configuring the `fivetran_platform_using_transformations` variable.

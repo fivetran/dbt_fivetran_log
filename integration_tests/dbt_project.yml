@@ -21,7 +21,6 @@ vars:
     fivetran_platform_log_identifier: "log"
     fivetran_platform_user_identifier: "user"
     fivetran_platform_transformation_runs_identifier: "transformation_runs"
-  # fivetran_platform_using_transformations: True # uncomment for docs generating
 
 
 models:

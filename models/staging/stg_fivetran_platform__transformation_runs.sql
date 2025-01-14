@@ -1,4 +1,3 @@
--- If you have the transformation_runs and wish to enable this model, set the fivetran_platform_using_transformations variable within your dbt_project.yml file to True.
 {% if var('fivetran_platform_using_transformations', does_table_exist('transformation_runs')) %}
 
 with base as (

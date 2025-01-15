@@ -1,4 +1,4 @@
-connector_id,_fivetran_synced,connecting_user_id,connector_name,connector_type,destination_id,paused,signed_up,_fivetran_deleted
-this_connector,2021-03-12 21:03:45.994,,this_connector,s3,ups_trampoline,true,2020-08-31 19:00:22.913630,false
-this_connector,2021-03-12 21:03:45.991,off_ence,this_connector,s3,television_trace,true,2019-03-22 18:49:12.833910,true
+connection_id,_fivetran_synced,connecting_user_id,connection_name,connection_type,destination_id,paused,signed_up,_fivetran_deleted
+this_connection,2021-03-12 21:03:45.994,,this_connection,s3,ups_trampoline,true,2020-08-31 19:00:22.913630,false
+this_connection,2021-03-12 21:03:45.991,off_ence,this_connection,s3,television_trace,true,2019-03-22 18:49:12.833910,true
 aft_gleeful,2023-05-18 15:57:06.879000,intimation_awkwardly,test,s3,obtained_willow,true,2020-05-18 18:13:43.563198,false

@@ -1,3 +1,7 @@
+# dbt_fivetran_log v1.11.0
+[PR #144](https://github.com/fivetran/dbt_fivetran_log/pull/144) includes the following updates:
+- Rename from connector to connection etc. etc.
+
 # dbt_fivetran_log v1.10.0
 [PR #140](https://github.com/fivetran/dbt_fivetran_log/pull/140) includes the following updates:
 

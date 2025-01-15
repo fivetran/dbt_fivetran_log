@@ -16,7 +16,7 @@ vars:
   fivetran_log:
     account: "{{ source('fivetran_platform', 'account') }}"
     incremental_mar: "{{ source('fivetran_platform', 'incremental_mar') }}"
-    connector: "{{ source('fivetran_platform', 'connector') }}"
+    connection: "{{ source('fivetran_platform', 'connection') }}"
     credits_used: "{{ source('fivetran_platform', 'credits_used') }}"
     destination: "{{ source('fivetran_platform', 'destination') }}"
     destination_membership: "{{ source('fivetran_platform', 'destination_membership') }}"

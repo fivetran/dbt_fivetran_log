@@ -1,27 +1,27 @@
 with base as (
 
     select * 
-    from {{ ref('stg_fivetran_platform__connector_tmp') }}
+    from {{ ref('stg_fivetran_platform__connection_tmp') }}
 ),
 
 fields as (
     select
         {{
             fivetran_utils.fill_staging_columns(
-                source_columns=adapter.get_columns_in_relation(ref('stg_fivetran_platform__connector_tmp')),
-                staging_columns=get_connector_columns()
+                source_columns=adapter.get_columns_in_relation(ref('stg_fivetran_platform__connection_tmp')),
+                staging_columns=get_connection_columns()
             )
         }}
-        ,row_number() over ( partition by connector_name, destination_id order by _fivetran_synced desc ) as nth_last_record
+        ,row_number() over ( partition by connection_name, destination_id order by _fivetran_synced desc ) as nth_last_record
     from base
 ),
 
 final as (
 
     select 
-        connector_id,
-        connector_name,
-        coalesce(connector_type_id, connector_type) as connector_type,
+        connection_id,
+        connection_name,
+        coalesce(connection_type_id, connection_type) as connection_type,
         destination_id,
         connecting_user_id,
         paused as is_paused,

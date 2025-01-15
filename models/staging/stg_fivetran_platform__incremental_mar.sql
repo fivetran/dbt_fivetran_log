@@ -18,7 +18,7 @@ fields as (
 final as (
 
     select
-        coalesce(connector_name, connector_id) as connector_name,
+        coalesce(connection_name, connection_id) as connection_name,
         destination_id,
         free_type,
         cast(measured_date as {{ dbt.type_timestamp() }}) as measured_date,

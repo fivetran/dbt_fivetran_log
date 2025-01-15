@@ -6,7 +6,7 @@
 
 with prod as (
     select
-        connector_id, 
+        connection_id, 
         email,
         date_day,
         count(*) as total_records
@@ -16,7 +16,7 @@ with prod as (
 
 dev as (
     select
-        connector_id, 
+        connection_id, 
         email,
         date_day,
         count(*) as total_records
@@ -26,14 +26,14 @@ dev as (
 
 final as (
     select 
-        prod.connector_id,
+        prod.connection_id,
         prod.email,
         prod.date_day,
         prod.total_records as prod_total,
         dev.total_records as dev_total
     from prod
     left join dev 
-        on dev.connector_id = prod.connector_id
+        on dev.connection_id = prod.connection_id
             and dev.email = prod.email
             and dev.date_day = prod.date_day
 )

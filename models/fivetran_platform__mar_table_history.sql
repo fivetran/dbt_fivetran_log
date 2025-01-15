@@ -7,10 +7,10 @@ with incremental_mar as (
     from {{ ref('stg_fivetran_platform__incremental_mar') }}
 ),
 
-connector as (
+connection as (
 
     select *
-    from {{ ref('stg_fivetran_platform__connector') }}
+    from {{ ref('stg_fivetran_platform__connection') }}
 ),
 
 destination as (
@@ -22,7 +22,7 @@ destination as (
 ordered_mar as (
 
     select
-        connector_name,
+        connection_name,
         schema_name,
         table_name,
         destination_id,
@@ -37,12 +37,12 @@ ordered_mar as (
         end, 0)) as free_monthly_active_rows
 
     from incremental_mar
-    group by connector_name, schema_name, table_name, destination_id, measured_month
+    group by connection_name, schema_name, table_name, destination_id, measured_month
 ),
 
 latest_mar as (
     select 
-        connector_name,
+        connection_name,
         schema_name,
         table_name,
         destination_id,
@@ -59,14 +59,14 @@ mar_join as (
 
     select
         latest_mar.*,
-        connector.connector_type,
-        connector.connector_id,
+        connection.connection_type,
+        connection.connection_id,
         destination.destination_name
 
     from latest_mar
-    join connector
-        on latest_mar.connector_name = connector.connector_name
-        and latest_mar.destination_id = connector.destination_id
+    join connection
+        on latest_mar.connection_name = connection.connection_name
+        and latest_mar.destination_id = connection.destination_id
     join destination on latest_mar.destination_id = destination.destination_id
 )
 

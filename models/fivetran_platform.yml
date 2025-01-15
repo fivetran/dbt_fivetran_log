@@ -2,36 +2,36 @@ version: 2
 
 models:
 
-  - name: fivetran_platform__connector_status
+  - name: fivetran_platform__connection_status
     description: > 
-      Table of each destination's connector and details surrounding its 
+      Table of each destination's connection and details surrounding its 
       connection and data-sync status.
 
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns: 
-            - connector_id
+            - connection_id
             - destination_id     
     columns:
 
-      - name: connector_id
-        description: System generated unique ID of the connector.
+      - name: connection_id
+        description: System generated unique ID of the connection.
 
-      - name: connector_name
-        description: Name of the connector.
+      - name: connection_name
+        description: Name of the connection.
 
-      - name: connector_type
-        description: The kind of connector (ie google sheets, webhooks).
+      - name: connection_type
+        description: The kind of connection (ie google sheets, webhooks).
 
       - name: destination_id
         description: >
-          Foreign key referencing the `destination` warehouse that the connector data is loaded into.
+          Foreign key referencing the `destination` warehouse that the connection data is loaded into.
 
       - name: destination_name
-        description: Name of the destination loading data from this connector.
+        description: Name of the destination loading data from this connection.
 
-      - name: connector_health
-        description: Status of the connector's data flow. Can be `"broken"`, `"deleted"`, `"incomplete"`, `"connected"`, `"paused"`, `"initial sync in progress"`, or `"priority first sync"`.
+      - name: connection_health
+        description: Status of the connection's data flow. Can be `"broken"`, `"deleted"`, `"incomplete"`, `"connected"`, `"paused"`, `"initial sync in progress"`, or `"priority first sync"`.
 
       - name: last_successful_sync_completed_at
         description: > 
@@ -47,7 +47,7 @@ models:
           Timestamp of when the last sync was completed.
           
       - name: set_up_at
-        description: Timestamp of when the connector was set up.
+        description: Timestamp of when the connection was set up.
 
       - name: number_of_schema_changes_last_month
         description: > 
@@ -62,24 +62,24 @@ models:
     
   - name: fivetran_platform__mar_table_history
     description: > 
-      Table of each table's monthly active rows (MAR) for all connectors, destinations, and schemas, per month.
+      Table of each table's monthly active rows (MAR) for all connections, destinations, and schemas, per month.
       Read more about how monthly active rows are defined and calculated 
       [here](https://fivetran.com/docs/getting-started/consumption-based-pricing).
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns: 
-            - connector_id
+            - connection_id
             - destination_id
             - schema_name
             - table_name
             - measured_month
     columns:
 
-      - name: connector_name
-        description: Name of the connector loading this table.
+      - name: connection_name
+        description: Name of the connection loading this table.
 
-      - name: connector_id
-        description: System-generated uniqu ID of the connector loading this table.
+      - name: connection_id
+        description: System-generated uniqu ID of the connection loading this table.
 
       - name: schema_name
         description: Name of the schema in which the table lives.
@@ -89,7 +89,7 @@ models:
 
       - name: destination_id
         description: >
-          Foreign key referencing the `destination` warehouse that the connector data is loaded into.
+          Foreign key referencing the `destination` warehouse that the connection data is loaded into.
 
       - name: measured_month
         description: The month (yyyy-mm-01) of the measurement.
@@ -106,8 +106,8 @@ models:
       - name: total_monthly_active_rows
         description: The total number of active rows measured in the table for the month.
       
-      - name: connector_type
-        description: The kind of connector (ie google sheets, webhooks).
+      - name: connection_type
+        description: The kind of connection (ie google sheets, webhooks).
         
       - name: destination_name 
         description: Name of the destination as it appears in the UI.
@@ -163,70 +163,70 @@ models:
       - name: dollars_spent
         description: The dollar amount used by the destination for the given month.
 
-  - name: fivetran_platform__connector_daily_events
+  - name: fivetran_platform__connection_daily_events
     description: >
-      Table of each connector's daily history of the quantity of api calls, schema changes, and records modified,
-      starting at the connector's setup date. 
+      Table of each connection's daily history of the quantity of api calls, schema changes, and records modified,
+      starting at the connection's setup date. 
     
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns: 
-            - connector_id
+            - connection_id
             - destination_id 
             - date_day
 
     columns:
-      - name: connector_id
-        description: System generated unique ID of the connector.
+      - name: connection_id
+        description: System generated unique ID of the connection.
 
-      - name: connector_name
-        description: Name of the connector.
+      - name: connection_name
+        description: Name of the connection.
 
-      - name: connector_type
-        description: The kind of connector (ie google sheets, webhooks).
+      - name: connection_type
+        description: The kind of connection (ie google sheets, webhooks).
 
       - name: destination_id
         description: >
-          Foreign key referencing the `destination` warehouse that the connector data is loaded into.
+          Foreign key referencing the `destination` warehouse that the connection data is loaded into.
 
       - name: destination_name
-        description: Name of the destination loading data from this connector.
+        description: Name of the destination loading data from this connection.
 
       - name: date_day
-        description: Date on which the number of api calls for the connector is measured.
+        description: Date on which the number of api calls for the connection is measured.
 
       - name: count_api_calls
-        description: The number of api call events logged for this connector on this day.
+        description: The number of api call events logged for this connection on this day.
 
       - name: count_record_modifications
         description: The sum of all records modified (includes updates, inserts, and deletes).
 
       - name: count_schema_changes
-        description: The number of schema change events for this connector. 
+        description: The number of schema change events for this connection. 
 
   - name: fivetran_platform__audit_table
     description: >
       Table replacing the deprecated `fivetran_audit` table. For each table written to in a sync,
       captures timestamps and row quantities around table syncs. Each record represents a table being
-      written to in a connector sync. Note: the quantities here will not match the deprecated `fivetran_audit`
+      written to in a connection sync. Note: the quantities here will not match the deprecated `fivetran_audit`
       table completely, as `fivetran_audit` reported on pre-duplicated data loads.
     columns:
       - name: unique_table_sync_key
-        description: Primary key of this table, hashed on `schema_name`, `connector_id`, `destination_id`, `table_name`, and `unique_table_sync_key`.
+        description: Primary key of this table, hashed on `schema_name`, `connection_id`, `destination_id`, `table_name`, and `unique_table_sync_key`.
         tests:
           - unique
           - not_null
-      - name: connector_id
-        description: System generated unique ID of the connector.
-      - name: connector_name
-        description: Name of the connector.
+      - name: connection_id
+        description: System generated unique ID of the connection.
+      - name: connection_name
+        description: Name of the connection.
       - name: schema_name
-        description: Name of the schema. In cases when the schema is not provided the connector_name is used.
+        description: Name of the schema. In cases when the schema is not provided the connection_name is used.
       - name: table_name
         description: Name of the table being written to. 
       - name: destination_id
         description: >
-          Foreign key referencing the `destination` warehouse that the connector data is loaded into.
+          Foreign key referencing the `destination` warehouse that the connection data is loaded into.
       - name: destination_name
         description: Name of the destination that the table is being written to. 
       - name: write_to_table_start
@@ -234,9 +234,9 @@ models:
       - name: write_to_table_end
         description: Timestamp of when Fivetran finished writing to this table.
       - name: sync_start
-        description: Timestamp of when this connector-level sync began and wrote or modified records to the table.
+        description: Timestamp of when this connection-level sync began and wrote or modified records to the table.
       - name: sync_end
-        description: Timestamp of when this connector-level sync finished, if successful, and wrote or modified records to the table. 
+        description: Timestamp of when this connection-level sync finished, if successful, and wrote or modified records to the table. 
       - name: sum_rows_replaced_or_inserted
         description: Sum of the rows replaced or inserted into this table during a sync. 
       - name: sum_rows_updated
@@ -248,23 +248,23 @@ models:
 
   - name: fivetran_platform__schema_changelog
     description: >
-      Table capturing information around each kind of schema change made to a connector.
+      Table capturing information around each kind of schema change made to a connection.
       Schema changes include altering and creating tables, changing the schema configuration, and creating schemas. 
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns: 
-            - connector_id
+            - connection_id
             - destination_id
             - message_data
             - created_at
     columns:
-      - name: connector_id
-        description: System generated unique ID of the connector.
-      - name: connector_name
-        description: Name of the connector whose schema was changed. 
+      - name: connection_id
+        description: System generated unique ID of the connection.
+      - name: connection_name
+        description: Name of the connection whose schema was changed. 
       - name: destination_id
         description: >
-          Foreign key referencing the `destination` warehouse that the connector data is loaded into.
+          Foreign key referencing the `destination` warehouse that the connection data is loaded into.
       - name: destination_name
         description: Name of the destination that the table is being written to. 
       - name: created_at
@@ -301,10 +301,10 @@ models:
         description: UI-facing name of the destination on which the user action was made.
       - name: destination_id
         description: Foreign key referencing the `destination` on which the user action was made.
-      - name: connector_name
-        description: Name of the connector that the user acted upon.
-      - name: connector_id 
-        description: Foreign key referencing the `connector` that the user acted upon.
+      - name: connection_name
+        description: Name of the connection that the user acted upon.
+      - name: connection_id 
+        description: Foreign key referencing the `connection` that the user acted upon.
       - name: email
         description: Account email of the user who triggered the action.
       - name: first_name

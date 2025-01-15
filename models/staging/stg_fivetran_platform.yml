@@ -6,8 +6,8 @@ models:
       Table of **monthly active row (MAR)** measurements made by table per date. 
       Each measurement is calculated cumulatively for the month and includes all types of mar (paid, free, etc.)
     columns:
-      - name: connector_name
-        description: The name of the connector being measured.
+      - name: connection_name
+        description: The name of the connection being measured.
       - name: destination_id
         description: Foreign key referencing the `destination` whose table is being measured.
       - name: free_type
@@ -15,11 +15,11 @@ models:
       - name: measured_date
         description: Timestamp of when the MAR measurement was made.
       - name: incremental_rows
-        description: The number of new distinct primary keys on the current day synced for the connector.
+        description: The number of new distinct primary keys on the current day synced for the connection.
       - name: sync_type
         description: This defines whether the sync for which MAR calculated is HISTORICAL or INCREMENTAL. Currently, the available value is UNKNOWN.
       - name: schema_name
-        description: The name of the connector's schema that houses the measured table.
+        description: The name of the connection's schema that houses the measured table.
       - name: table_name
         description: The name of the table whose MAR was measured.
       - name: updated_at
@@ -27,34 +27,34 @@ models:
       - name: _fivetran_synced
         description: Timestamp of when the record was last synced.
 
-  - name: stg_fivetran_platform__connector
+  - name: stg_fivetran_platform__connection
     description: >
-      Table of all connectors loading data into warehouses. Note that deleted connectors 
+      Table of all connections loading data into warehouses. Note that deleted connections 
       are not removed, but can be identified by having an older _fivetran_synced field relative 
-      to other connectors.
+      to other connections.
     tests:
-      # This combo will be used to join with other tables lacking `connector_id`
+      # This combo will be used to join with other tables lacking `connection_id`
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns: 
-            - connector_name
+            - connection_name
             - destination_id
     columns:
-      - name: connector_id
-        description: System generated destination-unique ID of the connector.
+      - name: connection_id
+        description: System generated destination-unique ID of the connection.
       - name: connecting_user_id
         description: Foreign key referencing the `user` who set up the connection.
-      - name: connector_name
-        description: Individual name of the connector. Note that this could be different from the `incremental_mar.schema_name`.
-      - name: connector_type
-        description: The kind of connector (ie google sheets, webhooks).
+      - name: connection_name
+        description: Individual name of the connection. Note that this could be different from the `incremental_mar.schema_name`.
+      - name: connection_type
+        description: The kind of connection (ie google sheets, webhooks).
       - name: destination_id
-        description: Foreign key referencing the `destination` warehouse that the connector data is loaded into.
+        description: Foreign key referencing the `destination` warehouse that the connection data is loaded into.
       - name: is_paused
-        description: Boolean that is true if the connector's sync is currently paused.
+        description: Boolean that is true if the connection's sync is currently paused.
       - name: set_up_at
         description: Timestamp of when the connection was set up.
       - name: is_deleted
-        description: Boolean that is true if the connector has been deleted.
+        description: Boolean that is true if the connection has been deleted.
 
   - name: stg_fivetran_platform__credits_used
     description: Table of the credits used by the customer per month for each destination.
@@ -119,8 +119,8 @@ models:
         description: Identifies which sync the event is associated with.
       - name: created_at
         description: Timestamp of when the event was logged.
-      - name: connector_id
-        description: The name of the `connector` that the logged event pertains to.
+      - name: connection_id
+        description: The name of the `connection` that the logged event pertains to.
       - name: event_type
         description: The umbrella event type. Events can be classified as a warning, an error, or just an information log.
       - name: message_data 

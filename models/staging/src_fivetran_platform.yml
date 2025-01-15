@@ -19,10 +19,10 @@ sources:
           Table of **monthly active row (MAR)** measurements made by table per date. 
           Each measurement is calculated cumulatively for the month and includes all types of mar (paid, free, etc.)
         columns:
-          - name: connector_id
-            description: The *name* of the connector being measured. This field has been replaced with the `connector_name` column since `connector_id` was erroneously named. This column but may still be present in older Fivetran Platform connectors. However, all connectors setup after July 2024 will not have this field as it has been replaced with connector_name.
-          - name: connector_name
-            description: The name of the connector being measured.
+          - name: connection_id
+            description: The *name* of the connection being measured. This field has been replaced with the `connection_name` column since `connection_id` was erroneously named. This column but may still be present in older Fivetran Platform connections. However, all connections setup after July 2024 will not have this field as it has been replaced with connection_name.
+          - name: connection_name
+            description: The name of the connection being measured.
           - name: destination_id
             description: Foreign key referencing the `destination` whose table is being measured.
           - name: free_type
@@ -30,11 +30,11 @@ sources:
           - name: measured_date
             description: Timestamp of when the MAR measurement was made.
           - name: incremental_rows
-            description: The number of new distinct primary keys on the current day synced for the connector.
+            description: The number of new distinct primary keys on the current day synced for the connection.
           - name: sync_type
             description: This defines whether the sync for which MAR calculated is HISTORICAL or INCREMENTAL. Currently, the available value is UNKNOWN.
           - name: schema_name
-            description: The name of the connector's schema that houses the measured table.
+            description: The name of the connection's schema that houses the measured table.
           - name: table_name
             description: The name of the table whose MAR was measured.
           - name: updated_at
@@ -42,27 +42,27 @@ sources:
           - name: _fivetran_synced
             description: Timestamp of when the record was last synced.
 
-      - name: connector
-        identifier: "{{ var('fivetran_platform_connector_identifier', 'connector')}}"
+      - name: connection
+        identifier: "{{ var('fivetran_platform_connection_identifier', 'connection')}}"
         description: >
-          Table of all connectors loading data into warehouses. Note that deleted connectors 
+          Table of all connections loading data into warehouses. Note that deleted connections 
           are not removed, but can be identified by having an older _fivetran_synced field relative 
-          to other connectors.
+          to other connections.
         freshness: null
         columns: 
-          - name: connector_id
-            description: System generated unique ID of the connector. 
+          - name: connection_id
+            description: System generated unique ID of the connection. 
           - name: connecting_user_id
-            description: Foreign key referencing the `user` who set up the connector.
-          - name: connector_name
-            description: Individual name of the connector. Note that this could be different from the `incremental_mar.schema_name`.
-            # Other tables lack a true `connector_id` and will have to join with `connector_name`
-          - name: connector_type
-            description: The kind of connector (ie google sheets, webhooks).
+            description: Foreign key referencing the `user` who set up the connection.
+          - name: connection_name
+            description: Individual name of the connection. Note that this could be different from the `incremental_mar.schema_name`.
+            # Other tables lack a true `connection_id` and will have to join with `connection_name`
+          - name: connection_type
+            description: The kind of connection (ie google sheets, webhooks).
           - name: destination_id
-            description: Foreign key referencing the `destination` warehouse that the connector data is loaded into.
+            description: Foreign key referencing the `destination` warehouse that the connection data is loaded into.
           - name: paused
-            description: Boolean that is true if the connector's sync is currently paused.
+            description: Boolean that is true if the connection's sync is currently paused.
           - name: signed_up
             description: Timestamp of when the connection was set up.
           - name: _fivetran_synced
@@ -92,7 +92,7 @@ sources:
           - name: measured_month
             description: The month (yyyy-mm) in which the credits were consumed.
           - name: amount
-            description: The dollar amount associated with the cost of your connector.
+            description: The dollar amount associated with the cost of your connection.
           - name: _fivetran_synced
             description: Timestamp of when the record was last synced.
 
@@ -120,12 +120,12 @@ sources:
         columns:
           - name: id 
             description: >
-              Contains either `connector_name` (for app/api logs), `transformation_id` (for transformation logs), 
+              Contains either `connection_name` (for app/api logs), `transformation_id` (for transformation logs), 
               or the value `"system"` (for system generated logs).
           - name: time_stamp
             description: Timestamp of when the event was logged.
-          - name: connector_id 
-            description: The *name* of the connector being logged. Note - this is erroneously named and will be fixed soon by Fivetran.
+          - name: connection_id 
+            description: The *name* of the connection being logged. Note - this is erroneously named and will be fixed soon by Fivetran.
           - name: event
             description: The umbrella event type. Events can be classified as a warning, an error, or just an information log.
           - name: message_data  

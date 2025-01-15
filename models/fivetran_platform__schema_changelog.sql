@@ -6,29 +6,29 @@ with schema_changes as (
     where event_subtype in ('create_table', 'alter_table', 'create_schema', 'change_schema_config')
 ),
 
-connector as (
+connection as (
 
     select *
-    from {{ ref('fivetran_platform__connector_status') }}
+    from {{ ref('fivetran_platform__connection_status') }}
 ),
 
-add_connector_info as (
+add_connection_info as (
 
     select 
         schema_changes.*,
-        connector.connector_name,
-        connector.destination_id,
-        connector.destination_name
+        connection.connection_name,
+        connection.destination_id,
+        connection.destination_name
 
-    from schema_changes join connector 
-        on schema_changes.connector_id = connector.connector_id
+    from schema_changes join connection 
+        on schema_changes.connection_id = connection.connection_id
 ),
 
 final as (
 
     select
-        connector_id,
-        connector_name,
+        connection_id,
+        connection_name,
         destination_id,
         destination_name,
         created_at,
@@ -44,7 +44,7 @@ final as (
         when event_subtype = 'create_schema' or event_subtype = 'create_table' then {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['schema']) }}
         else null end as schema_name
     
-    from add_connector_info
+    from add_connection_info
 )
 
 select * from final

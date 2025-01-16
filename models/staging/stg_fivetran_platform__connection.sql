@@ -12,16 +12,16 @@ fields as (
                 staging_columns=get_connection_columns()
             )
         }}
-        ,row_number() over ( partition by connection_name, destination_id order by _fivetran_synced desc ) as nth_last_record
+        ,row_number() over ( partition by {{ fivetran_log.coalesce_cast(['connection_name', 'connector_name']) }}, destination_id order by _fivetran_synced desc ) as nth_last_record
     from base
 ),
 
 final as (
 
     select 
-        connection_id,
-        connection_name,
-        coalesce(connection_type_id, connection_type) as connection_type,
+        {{ fivetran_log.coalesce_cast(['connection_id', 'connector_id']) }} as connection_id,
+        {{ fivetran_log.coalesce_cast(['connection_name', 'connector_name']) }} as connection_name,
+        {{ fivetran_log.coalesce_cast(['connection_type_id', 'connection_type', 'connector_type_id', 'connector_type']) }} as connection_type,
         destination_id,
         connecting_user_id,
         paused as is_paused,

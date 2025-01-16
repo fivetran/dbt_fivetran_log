@@ -21,7 +21,7 @@ final as (
         id as log_id, 
         sync_id,
         cast(time_stamp as {{ dbt.type_timestamp() }}) as created_at,
-        connection_id, -- Note: the connection_id column used to erroneously equal the connection_name, NOT its id.
+        {{ fivetran_log.coalesce_cast(['connection_id', 'connector_id']) }} as connection_id,
         case when transformation_id is not null and event is null then 'TRANSFORMATION'
         else event end as event_type, 
         message_data,

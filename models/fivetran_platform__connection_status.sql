@@ -72,7 +72,7 @@ connection_metrics as (
     select
         connection.connection_id,
         connection.connection_name,
-        connection.connection_type,
+        connection.connector_type,
         connection.destination_id,
         connection.is_paused,
         connection.set_up_at,
@@ -104,7 +104,7 @@ connection_metrics as (
     from connection 
     left join connection_log 
         on connection_log.connection_id = connection.connection_id
-    group by connection.connection_id, connection.connection_name, connection.connection_type, connection.destination_id, connection.is_paused, connection.set_up_at, connection.is_deleted
+    group by connection.connection_id, connection.connection_name, connection.connector_type, connection.destination_id, connection.is_paused, connection.set_up_at, connection.is_deleted
 ),
 
 connection_health_status as (
@@ -147,7 +147,7 @@ connection_recent_logs as (
     select 
         connection_health_status.connection_id,
         connection_health_status.connection_name,
-        connection_health_status.connection_type,
+        connection_health_status.connector_type,
         connection_health_status.destination_id,
         connection_health_status.connection_health,
         connection_health_status.last_successful_sync_completed_at,
@@ -173,7 +173,7 @@ connection_recent_logs as (
     group by -- remove duplicates, need explicit group by for SQL Server
         connection_health_status.connection_id,
         connection_health_status.connection_name,
-        connection_health_status.connection_type,
+        connection_health_status.connector_type,
         connection_health_status.destination_id,
         connection_health_status.connection_health,
         connection_health_status.last_successful_sync_completed_at,
@@ -190,7 +190,7 @@ final as (
     select
         connection_recent_logs.connection_id,
         connection_recent_logs.connection_name,
-        connection_recent_logs.connection_type,
+        connection_recent_logs.connector_type,
         connection_recent_logs.destination_id,
         destination.destination_name,
         connection_recent_logs.connection_health,
@@ -212,7 +212,7 @@ final as (
     group by 
         connection_recent_logs.connection_id, 
         connection_recent_logs.connection_name, 
-        connection_recent_logs.connection_type, 
+        connection_recent_logs.connector_type, 
         connection_recent_logs.destination_id, 
         destination.destination_name, 
         connection_recent_logs.connection_health, 

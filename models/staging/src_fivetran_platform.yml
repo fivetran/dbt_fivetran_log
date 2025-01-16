@@ -57,7 +57,33 @@ sources:
           - name: connection_name
             description: Individual name of the connection. Note that this could be different from the `incremental_mar.schema_name`.
             # Other tables lack a true `connection_id` and will have to join with `connection_name`
-          - name: connection_type
+          - name: connector_type
+            description: The kind of connection (ie google sheets, webhooks).
+          - name: destination_id
+            description: Foreign key referencing the `destination` warehouse that the connection data is loaded into.
+          - name: paused
+            description: Boolean that is true if the connection's sync is currently paused.
+          - name: signed_up
+            description: Timestamp of when the connection was set up.
+          - name: _fivetran_synced
+            description: Timestamp of when the record was last synced.
+
+      - name: connector
+        identifier: "{{ var('fivetran_platform_connector_identifier', 'connector')}}"
+        description: >
+          (TO BE DEPRECATED) Table of all connections loading data into warehouses. Note that deleted connections 
+          are not removed, but can be identified by having an older _fivetran_synced field relative 
+          to other connections.
+        freshness: null
+        columns: 
+          - name: connector_id
+            description: System generated unique ID of the connection. 
+          - name: connecting_user_id
+            description: Foreign key referencing the `user` who set up the connection.
+          - name: connector_name
+            description: Individual name of the connection. Note that this could be different from the `incremental_mar.schema_name`.
+            # Other tables lack a true `connection_id` and will have to join with `connection_name`
+          - name: connector_type
             description: The kind of connection (ie google sheets, webhooks).
           - name: destination_id
             description: Foreign key referencing the `destination` warehouse that the connection data is loaded into.

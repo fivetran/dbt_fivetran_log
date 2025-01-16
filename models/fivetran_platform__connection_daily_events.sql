@@ -69,7 +69,7 @@ connection_event_counts as (
         pivot_out_events.count_schema_changes,
         connection.connection_name,
         connection.connection_id,
-        connection.connection_type,
+        connection.connector_type,
         connection.destination_name,
         connection.destination_id,
         connection.set_up_at
@@ -107,7 +107,7 @@ connection_event_history as (
         spine.date_day,
         connection_event_counts.connection_name,
         connection_event_counts.connection_id,
-        connection_event_counts.connection_type,
+        connection_event_counts.connector_type,
         connection_event_counts.destination_name,
         connection_event_counts.destination_id,
         max(case 
@@ -126,7 +126,7 @@ connection_event_history as (
     spine join connection_event_counts
         on spine.date_day  >= cast({{ dbt.date_trunc('day', 'cast(connection_event_counts.set_up_at as date)') }} as date)
 
-    group by spine.date_day, connection_name, connection_id, connection_type, destination_name, destination_id
+    group by spine.date_day, connection_name, connection_id, connector_type, destination_name, destination_id
 ),
 
 -- now rejoin spine to get a complete calendar
@@ -136,7 +136,7 @@ join_event_history as (
         spine.date_day,
         connection_event_history.connection_name,
         connection_event_history.connection_id,
-        connection_event_history.connection_type,
+        connection_event_history.connector_type,
         connection_event_history.destination_name,
         connection_event_history.destination_id,
         max(connection_event_history.count_api_calls) as count_api_calls,
@@ -147,7 +147,7 @@ join_event_history as (
     spine left join connection_event_history
         on spine.date_day = connection_event_history.date_day
 
-    group by spine.date_day, connection_name, connection_id, connection_type, destination_name, destination_id
+    group by spine.date_day, connection_name, connection_id, connector_type, destination_name, destination_id
 ),
 
 final as (

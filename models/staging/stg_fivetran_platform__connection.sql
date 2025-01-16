@@ -1,37 +1,93 @@
-with base as (
+{% set using_connection = var('fivetran_platform_using_connection', True) %}
+{% set using_connector = var('fivetran_platform_using_connector', False) %}
 
-    select * 
-    from {{ ref('stg_fivetran_platform__connection_tmp') }}
-),
+with 
 
-fields as (
-    select
-        {{
-            fivetran_utils.fill_staging_columns(
-                source_columns=adapter.get_columns_in_relation(ref('stg_fivetran_platform__connection_tmp')),
-                staging_columns=get_connection_columns()
-            )
-        }}
-        ,row_number() over ( partition by {{ fivetran_log.coalesce_cast(['connection_name', 'connector_name']) }}, destination_id order by _fivetran_synced desc ) as nth_last_record
-    from base
+{% if using_connection -%}
+    connection_base as (
+        select * 
+        from {{ ref('stg_fivetran_platform__connection_tmp') }}
+    ),
+
+    connection_fields as (
+        select
+            {{
+                fivetran_utils.fill_staging_columns(
+                    source_columns=adapter.get_columns_in_relation(ref('stg_fivetran_platform__connection_tmp')),
+                    staging_columns=get_connection_columns()
+                )
+            }}
+        from connection_base
+    ),
+{% endif %}
+
+{% if using_connector -%}
+    connector_base as (
+        select * 
+        from {{ ref('stg_fivetran_platform__connector_tmp') }}
+    ),
+
+    connector_fields as (
+        select
+            {{
+                fivetran_utils.fill_staging_columns(
+                    source_columns=adapter.get_columns_in_relation(ref('stg_fivetran_platform__connector_tmp')),
+                    staging_columns=get_connector_columns()
+                )
+            }}
+        from connector_base
+    ),
+{% endif %}
+
+unioned as (
+
+    {% if using_connection -%}
+        select 
+            cast(connection_id as {{ dbt.type_string() }}) as connection_id,
+            cast(connection_name as {{ dbt.type_string() }}) as connection_name,
+            {{ fivetran_log.coalesce_cast(['connector_type_id', 'connector_type']) }} as connector_type,
+            cast(destination_id as {{ dbt.type_string() }}) as destination_id,
+            cast(connecting_user_id as {{ dbt.type_string() }}) as connecting_user_id,
+            cast(paused as {{ dbt.type_boolean() }}) as is_paused,
+            cast(signed_up as {{ dbt.type_timestamp() }}) as set_up_at,
+            coalesce(_fivetran_deleted,{{ ' 0 ' if target.type == 'sqlserver' else ' false'}}) as is_deleted,
+            cast(_fivetran_synced as {{ dbt.type_timestamp() }}) as _fivetran_synced
+        from connection_fields
+    {% endif %}
+
+    {% if using_connection and using_connector -%}
+        union all
+    {% endif %}
+
+    {% if using_connector -%}
+        select 
+            cast(connector_id as {{ dbt.type_string() }}) as connection_id,
+            cast(connector_name as {{ dbt.type_string() }}) as connection_name,
+            {{ fivetran_log.coalesce_cast(['connector_type_id', 'connector_type']) }} as connector_type,
+            cast(destination_id as {{ dbt.type_string() }}) as destination_id,
+            cast(connecting_user_id as {{ dbt.type_string() }}) as connecting_user_id,
+            cast(paused as {{ dbt.type_boolean() }}) as is_paused,
+            cast(signed_up as {{ dbt.type_timestamp() }}) as set_up_at,
+            coalesce(_fivetran_deleted,{{ ' 0 ' if target.type == 'sqlserver' else ' false'}}) as is_deleted,
+            cast(_fivetran_synced as {{ dbt.type_timestamp() }}) as _fivetran_synced
+        from connector_fields
+    {% endif %}
 ),
 
 final as (
-
-    select 
-        {{ fivetran_log.coalesce_cast(['connection_id', 'connector_id']) }} as connection_id,
-        {{ fivetran_log.coalesce_cast(['connection_name', 'connector_name']) }} as connection_name,
-        {{ fivetran_log.coalesce_cast(['connection_type_id', 'connection_type', 'connector_type_id', 'connector_type']) }} as connection_type,
+    select
+        connection_id,
+        connection_name,
+        connector_type,
         destination_id,
         connecting_user_id,
-        paused as is_paused,
-        signed_up as set_up_at,
-        coalesce(_fivetran_deleted,{{ ' 0 ' if target.type == 'sqlserver' else ' false'}}) as is_deleted
-    from fields
-
-    -- Only look at the most recent one
-    where nth_last_record = 1
+        is_paused,
+        set_up_at,
+        is_deleted,
+        row_number() over ( partition by connection_name, destination_id order by _fivetran_synced desc ) as nth_last_record
+    from unioned
 )
 
 select * 
 from final
+where nth_last_record = 1

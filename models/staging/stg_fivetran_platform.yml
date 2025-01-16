@@ -45,7 +45,7 @@ models:
         description: Foreign key referencing the `user` who set up the connection.
       - name: connection_name
         description: Individual name of the connection. Note that this could be different from the `incremental_mar.schema_name`.
-      - name: connection_type
+      - name: connector_type
         description: The kind of connection (ie google sheets, webhooks).
       - name: destination_id
         description: Foreign key referencing the `destination` warehouse that the connection data is loaded into.

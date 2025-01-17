@@ -21,8 +21,12 @@ sources:
         columns:
           - name: connection_id
             description: The *name* of the connection being measured. This field has been replaced with the `connection_name` column since `connection_id` was erroneously named. This column but may still be present in older Fivetran Platform connections. However, all connections setup after July 2024 will not have this field as it has been replaced with connection_name.
+          - name: connector_id
+            description: (DEPRECATED) The *name* of the connection being measured. This field has been replaced with the `connection_name` column since `connection_id` was erroneously named. This column but may still be present in older Fivetran Platform connections. However, all connections setup after July 2024 will not have this field as it has been replaced with connection_name.
           - name: connection_name
             description: The name of the connection being measured.
+          - name: connector_name
+            description: (DEPRECATED) The name of the connection being measured.
           - name: destination_id
             description: Foreign key referencing the `destination` whose table is being measured.
           - name: free_type
@@ -67,11 +71,13 @@ sources:
             description: Timestamp of when the connection was set up.
           - name: _fivetran_synced
             description: Timestamp of when the record was last synced.
+          - name: _fivetran_deleted
+            description: Boolean if the record is deleted.
 
       - name: connector
         identifier: "{{ var('fivetran_platform_connector_identifier', 'connector')}}"
         description: >
-          (TO BE DEPRECATED) Table of all connections loading data into warehouses. Note that deleted connections 
+          (DEPRECATED) Table of all connections loading data into warehouses. Note that deleted connections 
           are not removed, but can be identified by having an older _fivetran_synced field relative 
           to other connections.
         freshness: null
@@ -93,6 +99,8 @@ sources:
             description: Timestamp of when the connection was set up.
           - name: _fivetran_synced
             description: Timestamp of when the record was last synced.
+          - name: _fivetran_deleted
+            description: Boolean if the record is deleted.
 
       - name: credits_used
         identifier: "{{ var('fivetran_platform_credits_used_identifier', 'credits_used')}}"
@@ -152,6 +160,8 @@ sources:
             description: Timestamp of when the event was logged.
           - name: connection_id 
             description: The *name* of the connection being logged. Note - this is erroneously named and will be fixed soon by Fivetran.
+          - name: connector_id 
+            description: (DEPRECATED) The *name* of the connection being logged. Note - this is erroneously named and will be fixed soon by Fivetran.
           - name: event
             description: The umbrella event type. Events can be classified as a warning, an error, or just an information log.
           - name: message_data  

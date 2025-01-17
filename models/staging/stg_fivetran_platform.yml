@@ -7,7 +7,7 @@ models:
       Each measurement is calculated cumulatively for the month and includes all types of mar (paid, free, etc.)
     columns:
       - name: connection_name
-        description: The name of the connection being measured.
+        description: The name of the connection being measured. Coalesced with the DEPRECATED field `connector_name`.
       - name: destination_id
         description: Foreign key referencing the `destination` whose table is being measured.
       - name: free_type
@@ -40,11 +40,11 @@ models:
             - destination_id
     columns:
       - name: connection_id
-        description: System generated destination-unique ID of the connection.
+        description: System generated destination-unique ID of the connection. Coalesced with the DEPRECATED field `connector_id`.
       - name: connecting_user_id
         description: Foreign key referencing the `user` who set up the connection.
       - name: connection_name
-        description: Individual name of the connection. Note that this could be different from the `incremental_mar.schema_name`.
+        description: Individual name of the connection. Note that this could be different from the `incremental_mar.schema_name`. Coalesced with the DEPRECATED field `connector_name`.
       - name: connector_type
         description: The kind of connection (ie google sheets, webhooks).
       - name: destination_id
@@ -120,7 +120,7 @@ models:
       - name: created_at
         description: Timestamp of when the event was logged.
       - name: connection_id
-        description: The name of the `connection` that the logged event pertains to.
+        description: The name of the `connection` that the logged event pertains to. Coalesced with the DEPRECATED field `connector_id`.
       - name: event_type
         description: The umbrella event type. Events can be classified as a warning, an error, or just an information log.
       - name: message_data 

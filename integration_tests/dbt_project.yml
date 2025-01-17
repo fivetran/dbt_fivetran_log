@@ -9,9 +9,8 @@ dispatch:
     search_order: ['spark_utils', 'dbt_utils']
 
 vars:
-  fivetran_platform_using_connector: true
   fivetran_log:
-    fivetran_platform_schema: zz_platform #"fivetran_platform_integration_tests_6"
+    fivetran_platform_schema: "fivetran_platform_integration_tests_6"
     fivetran_platform_account_identifier: "account"
     fivetran_platform_incremental_mar_identifier: "incremental_mar"
     fivetran_platform_connection_identifier: "connection"

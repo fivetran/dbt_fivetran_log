@@ -141,7 +141,7 @@ connection_health_status as (
     from connection_metrics
 ),
 
--- Joining with log to grab pertinent error/warning messagees
+-- Joining with log to grab pertinent error/warning messages
 connection_recent_logs as (
 
     select 

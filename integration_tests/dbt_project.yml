@@ -41,11 +41,11 @@ seeds:
     connection:
       +column_types:
         signed_up: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
-        _fivetran_deleted: boolean
+        _fivetran_deleted: "{{ 'bit' if target.type == 'sqlserver' else 'boolean' }}"
     connector:
       +column_types:
         signed_up: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
-        _fivetran_deleted: boolean
+        _fivetran_deleted: "{{ 'bit' if target.type == 'sqlserver' else 'boolean' }}"
     credits_used:
       +column_types:
         credits_consumed: "{{ 'int64' if target.type == 'bigquery' else 'bigint' }}"

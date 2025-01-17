@@ -18,7 +18,7 @@ fields as (
 final as (
 
     select
-        {{ fivetran_log.coalesce_cast(['connection_name', 'connection_id', 'connector_name', 'connector_id']) }} as connection_name,
+        {{ fivetran_log.coalesce_cast(['connection_name', 'connection_id', 'connector_name', 'connector_id'], dbt.type_string()) }} as connection_name,
         destination_id,
         free_type,
         cast(measured_date as {{ dbt.type_timestamp() }}) as measured_date,

@@ -9,6 +9,9 @@ dispatch:
     search_order: ['spark_utils', 'dbt_utils']
 
 vars:
+  # # enable when generating docs
+  # fivetran_platform_using_connector: true
+
   fivetran_log:
     fivetran_platform_schema: "fivetran_platform_integration_tests_6"
     fivetran_platform_account_identifier: "account"

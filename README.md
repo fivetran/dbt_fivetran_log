@@ -16,8 +16,7 @@
 </p>
 
 ## What does this dbt package do?
-- Generates a comprehensive data dictionary of your Fivetran Platform connector (previously called Fivetran Log) data via the [dbt docs site](https://fivetran.github.io/dbt_fivetran_log/)
-
+- Generates a comprehensive data dictionary of your Fivetran Platform connection (previously called Fivetran Log) data via the [dbt docs site](https://fivetran.github.io/dbt_fivetran_log/)
 - Produces staging models in the format described by [this ERD](https://fivetran.com/docs/logs/fivetran-platform#schemainformation) which clean, test, and prepare your Fivetran data from our free [Fivetran Platform connector](https://fivetran.com/docs/logs/fivetran-platform) and generates analysis ready end models.
 - The above mentioned models enable you to better understand how you are spending money in Fivetran according to our [consumption-based pricing model](https://fivetran.com/docs/usage-based-pricing) as well as providing details about the performance and status of your Fivetran connections. This is achieved by:
     - Displaying consumption data at the table, connection, destination, and account levels
@@ -46,7 +45,7 @@ Refer to the table below for a detailed view of all tables materialized by defau
 
 To use this dbt package, you must have the following:
 
-- The Fivetran Platform connection syncing data into your destination.
+- A Fivetran Platform connection syncing data into your destination.
 - A **BigQuery**, **Snowflake**, **Redshift**, **Postgres**, **Databricks**, or **SQL Server**. destination.
 
 #### Databricks Dispatch Configuration
@@ -70,7 +69,7 @@ For **Snowflake**, **Redshift**, and **Postgres** databases, we have chosen `del
 ### Step 2: Installing the Package
 Include the following Fivetran Platform package version range in your `packages.yml`
 > Check [dbt Hub](https://hub.getdbt.com/) for the latest installation instructions, or [read the dbt docs](https://docs.getdbt.com/docs/package-management) for more information on installing packages.
-```yaml
+```yml
 packages:
   - package: fivetran/fivetran_log
     version: [">=1.11.0", "<1.12.0"]

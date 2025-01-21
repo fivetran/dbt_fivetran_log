@@ -19,7 +19,7 @@
 - Generates a comprehensive data dictionary of your Fivetran Platform connector (previously called Fivetran Log) data via the [dbt docs site](https://fivetran.github.io/dbt_fivetran_log/)
 
 - Produces staging models in the format described by [this ERD](https://fivetran.com/docs/logs/fivetran-platform#schemainformation) which clean, test, and prepare your Fivetran data from our free [Fivetran Platform connector](https://fivetran.com/docs/logs/fivetran-platform) and generates analysis ready end models.
-- The above mentioned models enable you to better understand how you are spending money in Fivetran according to our [consumption-based pricing model](https://fivetran.com/docs/usage-based-pricing) as well as providing details about the performance and status of your Fivetran connectors. This is achieved by:
+- The above mentioned models enable you to better understand how you are spending money in Fivetran according to our [consumption-based pricing model](https://fivetran.com/docs/usage-based-pricing) as well as providing details about the performance and status of your Fivetran connections. This is achieved by:
     - Displaying consumption data at the table, connector, destination, and account levels
     - Providing a history of measured free and paid monthly active rows (MAR), credit consumption, and the relationship between the two
     - Creating a history of vital daily events for each connector
@@ -43,7 +43,7 @@ Refer to the table below for a detailed view of all tables materialized by defau
 
 ## How do I use the dbt package?
 ### Step 1: Pre-Requisites
-- **Connector**: Have the Fivetran Platform connector syncing data into your warehouse.
+- At least one  Fivetran Platform connection syncing data into your destination.
 - **Database support**: This package has been tested on **BigQuery**, **Snowflake**, **Redshift**, **Postgres**, **Databricks**, and **SQL Server**. Ensure you are using one of these supported databases.
 
 #### Databricks Dispatch Configuration

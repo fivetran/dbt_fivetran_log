@@ -39,6 +39,8 @@
 
 ## Documentation
 - Updated documentation to reflect all renames and the source table transition.
+- Added Quickstart model counts to README. ([#145](https://github.com/fivetran/dbt_fivetran_log/pull/145))
+- Corrected references to connectors and connections in the README. ([#145](https://github.com/fivetran/dbt_fivetran_log/pull/145))
 
 ## Under the Hood (Maintainers Only)
 - Updated consistency and integrity tests to align with naming changes.

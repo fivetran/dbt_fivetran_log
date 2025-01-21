@@ -1,10 +1,49 @@
 # dbt_fivetran_log v1.11.0
 [PR #144](https://github.com/fivetran/dbt_fivetran_log/pull/144) includes the following updates:
-- Rename from connector to connection etc. etc.
+
+## Breaking Changes
+> A `--full-refresh` is **required** after upgrading to prevent errors caused by naming changes.
+
+- Source Table Transition:
+  - In Q1 2025, the source table `CONNECTOR` was replaced with a new table, `CONNECTION`. Historical data remains in `CONNECTOR` and is not migrated to `CONNECTION`.
+  - For Quickstart users, this change is automatically handled, and records from both tables are unioned if both exist in your destination.
+  - For dbt Core users:
+    - The default configuration uses only the `CONNECTION` table.
+    - Users can configure which tables to include by enabling either `CONNECTION`, `CONNECTOR`, or both via the following variables:
+      - `fivetran_platform_using_connection`
+      - `fivetran_platform_using_connector`
+
+- Model Name Renames:
+  - `fivetran_platform__connector_status` → `fivetran_platform__connection_status`
+  - `fivetran_platform__connector_daily_events` → `fivetran_platform__connection_daily_events`
+  - `stg_fivetran_platform__connector` → `stg_fivetran_platform__connection`
+
+- Column Renames:
+  - Renamed `connector_id` to `connection_id` and `connector_name` to `connection_name` in the following models:
+    - `fivetran_platform__connection_status`
+      - Also renamed `connector_health` to `connection_health`
+    - `fivetran_platform__mar_table_history`
+    - `fivetran_platform__connection_daily_events`
+    - `fivetran_platform__audit_table`
+    - `fivetran_platform__audit_user_activity`
+    - `fivetran_platform__schema_changelog`
+    - `stg_fivetran_platform__connection`
+
+- New Model:
+  - Added `stg_fivetran_platform__connection_tmp`
+
+## Features
+- Added macro `coalesce_cast` to ensure consistent data types when using `coalesce`, preventing potential errors.
+- Added macro `get_connection_columns` for the new `CONNECTION` source.
 
 ## Documentation
-- Added Quickstart model counts to README. ([#143](https://github.com/fivetran/dbt_fivetran_log/pull/143))
-- Corrected references to connectors and connections in the README. ([#143](https://github.com/fivetran/dbt_fivetran_log/pull/143))
+- Updated documentation to reflect all renames and the source table transition.
+
+## Under the Hood (Maintainers Only)
+- Updated consistency and integrity tests to align with naming changes.
+- Refactored seeds and `get_*_columns` macros to reflect renames.
+- Added a new seed for the `CONNECTION` table.
+- Updated `run_models` to test all possible combinations of `CONNECTION` and `CONNECTOR`.
 
 # dbt_fivetran_log v1.10.0
 [PR #140](https://github.com/fivetran/dbt_fivetran_log/pull/140) includes the following updates:

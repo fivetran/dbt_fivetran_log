@@ -12,6 +12,7 @@
     - Users can configure which tables to include by enabling either `CONNECTION`, `CONNECTOR`, or both via the following variables:
       - `fivetran_platform_using_connection`
       - `fivetran_platform_using_connector`
+    - For more details, refer to the [README](https://github.com/fivetran/dbt_fivetran_log/blob/main/README.md#leveraging-connection-vs-connector-source). 
 
 - Model Name Renames:
   - `fivetran_platform__connector_status` → `fivetran_platform__connection_status`

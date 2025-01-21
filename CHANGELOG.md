@@ -14,8 +14,10 @@
   - If you would like to override these updates, you can also manually disable the `fivetran_platform_using_transformations` variable by setting it to False in your project.yml
 
 ## Documentation Updates
-  - Included documentation about the `transformation_runs` source table and the aggregated `*_model_run` fields.
-  - Added information about manually configuring the `fivetran_platform_using_transformations` variable in the [DECISION LOG.](https://github.com/fivetran/dbt_fivetran_log/blob/main/DECISIONLOG.md)
+- Included documentation about the `transformation_runs` source table and the aggregated `*_model_run` fields.
+- Added information about manually configuring the `fivetran_platform_using_transformations` variable in the [DECISION LOG.](https://github.com/fivetran/dbt_fivetran_log/blob/main/DECISIONLOG.md)## Documentation
+- Added Quickstart model counts to README. ([#145](https://github.com/fivetran/dbt_fivetran_log/pull/145))
+- Corrected references to connectors and connections in the README. ([#145](https://github.com/fivetran/dbt_fivetran_log/pull/145))
 
 ## Under the Hood
 - Added `transformation_runs` seed data in `integration_tests/seeds/`.

@@ -85,7 +85,7 @@ unioned as (
 {% endif %}
 ),
 
-final as (
+sorted_rows as (
     select
         connection_id,
         connection_name,
@@ -97,8 +97,21 @@ final as (
         coalesce(_fivetran_deleted, {{ ' 0 ' if target.type == 'sqlserver' else ' false' }}) as is_deleted,
         row_number() over (partition by connection_name, destination_id order by _fivetran_synced desc) as nth_last_record
     from unioned
+),
+
+final as (
+    select
+        connection_id,
+        connection_name,
+        connector_type,
+        destination_id,
+        connecting_user_id,
+        is_paused,
+        set_up_at,
+        is_deleted
+    from sorted_rows
+    where nth_last_record = 1
 )
 
 select * 
 from final
-where nth_last_record = 1

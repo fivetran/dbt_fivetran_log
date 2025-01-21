@@ -9,7 +9,7 @@ dispatch:
     search_order: ['spark_utils', 'dbt_utils']
 
 vars:
-  # # enable when generating docs
+  ## enable when generating docs
   # fivetran_platform_using_connector: true
 
   fivetran_log:

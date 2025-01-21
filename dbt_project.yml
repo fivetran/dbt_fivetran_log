@@ -1,6 +1,6 @@
 config-version: 2
 name: 'fivetran_log'
-version: '1.10.0'
+version: '1.11.0'
 require-dbt-version: [">=1.3.0", "<2.0.0"]
 
 models:
@@ -9,13 +9,13 @@ models:
     +schema: fivetran_platform
     staging:
       +schema: stg_fivetran_platform
-      tmp:
-        +materialized: view
+      +materialized: view
 
 vars:
   fivetran_log:
     account: "{{ source('fivetran_platform', 'account') }}"
     incremental_mar: "{{ source('fivetran_platform', 'incremental_mar') }}"
+    connection: "{{ source('fivetran_platform', 'connection') }}"
     connector: "{{ source('fivetran_platform', 'connector') }}"
     credits_used: "{{ source('fivetran_platform', 'credits_used') }}"
     destination: "{{ source('fivetran_platform', 'destination') }}"

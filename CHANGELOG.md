@@ -1,4 +1,6 @@
-# dbt_fivetran_log version.version
+# dbt_fivetran_log v1.11.0
+[PR #144](https://github.com/fivetran/dbt_fivetran_log/pull/144) includes the following updates:
+- Rename from connector to connection etc. etc.
 
 ## Documentation
 - Added Quickstart model counts to README. ([#143](https://github.com/fivetran/dbt_fivetran_log/pull/143))

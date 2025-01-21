@@ -20,10 +20,10 @@
 
 - Produces staging models in the format described by [this ERD](https://fivetran.com/docs/logs/fivetran-platform#schemainformation) which clean, test, and prepare your Fivetran data from our free [Fivetran Platform connector](https://fivetran.com/docs/logs/fivetran-platform) and generates analysis ready end models.
 - The above mentioned models enable you to better understand how you are spending money in Fivetran according to our [consumption-based pricing model](https://fivetran.com/docs/usage-based-pricing) as well as providing details about the performance and status of your Fivetran connections. This is achieved by:
-    - Displaying consumption data at the table, connector, destination, and account levels
+    - Displaying consumption data at the table, connection, destination, and account levels
     - Providing a history of measured free and paid monthly active rows (MAR), credit consumption, and the relationship between the two
-    - Creating a history of vital daily events for each connector
-    - Surfacing an audit log of records inserted, deleted, an updated in each table during connector syncs
+    - Creating a history of vital daily events for each connection
+    - Surfacing an audit log of records inserted, deleted, an updated in each table during connection syncs
     - Keeping an audit log of user-triggered actions across your Fivetran instance
 
 <!--section="fivetran_platform_transformation_model"-->
@@ -32,12 +32,12 @@ Refer to the table below for a detailed view of all tables materialized by defau
 
 | **Table**                  | **Description**                                                                                                                                               |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [fivetran_platform__connector_status](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__connector_status)        | Each record represents a connector loading data into a destination, enriched with data about the connector's data sync status.                                          |
-| [fivetran_platform__mar_table_history](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__mar_table_history)     | Each record represents a table's free, paid, and total volume for a month, complete with data about its connector and destination.                             |
+| [fivetran_platform__connection_status](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__connection_status)        | Each record represents a connection loading data into a destination, enriched with data about the connection's data sync status.                                          |
+| [fivetran_platform__mar_table_history](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__mar_table_history)     | Each record represents a table's free, paid, and total volume for a month, complete with data about its connection and destination.                             |
 | [fivetran_platform__usage_mar_destination_history](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__usage_mar_destination_history)    | Table of each destination's usage and active volume, per month. Includes the usage per million MAR and MAR per usage. Usage either refers to a dollar or credit amount, depending on customer's pricing model. Read more about the relationship between usage and MAR [here](https://www.fivetran.com/legal/service-consumption-table).                             |
-| [fivetran_platform__connector_daily_events](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__connector_daily_events)    | Each record represents a daily measurement of the API calls, schema changes, and record modifications made by a connector, starting from the date on which the connector was set up.                            |
-| [fivetran_platform__schema_changelog](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__schema_changelog)    | Each record represents a schema change (altering/creating tables, creating schemas, and changing schema configurations) made to a connector and contains detailed information about the schema change event.                           |
-| [fivetran_platform__audit_table](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_table)    | Replaces the deprecated [`_fivetran_audit` table](https://fivetran.com/docs/getting-started/system-columns-and-tables#audittables). Each record represents a table being written to during a connector sync. Contains timestamps related to the connector and table-level sync progress and the sum of records inserted/replaced, updated, and deleted in the table.                             |
+| [fivetran_platform__connection_daily_events](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__connection_daily_events)    | Each record represents a daily measurement of the API calls, schema changes, and record modifications made by a connection, starting from the date on which the connection was set up.                            |
+| [fivetran_platform__schema_changelog](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__schema_changelog)    | Each record represents a schema change (altering/creating tables, creating schemas, and changing schema configurations) made to a connection and contains detailed information about the schema change event.                           |
+| [fivetran_platform__audit_table](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_table)    | Replaces the deprecated [`_fivetran_audit` table](https://fivetran.com/docs/getting-started/system-columns-and-tables#audittables). Each record represents a table being written to during a connection sync. Contains timestamps related to the connection and table-level sync progress and the sum of records inserted/replaced, updated, and deleted in the table.                             |
 | [fivetran_platform__audit_user_activity](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_user_activity)    | Each record represents a user-triggered action in your Fivetran instance. This table is intended for audit-trail purposes, as it can be very helpful when trying to trace a user action to a [log event](https://fivetran.com/docs/logs#logeventlist) such as a schema change, sync frequency update, manual update, broken connection, etc.                             |
 ### Materialized Models
 Each Quickstart transformation job run materializes 19 models if all components of this data model are enabled. This count includes all staging, intermediate, and final models materialized as `view`, `table`, or `incremental`.
@@ -45,8 +45,11 @@ Each Quickstart transformation job run materializes 19 models if all components 
 
 ## How do I use the dbt package?
 ### Step 1: Pre-Requisites
-- **Connector**: Have the Fivetran Platform connection syncing data into your warehouse.
-- **Database support**: This package has been tested on **BigQuery**, **Snowflake**, **Redshift**, **Postgres**, **Databricks**, and **SQL Server**. Ensure you are using one of these supported databases.
+
+To use this dbt package, you must have the following:
+
+- The Fivetran Platform connection syncing data into your destination.
+- A **BigQuery**, **Snowflake**, **Redshift**, **Postgres**, **Databricks**, or **SQL Server**. destination.
 
 #### Databricks Dispatch Configuration
 If you are using a Databricks destination with this package you will need to add the below (or a variation of the below) dispatch configuration within your `dbt_project.yml`. This is required in order for the package to accurately search for macros within the `dbt-labs/spark_utils` then the `dbt-labs/dbt_utils` packages respectively.
@@ -72,7 +75,7 @@ Include the following Fivetran Platform package version range in your `packages.
 ```yaml
 packages:
   - package: fivetran/fivetran_log
-    version: [">=1.10.0", "<1.11.0"]
+    version: [">=1.11.0", "<1.12.0"]
 ```
 
 > Note that although the source connector is now "Fivetran Platform", the package retains the old name of "fivetran_log".

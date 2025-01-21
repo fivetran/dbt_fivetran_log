@@ -6,7 +6,7 @@
 
 with prod as (
     select
-        connector_name,
+        connection_name,
         schema_name,
         table_name,
         destination_id,
@@ -19,7 +19,7 @@ with prod as (
 
 dev as (
     select
-        connector_name,
+        connection_name,
         schema_name,
         table_name,
         destination_id,
@@ -32,7 +32,7 @@ dev as (
 
 final as (
     select 
-        prod.connector_name,
+        prod.connection_name,
         prod.schema_name,
         prod.table_name,
         prod.destination_id,
@@ -43,7 +43,7 @@ final as (
         dev.total_mar as dev_total_mar
     from prod
     left join dev 
-        on dev.connector_name = prod.connector_name
+        on dev.connection_name = prod.connection_name
             and dev.schema_name = prod.schema_name
             and dev.table_name = prod.table_name
             and dev.destination_id = prod.destination_id

@@ -1,9 +1,9 @@
--- depends_on: {{ var('connector') }}
+-- depends_on: {{ var('connection') }}
 
-with connector as (
+with connection as (
     
     select * 
-    from {{ ref('fivetran_platform__connector_status') }}
+    from {{ ref('fivetran_platform__connection_status') }}
 ),
 
 -- grab api calls, schema changes, and record modifications
@@ -11,7 +11,7 @@ with connector as (
 log_events as (
 
     select 
-        connector_id,
+        connection_id,
         cast( {{ dbt.date_trunc('day', 'created_at') }} as date) as date_day,
         event_subtype,
         replace(message_data, 'totalQueries', 'total_queries') as message_data
@@ -21,13 +21,13 @@ log_events as (
     where event_subtype in (
         'api_call', 'extract_summary', 'records_modified', 'create_table', 'alter_table',
         'create_schema', 'change_schema_config') -- all relevant event subtypes
-        and connector_id is not null
+        and connection_id is not null
 ),
 
 agg_log_events as (
 
     select 
-        connector_id,
+        connection_id,
         date_day,
         case 
             when event_subtype in ('create_table', 'alter_table', 'create_schema', 'change_schema_config') then 'schema_change' 
@@ -44,45 +44,45 @@ agg_log_events as (
             ) as count_events
 
     from log_events
-    group by connector_id, date_day, event_subtype
+    group by connection_id, date_day, event_subtype
 ),
 
 pivot_out_events as (
 
     select
-        connector_id,
+        connection_id,
         date_day,
         max(case when event_subtype = 'api_call' or event_subtype = 'extract_summary' then count_events else 0 end) as count_api_calls,
         max(case when event_subtype = 'records_modified' then count_events else 0 end) as count_record_modifications,
         max(case when event_subtype = 'schema_change' then count_events else 0 end) as count_schema_changes
 
     from agg_log_events
-    group by connector_id, date_day
+    group by connection_id, date_day
 ), 
 
-connector_event_counts as (
+connection_event_counts as (
 
     select
         pivot_out_events.date_day,
         pivot_out_events.count_api_calls,
         pivot_out_events.count_record_modifications,
         pivot_out_events.count_schema_changes,
-        connector.connector_name,
-        connector.connector_id,
-        connector.connector_type,
-        connector.destination_name,
-        connector.destination_id,
-        connector.set_up_at
+        connection.connection_name,
+        connection.connection_id,
+        connection.connector_type,
+        connection.destination_name,
+        connection.destination_id,
+        connection.set_up_at
     from
-    connector left join pivot_out_events 
-        on pivot_out_events.connector_id = connector.connector_id
+    connection left join pivot_out_events 
+        on pivot_out_events.connection_id = connection.connection_id
 ),
 
 spine as (
 
     {% if execute and flags.WHICH in ('run', 'build') %}
     {% set first_date_query %}
-        select  min( signed_up ) as min_date from {{ var('connector') }}
+        select  min( signed_up ) as min_date from {{ var('connection') }}
     {% endset %}
     {% set first_date = run_query(first_date_query).columns[0][0]|string %}
     
@@ -101,32 +101,32 @@ spine as (
     ) as date_spine
 ),
 
-connector_event_history as (
+connection_event_history as (
 
     select
         spine.date_day,
-        connector_event_counts.connector_name,
-        connector_event_counts.connector_id,
-        connector_event_counts.connector_type,
-        connector_event_counts.destination_name,
-        connector_event_counts.destination_id,
+        connection_event_counts.connection_name,
+        connection_event_counts.connection_id,
+        connection_event_counts.connector_type,
+        connection_event_counts.destination_name,
+        connection_event_counts.destination_id,
         max(case 
-            when spine.date_day = connector_event_counts.date_day then connector_event_counts.count_api_calls
+            when spine.date_day = connection_event_counts.date_day then connection_event_counts.count_api_calls
             else 0
         end) as count_api_calls,
         max(case 
-            when spine.date_day = connector_event_counts.date_day then connector_event_counts.count_record_modifications
+            when spine.date_day = connection_event_counts.date_day then connection_event_counts.count_record_modifications
             else 0
         end) as count_record_modifications,
         max(case 
-            when spine.date_day = connector_event_counts.date_day then connector_event_counts.count_schema_changes
+            when spine.date_day = connection_event_counts.date_day then connection_event_counts.count_schema_changes
             else 0
         end) as count_schema_changes
     from
-    spine join connector_event_counts
-        on spine.date_day  >= cast({{ dbt.date_trunc('day', 'cast(connector_event_counts.set_up_at as date)') }} as date)
+    spine join connection_event_counts
+        on spine.date_day  >= cast({{ dbt.date_trunc('day', 'cast(connection_event_counts.set_up_at as date)') }} as date)
 
-    group by spine.date_day, connector_name, connector_id, connector_type, destination_name, destination_id
+    group by spine.date_day, connection_name, connection_id, connector_type, destination_name, destination_id
 ),
 
 -- now rejoin spine to get a complete calendar
@@ -134,20 +134,20 @@ join_event_history as (
     
     select
         spine.date_day,
-        connector_event_history.connector_name,
-        connector_event_history.connector_id,
-        connector_event_history.connector_type,
-        connector_event_history.destination_name,
-        connector_event_history.destination_id,
-        max(connector_event_history.count_api_calls) as count_api_calls,
-        max(connector_event_history.count_record_modifications) as count_record_modifications,
-        max(connector_event_history.count_schema_changes) as count_schema_changes
+        connection_event_history.connection_name,
+        connection_event_history.connection_id,
+        connection_event_history.connector_type,
+        connection_event_history.destination_name,
+        connection_event_history.destination_id,
+        max(connection_event_history.count_api_calls) as count_api_calls,
+        max(connection_event_history.count_record_modifications) as count_record_modifications,
+        max(connection_event_history.count_schema_changes) as count_schema_changes
 
     from
-    spine left join connector_event_history
-        on spine.date_day = connector_event_history.date_day
+    spine left join connection_event_history
+        on spine.date_day = connection_event_history.date_day
 
-    group by spine.date_day, connector_name, connector_id, connector_type, destination_name, destination_id
+    group by spine.date_day, connection_name, connection_id, connector_type, destination_name, destination_id
 ),
 
 final as (

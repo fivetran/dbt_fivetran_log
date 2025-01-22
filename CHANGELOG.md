@@ -21,6 +21,7 @@
 - Added the `get_transformation_runs_columns()` macro to ensure all required columns are present.
 - Added `transformation_runs` seed data in `integration_tests/seeds/`.
 - Added a `run_count__usage_mar_destination_history` validation test to check model run counts across staging and end model.
+- (Redshift only) Updates to use limit 1 instead of limit 0 for empty tables. This ensures that Redshift will respect the package's datatype casts.
 
 # dbt_fivetran_log v1.10.0
 [PR #140](https://github.com/fivetran/dbt_fivetran_log/pull/140) includes the following updates:

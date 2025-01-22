@@ -188,3 +188,37 @@ models:
         description: Phone number associated with user.
       - name: is_verified
         description: Boolean that indicates whether the user has verified their email address in the account creation process.
+
+  - name: stg_fivetran_platform__transformation_runs
+    description: Table of all transformation runs that have been executed by Fivetran.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: 
+            - destination_id
+            - job_id
+            - project_type
+            - free_type
+            - updated_at
+            - measured_date
+    columns:
+      - name: destination_id
+        description: Foreign key referencing the destination for which model runs is calculated.
+      - name: job_id
+        description: Unique key referencing the job affiliated with the transformation run.
+      - name: measured_date
+        description: The date in UTC format of when models were run.
+      - name: measured_month
+        description: The month (yyyy-mm) of the transformation activity.
+      - name: project_type
+        description: The type of transformation project that was run (ie DBT_CORE, QUICKSTART).
+      - name: free_type
+        description: If it is a free model run, the value indicates the type of free run. For paid model runs, the value is `PAID`.
+      - name: job_name
+        description: The name of the transformation job that was run.
+      - name: updated_at
+        description: Timestamp of when the record was last updated.
+      - name: model_runs
+        description: The number of models that were run in the transformation.
+      - name: _fivetran_synced
+        description: Timestamp of when the record was last synced.
+

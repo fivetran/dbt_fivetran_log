@@ -1,8 +1,26 @@
-# dbt_fivetran_log version.version
+# dbt_fivetran_log v1.11.0
+[PR #141](https://github.com/fivetran/dbt_fivetran_log/pull/141) includes the following updates:
 
-## Documentation
+## Schema Changes: Adding the Transformation Runs Table
+- This package now accounts for the `transformation_runs` source table. Therefore, a new staging model [`stg_fivetran_platform__transformation_runs`](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.stg_fivetran_platform__transformation_runs) has been added. Note that not all customers have the `transformation_runs` source table, particularly if they are not using Fivetran Transformations. If the table doesn't exist, `stg_fivetran_platform__transformation_runs` will persist as an empty model and respective downstream fields will be null. 
+
+- In addition, the following fields have been added to the [`fivetran_platform__usage_mar_destination_history`](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__usage_mar_destination_history) end model:
+    - `paid_model_runs`
+    - `free_model_runs`
+    - `total_model_runs`
+
+## Documentation Updates
+- Included documentation about the `transformation_runs` source table and the aggregated `*_model_runs` fields.
+- Added information about manually configuring the `fivetran_platform_using_transformations` variable in the [DECISION LOG.](https://github.com/fivetran/dbt_fivetran_log/blob/main/DECISIONLOG.md)
 - Added Quickstart model counts to README. ([#145](https://github.com/fivetran/dbt_fivetran_log/pull/145))
 - Corrected references to connectors and connections in the README. ([#145](https://github.com/fivetran/dbt_fivetran_log/pull/145))
+
+## Under the Hood
+- Introduced the variable `fivetran_platform_using_transformations` to control the `stg_fivetran_platform__transformation_runs` output. It is configured based on whether the `transformation_runs` table exists. For more information, refer to the [DECISION LOG.](https://github.com/fivetran/dbt_fivetran_log/blob/main/DECISIONLOG.md)
+- Added the `get_transformation_runs_columns()` macro to ensure all required columns are present.
+- Added `transformation_runs` seed data in `integration_tests/seeds/`.
+- Added a `run_count__usage_mar_destination_history` validation test to check model run counts across staging and end model.
+- (Redshift only) Updates to use limit 1 instead of limit 0 for empty tables. This ensures that Redshift will respect the package's datatype casts.
 
 # dbt_fivetran_log v1.10.0
 [PR #140](https://github.com/fivetran/dbt_fivetran_log/pull/140) includes the following updates:
@@ -15,6 +33,7 @@
 
 ## Under the Hood (Maintainers Only)
 - Enhanced seed data for integration testing to include the different spellings and ensure compatibility with Redshift.
+
 
 # dbt_fivetran_log v1.9.1
 [PR #138](https://github.com/fivetran/dbt_fivetran_log/pull/138) includes the following updates:

@@ -30,7 +30,7 @@ select
     cast(null as {{ dbt.type_int() }}) as dollars_spent
 
     {% if target.type not in ('sqlserver') %}
-    limit 0
+    limit {{ '1' if target.type == 'redshift' else '0' }}
     {% endif %}
 
 {% endif %}

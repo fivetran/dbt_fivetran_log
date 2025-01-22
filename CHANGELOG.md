@@ -2,24 +2,23 @@
 [PR #141](https://github.com/fivetran/dbt_fivetran_log/pull/141) includes the following updates:
 
 ## Schema Changes: Adding the Transformation Runs Table
-- We have added the `transformation_runs` source table. Note that not all customers have the `transformation_runs` source table, particularly if they are not using Fivetran Transformations. Therefore, the `transformation_runs` table will only populate if the table exists in your schema, via a new variable `fivetran_platform_using_transformations`, which automatically checks for the table. If the table doesn't exist, the staging `stg_fivetran_platform__transformation_runs` model will persist as an empty model and respective downstream fields will be null. 
+- This package now accounts for the `transformation_runs` source table. Therefore, a new staging model [`stg_fivetran_platform__transformation_runs`](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.stg_fivetran_platform__transformation_runs) has been added. Note that not all customers have the `transformation_runs` source table, particularly if they are not using Fivetran Transformations. Therefore, the `transformation_runs` table will only populate if the table exists in your schema, via a new variable `fivetran_platform_using_transformations`, which automatically checks for the table. If the table doesn't exist, `stg_fivetran_platform__transformation_runs` will persist as an empty model and respective downstream fields will be null. 
 
-- If the `transformation_runs` source table exists in your schema, `fivetran_platform_using_transformations` will be set to True and the following updates apply:
-  - Added a new staging [`stg_fivetran_platform__transformation_runs`](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.stg_fivetran_platform__transformation_runs) model. 
-    - We have also added the `get_transformation_runs_columns()` macro to ensure all required columns are present.
-  - Added the following fields to the [`fivetran_platform__usage_mar_destination_history`](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__usage_mar_destination_history) end model for each destination and month:
+- In addition, the following fields to the [`fivetran_platform__usage_mar_destination_history`](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__usage_mar_destination_history) end model:
     - `paid_model_runs`
     - `free_model_runs`
     - `total_model_runs`
-  - If you would like to override these updates, you can also manually disable the `fivetran_platform_using_transformations` variable by setting it to False in your project.yml
+
+- If you have the `transformation_runs` source table but wish to not have it passed through in your models, you may manually disable the `fivetran_platform_using_transformations` variable by setting it to False in your project.yml. For more information, refer to the [DECISION LOG.](https://github.com/fivetran/dbt_fivetran_log/blob/main/DECISIONLOG.md)
 
 ## Documentation Updates
-- Included documentation about the `transformation_runs` source table and the aggregated `*_model_run` fields.
-- Added information about manually configuring the `fivetran_platform_using_transformations` variable in the [DECISION LOG.](https://github.com/fivetran/dbt_fivetran_log/blob/main/DECISIONLOG.md)## Documentation
+- Included documentation about the `transformation_runs` source table and the aggregated `*_model_runs` fields.
+- Added information about manually configuring the `fivetran_platform_using_transformations` variable in the [DECISION LOG.](https://github.com/fivetran/dbt_fivetran_log/blob/main/DECISIONLOG.md)
 - Added Quickstart model counts to README. ([#145](https://github.com/fivetran/dbt_fivetran_log/pull/145))
 - Corrected references to connectors and connections in the README. ([#145](https://github.com/fivetran/dbt_fivetran_log/pull/145))
 
 ## Under the Hood
+- Added the `get_transformation_runs_columns()` macro to ensure all required columns are present.
 - Added `transformation_runs` seed data in `integration_tests/seeds/`.
 - Added a `run_count__usage_mar_destination_history` validation test to check model run counts across staging and end model.
 

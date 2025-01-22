@@ -4,7 +4,7 @@
 ## Schema Changes: Adding the Transformation Runs Table
 - This package now accounts for the `transformation_runs` source table. Therefore, a new staging model [`stg_fivetran_platform__transformation_runs`](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.stg_fivetran_platform__transformation_runs) has been added. Note that not all customers have the `transformation_runs` source table, particularly if they are not using Fivetran Transformations. If the table doesn't exist, `stg_fivetran_platform__transformation_runs` will persist as an empty model and respective downstream fields will be null. 
 
-- In addition, the following fields to the [`fivetran_platform__usage_mar_destination_history`](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__usage_mar_destination_history) end model:
+- In addition, the following fields have been added to the [`fivetran_platform__usage_mar_destination_history`](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__usage_mar_destination_history) end model:
     - `paid_model_runs`
     - `free_model_runs`
     - `total_model_runs`

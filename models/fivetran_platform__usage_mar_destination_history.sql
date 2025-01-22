@@ -21,8 +21,8 @@ transformation_runs as (
     select
         destination_id,
         measured_month,
-        sum(case when free_type = 'PAID' then model_runs else 0 end) as paid_model_runs,
-        sum(case when free_type != 'PAID' then model_runs else 0 end) as free_model_runs,
+        sum(case when lower(free_type) = 'paid' then model_runs else 0 end) as paid_model_runs,
+        sum(case when lower(free_type) != 'paid' then model_runs else 0 end) as free_model_runs,
         sum(coalesce(model_runs, 0)) as total_model_runs
     from {{ ref('stg_fivetran_platform__transformation_runs') }}
     group by destination_id, measured_month

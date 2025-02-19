@@ -14,6 +14,7 @@
 - Added information about manually configuring the `fivetran_platform_using_transformations` variable in the [DECISION LOG.](https://github.com/fivetran/dbt_fivetran_log/blob/main/DECISIONLOG.md)
 - Added Quickstart model counts to README. ([#145](https://github.com/fivetran/dbt_fivetran_log/pull/145))
 - Corrected references to connectors and connections in the README. ([#145](https://github.com/fivetran/dbt_fivetran_log/pull/145))
+- Updated dbt documentation column and table descriptions for clarity and consistency across models and sources. ([#147](https://github.com/fivetran/dbt_fivetran_log/pull/147))
 
 ## Under the Hood
 - Introduced the variable `fivetran_platform_using_transformations` to control the `stg_fivetran_platform__transformation_runs` output. It is configured based on whether the `transformation_runs` table exists. For more information, refer to the [DECISION LOG.](https://github.com/fivetran/dbt_fivetran_log/blob/main/DECISIONLOG.md)

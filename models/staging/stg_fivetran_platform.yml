@@ -17,7 +17,9 @@ models:
       - name: incremental_rows
         description: The number of new distinct primary keys synced for the connector on the given day.
       - name: sync_type
-        description: Indicates whether the MAR calculation is based on a historical or incremental sync. Currently, the only available value is `UNKNOWN`.
+        description: >
+              Indicates whether the MAR calculation is based on a historical or incremental sync. 
+              Possible values include `HISTORICAL`, `INCREMENTAL`, and `UNKNOWN`.
       - name: schema_name
         description: Name of the schema containing the measured table.
       - name: table_name

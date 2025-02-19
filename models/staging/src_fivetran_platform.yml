@@ -20,7 +20,9 @@ sources:
           Each measurement is cumulative for the month and includes all MAR types (paid, free, etc.).
         columns:
           - name: connector_id
-            description: System-generated unique ID of the connector being measured. This column has been deprecated and replaced with `connector_name` for connectors created after July 2024.
+            description: >
+              The *name* of the connector being measured. This column has been deprecated and replaced with `connector_name` for
+              connectors created after July 2024, however this column but may still be present in older Fivetran Platform connectors.
           - name: connector_name
             description: Name of the connector being measured.
           - name: destination_id
@@ -32,7 +34,9 @@ sources:
           - name: incremental_rows
             description: The number of new distinct primary keys synced for the connector on the given day.
           - name: sync_type
-            description: Indicates whether the MAR calculation is based on a historical or incremental sync. Currently, the only available value is `UNKNOWN`.
+            description: >
+              Indicates whether the MAR calculation is based on a historical or incremental sync. 
+              Possible values include `HISTORICAL`, `INCREMENTAL`, and `UNKNOWN`.
           - name: schema_name
             description: Name of the schema containing the measured table.
           - name: table_name
@@ -83,7 +87,7 @@ sources:
       - name: usage_cost
         identifier: "{{ var('fivetran_platform_usage_cost_identifier', 'usage_cost')}}"
         freshness: null
-        description: Table of usage costs in credits or dollars per destination and month.
+        description: Table of usage costs per destination and month.
         columns:
           - name: destination_id
             description: Foreign key referencing the destination where costs were incurred.
@@ -152,6 +156,52 @@ sources:
             description: Name of the Fivetran account.
           - name: status
             description: Account status (e.g., `trial`, `frozen`).
+          - name: _fivetran_synced
+            description: Timestamp when the record was last synced.
+
+      - name: destination_membership
+        identifier: "{{ var('fivetran_platform_destination_membership_identifier', 'destination_membership')}}"
+        description: Table of users with access to a destination.
+        freshness: null
+        config:
+          enabled: "{{ var('fivetran_platform_using_destination_membership', true) }}"
+        columns:
+          - name: destination_id
+            description: Foreign key referencing the destination to which the user belongs.
+          - name: user_id
+            description: Foreign key referencing the user with access to the destination.
+          - name: activated_at
+            description: Timestamp when the user was activated in the destination.
+          - name: joined_at
+            description: Timestamp when the user was added to the destination.
+          - name: role
+            description: The user's permissions for this individual destination.
+          - name: _fivetran_synced
+            description: Timestamp when the record was last synced.
+
+      - name: user
+        identifier: "{{ var('fivetran_platform_user_identifier', 'user')}}"
+        description: Table of users with access to this Fivetran account.
+        freshness: null
+        config:
+          enabled: "{{ var('fivetran_platform_using_user', true) }}"
+        columns:
+          - name: id
+            description: Unique ID of the user's account.
+          - name: created_at
+            description: Timestamp when the user was created.
+          - name: email
+            description: Email associated with the user.
+          - name: email_disabled
+            description: Boolean indicating whether the user has disabled all email notifications.
+          - name: family_name
+            description: User's last name.
+          - name: given_name
+            description: User's first name.
+          - name: phone
+            description: Phone number associated with the user.
+          - name: verified 
+            description: Boolean indicating whether the user has verified their email address.
           - name: _fivetran_synced
             description: Timestamp when the record was last synced.
 

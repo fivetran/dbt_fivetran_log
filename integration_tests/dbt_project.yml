@@ -13,7 +13,7 @@ vars:
   # fivetran_platform_using_connector: true
 
   fivetran_log:
-    fivetran_platform_schema: "fivetran_platform_integration_tests_6"
+    fivetran_platform_schema: "fivetran_platform_integration_tests_13"
     fivetran_platform_account_identifier: "account"
     fivetran_platform_incremental_mar_identifier: "incremental_mar"
     fivetran_platform_connection_identifier: "connection"
@@ -24,10 +24,12 @@ vars:
     fivetran_platform_destination_membership_identifier: "destination_membership"
     fivetran_platform_log_identifier: "log"
     fivetran_platform_user_identifier: "user"
+    fivetran_platform_transformation_runs_identifier: "transformation_runs"
+
 
 models:
   fivetran_log:
-    +schema: "{{ 'platform_sqlw_tests' if target.name == 'databricks-sql' else 'fivetran_platform' }}"
+    +schema: "{{ 'sqlw_tests_4' if target.name == 'databricks-sql' else 'fivetran_platform' }}"
     # +schema: "fivetran_platform_{{ var('directed_schema','dev') }}"
 
 seeds:

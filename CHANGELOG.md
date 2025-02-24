@@ -23,6 +23,7 @@
 - Model Renames:
   - `fivetran_platform__connector_status` → `fivetran_platform__connection_status`
   - `fivetran_platform__connector_daily_events` → `fivetran_platform__connection_daily_events`
+  - `fivetran_platform__usage_mar_destination_history` → `fivetran_platform__usage_history`
   - `stg_fivetran_platform__connector` → `stg_fivetran_platform__connection`
   - **NOTE**: Ensure any downstream queries are updated to reflect the new model names.
 

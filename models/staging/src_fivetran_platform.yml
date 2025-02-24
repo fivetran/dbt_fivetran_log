@@ -55,7 +55,12 @@ sources:
         description: >
           Table of all connections loading data into destinations. Deleted connections 
           remain in the table but can be identified by having an older `_fivetran_synced` timestamp.
+          Note: Historical data from `CONNECTOR` is not present in this table; however, the package
+          unions data from both `CONNECTOR` and `CONNECTION` if both exist in your destination
+          and are enabled.
         freshness: null
+        config:
+          enabled: "{{ var('fivetran_platform_using_connection', true) }}"
         columns: 
           - name: connection_id
             description: System-generated unique ID of the connection.
@@ -80,10 +85,14 @@ sources:
       - name: connector
         identifier: "{{ var('fivetran_platform_connector_identifier', 'connector')}}"
         description: >
-          (DEPRECATED) Table of all connections loading data into warehouses. Note that deleted connections 
-          are not removed, but can be identified by having an older _fivetran_synced field relative 
-          to other connections.
+          (DEPRECATED) Table of all connections loading data into destinations. Deleted connections 
+          remain in the table but can be identified by having an older `_fivetran_synced` timestamp.
+          Note: Historical data from this table is not present in `CONNECTOR`; however, the package
+          unions data from both `CONNECTOR` and `CONNECTION` if both exist in your destination
+          and are enabled.
         freshness: null
+        config:
+          enabled: "{{ var('fivetran_platform_using_connector', true) }}"
         columns: 
           - name: connector_id
             description: System-generated unique ID of the connection. 

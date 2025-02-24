@@ -16,7 +16,7 @@ models:
       - name: connection_name
         description: Name of the connection.
       - name: connector_type
-        description: The kind of connection (e.g. Google Sheets, Webhooks).
+        description: The kind of connector (e.g. Google Sheets, Webhooks).
       - name: destination_id
         description: Foreign key referencing the destination receiving data from the connection.
       - name: destination_name
@@ -76,7 +76,7 @@ models:
       - name: total_monthly_active_rows
         description: The total number of active rows measured in the table for the month.
       - name: connector_type
-        description: The kind of connection (e.g. Google Sheets, Webhooks).
+        description: The kind of connector (e.g. Google Sheets, Webhooks).
       - name: destination_name 
         description: Name of the destination as it appears in the UI.
 
@@ -139,7 +139,7 @@ models:
       - name: connection_name
         description: Name of the connection.
       - name: connector_type
-        description: The kind of connection (e.g. Google Sheets, Webhooks).
+        description: The kind of connector (e.g. Google Sheets, Webhooks).
       - name: destination_id
         description: Foreign key referencing the destination receiving data from the connection.
       - name: destination_name

@@ -1,8 +1,9 @@
 # dbt_fivetran_log v1.12.0
 [PR #144](https://github.com/fivetran/dbt_fivetran_log/pull/144) includes the following updates:
 
-## Breaking Changes
-> A `--full-refresh` is **required** after upgrading to prevent errors caused by naming and materialization changes.
+## Breaking Changes - Action Required
+> A `--full-refresh` is **required** after upgrading to prevent errors caused by naming and materialization changes. Additionally, downstream queries **must** be updated to reflect new model and column names.
+
 
 - The materialization of all `stg_*` staging models has been update to views. Previously the `stg_*_tmp` models were views and the non-tmp models were tables, but now they are all tables to avoid redundancy of data in tables.
 
@@ -19,10 +20,11 @@
       - `fivetran_platform_using_connector`
     - For more details, refer to the [README](https://github.com/fivetran/dbt_fivetran_log/blob/main/README.md#leveraging-connection-vs-connector-source). 
 
-- Model Name Renames:
+- Model Renames:
   - `fivetran_platform__connector_status` → `fivetran_platform__connection_status`
   - `fivetran_platform__connector_daily_events` → `fivetran_platform__connection_daily_events`
   - `stg_fivetran_platform__connector` → `stg_fivetran_platform__connection`
+  - **NOTE**: Ensure any downstream queries are updated to reflect the new model names.
 
 - Column Renames:
   - Renamed `connector_id` to `connection_id` and `connector_name` to `connection_name` in the following models:
@@ -36,6 +38,7 @@
     - `stg_fivetran_platform__connection`
     - `stg_fivetran_platform__log`
     - `stg_fivetran_platform__incremental_mar`
+  - **NOTE**: Ensure any downstream queries are updated to reflect the new column names.
 
 - New Model:
   - Added `stg_fivetran_platform__connection_tmp`

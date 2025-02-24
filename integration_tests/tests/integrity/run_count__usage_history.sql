@@ -11,7 +11,7 @@ with end_model as (
         sum(total_model_runs) as total_model_runs,
         sum(paid_model_runs) as paid_model_runs,
         sum(free_model_runs) as free_model_runs
-    from {{ ref('fivetran_platform__usage_mar_destination_history') }}
+    from {{ ref('fivetran_platform__usage_history') }}
     group by 1,2
 ),
 

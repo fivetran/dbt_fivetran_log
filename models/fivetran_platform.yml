@@ -143,7 +143,7 @@ models:
         description: Name of the destination as it appears in the UI.
 
 
-  - name: fivetran_platform__usage_mar_destination_history
+  - name: fivetran_platform__usage_history
     description: >
       Table of each destination's usage and active volume per month, including usage per million MAR and MAR per usage. 
       Usage is measured in dollars or credits, depending on the customer's pricing model. 

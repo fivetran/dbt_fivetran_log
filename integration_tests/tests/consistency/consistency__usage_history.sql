@@ -9,7 +9,7 @@ with prod as (
         measured_month,
         destination_id,
         count(*) as total_records
-    from {{ target.schema }}_fivetran_platform_prod.fivetran_platform__usage_mar_destination_history
+    from {{ target.schema }}_fivetran_platform_prod.fivetran_platform__usage_history
     group by 1, 2
 ),
 
@@ -18,7 +18,7 @@ dev as (
         measured_month,
         destination_id,
         count(*) as total_records
-    from {{ target.schema }}_fivetran_platform_dev.fivetran_platform__usage_mar_destination_history
+    from {{ target.schema }}_fivetran_platform_dev.fivetran_platform__usage_history
     group by 1, 2
 ),
 

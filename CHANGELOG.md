@@ -2,7 +2,12 @@
 [PR #144](https://github.com/fivetran/dbt_fivetran_log/pull/144) includes the following updates:
 
 ## Breaking Changes
-> A `--full-refresh` is **required** after upgrading to prevent errors caused by naming changes.
+> A `--full-refresh` is **required** after upgrading to prevent errors caused by naming and materialization changes.
+
+- The materialization of all `stg_*` staging models has been update to views. Previously the `stg_*_tmp` models were views and the non-tmp models were tables, but now they are all tables to avoid redundancy of data in tables.
+
+- Updated the materialization of all `stg_*` staging models to views.
+  - Previously `stg_*_tmp` models were views while the non-`*_tmp` versions were tables. Now all are views to eliminate redundant data storage.
 
 - Source Table Transition:
   - In Q1 2025, the source table `CONNECTOR` was replaced with a new table, `CONNECTION`. Historical data remains in `CONNECTOR` and is not migrated to `CONNECTION`.
@@ -29,6 +34,8 @@
     - `fivetran_platform__audit_user_activity`
     - `fivetran_platform__schema_changelog`
     - `stg_fivetran_platform__connection`
+    - `stg_fivetran_platform__log`
+    - `stg_fivetran_platform__incremental_mar`
 
 - New Model:
   - Added `stg_fivetran_platform__connection_tmp`

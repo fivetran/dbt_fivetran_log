@@ -1,4 +1,4 @@
--- depends_on: {{ var('connection') }}
+-- depends_on: {{ ref('stg_fivetran_platform__connection') }}
 
 with connection as (
     
@@ -82,7 +82,7 @@ spine as (
 
     {% if execute and flags.WHICH in ('run', 'build') %}
     {% set first_date_query %}
-        select  min( signed_up ) as min_date from {{ var('connection') }}
+        select  min( signed_up ) as min_date from {{ ref('stg_fivetran_platform__connection') }}
     {% endset %}
     {% set first_date = run_query(first_date_query).columns[0][0]|string %}
     

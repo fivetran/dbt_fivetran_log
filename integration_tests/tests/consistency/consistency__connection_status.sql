@@ -9,7 +9,7 @@ with prod as (
         1 as join_key,
         count(*) as total_records,
         sum(number_of_schema_changes_last_month) as total_schema_changes_last_month
-    from {{ target.schema }}_fivetran_platform_prod.fivetran_platform__connector_status
+    from {{ target.schema }}_fivetran_platform_prod.fivetran_platform__connection_status
     group by 1
 ),
 
@@ -18,7 +18,7 @@ dev as (
         1 as join_key,
         count(*) as total_records,
         sum(number_of_schema_changes_last_month) as total_schema_changes_last_month
-    from {{ target.schema }}_fivetran_platform_dev.fivetran_platform__connector_status
+    from {{ target.schema }}_fivetran_platform_dev.fivetran_platform__connection_status
     group by 1
 ),
 

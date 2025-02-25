@@ -1,3 +1,56 @@
+# dbt_fivetran_log v1.12.0
+[PR #144](https://github.com/fivetran/dbt_fivetran_log/pull/144) includes the following updates:
+
+## Breaking Changes - Action Required
+> A `--full-refresh` is **required** after upgrading to prevent errors caused by naming and materialization changes. Additionally, downstream queries **must** be updated to reflect new model and column names.
+
+- The materialization of all `stg_*` staging models has been update to views. Previously the `stg_*_tmp` models were views and the non-tmp models were tables, but now they are all tables to avoid redundancy of data in tables.
+
+- Updated the materialization of all `stg_*` staging models to views.
+  - Previously `stg_*_tmp` models were views while the non-`*_tmp` versions were tables. Now all are views to eliminate redundant data storage.
+
+- Source Table Transition:
+  - In Q1 2025, the source table `CONNECTOR` was replaced with `CONNECTION`. Historical data remains in `CONNECTOR` and is not migrated to `CONNECTION`.  
+    - This change clarifies the distinction between connectors and connections: **Connectors** enable the creation of **connections** between sources and destinations.
+  - For Quickstart users, this change is automatically handled, and records from both tables are unioned if both exist in your destination.
+  - For dbt Core users:
+    - The default configuration uses only the `CONNECTION` table.
+    - Users can configure which tables to include by enabling either `CONNECTION`, `CONNECTOR`, or both via the following variables:
+      - `fivetran_platform_using_connection`
+      - `fivetran_platform_using_connector`
+    - For more details, refer to the [README](https://github.com/fivetran/dbt_fivetran_log/blob/main/README.md#leveraging-connection-vs-connector-source). 
+
+- Model Renames:
+  - `fivetran_platform__connector_status` → `fivetran_platform__connection_status`
+  - `fivetran_platform__connector_daily_events` → `fivetran_platform__connection_daily_events`
+  - `fivetran_platform__usage_mar_destination_history` → `fivetran_platform__usage_history`
+  - `stg_fivetran_platform__connector` → `stg_fivetran_platform__connection`
+  - **NOTE**: Ensure any downstream queries are updated to reflect the new model names.
+
+- Column Renames:
+  - Renamed `connector_id` to `connection_id` and `connector_name` to `connection_name` in the following models:
+    - `fivetran_platform__connection_status`
+      - Also renamed `connector_health` to `connection_health`
+    - `fivetran_platform__mar_table_history`
+    - `fivetran_platform__connection_daily_events`
+    - `fivetran_platform__audit_table`
+    - `fivetran_platform__audit_user_activity`
+    - `fivetran_platform__schema_changelog`
+    - `stg_fivetran_platform__connection`
+    - `stg_fivetran_platform__log`
+    - `stg_fivetran_platform__incremental_mar`
+  - **NOTE**: Ensure any downstream queries are updated to reflect the new column names.
+
+- New Model:
+  - Added `stg_fivetran_platform__connection_tmp`
+
+## Features
+- Added macro `coalesce_cast` to ensure consistent data types when using `coalesce`, preventing potential errors.
+- Added macro `get_connection_columns` for the new `CONNECTION` source.
+
+## Documentation
+- Updated documentation to reflect all renames and the source table transition.
+
 # dbt_fivetran_log v1.11.0
 [PR #141](https://github.com/fivetran/dbt_fivetran_log/pull/141) includes the following updates:
 
@@ -22,6 +75,12 @@
 - Added `transformation_runs` seed data in `integration_tests/seeds/`.
 - Added a `run_count__usage_mar_destination_history` validation test to check model run counts across staging and end model.
 - (Redshift only) Updates to use limit 1 instead of limit 0 for empty tables. This ensures that Redshift will respect the package's datatype casts.
+
+## Under the Hood (Maintainers Only)
+- Updated consistency and integrity tests to align with naming changes.
+- Refactored seeds and `get_*_columns` macros to reflect renames.
+- Added a new seed for the `CONNECTION` table.
+- Updated `run_models` to test all possible combinations of `CONNECTION` and `CONNECTOR`.
 
 # dbt_fivetran_log v1.10.0
 [PR #140](https://github.com/fivetran/dbt_fivetran_log/pull/140) includes the following updates:

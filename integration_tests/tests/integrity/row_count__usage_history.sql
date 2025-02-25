@@ -9,7 +9,7 @@ with end_model as (
         measured_month,
         destination_id,
         count(*) as row_count
-    from {{ ref('fivetran_platform__usage_mar_destination_history') }}
+    from {{ ref('fivetran_platform__usage_history') }}
     group by measured_month, destination_id
 ),
 

@@ -7,24 +7,24 @@
 with end_model as (
     select 
         date_day,
-        connector_id, 
+        connection_id, 
         destination_id,
         count(*) as row_count
-    from {{ ref('fivetran_platform__connector_daily_events') }}
-    group by date_day, connector_id, destination_id
+    from {{ ref('fivetran_platform__connection_daily_events') }}
+    group by date_day, connection_id, destination_id
 ),
 
 staging_model as (
     
     select * 
-    from {{ ref('fivetran_platform__connector_status') }}
+    from {{ ref('fivetran_platform__connection_status') }}
 ),
 
 spine as (
 
     {% if execute %}
     {% set first_date_query %}
-        select  min( signed_up ) as min_date from {{ source('fivetran_platform','connector') }}
+        select  min( signed_up ) as min_date from {{ source('fivetran_platform','connection') }}
     {% endset %}
     {% set first_date = run_query(first_date_query).columns[0][0]|string %}
     
@@ -46,24 +46,24 @@ spine as (
 staging_cleanup as (
     select 
         spine.date_day,
-        staging_model.connector_id,
+        staging_model.connection_id,
         staging_model.destination_id,
         count(*) as row_count
     from spine
     left join staging_model
         on spine.date_day >= cast({{ dbt.date_trunc('day', 'cast(staging_model.set_up_at as date)') }} as date)
-    group by spine.date_day, staging_model.connector_id, staging_model.destination_id
+    group by spine.date_day, staging_model.connection_id, staging_model.destination_id
 )
 
 select 
     end_model.date_day,
-    end_model.connector_id,
+    end_model.connection_id,
     end_model.destination_id,
     end_model.row_count as end_model_row_count,
     staging_cleanup.row_count as staging_model_row_count
 from end_model
 left join staging_cleanup
-    on end_model.connector_id = staging_cleanup.connector_id
+    on end_model.connection_id = staging_cleanup.connection_id
     and end_model.destination_id = staging_cleanup.destination_id
     and end_model.date_day = staging_cleanup.date_day
 where staging_cleanup.row_count != end_model.row_count

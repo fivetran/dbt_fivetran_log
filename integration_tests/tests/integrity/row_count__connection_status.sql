@@ -6,31 +6,31 @@
 
 with end_model as (
     select 
-        connector_id,
-        connector_name,
+        connection_id,
+        connection_name,
         connector_type,
         destination_id,
         set_up_at,
         count(*) as row_count
-    from {{ ref('fivetran_platform__connector_status') }}
-    group by connector_id, connector_name, connector_type, destination_id, set_up_at
+    from {{ ref('fivetran_platform__connection_status') }}
+    group by connection_id, connection_name, connector_type, destination_id, set_up_at
 ),
 
 staging_model as (
     select
-        connector_id,
-        connector_name,
+        connection_id,
+        connection_name,
         connector_type,
         destination_id,
         set_up_at,
         count(*) as row_count
-    from {{ ref('stg_fivetran_platform__connector') }}
-    group by connector_id, connector_name, connector_type, destination_id, set_up_at
+    from {{ ref('stg_fivetran_platform__connection') }}
+    group by connection_id, connection_name, connector_type, destination_id, set_up_at
 )
 
 select 
-    end_model.connector_id,
-    end_model.connector_name,
+    end_model.connection_id,
+    end_model.connection_name,
     end_model.connector_type,
     end_model.destination_id,
     end_model.set_up_at,
@@ -38,6 +38,6 @@ select
     staging_model.row_count as staging_model_row_count
 from end_model
 left join staging_model
-    on end_model.connector_id = staging_model.connector_id
+    on end_model.connection_id = staging_model.connection_id
     and end_model.destination_id = staging_model.destination_id
 where staging_model.row_count != end_model.row_count

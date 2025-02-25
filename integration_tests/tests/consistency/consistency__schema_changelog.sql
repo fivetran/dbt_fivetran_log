@@ -6,7 +6,7 @@
 
 with prod as (
     select
-        connector_id, 
+        connection_id, 
         table_name,
         count(*) as total_records
     from {{ target.schema }}_fivetran_platform_prod.fivetran_platform__schema_changelog
@@ -15,7 +15,7 @@ with prod as (
 
 dev as (
     select
-        connector_id, 
+        connection_id, 
         table_name,
         count(*) as total_records
     from {{ target.schema }}_fivetran_platform_dev.fivetran_platform__schema_changelog
@@ -24,13 +24,13 @@ dev as (
 
 final as (
     select 
-        prod.connector_id,
+        prod.connection_id,
         prod.table_name,
         prod.total_records as prod_total,
         dev.total_records as dev_total
     from prod
     left join dev 
-        on dev.connector_id = prod.connector_id
+        on dev.connection_id = prod.connection_id
             and dev.table_name = prod.table_name
 )
 

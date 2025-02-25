@@ -13,7 +13,7 @@
 with base as (
     
     select
-        connector_id,
+        connection_id,
         created_at,
         event_subtype, 
         replace(message_data, 'operationType', 'operation_type') as message_data
@@ -47,46 +47,46 @@ sync_log as (
     where event_subtype = 'records_modified'
 ),
 
-connector as (
+connection as (
 
     select *
-    from {{ ref('fivetran_platform__connector_status') }}
+    from {{ ref('fivetran_platform__connection_status') }}
 ),
 
-add_connector_info as (
+add_connection_info as (
 
     select 
         sync_log.*,
-        connector.connector_name,
-        connector.destination_id,
-        connector.destination_name
+        connection.connection_name,
+        connection.destination_id,
+        connection.destination_name
     from sync_log 
-    left join connector
-        on connector.connector_id = sync_log.connector_id
+    left join connection
+        on connection.connection_id = sync_log.connection_id
 ),
 
 sync_timestamps as (
 
     select
-        connector_id,
-        connector_name,
+        connection_id,
+        connection_name,
         table_name,
         event_subtype,
         destination_id,
         destination_name,
         created_at as write_to_table_start,
         min(case when event_subtype = 'write_to_table_end' then created_at else null end) 
-            over (partition by connector_id, table_name order by created_at ROWS between CURRENT ROW AND UNBOUNDED FOLLOWING) as write_to_table_end,
+            over (partition by connection_id, table_name order by created_at ROWS between CURRENT ROW AND UNBOUNDED FOLLOWING) as write_to_table_end,
 
         max(case when event_subtype = 'sync_start' then created_at else null end) 
-            over (partition by connector_id order by created_at ROWS between UNBOUNDED PRECEDING and CURRENT ROW) as sync_start,
+            over (partition by connection_id order by created_at ROWS between UNBOUNDED PRECEDING and CURRENT ROW) as sync_start,
 
         min(case when event_subtype = 'sync_end' then created_at else null end) 
-            over (partition by connector_id order by created_at ROWS between CURRENT ROW AND UNBOUNDED FOLLOWING) as sync_end, -- coalesce with next_sync_start
+            over (partition by connection_id order by created_at ROWS between CURRENT ROW AND UNBOUNDED FOLLOWING) as sync_end, -- coalesce with next_sync_start
 
         min(case when event_subtype = 'sync_start' then created_at else null end) 
-            over (partition by connector_id order by created_at ROWS between CURRENT ROW AND UNBOUNDED FOLLOWING) as next_sync_start
-    from add_connector_info
+            over (partition by connection_id order by created_at ROWS between CURRENT ROW AND UNBOUNDED FOLLOWING) as next_sync_start
+    from add_connection_info
 ),
 
 -- this will be the base for every record in the final CTE
@@ -100,7 +100,7 @@ limit_to_table_starts as (
 records_modified_log as (
 
     select 
-        connector_id,
+        connection_id,
         created_at,
         table_name,
         schema_name,
@@ -113,9 +113,9 @@ records_modified_log as (
 sum_records_modified as (
 
     select
-        limit_to_table_starts.connector_id,
-        limit_to_table_starts.connector_name,
-        coalesce(records_modified_log.schema_name, limit_to_table_starts.connector_name) as schema_name,
+        limit_to_table_starts.connection_id,
+        limit_to_table_starts.connection_name,
+        coalesce(records_modified_log.schema_name, limit_to_table_starts.connection_name) as schema_name,
         limit_to_table_starts.table_name,
         limit_to_table_starts.destination_id,
         limit_to_table_starts.destination_name,
@@ -128,7 +128,7 @@ sum_records_modified as (
         sum(case when records_modified_log.operation_type = 'DELETED' then records_modified_log.row_count else 0 end) as sum_rows_deleted
     from limit_to_table_starts
     left join records_modified_log on 
-        limit_to_table_starts.connector_id = records_modified_log.connector_id
+        limit_to_table_starts.connection_id = records_modified_log.connection_id
         and limit_to_table_starts.table_name = records_modified_log.table_name
 
         -- confine it to one sync
@@ -137,9 +137,9 @@ sum_records_modified as (
 
     -- explicit group by needed for SQL Server
     group by 
-        limit_to_table_starts.connector_id,
-        limit_to_table_starts.connector_name,
-        coalesce(records_modified_log.schema_name, limit_to_table_starts.connector_name),
+        limit_to_table_starts.connection_id,
+        limit_to_table_starts.connection_name,
+        coalesce(records_modified_log.schema_name, limit_to_table_starts.connection_name),
         limit_to_table_starts.table_name,
         limit_to_table_starts.destination_id,
         limit_to_table_starts.destination_name,
@@ -153,7 +153,7 @@ final as (
 
     select 
         *,
-        {{ dbt_utils.generate_surrogate_key(['schema_name','connector_id', 'destination_id', 'table_name', 'write_to_table_start']) }} as unique_table_sync_key, -- for incremental materialization 
+        {{ dbt_utils.generate_surrogate_key(['schema_name','connection_id', 'destination_id', 'table_name', 'write_to_table_start']) }} as unique_table_sync_key, -- for incremental materialization 
         cast({{ dbt.date_trunc('day', 'sync_start') }} as date) as sync_start_day -- for partitioning
     from sum_records_modified
 )

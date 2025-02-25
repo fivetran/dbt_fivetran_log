@@ -15,10 +15,10 @@ user_logs as (
         and lower(actor_email) != 'fivetran'
 ),
 
-connector as (
+connection as (
 
     select *
-    from {{ ref('stg_fivetran_platform__connector') }}
+    from {{ ref('stg_fivetran_platform__connection') }}
 ),
 
 destination as (
@@ -60,8 +60,8 @@ final as (
         user_logs.created_at as occurred_at,
         destination.destination_name,
         destination.destination_id,
-        connector.connector_name,
-        connector.connector_id,
+        connection.connection_name,
+        connection.connection_id,
         user_logs.actor_email as email,
 {%- if var('fivetran_platform_using_user', true) %}
         users.first_name,
@@ -78,10 +78,10 @@ final as (
         user_logs.log_id
 
     from user_logs
-    left join connector
-        on user_logs.connector_id = connector.connector_id
+    left join connection
+        on user_logs.connection_id = connection.connection_id
     left join destination
-        on connector.destination_id = destination.destination_id
+        on connection.destination_id = destination.destination_id
 
 {%- if var('fivetran_platform_using_user', true) %}
     left join users 

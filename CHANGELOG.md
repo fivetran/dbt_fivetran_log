@@ -4,14 +4,14 @@
 ## Breaking Changes - Action Required
 > A `--full-refresh` is **required** after upgrading to prevent errors caused by naming and materialization changes. Additionally, downstream queries **must** be updated to reflect new model and column names.
 
-
 - The materialization of all `stg_*` staging models has been update to views. Previously the `stg_*_tmp` models were views and the non-tmp models were tables, but now they are all tables to avoid redundancy of data in tables.
 
 - Updated the materialization of all `stg_*` staging models to views.
   - Previously `stg_*_tmp` models were views while the non-`*_tmp` versions were tables. Now all are views to eliminate redundant data storage.
 
 - Source Table Transition:
-  - In Q1 2025, the source table `CONNECTOR` was replaced with a new table, `CONNECTION`. Historical data remains in `CONNECTOR` and is not migrated to `CONNECTION`.
+  - In Q1 2025, the source table `CONNECTOR` was replaced with `CONNECTION`. Historical data remains in `CONNECTOR` and is not migrated to `CONNECTION`.  
+    - This change clarifies the distinction between connectors and connections: **Connectors** enable the creation of **connections** between sources and destinations.
   - For Quickstart users, this change is automatically handled, and records from both tables are unioned if both exist in your destination.
   - For dbt Core users:
     - The default configuration uses only the `CONNECTION` table.

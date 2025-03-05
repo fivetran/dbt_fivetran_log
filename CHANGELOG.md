@@ -7,14 +7,13 @@
 - The materialization of all `stg_*` staging models has been updated from `table` to `view`.
   - Previously `stg_*_tmp` models were views while the non-`*_tmp` versions were tables. Now all are views to eliminate redundant data storage.
 
-- Source Table Transition:
-  - The source table `CONNECTOR` is deprecated and is replaced with `CONNECTION`. For a short time these tables will be identically, but connector will stop being populated and eventually removed. 
-    - This change clarifies the distinction between connectors and connections: **Connectors** enable the creation of **connections** between sources and destinations.
-  - For Quickstart users, the `CONNECTION` source will be preferred.
-  - For dbt Core users:
-    - The default configuration uses only the `CONNECTION` table.
-    - Users that do not yet have the `CONNECTION` source can use `CONNECTOR` until `CONNECTION` is available to them by setting the var `fivetran_platform_using_connection` to false in their dbt_project.yml.
-    - For more details, refer to the [README](https://github.com/fivetran/dbt_fivetran_log/blob/main/README.md#leveraging-connection-vs-connector-source). 
+- **Source Table Transition:**
+  - The `CONNECTOR` source table is deprecated and replaced by `CONNECTION`. During a brief transition period, both tables will be identical, but `CONNECTOR` will stop receiving data and be removed at a later time.
+    - This change clarifies the distinction: **Connectors** facilitate the creation of **connections** between sources and destinations.
+  - The `CONNECTION` table is now the default source
+    - **For Quickstart users:** The `CONNECTOR` will automatically be used if `CONNECTION` is not yet available.
+    - **For dbt Core users:** Users without the `CONNECTION` source can continue using `CONNECTOR` by setting `fivetran_platform_using_connection` to `false` in `dbt_project.yml` until `CONNECTION` becomes available.
+    - For more details, refer to the [README](https://github.com/fivetran/dbt_fivetran_log/blob/main/README.md#leveraging-connection-vs-connector).
 
 - Model Renames:
   - `fivetran_platform__connector_status` → `fivetran_platform__connection_status`

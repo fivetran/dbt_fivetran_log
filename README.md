@@ -98,15 +98,15 @@ vars:
     fivetran_platform_using_user: false # Default is true. This will disable only the user logic
 ```
 
-#### Leveraging `CONNECTION` vs `CONNECTOR` source
-In Q1 2025, the source table `CONNECTOR` replaced the table `CONNECTION`. Historical data will remain in `CONNECTOR` but will not be migrated to `CONNECTION`. For Quickstart users, this change is automatically handled, and records from both tables are seamlessly unioned if both exist in your destination. 
+#### Leveraging `CONNECTION` vs `CONNECTOR`  
+In Q1 2025, the `CONNECTOR` source table was deprecated and replaced by `CONNECTION`, and `CONNECTION` is now the default source.
 
-For dbt Core users, the default configuration uses only the `CONNECTION` table. However, you can customize which tables to include by adjusting the configuration variables. **At least one source table must be enabled, but you can choose to use either `CONNECTION`, `CONNECTOR`, or both.**
+- For **Quickstart users**, `CONNECTOR` will automatically be used if `CONNECTION` is not yet available.
+- For **dbt Core users**, if `CONNECTION` is not yet available in your connection, you can continue using `CONNECTOR` by adding the following variable to your root `dbt_project.yml` file:
 
 ```yml
 vars:
-    fivetran_platform_using_connection: false # Disable the CONNECTION source, default is true
-    fivetran_platform_using_connector: true  # Enable the CONNECTOR source, default is false
+    fivetran_platform_using_connection: false # Use CONNECTOR instead of CONNECTION (default: true)
 ```
 
 ### (Optional) Step 5: Additional Configurations

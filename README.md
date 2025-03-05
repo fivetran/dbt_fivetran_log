@@ -102,12 +102,11 @@ vars:
 In Q1 2025, the `CONNECTOR` source table was deprecated and replaced by `CONNECTION`, and `CONNECTION` is now the default source.
 
 - For **Quickstart users**, `CONNECTOR` will automatically be used if `CONNECTION` is not yet available.
-- For **dbt Core users**, if `CONNECTION` is not yet available in your connection, you can continue using `CONNECTOR` by adding the following variables to your root `dbt_project.yml` file:
+- For **dbt Core users**, if `CONNECTION` is not yet available in your connection, you can continue using `CONNECTOR` by adding the following variable to your root `dbt_project.yml` file:
 
 ```yml
 vars:
     fivetran_platform_using_connection: false # default: true
-    fivetran_platform_using_connector: true # default: false
 ```
 
 ### (Optional) Step 5: Additional Configurations

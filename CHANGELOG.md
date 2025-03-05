@@ -25,7 +25,7 @@
   - `fivetran_platform__usage_mar_destination_history` → `fivetran_platform__usage_history`
   - `stg_fivetran_platform__connector` → `stg_fivetran_platform__connection`
   - `stg_fivetran_platform__connector_tmp` → `stg_fivetran_platform__connection_tmp`
-  - **NOTE**: Ensure any downstream queries are updated to reflect the new model names.
+> **NOTE**: Ensure any downstream queries are updated to reflect the new model names.
 
 - Column Renames:
   - Renamed `connector_id` to `connection_id` and `connector_name` to `connection_name` in the following models:
@@ -39,7 +39,7 @@
     - `stg_fivetran_platform__connection`
     - `stg_fivetran_platform__log`
     - `stg_fivetran_platform__incremental_mar`
-  - **NOTE**: Ensure any downstream queries are updated to reflect the new column names.
+> **NOTE**: Ensure any downstream queries are updated to reflect the new column names.
 
 ## Features
 - Added macro `coalesce_cast` to ensure consistent data types when using `coalesce`, preventing potential errors.

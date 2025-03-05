@@ -26,7 +26,7 @@ sources:
           - name: connection_name
             description: The name of the measured connection.
           - name: connector_name
-            description: (DEPRECATED) The name of the measured connection.
+            description: (DEPRECATED) The name of the measured connection. Refer to `connection_name` instead.
           - name: destination_id
             description: Foreign key referencing the destination of the measured table.
           - name: free_type
@@ -164,7 +164,7 @@ sources:
           - name: connection_id 
             description: ID of the logged connection.
           - name: connector_id 
-            description: (DEPRECATED) ID of the logged connection.
+            description: (DEPRECATED) ID of the logged connection. Refer to `connection_id` instead.
           - name: event
             description: High-level event category. Possible values include `WARNING`, `ERROR`, and `INFO`.
           - name: message_data  

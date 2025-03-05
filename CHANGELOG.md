@@ -19,7 +19,12 @@
       ```
     - For more details, refer to the [README](https://github.com/fivetran/dbt_fivetran_log/blob/main/README.md#leveraging-connection-vs-connector).
 
-- Model Renames:
+- New Columns:
+  - As part of the `CONNECTION` updates, the following columns have been added alongside their `connector_*` equivalents:  
+    - INCREMENTAL_MAR: `connection_id` and `connection_name`  
+    - LOG: `connection_id`
+
+- Renamed Models:
   - `fivetran_platform__connector_status` → `fivetran_platform__connection_status`
   - `fivetran_platform__connector_daily_events` → `fivetran_platform__connection_daily_events`
   - `fivetran_platform__usage_mar_destination_history` → `fivetran_platform__usage_history`
@@ -27,7 +32,7 @@
   - `stg_fivetran_platform__connector_tmp` → `stg_fivetran_platform__connection_tmp`
 > **NOTE**: Ensure any downstream queries are updated to reflect the new model names.
 
-- Column Renames:
+- Renamed Columns:
   - Renamed `connector_id` to `connection_id` and `connector_name` to `connection_name` in the following models:
     - `fivetran_platform__connection_status`
       - Also renamed `connector_health` to `connection_health`
@@ -41,11 +46,6 @@
     - `stg_fivetran_platform__incremental_mar`
   - These renames 
 > **NOTE**: Ensure any downstream queries are updated to reflect the new column names.
-
-- New Columns:
-  - As part of the `CONNECTION` updates, the following columns have been added alongside their `connector_*` equivalents:  
-    - INCREMENTAL_MAR: `connection_id` and `connection_name`  
-    - LOG: `connection_id`
 
 ## Features
 - Added macro `coalesce_cast` to ensure consistent data types when using `coalesce`, preventing potential errors.

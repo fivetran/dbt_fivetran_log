@@ -51,8 +51,7 @@ sources:
       - name: connection
         identifier: "{{ var('fivetran_platform_connection_identifier', 'connection')}}"
         description: >
-          Table of all connections loading data into destinations. Deleted connections 
-          remain in the table but can be identified by having an older `_fivetran_synced` timestamp.
+          Table of all connections loading data into destinations.
         freshness: null
         config:
           enabled: "{{ var('fivetran_platform_using_connection', true) }}"
@@ -80,9 +79,8 @@ sources:
       - name: connector
         identifier: "{{ var('fivetran_platform_connector_identifier', 'connector')}}"
         description: >
-          (DEPRECATED) Table of all connections loading data into destinations. Deleted connections 
-          remain in the table but can be identified by having an older `_fivetran_synced` timestamp.
-          Note: This table is deprecated and will be removed at a later date.
+          (DEPRECATED) Table of all connections loading data into destinations.
+          Note: This table is deprecated in favor of CONNECTION and will be removed at a later date.
         freshness: null
         config:
           enabled: "{{ false if var('fivetran_platform_using_connection', true) else true }}"

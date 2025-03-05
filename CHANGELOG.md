@@ -1,4 +1,4 @@
-# dbt_fivetran_log v1.12.0
+# dbt_fivetran_log v2.0.0
 [PR #144](https://github.com/fivetran/dbt_fivetran_log/pull/144) includes the following updates:
 
 ## Breaking Changes - Action Required
@@ -39,7 +39,13 @@
     - `stg_fivetran_platform__connection`
     - `stg_fivetran_platform__log`
     - `stg_fivetran_platform__incremental_mar`
+  - These renames 
 > **NOTE**: Ensure any downstream queries are updated to reflect the new column names.
+
+- New Columns:
+  - As part of the `CONNECTION` updates, the following columns have been added alongside their `connector_*` equivalents:  
+    - INCREMENTAL_MAR: `connection_id` and `connection_name`  
+    - LOG: `connection_id`
 
 ## Features
 - Added macro `coalesce_cast` to ensure consistent data types when using `coalesce`, preventing potential errors.

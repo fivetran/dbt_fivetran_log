@@ -10,8 +10,6 @@ table_variables:
     - user
   fivetran_platform_using_connection:
     - connection
-  fivetran_platform_using_connector:
-    - connector
 
 destination_configurations:
   databricks:

@@ -12,7 +12,11 @@
     - This change clarifies the distinction: **Connectors** facilitate the creation of **connections** between sources and destinations.
   - The `CONNECTION` table is now the default source
     - **For Quickstart users:** The `CONNECTOR` will automatically be used if `CONNECTION` is not yet available.
-    - **For dbt Core users:** Users without the `CONNECTION` source can continue using `CONNECTOR` by setting `fivetran_platform_using_connection` to `false` in `dbt_project.yml` until `CONNECTION` becomes available.
+    - **For dbt Core users:** Users without the `CONNECTION` source can continue using `CONNECTOR` by adding the following variable to your root `dbt_project.yml` file:
+      ```yml
+      vars:
+          fivetran_platform_using_connection: false # default: true
+      ```
     - For more details, refer to the [README](https://github.com/fivetran/dbt_fivetran_log/blob/main/README.md#leveraging-connection-vs-connector).
 
 - Model Renames:

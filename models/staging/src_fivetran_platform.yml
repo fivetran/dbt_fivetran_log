@@ -19,8 +19,6 @@ sources:
           Table of monthly active row (MAR) measurements recorded per table and date.
           Each measurement is cumulative for the month and includes all MAR types (paid, free, etc.).
         columns:
-          - name: connection_id
-            description: The *name* of the measured connection. This field has been replaced with the `connection_name` column since `connection_id` was erroneously named. This column but may still be present in older Fivetran Platform connections. However, all connections setup after July 2024 will not have this field as it has been replaced with connection_name.
           - name: connector_id
             description: >
               (DEPRECATED) The *name* of the measured connection. This column has been deprecated and replaced with `connection_name` for
@@ -55,9 +53,6 @@ sources:
         description: >
           Table of all connections loading data into destinations. Deleted connections 
           remain in the table but can be identified by having an older `_fivetran_synced` timestamp.
-          Note: Historical data from `CONNECTOR` is not present in this table; however, the package
-          unions data from both `CONNECTOR` and `CONNECTION` if both exist in your destination
-          and are enabled.
         freshness: null
         config:
           enabled: "{{ var('fivetran_platform_using_connection', true) }}"
@@ -87,12 +82,10 @@ sources:
         description: >
           (DEPRECATED) Table of all connections loading data into destinations. Deleted connections 
           remain in the table but can be identified by having an older `_fivetran_synced` timestamp.
-          Note: Historical data from this table is not present in `CONNECTOR`; however, the package
-          unions data from both `CONNECTOR` and `CONNECTION` if both exist in your destination
-          and are enabled.
+          Note: This table is deprecated and will be removed at a later date.
         freshness: null
         config:
-          enabled: "{{ var('fivetran_platform_using_connector', false) }}"
+          enabled: "{{ false if var('fivetran_platform_using_connection', true) else true }}"
         columns: 
           - name: connector_id
             description: System-generated unique ID of the connection. 

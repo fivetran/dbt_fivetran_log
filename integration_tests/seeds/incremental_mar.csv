@@ -1,4 +1,4 @@
-connection_name,connection_id,destination_id,free_type,measured_date,schema_name,sync_type,table_name,updated_at,_fivetran_synced,incremental_rows
+connection_name,connector_id,destination_id,free_type,measured_date,schema_name,sync_type,table_name,updated_at,_fivetran_synced,incremental_rows
 this_connection,,ups_trampoline,PAID,2022-01-31 00:00:00,this_connection,UNKNOWN,my_table,2022-09-01 6:12:13,2022-11-09 20:09:26,46
 this_connection,,ups_trampoline,PAID,2022-02-22 00:00:00,that_connection,UNKNOWN,drop_table,2022-05-22 8:29:22,2022-11-07 20:10:24,1
 ,this_connection,television_trace,PAID,2022-03-01 00:00:00,that_connection,UNKNOWN,drop_table,2022-03-01 21:52:24,2022-11-07 20:10:15,8

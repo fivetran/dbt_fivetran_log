@@ -4,20 +4,16 @@
 ## Breaking Changes - Action Required
 > A `--full-refresh` is **required** after upgrading to prevent errors caused by naming and materialization changes. Additionally, downstream queries **must** be updated to reflect new model and column names.
 
-- The materialization of all `stg_*` staging models has been update to views. Previously the `stg_*_tmp` models were views and the non-tmp models were tables, but now they are all tables to avoid redundancy of data in tables.
-
-- Updated the materialization of all `stg_*` staging models to views.
+- The materialization of all `stg_*` staging models has been updated from `table` to `view`.
   - Previously `stg_*_tmp` models were views while the non-`*_tmp` versions were tables. Now all are views to eliminate redundant data storage.
 
 - Source Table Transition:
-  - In Q1 2025, the source table `CONNECTOR` was replaced with `CONNECTION`. Historical data remains in `CONNECTOR` and is not migrated to `CONNECTION`.  
+  - The source table `CONNECTOR` is deprecated and is replaced with `CONNECTION`. For a short time these tables will be identically, but connector will stop being populated and eventually removed. 
     - This change clarifies the distinction between connectors and connections: **Connectors** enable the creation of **connections** between sources and destinations.
-  - For Quickstart users, this change is automatically handled, and records from both tables are unioned if both exist in your destination.
+  - For Quickstart users, the `CONNECTION` source will be preferred.
   - For dbt Core users:
     - The default configuration uses only the `CONNECTION` table.
-    - Users can configure which tables to include by enabling either `CONNECTION`, `CONNECTOR`, or both via the following variables:
-      - `fivetran_platform_using_connection`
-      - `fivetran_platform_using_connector`
+    - Users that do not yet have the `CONNECTION` source can use `CONNECTOR` until `CONNECTION` is available to them by setting the var `fivetran_platform_using_connection` to false in their dbt_project.yml.
     - For more details, refer to the [README](https://github.com/fivetran/dbt_fivetran_log/blob/main/README.md#leveraging-connection-vs-connector-source). 
 
 - Model Renames:
@@ -25,6 +21,7 @@
   - `fivetran_platform__connector_daily_events` → `fivetran_platform__connection_daily_events`
   - `fivetran_platform__usage_mar_destination_history` → `fivetran_platform__usage_history`
   - `stg_fivetran_platform__connector` → `stg_fivetran_platform__connection`
+  - `stg_fivetran_platform__connector_tmp` → `stg_fivetran_platform__connection_tmp`
   - **NOTE**: Ensure any downstream queries are updated to reflect the new model names.
 
 - Column Renames:
@@ -40,9 +37,6 @@
     - `stg_fivetran_platform__log`
     - `stg_fivetran_platform__incremental_mar`
   - **NOTE**: Ensure any downstream queries are updated to reflect the new column names.
-
-- New Model:
-  - Added `stg_fivetran_platform__connection_tmp`
 
 ## Features
 - Added macro `coalesce_cast` to ensure consistent data types when using `coalesce`, preventing potential errors.

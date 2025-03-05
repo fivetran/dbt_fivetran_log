@@ -92,7 +92,7 @@ sources:
           and are enabled.
         freshness: null
         config:
-          enabled: "{{ var('fivetran_platform_using_connector', true) }}"
+          enabled: "{{ var('fivetran_platform_using_connector', false) }}"
         columns: 
           - name: connector_id
             description: System-generated unique ID of the connection. 

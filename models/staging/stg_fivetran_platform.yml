@@ -40,7 +40,7 @@ models:
             - destination_id
     columns:
       - name: connection_id
-        description: System-generated unique ID of the connection. Coalesced with the DEPRECATED field `connector_id`.
+        description: System-generated unique ID of the connection. 
       - name: connecting_user_id
         description: Foreign key referencing the user who set up the connection.
       - name: connection_name

@@ -1,4 +1,2 @@
-{{ config(enabled=var('fivetran_platform_using_connection', True)) -}}
-
 select *
-from {{ var('connection') }}
+from {{ var('connection' if var('fivetran_platform_using_connection', True) else 'connector') }}

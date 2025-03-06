@@ -6,8 +6,7 @@
 {% macro default__coalesce_cast(column_list, datatype=dbt.type_string()) %}
     coalesce(
     {%- for column in column_list %}
-        cast({{ column }} as {{ datatype }})
-        {%- if not loop.last -%},{%- endif -%}
+        cast({{ column }} as {{ datatype }}){{ ',' if not loop.last }}
     {% endfor %}
     )
 {% endmacro %}

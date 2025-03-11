@@ -43,7 +43,9 @@
     - `fivetran_platform__schema_changelog`
     - `stg_fivetran_platform__connection`
     - `stg_fivetran_platform__log`
+       - `connector_id` to `connection_id` only
     - `stg_fivetran_platform__incremental_mar`
+        - `connector_name` to `connection_name` only
   - These renames 
 > **NOTE**: Ensure any downstream queries are updated to reflect the new column names.
 

@@ -8,6 +8,8 @@ table_variables:
     - destination_membership
   fivetran_platform_using_user:
     - user
+  fivetran_platform_using_connection:
+    - connection
 
 destination_configurations:
   databricks:
@@ -17,10 +19,10 @@ destination_configurations:
 
 public_models: [
   "fivetran_platform__schema_changelog",
-  "fivetran_platform__connector_daily_events",
+  "fivetran_platform__connection_daily_events",
   "fivetran_platform__audit_user_activity",
-  "fivetran_platform__connector_status",
-  "fivetran_platform__usage_mar_destination_history",
+  "fivetran_platform__connection_status",
+  "fivetran_platform__usage_history",
   "fivetran_platform__audit_table",
   "fivetran_platform__mar_table_history"
 ]

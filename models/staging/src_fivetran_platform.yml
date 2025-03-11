@@ -21,18 +21,20 @@ sources:
         columns:
           - name: connector_id
             description: >
-              The *name* of the connector being measured. This column has been deprecated and replaced with `connector_name` for
+              (DEPRECATED) The *name* of the measured connection. This column has been deprecated and replaced with `connection_name` for
               connectors created after July 2024, however this column but may still be present in older Fivetran Platform connectors.
+          - name: connection_name
+            description: The name of the measured connection.
           - name: connector_name
-            description: Name of the connector being measured.
+            description: (DEPRECATED) The name of the measured connection. Refer to `connection_name` instead.
           - name: destination_id
-            description: Foreign key referencing the destination whose table is being measured.
+            description: Foreign key referencing the destination of the measured table.
           - name: free_type
             description: Indicates the type of free MAR, or `PAID` for paid MAR.
           - name: measured_date
             description: Timestamp when the MAR measurement was recorded.
           - name: incremental_rows
-            description: The number of new distinct primary keys synced for the connector on the given day.
+            description: The number of new distinct primary keys synced for the connection on the given day.
           - name: sync_type
             description: >
               Indicates whether the MAR calculation is based on a historical or incremental sync. 
@@ -46,29 +48,62 @@ sources:
           - name: _fivetran_synced
             description: Timestamp when the record was last synced.
 
-      - name: connector
-        identifier: "{{ var('fivetran_platform_connector_identifier', 'connector')}}"
+      - name: connection
+        identifier: "{{ var('fivetran_platform_connection_identifier', 'connection')}}"
         description: >
-          Table of all connectors loading data into destinations. Deleted connectors 
-          remain in the table but can be identified by having an older `_fivetran_synced` timestamp.
+          Table of all connections loading data into destinations.
         freshness: null
+        config:
+          enabled: "{{ var('fivetran_platform_using_connection', true) }}"
         columns: 
-          - name: connector_id
-            description: System-generated unique ID of the connector.
+          - name: connection_id
+            description: System-generated unique ID of the connection.
           - name: connecting_user_id
-            description: Foreign key referencing the user who set up the connector.
-          - name: connector_name
-            description: Name of the connector. This may differ from `incremental_mar.schema_name`.
+            description: Foreign key referencing the user who set up the connection.
+          - name: connection_name
+            description: Name of the connection. This may differ from `incremental_mar.schema_name`.
+            # Other tables lack a true `connection_id` and will have to join with `connection_name`
           - name: connector_type
-            description: Type of connector (e.g., Google Sheets, Webhooks).
+            description: Type of connection (e.g., Google Sheets, Webhooks).
           - name: destination_id
-            description: Foreign key referencing the destination receiving data from the connector.
+            description: Foreign key referencing the destination receiving data from the connection.
           - name: paused
-            description: Boolean indicating whether the connector's sync is currently paused.
+            description: Boolean indicating whether the connection's sync is currently paused.
           - name: signed_up
             description: Timestamp when the connector was set up.
           - name: _fivetran_synced
-            description: Timestamp when the record was last synced.
+            description: Timestamp of when the record was last synced.
+          - name: _fivetran_deleted
+            description: Boolean if the record is deleted.
+
+      - name: connector
+        identifier: "{{ var('fivetran_platform_connector_identifier', 'connector')}}"
+        description: >
+          (DEPRECATED) Table of all connections loading data into destinations.
+          Note: This table is deprecated in favor of CONNECTION and will be removed at a later date.
+        freshness: null
+        config:
+          enabled: "{{ false if var('fivetran_platform_using_connection', true) else true }}"
+        columns: 
+          - name: connector_id
+            description: System-generated unique ID of the connection. 
+          - name: connecting_user_id
+            description: Foreign key referencing the user who set up the connection.
+          - name: connector_name
+            description: Name of the connection. This may differ from `incremental_mar.schema_name`.
+            # Other tables lack a true `connection_id` and will have to join with `connection_name`
+          - name: connector_type
+            description: Type of connection (e.g., Google Sheets, Webhooks).
+          - name: destination_id
+            description: Foreign key referencing the destination receiving data from the connection.
+          - name: paused
+            description: Boolean indicating whether the connection's sync is currently paused.
+          - name: signed_up
+            description: Timestamp when the connector was set up.
+          - name: _fivetran_synced
+            description: Timestamp of when the record was last synced.
+          - name: _fivetran_deleted
+            description: Boolean if the record is deleted.
 
       - name: credits_used
         identifier: "{{ var('fivetran_platform_credits_used_identifier', 'credits_used')}}"
@@ -94,7 +129,7 @@ sources:
           - name: measured_month
             description: Month when the costs were incurred, formatted as `YYYY-MM`.
           - name: amount
-            description: The dollar amount associated with connector usage.
+            description: The dollar amount associated with connection usage.
           - name: _fivetran_synced
             description: Timestamp when the record was last synced.
 
@@ -121,13 +156,13 @@ sources:
         description: Table of logged events related to data syncs. More info on error logs [here](https://fivetran.com/docs/logs/fivetran-log#errorlogs).
         columns:
           - name: id 
-            description: >
-              Contains either `connector_name` (for app/API logs), `transformation_id` (for transformation logs), 
-              or `"system"` for system-generated logs.
+            description: Unique ID of the log.
           - name: time_stamp
             description: Timestamp when the event was logged.
+          - name: connection_id 
+            description: ID of the logged connection.
           - name: connector_id 
-            description: System-generated unique ID of the connector being logged.
+            description: (DEPRECATED) ID of the logged connection. Refer to `connection_id` instead.
           - name: event
             description: High-level event category. Possible values include `WARNING`, `ERROR`, and `INFO`.
           - name: message_data  

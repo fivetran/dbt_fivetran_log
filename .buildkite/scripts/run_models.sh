@@ -42,8 +42,8 @@ dbt compile --vars '{fivetran_platform_schema: sqlw_tests_4}' --target "$db"
 dbt run --vars '{fivetran_platform_schema: sqlw_tests_4}' --target "$db" --full-refresh
 dbt run --vars '{fivetran_platform_schema: sqlw_tests_4}' --target "$db"
 dbt test --vars '{fivetran_platform_schema: sqlw_tests_4}' --target "$db"
-dbt run --vars '{fivetran_platform_schema: sqlw_tests_4, fivetran_platform__usage_pricing: true}' --target "$db" --full-refresh
-dbt run --vars '{fivetran_platform_schema: sqlw_tests_4, fivetran_platform__usage_pricing: true}' --target "$db"
+dbt run --vars '{fivetran_platform_schema: sqlw_tests_4, fivetran_platform__usage_pricing: true, fivetran_platform_using_connection: false}' --target "$db" --full-refresh
+dbt run --vars '{fivetran_platform_schema: sqlw_tests_4, fivetran_platform__usage_pricing: true, fivetran_platform_using_connection: false}' --target "$db"
 dbt test --vars '{fivetran_platform_schema: sqlw_tests_4}' --target "$db"
 dbt run --vars '{fivetran_platform_schema: sqlw_tests_4, fivetran_platform__credits_pricing: false, fivetran_platform__usage_pricing: true, fivetran_platform_using_transformations: true}' --target "$db" --full-refresh
 dbt run --vars '{fivetran_platform_schema: sqlw_tests_4, fivetran_platform__credits_pricing: false, fivetran_platform__usage_pricing: true, fivetran_platform_using_transformations: true}' --target "$db"
@@ -57,8 +57,8 @@ dbt compile --target "$db"
 dbt run --target "$db" --full-refresh
 dbt run --target "$db"
 dbt test --target "$db"
-dbt run --vars '{fivetran_platform__usage_pricing: true}' --target "$db" --full-refresh
-dbt run --vars '{fivetran_platform__usage_pricing: true}' --target "$db"
+dbt run --vars '{fivetran_platform__usage_pricing: true, fivetran_platform_using_connection: false}' --target "$db" --full-refresh
+dbt run --vars '{fivetran_platform__usage_pricing: true, fivetran_platform_using_connection: false}' --target "$db"
 dbt test --target "$db"
 dbt run --vars '{fivetran_platform__credits_pricing: false, fivetran_platform__usage_pricing: true, fivetran_platform_using_transformations: true}' --target "$db" --full-refresh
 dbt run --vars '{fivetran_platform__credits_pricing: false, fivetran_platform__usage_pricing: true, fivetran_platform_using_transformations: true}' --target "$db"

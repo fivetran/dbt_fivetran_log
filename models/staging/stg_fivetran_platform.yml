@@ -6,20 +6,20 @@ models:
       Table of monthly active row (MAR) measurements recorded per table and date.
       Each measurement is cumulative for the month and includes all MAR types (paid, free, etc.).
     columns:
-      - name: connector_name
-        description: Name of the connector being measured.
+      - name: connection_name
+        description: Name of the measured connection. Coalesced with the DEPRECATED fields `connector_name` and `connector_id`.
       - name: destination_id
-        description: Foreign key referencing the destination whose table is being measured.
+        description: Foreign key referencing the destination of the measured table.
       - name: free_type
         description: Indicates the type of free MAR, or `PAID` for paid MAR.
       - name: measured_date
         description: Timestamp when the MAR measurement was recorded.
       - name: incremental_rows
-        description: The number of new distinct primary keys synced for the connector on the given day.
+        description: The number of new distinct primary keys synced for the connection on the given day.
       - name: sync_type
         description: >
-              Indicates whether the MAR calculation is based on a historical or incremental sync. 
-              Possible values include `HISTORICAL`, `INCREMENTAL`, and `UNKNOWN`.
+          Indicates whether the MAR calculation is based on a historical or incremental sync. 
+          Possible values include `HISTORICAL`, `INCREMENTAL`, and `UNKNOWN`.
       - name: schema_name
         description: Name of the schema containing the measured table.
       - name: table_name
@@ -29,24 +29,24 @@ models:
       - name: _fivetran_synced
         description: Timestamp when the record was last synced.
 
-  - name: stg_fivetran_platform__connector
+  - name: stg_fivetran_platform__connection
     description: >
-      Table of all connectors loading data into destinations. Deleted connectors 
+      Table of all connections loading data into destinations. Deleted connections 
       remain in the table but can be identified by having an older `_fivetran_synced` timestamp.
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns: 
-            - connector_name
+            - connection_name
             - destination_id
     columns:
-      - name: connector_id
-        description: System-generated unique ID of the connector.
+      - name: connection_id
+        description: System-generated unique ID of the connection. 
       - name: connecting_user_id
-        description: Foreign key referencing the user who set up the connector.
-      - name: connector_name
-        description: Name of the connector. This may differ from `incremental_mar.schema_name`.
+        description: Foreign key referencing the user who set up the connection.
+      - name: connection_name
+        description: Name of the connection. This may differ from `incremental_mar.schema_name`.
       - name: connector_type
-        description: Type of connector (e.g., Google Sheets, Webhooks).
+        description: Type of connection (e.g., Google Sheets, Webhooks).
       - name: destination_id
         description: Foreign key referencing the destination receiving data from the connector.
       - name: is_paused
@@ -54,7 +54,7 @@ models:
       - name: set_up_at
         description: Timestamp when the connector was set up.
       - name: is_deleted
-        description: Boolean indicating whether the connector has been deleted.
+        description: Boolean indicating whether the connection has been deleted.
 
   - name: stg_fivetran_platform__credits_used
     description: Table of the credits used by the customer per month for each destination.
@@ -119,8 +119,8 @@ models:
         description: Identifies which sync the event is associated with.
       - name: created_at
         description: Timestamp when the event was logged.
-      - name: connector_id
-        description: System-generated unique ID of the connector being logged.
+      - name: connection_id
+        description: System-generated unique ID of the logged connection. Coalesced with the DEPRECATED field `connector_id`.
       - name: event_type
         description: High-level event category. Possible values include `WARNING`, `ERROR`, and `INFO`.
       - name: message_data 

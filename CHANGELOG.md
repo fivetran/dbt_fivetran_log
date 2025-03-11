@@ -1,3 +1,66 @@
+# dbt_fivetran_log v2.0.0
+[PR #144](https://github.com/fivetran/dbt_fivetran_log/pull/144) includes the following updates:
+
+## Breaking Changes - Action Required
+> A `--full-refresh` is **required** after upgrading to prevent errors caused by naming and materialization changes. Additionally, downstream queries **must** be updated to reflect new model and column names.
+
+- The materialization of all `stg_*` staging models has been updated from `table` to `view`.
+  - Previously `stg_*_tmp` models were views while the non-`*_tmp` versions were tables. Now all are views to eliminate redundant data storage.
+
+- **Source Table Transition:**
+  - The `CONNECTOR` source table is deprecated and replaced by `CONNECTION`. During a brief transition period, both tables will be identical, but `CONNECTOR` will stop receiving data and be removed at a later time.
+    - This change clarifies the distinction: **Connectors** facilitate the creation of **connections** between sources and destinations.
+  - The `CONNECTION` table is now the default source.
+    - **For Quickstart users:** The `CONNECTOR` will automatically be used if `CONNECTION` is not yet available.
+    - **For dbt Core users:** Users without the `CONNECTION` source can continue using `CONNECTOR` by adding the following variable to your root `dbt_project.yml` file:
+      ```yml
+      vars:
+          fivetran_platform_using_connection: false # default: true
+      ```
+    - For more details, refer to the [README](https://github.com/fivetran/dbt_fivetran_log/blob/main/README.md#leveraging-connection-vs-connector).
+
+- New Columns:
+  - As part of the `CONNECTION` updates, the following columns have been added alongside their `connector_*` equivalents:  
+    - INCREMENTAL_MAR: `connection_name`  
+    - LOG: `connection_id`
+
+- Renamed Models:
+  - `fivetran_platform__connector_status` → `fivetran_platform__connection_status`
+  - `fivetran_platform__connector_daily_events` → `fivetran_platform__connection_daily_events`
+  - `fivetran_platform__usage_mar_destination_history` → `fivetran_platform__usage_history`
+  - `stg_fivetran_platform__connector` → `stg_fivetran_platform__connection`
+  - `stg_fivetran_platform__connector_tmp` → `stg_fivetran_platform__connection_tmp`
+> **NOTE**: Ensure any downstream queries are updated to reflect the new model names.
+
+- Renamed Columns:
+  - Renamed `connector_id` to `connection_id` and `connector_name` to `connection_name` in the following models:
+    - `fivetran_platform__connection_status`
+      - Also renamed `connector_health` to `connection_health`
+    - `fivetran_platform__mar_table_history`
+    - `fivetran_platform__connection_daily_events`
+    - `fivetran_platform__audit_table`
+    - `fivetran_platform__audit_user_activity`
+    - `fivetran_platform__schema_changelog`
+    - `stg_fivetran_platform__connection`
+    - `stg_fivetran_platform__log`
+       - `connector_id` to `connection_id` only
+    - `stg_fivetran_platform__incremental_mar`
+        - `connector_name` to `connection_name` only
+> **NOTE**: Ensure any downstream queries are updated to reflect the new column names.
+
+## Features
+- Added macro `coalesce_cast` to ensure consistent data types when using `coalesce`, preventing potential errors.
+- Added macro `get_connection_columns` for the new `CONNECTION` source.
+
+## Documentation
+- Updated documentation to reflect all renames and the source table transition.
+
+## Under the Hood (Maintainers Only)
+- Updated consistency and integrity tests to align with naming changes.
+- Refactored seeds and `get_*_columns` macros to reflect renames.
+- Added a new seed for the `CONNECTION` table.
+- Updated `run_models` to test new var `fivetran_platform_using_connection`.
+
 # dbt_fivetran_log v1.11.0
 [PR #141](https://github.com/fivetran/dbt_fivetran_log/pull/141) includes the following updates:
 

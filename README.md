@@ -31,10 +31,10 @@ Refer to the table below for a detailed view of all tables materialized by defau
 
 | **Table**                  | **Description**                                                                                                                                               |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [fivetran_platform__connector_status](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__connector_status)        | Each record represents a connection loading data into a destination, enriched with data about the connection's data sync status.                                          |
+| [fivetran_platform__connection_status](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__connection_status)        | Each record represents a connection loading data into a destination, enriched with data about the connection's data sync status.                                          |
 | [fivetran_platform__mar_table_history](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__mar_table_history)     | Each record represents a table's free, paid, and total volume for a month, complete with data about its connection and destination.                             |
-| [fivetran_platform__usage_mar_destination_history](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__usage_mar_destination_history)    | Table of each destination's usage and active volume, per month. Includes the usage per million MAR and MAR per usage. Usage either refers to a dollar or credit amount, depending on customer's pricing model. Read more about the relationship between usage and MAR [here](https://www.fivetran.com/legal/service-consumption-table).                             |
-| [fivetran_platform__connector_daily_events](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__connector_daily_events)    | Each record represents a daily measurement of the API calls, schema changes, and record modifications made by a connection, starting from the date on which the connection was set up.                            |
+| [fivetran_platform__usage_history](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__usage_history)    | Table of each destination's usage and active volume, per month. Includes the usage per million MAR and MAR per usage. Usage either refers to a dollar or credit amount, depending on customer's pricing model. Read more about the relationship between usage and MAR [here](https://www.fivetran.com/legal/service-consumption-table).                             |
+| [fivetran_platform__connection_daily_events](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__connection_daily_events)    | Each record represents a daily measurement of the API calls, schema changes, and record modifications made by a connection, starting from the date on which the connection was set up.                            |
 | [fivetran_platform__schema_changelog](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__schema_changelog)    | Each record represents a schema change (altering/creating tables, creating schemas, and changing schema configurations) made to a connection and contains detailed information about the schema change event.                           |
 | [fivetran_platform__audit_table](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_table)    | Replaces the deprecated [`_fivetran_audit` table](https://fivetran.com/docs/getting-started/system-columns-and-tables#audittables). Each record represents a table being written to during a connection sync. Contains timestamps related to the connection and table-level sync progress and the sum of records inserted/replaced, updated, and deleted in the table.                             |
 | [fivetran_platform__audit_user_activity](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_user_activity)    | Each record represents a user-triggered action in your Fivetran instance. This table is intended for audit-trail purposes, as it can be very helpful when trying to trace a user action to a [log event](https://fivetran.com/docs/logs#logeventlist) such as a schema change, sync frequency update, manual update, broken connection, etc.                             |
@@ -48,7 +48,7 @@ Each Quickstart transformation job run materializes 19 models if all components 
 
 To use this dbt package, you must have the following:
 
-- The Fivetran Platform connection syncing data into your destination.
+- A Fivetran Platform connection syncing data into your destination.
 - A **BigQuery**, **Snowflake**, **Redshift**, **Postgres**, **Databricks**, or **SQL Server**. destination.
 
 #### Databricks Dispatch Configuration
@@ -72,10 +72,10 @@ For **Snowflake**, **Redshift**, and **Postgres** databases, we have chosen `del
 ### Step 2: Installing the Package
 Include the following Fivetran Platform package version range in your `packages.yml`
 > Check [dbt Hub](https://hub.getdbt.com/) for the latest installation instructions, or [read the dbt docs](https://docs.getdbt.com/docs/package-management) for more information on installing packages.
-```yaml
+```yml
 packages:
   - package: fivetran/fivetran_log
-    version: [">=1.11.0", "<1.12.0"]
+    version: [">=2.0.0", "<2.1.0"]
 ```
 
 > Note that although the source connector is now "Fivetran Platform", the package retains the old name of "fivetran_log".
@@ -96,6 +96,17 @@ If you do not leverage Fivetran RBAC, then you will not have the `user` or `dest
 vars:
     fivetran_platform_using_destination_membership: false # Default is true. This will disable only the destination membership logic
     fivetran_platform_using_user: false # Default is true. This will disable only the user logic
+```
+
+#### Leveraging `CONNECTION` vs `CONNECTOR`  
+In Q1 2025, the `CONNECTOR` source table was deprecated and replaced by `CONNECTION`, and `CONNECTION` is now the default source.
+
+- For **Quickstart users**, `CONNECTOR` will automatically be used if `CONNECTION` is not yet available.
+- For **dbt Core users**, if `CONNECTION` is not yet available in your connection, you can continue using `CONNECTOR` by adding the following variable to your root `dbt_project.yml` file:
+
+```yml
+vars:
+    fivetran_platform_using_connection: false # default: true
 ```
 
 ### (Optional) Step 5: Additional Configurations

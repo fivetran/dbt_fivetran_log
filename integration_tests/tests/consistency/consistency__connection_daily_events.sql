@@ -6,31 +6,35 @@
 
 with prod as (
     select
-        measured_month,
+        date_day,
+        connection_id, 
         destination_id,
         count(*) as total_records
-    from {{ target.schema }}_fivetran_platform_prod.fivetran_platform__usage_mar_destination_history
-    group by 1, 2
+    from {{ target.schema }}_fivetran_platform_prod.fivetran_platform__connection_daily_events
+    group by 1, 2, 3
 ),
 
 dev as (
     select
-        measured_month,
+        date_day,
+        connection_id, 
         destination_id,
         count(*) as total_records
-    from {{ target.schema }}_fivetran_platform_dev.fivetran_platform__usage_mar_destination_history
-    group by 1, 2
+    from {{ target.schema }}_fivetran_platform_dev.fivetran_platform__connection_daily_events
+    group by 1, 2, 3
 ),
 
 final as (
     select 
-        prod.measured_month,
+        prod.date_day,
+        prod.connection_id,
         prod.destination_id,
         prod.total_records as prod_total,
         dev.total_records as dev_total
     from prod
     left join dev 
-        on dev.measured_month = prod.measured_month
+        on dev.date_day = prod.date_day
+            and dev.connection_id = prod.connection_id
             and dev.destination_id = prod.destination_id
 )
 

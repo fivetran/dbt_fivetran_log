@@ -10,7 +10,7 @@
 - **Source Table Transition:**
   - The `CONNECTOR` source table is deprecated and replaced by `CONNECTION`. During a brief transition period, both tables will be identical, but `CONNECTOR` will stop receiving data and be removed at a later time.
     - This change clarifies the distinction: **Connectors** facilitate the creation of **connections** between sources and destinations.
-  - The `CONNECTION` table is now the default source
+  - The `CONNECTION` table is now the default source.
     - **For Quickstart users:** The `CONNECTOR` will automatically be used if `CONNECTION` is not yet available.
     - **For dbt Core users:** Users without the `CONNECTION` source can continue using `CONNECTOR` by adding the following variable to your root `dbt_project.yml` file:
       ```yml

@@ -21,7 +21,7 @@
 
 - New Columns:
   - As part of the `CONNECTION` updates, the following columns have been added alongside their `connector_*` equivalents:  
-    - INCREMENTAL_MAR: `connection_id` and `connection_name`  
+    - INCREMENTAL_MAR: `connection_name`  
     - LOG: `connection_id`
 
 - Renamed Models:
@@ -46,7 +46,6 @@
        - `connector_id` to `connection_id` only
     - `stg_fivetran_platform__incremental_mar`
         - `connector_name` to `connection_name` only
-  - These renames 
 > **NOTE**: Ensure any downstream queries are updated to reflect the new column names.
 
 ## Features
@@ -55,6 +54,12 @@
 
 ## Documentation
 - Updated documentation to reflect all renames and the source table transition.
+
+## Under the Hood (Maintainers Only)
+- Updated consistency and integrity tests to align with naming changes.
+- Refactored seeds and `get_*_columns` macros to reflect renames.
+- Added a new seed for the `CONNECTION` table.
+- Updated `run_models` to test all possible combinations of `CONNECTION` and `CONNECTOR`.
 
 # dbt_fivetran_log v1.11.0
 [PR #141](https://github.com/fivetran/dbt_fivetran_log/pull/141) includes the following updates:
@@ -80,12 +85,6 @@
 - Added `transformation_runs` seed data in `integration_tests/seeds/`.
 - Added a `run_count__usage_mar_destination_history` validation test to check model run counts across staging and end model.
 - (Redshift only) Updates to use limit 1 instead of limit 0 for empty tables. This ensures that Redshift will respect the package's datatype casts.
-
-## Under the Hood (Maintainers Only)
-- Updated consistency and integrity tests to align with naming changes.
-- Refactored seeds and `get_*_columns` macros to reflect renames.
-- Added a new seed for the `CONNECTION` table.
-- Updated `run_models` to test all possible combinations of `CONNECTION` and `CONNECTOR`.
 
 # dbt_fivetran_log v1.10.0
 [PR #140](https://github.com/fivetran/dbt_fivetran_log/pull/140) includes the following updates:

@@ -59,7 +59,7 @@
 - Updated consistency and integrity tests to align with naming changes.
 - Refactored seeds and `get_*_columns` macros to reflect renames.
 - Added a new seed for the `CONNECTION` table.
-- Updated `run_models` to test all possible combinations of `CONNECTION` and `CONNECTOR`.
+- Updated `run_models` to test new var `fivetran_platform_using_connection`.
 
 # dbt_fivetran_log v1.11.0
 [PR #141](https://github.com/fivetran/dbt_fivetran_log/pull/141) includes the following updates:

@@ -7,7 +7,7 @@ models:
       Each measurement is cumulative for the month and includes all MAR types (paid, free, etc.).
     columns:
       - name: connection_name
-        description: Name of the measured connection. Coalesced with the DEPRECATED field `connector_name`.
+        description: Name of the measured connection. Coalesced with the DEPRECATED fields `connector_name` and `connector_id`.
       - name: destination_id
         description: Foreign key referencing the destination of the measured table.
       - name: free_type

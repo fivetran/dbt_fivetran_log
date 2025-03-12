@@ -1,3 +1,11 @@
+# dbt_fivetran_log v2.1.0
+
+## Dependency Changes
+- Removed the dependency on [calogica/dbt_date](https://github.com/calogica/dbt-date) as it is no longer actively maintained. To maintain functionality, key date macros have been replicated within the fivetran_date_macros folder with minimal modifications. Only macro versions supporting the Fivetran Log supported destinations are retained, and all have been prefixed with `fivetran_` to avoid naming conflicts.
+  - `date_part` -> `fivetran_date_part`
+  - `day_name` -> `fivetran_day_name`
+  - `day_of_month` -> `fivetran_day_of_month`
+
 # dbt_fivetran_log v2.0.0
 [PR #144](https://github.com/fivetran/dbt_fivetran_log/pull/144) includes the following updates:
 

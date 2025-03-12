@@ -50,8 +50,8 @@ final as (
         {{ dbt.date_trunc('day', 'user_logs.created_at') }} as date_day,
         
         {% if target.type != 'sqlserver' -%}
-            {{ dbt_date.day_name('user_logs.created_at') }} as day_name,
-            {{ dbt_date.day_of_month('user_logs.created_at') }} as day_of_month,
+            {{ fivetran_log.fivetran_day_name('user_logs.created_at') }} as day_name,
+            {{ fivetran_log.fivetran_day_of_month('user_logs.created_at') }} as day_of_month,
         {% else -%} 
             format(cast(user_logs.created_at as date), 'ddd') as day_name,
             day(user_logs.created_at) as day_of_month,

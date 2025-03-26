@@ -75,7 +75,7 @@ Include the following Fivetran Platform package version range in your `packages.
 ```yml
 packages:
   - package: fivetran/fivetran_log
-    version: [">=2.0.0", "<2.1.0"]
+    version: [">=2.1.0", "<2.2.0"]
 ```
 
 > Note that although the source connector is now "Fivetran Platform", the package retains the old name of "fivetran_log".
@@ -149,9 +149,6 @@ packages:
 
     - package: dbt-labs/spark_utils
       version: [">=0.3.0", "<0.4.0"]
-
-    - package: calogica/dbt_date
-      version: [">=0.9.0", "<1.0.0"]
 ```
 
 ## How is this package maintained and can I contribute?

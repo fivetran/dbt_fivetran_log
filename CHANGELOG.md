@@ -1,3 +1,9 @@
+# dbt_fivetran_log v2.1.1
+
+## Under the Hood
+- Incorporated `fivetran_platform__credits_pricing` and `fivetran_platform_using_transformations` into the `quickstart.yml` file.
+- Updated the package maintainer PR template.
+
 # dbt_fivetran_log v2.1.0
 [PR #150](https://github.com/fivetran/dbt_fivetran_log/pull/150) includes the following updates:
 

@@ -1,4 +1,4 @@
-# dbt_fivetran_log v2.1.1
+# dbt_fivetran_log v2.1.1-a1
 
 [PR #153](https://github.com/fivetran/dbt_fivetran_log/pull/153) includes the following updates:
 

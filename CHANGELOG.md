@@ -2,9 +2,9 @@
 
 [PR #154](https://github.com/fivetran/dbt_fivetran_log/pull/154) includes the following updates:
 
-## Breaking Change for dbt Core < 1.9.0
+## Breaking Change for dbt Core < 1.9.5
 > *Note: This is not relevant to Fivetran Quickstart users.*
-Migrated `freshness` from a top-level source property to a source `config` in alignment with [recent updates](https://github.com/dbt-labs/dbt-core/issues/11506) from dbt Core. This will resolve the following deprecation warning that users running dbt >= 1.9.0 may have received:
+Migrated `freshness` from a top-level source property to a source `config` in alignment with [recent updates](https://github.com/dbt-labs/dbt-core/issues/11506) from dbt Core. This will resolve the following deprecation warning that users running dbt >= 1.9.5 may have received:
 
 ```
 [WARNING]: Deprecated functionality
@@ -13,10 +13,10 @@ Found `freshness` as a top-level property of `fivetran_platform` in file
 into the `config` of `fivetran_platform`.
 ```
 
-**IMPORTANT:** Users running dbt Core < 1.9.0 will not be able to utilize freshness tests in this release or any subsequent releases, as older versions of dbt will not recognize freshness as a source `config` and therefore not run the tests.
+**IMPORTANT:** Users running dbt Core < 1.9.5 will not be able to utilize freshness tests in this release or any subsequent releases, as older versions of dbt will not recognize freshness as a source `config` and therefore not run the tests.
 
-If you are using dbt Core < 1.9.0 and want to continue running TikTok Ads freshness tests, please elect **one** of the following options:
-  1. (Recommended) Upgrade to dbt Core >= 1.9.0
+If you are using dbt Core < 1.9.5 and want to continue running TikTok Ads freshness tests, please elect **one** of the following options:
+  1. (Recommended) Upgrade to dbt Core >= 1.9.5
   2. Do not upgrade your installed version of the `fivetran_platform` package. Pin your dependency on v2.1.0 in your `packages.yml` file.
   3. Utilize a dbt [override](https://docs.getdbt.com/reference/resource-properties/overrides) to overwrite the package's `fivetran_platform` source and apply freshness via the [old](https://github.com/fivetran/dbt_fivetran_log/blob/v2.1.0/models/staging/src_fivetran_platform.yml#L11-L13) top-level property route. This will require you to copy and paste the entirety of the `src_fivetran_platform.yml` [file](https://github.com/fivetran/dbt_fivetran_log/blob/v2.1.0/models/staging/src_fivetran_platform.yml#L15-L265) and add an `overrides: fivetran_platform_source` property.
 
@@ -147,7 +147,7 @@ If you are using dbt Core < 1.9.0 and want to continue running TikTok Ads freshn
 - Replaced the deprecated `dbt.current_timestamp_backcompat()` function with `dbt.current_timestamp()` to ensure all timestamps are captured in UTC.
 - Updated `fivetran_platform__connector_daily_events` to support running `dbt compile` prior to the initial `dbt run` on a new schema.
 
-# dbt_fivetran_log v1.9.0
+# dbt_fivetran_log v1.9.5
 [PR #132](https://github.com/fivetran/dbt_fivetran_log/pull/132) includes the following updates:
 
 ## 🚨 Schema Changes 🚨

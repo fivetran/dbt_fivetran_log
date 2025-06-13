@@ -97,15 +97,13 @@ connection_metrics as (
                 
 
         max(case when connection_log.event_type = 'SEVERE' 
-                or connection_log.event_subtype = 'connection_failure'
                 or (connection_log.event_subtype in ('status', 'sync_end')
-                and connection_log.log_status = 'FAILURE')
+                    and connection_log.log_status = 'FAILURE')
             then connection_log.created_at else null end) as last_error_at,
 
         max(case when connection_log.event_type = 'SEVERE'
-                or connection_log.event_subtype = 'connection_failure'
                 or (connection_log.event_subtype in ('status', 'sync_end')
-                and connection_log.log_status = 'FAILURE')
+                    and connection_log.log_status = 'FAILURE')
             then connection_log.sync_batch_id else null end) as last_error_batch,
         max(case when event_type = 'WARNING' then connection_log.created_at else null end) as last_warning_at
 

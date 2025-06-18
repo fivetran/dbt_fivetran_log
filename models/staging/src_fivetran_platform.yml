@@ -7,10 +7,11 @@ sources:
 
     loader: fivetran
     loaded_at_field: _fivetran_synced
-      
-    freshness:
-      warn_after: {count: 72, period: hour}
-      error_after: {count: 96, period: hour}
+
+    config:  
+      freshness:
+        warn_after: {count: 72, period: hour}
+        error_after: {count: 96, period: hour}
 
     tables:
       - name: incremental_mar
@@ -52,8 +53,8 @@ sources:
         identifier: "{{ var('fivetran_platform_connection_identifier', 'connection')}}"
         description: >
           Table of all connections loading data into destinations.
-        freshness: null
         config:
+          freshness: null
           enabled: "{{ var('fivetran_platform_using_connection', true) }}"
         columns: 
           - name: connection_id
@@ -81,9 +82,9 @@ sources:
         description: >
           (DEPRECATED) Table of all connections loading data into destinations.
           Note: This table is deprecated in favor of CONNECTION and will be removed at a later date.
-        freshness: null
         config:
           enabled: "{{ false if var('fivetran_platform_using_connection', true) else true }}"
+          freshness: null
         columns: 
           - name: connector_id
             description: System-generated unique ID of the connection. 
@@ -107,7 +108,8 @@ sources:
 
       - name: credits_used
         identifier: "{{ var('fivetran_platform_credits_used_identifier', 'credits_used')}}"
-        freshness: null
+        config:
+          freshness: null
         description: Table of credits used by the customer per month within each destination.
         columns:
           - name: destination_id
@@ -121,7 +123,8 @@ sources:
 
       - name: usage_cost
         identifier: "{{ var('fivetran_platform_usage_cost_identifier', 'usage_cost')}}"
-        freshness: null
+        config:
+          freshness: null
         description: Table of usage costs per destination and month.
         columns:
           - name: destination_id
@@ -135,7 +138,8 @@ sources:
 
       - name: destination
         identifier: "{{ var('fivetran_platform_destination_identifier', 'destination')}}"
-        freshness: null
+        config:
+          freshness: null
         description: Table of destinations receiving data. Each declared source has one record.
         columns:
           - name: id
@@ -179,7 +183,8 @@ sources:
       - name: account
         identifier: "{{ var('fivetran_platform_account_identifier', 'account')}}"
         description: Table of information about this Fivetran account.
-        freshness: null
+        config:
+          freshness: null
         columns:
           - name: id
             description: Unique ID of the account.
@@ -197,8 +202,8 @@ sources:
       - name: destination_membership
         identifier: "{{ var('fivetran_platform_destination_membership_identifier', 'destination_membership')}}"
         description: Table of users with access to a destination.
-        freshness: null
         config:
+          freshness: null
           enabled: "{{ var('fivetran_platform_using_destination_membership', true) }}"
         columns:
           - name: destination_id
@@ -217,8 +222,8 @@ sources:
       - name: user
         identifier: "{{ var('fivetran_platform_user_identifier', 'user')}}"
         description: Table of users with access to this Fivetran account.
-        freshness: null
         config:
+          freshness: null
           enabled: "{{ var('fivetran_platform_using_user', true) }}"
         columns:
           - name: id
@@ -243,7 +248,8 @@ sources:
       - name: transformation_runs
         identifier: "{{ var('fivetran_platform_transformation_runs_identifier', 'transformation_runs') }}"
         description: Table of all transformation runs executed by Fivetran.
-        freshness: null
+        config:
+          freshness: null
         columns:
           - name: destination_id
             description: Foreign key referencing the destination where the transformation run was executed.

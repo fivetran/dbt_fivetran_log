@@ -7,7 +7,7 @@ sources:
 
     loader: fivetran
     loaded_at_field: _fivetran_synced
-      
+
     config:
       freshness:
         warn_after: {count: 72, period: hour}
@@ -108,9 +108,9 @@ sources:
 
       - name: credits_used
         identifier: "{{ var('fivetran_platform_credits_used_identifier', 'credits_used')}}"
+        description: Table of credits used by the customer per month within each destination.
         config:
           freshness: null
-        description: Table of credits used by the customer per month within each destination.
         columns:
           - name: destination_id
             description: Foreign key referencing the destination where credits were used.
@@ -123,9 +123,9 @@ sources:
 
       - name: usage_cost
         identifier: "{{ var('fivetran_platform_usage_cost_identifier', 'usage_cost')}}"
+        description: Table of usage costs per destination and month.
         config:
           freshness: null
-        description: Table of usage costs per destination and month.
         columns:
           - name: destination_id
             description: Foreign key referencing the destination where costs were incurred.
@@ -138,9 +138,9 @@ sources:
 
       - name: destination
         identifier: "{{ var('fivetran_platform_destination_identifier', 'destination')}}"
+        description: Table of destinations receiving data. Each declared source has one record.
         config:
           freshness: null
-        description: Table of destinations receiving data. Each declared source has one record.
         columns:
           - name: id
             description: Unique ID of the destination.

@@ -17,7 +17,7 @@ into the `config` of `fivetran_platform`.
 If you are using dbt Core < 1.9.6 and want to continue running Fivetran Platform freshness tests, please elect **one** of the following options:
   1. (Recommended) Upgrade to dbt Core >= 1.9.6
   2. Do not upgrade your installed version of the `fivetran_log` package. Pin your dependency on v2.1.0 in your `packages.yml` file.
-  3. Utilize a dbt [override](https://docs.getdbt.com/reference/resource-properties/overrides) to overwrite the package's `fivetran_log` source and apply freshness via the [old](https://github.com/fivetran/dbt_fivetran_log/blob/v2.1.0/models/staging/src_fivetran_platform.yml#L11-L13) top-level property route. This will require you to copy and paste the entirety of the `src_fivetran_platform.yml` [file](https://github.com/fivetran/dbt_fivetran_log/blob/v2.1.0/models/staging/src_fivetran_platform.yml#L15-L265) and add an `overrides: fivetran_log` property.
+  3. Utilize a dbt [override](https://docs.getdbt.com/reference/resource-properties/overrides) to overwrite the package's `fivetran_platform` source and apply freshness via the [old](https://github.com/fivetran/dbt_fivetran_log/blob/v2.1.0/models/staging/src_fivetran_platform.yml#L11-L13) top-level property route. This will require you to copy and paste the entirety of the `src_fivetran_platform.yml` [file](https://github.com/fivetran/dbt_fivetran_log/blob/v2.1.0/models/staging/src_fivetran_platform.yml#L15-L265) and add an `overrides: fivetran_log` property.
 
 ## Bug fixes
 - Updated logic for identifying broken connections. Connection `sync_end` events having `log_status = 'FAILURE'`, in addition to `SEVERE` event types, are now considered broken connections. ([PR #155](https://github.com/fivetran/dbt_fivetran_log/pull/155))

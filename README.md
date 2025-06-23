@@ -25,7 +25,7 @@
     - Surfacing an audit log of records inserted, deleted, an updated in each table during connection syncs.
     - Keeping an audit log of user-triggered actions across your Fivetran instance.
     - Adds freshness tests to source data.
-      > dbt Core >= 1.9.6 is required to run freshness tests out of the box. See other options [here](https://github.com/fivetran/dbt_fivetran_log/blob/main/CHANGELOG.md#breaking-change-for-dbt-core--195).
+      > dbt Core >= 1.9.6 is required to run freshness tests out of the box. See other options [here](https://github.com/fivetran/dbt_fivetran_log/blob/main/CHANGELOG.md#breaking-change-for-dbt-core--196).
 
 <!--section="fivetran_platform_transformation_model"-->
 Refer to the table below for a detailed view of all tables materialized by default within this package. Additionally, check out our [docs site](https://fivetran.github.io/dbt_fivetran_log/#!/overview/fivetran_platform?g_v=1&g_e=seeds) for more details about these tables.

@@ -7,7 +7,7 @@ sources:
 
     loader: fivetran
     loaded_at_field: _fivetran_synced
-    
+
     config:
       freshness:
         warn_after: {count: 72, period: hour}

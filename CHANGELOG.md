@@ -1,3 +1,9 @@
+# dbt_fivetran_log v2.2.0
+This release includes the following updates:
+
+## Bug fixes
+- Updated logic for identifying broken connections. Connection `sync_end` events having `log_status = 'FAILURE'`, in addition to `SEVERE` event types, are now considered broken connections. ([PR #155](https://github.com/fivetran/dbt_fivetran_log/pull/155))
+
 # dbt_fivetran_log v2.1.0
 [PR #150](https://github.com/fivetran/dbt_fivetran_log/pull/150) includes the following updates:
 

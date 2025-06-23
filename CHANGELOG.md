@@ -25,6 +25,9 @@ If you are using dbt Core < 1.9.6 and want to continue running Fivetran Platform
 ## Under the Hood
 - Updated the package maintainer PR template.
 
+## Contributors
+- [@felipecoxanet](https://github.com/felipecoxanet) ([PR #152](https://github.com/fivetran/dbt_fivetran_log/pull/152))
+
 # dbt_fivetran_log v2.1.0
 [PR #150](https://github.com/fivetran/dbt_fivetran_log/pull/150) includes the following updates:
 

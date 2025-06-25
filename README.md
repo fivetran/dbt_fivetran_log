@@ -19,11 +19,13 @@
 - Generates a comprehensive data dictionary of your Fivetran Platform connection (previously called Fivetran Log) data via the [dbt docs site](https://fivetran.github.io/dbt_fivetran_log/)
 - Produces staging models in the format described by [this ERD](https://fivetran.com/docs/logs/fivetran-platform#schemainformation) which clean, test, and prepare your Fivetran data from our free [Fivetran Platform connector](https://fivetran.com/docs/logs/fivetran-platform) and generates analysis ready end models.
 - The above mentioned models enable you to better understand how you are spending money in Fivetran according to our [consumption-based pricing model](https://fivetran.com/docs/usage-based-pricing) as well as providing details about the performance and status of your Fivetran connections. This is achieved by:
-    - Displaying consumption data at the table, connection, destination, and account levels
-    - Providing a history of measured free and paid monthly active rows (MAR), credit consumption, and the relationship between the two
-    - Creating a history of vital daily events for each connection
-    - Surfacing an audit log of records inserted, deleted, an updated in each table during connection syncs
-    - Keeping an audit log of user-triggered actions across your Fivetran instance
+    - Displaying consumption data at the table, connection, destination, and account levels.
+    - Providing a history of measured free and paid monthly active rows (MAR), credit consumption, and the relationship between the two.
+    - Creating a history of vital daily events for each connection.
+    - Surfacing an audit log of records inserted, deleted, an updated in each table during connection syncs.
+    - Keeping an audit log of user-triggered actions across your Fivetran instance.
+    - Adds freshness tests to source data.
+      > dbt Core >= 1.9.6 is required to run freshness tests out of the box. See other options [here](https://github.com/fivetran/dbt_fivetran_log/blob/main/CHANGELOG.md#breaking-change-for-dbt-core--196).
 
 <!--section="fivetran_platform_transformation_model"-->
 Refer to the table below for a detailed view of all tables materialized by default within this package. Additionally, check out our [docs site](https://fivetran.github.io/dbt_fivetran_log/#!/overview/fivetran_platform?g_v=1&g_e=seeds) for more details about these tables.
@@ -75,7 +77,7 @@ Include the following Fivetran Platform package version range in your `packages.
 ```yml
 packages:
   - package: fivetran/fivetran_log
-    version: 2.1.1-a1
+    version: [">=2.2.0", "<2.3.0"]
 ```
 
 > Note that although the source connector is now "Fivetran Platform", the package retains the old name of "fivetran_log".

@@ -4,7 +4,6 @@
 
 ## Under the Hood
 - Incorporated `fivetran_platform__credits_pricing` and `fivetran_platform_using_transformations` into the `quickstart.yml` file.
-- Updated the package maintainer PR template.
 
 # dbt_fivetran_log v2.2.0
 [PR #154](https://github.com/fivetran/dbt_fivetran_log/pull/154) includes the following updates:
@@ -42,7 +41,6 @@ If you are using dbt Core < 1.9.6 and want to continue running Fivetran Platform
 
 ## Under the Hood
 - Incorporated `fivetran_platform__credits_pricing` and `fivetran_platform_using_transformations` into the `quickstart.yml` file.
-- Updated the package maintainer PR template.
 
 # dbt_fivetran_log v2.1.0
 [PR #150](https://github.com/fivetran/dbt_fivetran_log/pull/150) includes the following updates:

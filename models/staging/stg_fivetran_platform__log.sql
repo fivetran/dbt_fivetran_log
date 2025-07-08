@@ -20,7 +20,7 @@ fields as (
 field_conversion as (
     select
         *,
-        {{ fivetran_log.json_to_string('message_data', source_columns_in_relation) }} as message_data_string
+        {{ fivetran_log.json_to_string("message_data", source_columns_in_relation) }} as message_data_string
     from fields
 ),
 

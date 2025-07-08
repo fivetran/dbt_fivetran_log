@@ -29,6 +29,6 @@ ZZLSXVYxirh8aKlgdCzo5fvd71g=,2021-12-10 14:26:42.029,2021-12-10 20:30:53.949,thi
 D7UqnKYn6OT04HkUcPNjXA95ttI=,2021-12-10 14:26:29.719,2021-12-10 20:30:53.878,this_connection,INFO,"{""table"":""media_insights""}",write_to_table_start,123,456abc
 V3H62Gj5c6nB8bY+OdxMHvp/hNs=,2021-12-10 14:26:05.907,2021-12-10 20:30:53.778,this_connection,INFO,,sync_start,123,456abc
 jkLxnPUfQ/9mHaWCmxUQEhul8ZA=,2023-11-09 11:31:31.579000,2023-11-09 15:55:12.560000,which_connection,INFO,"{""actor"":""me@me.com"",""properties"":{""customEvents"":[],""syncMode"":""AllEvents"",""isTest"":false,""events"":[],""customEventSyncMode"":""AllEvents""},""id"":""iterable""}",create_connection,,
-R7UqnKYn6OT04HkUcPNjXA95qqI=,2021-12-10 16:26:29.719,2021-12-10 20:30:53.878,who_connection,INFO,says actor but not a json,status,,456abc
+R7UqnKYn6OT04HkUcPNjXA95qqI=,2021-12-10 16:26:29.719,2021-12-10 20:30:53.878,who_connection,INFO,,,456abc
 D7UqnKYn6OT04HkUcPNjXA95qqp=,2024-11-18 16:26:29.719,2024-11-19 20:30:53.878,why_connection,INFO,"{""total_queries"":15,""total_rows"":4810}",extract_summary,,456abc
 h7UqnKYn6OT04HkUcPNjXA95qlp=,2024-11-19 16:26:29.719,2024-11-19 20:30:53.878,why_connection,INFO,"{""totalQueries"":5,""total_rows"":4810}",extract_summary,,456abc

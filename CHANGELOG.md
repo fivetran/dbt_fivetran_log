@@ -4,7 +4,8 @@
 
 ## Under the Hood
 - Added BigQuery JSON field support for the following model and columns:
-  - `stg_fivetran_platform__log`: `message_data` column. This resulted in a new cte named `field_conversion` to apply the conversion prior to the additional light transformations using the `message_data` column.
+  - `stg_fivetran_platform__log`: `message_data` column. 
+    - Added the `field_conversion` cte to apply the conversion to `message_data` prior to additional transformations.
 - Added the `json_to_string()` macro for BigQuery to convert JSON fields to strings for reliable downstream parsing.
 - Included json versions to the integration tests to ensure json data type compatibility.
 

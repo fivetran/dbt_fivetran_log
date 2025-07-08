@@ -1,5 +1,5 @@
 name: 'fivetran_log_integration_tests'
-version: '2.2.1'
+version: '2.2.2'
 
 config-version: 2
 profile: 'integration_tests'
@@ -61,7 +61,14 @@ seeds:
     log:
       +column_types:
         time_stamp: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
+        message_data: "{{ 'string' if target.type in ('bigquery', 'spark', 'databricks') else 'varchar' if target.type != 'sqlserver' else 'varchar(256)' }}"
         transformation_id:  "{{ 'string' if target.type in ('bigquery', 'spark', 'databricks') else 'varchar' if target.type != 'sqlserver' else 'varchar(256)' }}"
+    log_bq_json_data:
+      +enabled: "{{ target.type == 'bigquery' }}"
+      +column_types:
+        time_stamp: timestamp
+        message_data: json
+        transformation_id: string
     user:
       +column_types:
         created_at: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"

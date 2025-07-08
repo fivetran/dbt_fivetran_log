@@ -57,6 +57,10 @@ dbt compile --target "$db"
 dbt run --target "$db" --full-refresh
 dbt run --target "$db"
 dbt test --target "$db"
+if [ "$db" = "bigquery" ]; then
+dbt run --vars '{fivetran_platform_log_identifier: log_bq_json_data}' --target "$db" --full-refresh
+dbt test --target "$db"
+fi
 dbt run --vars '{fivetran_platform__usage_pricing: true, fivetran_platform_using_connection: false}' --target "$db" --full-refresh
 dbt run --vars '{fivetran_platform__usage_pricing: true, fivetran_platform_using_connection: false}' --target "$db"
 dbt test --target "$db"

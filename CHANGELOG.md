@@ -1,6 +1,6 @@
 # dbt_fivetran_log v2.2.2
 
-[PR #158](https://github.com/fivetran/dbt_fivetran_log/pull/158) includes the following updates:
+[PR #160](https://github.com/fivetran/dbt_fivetran_log/pull/160) includes the following updates:
 
 ## Under the Hood
 - Added BigQuery JSON field support for the following model and columns:

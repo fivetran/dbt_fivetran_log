@@ -1,3 +1,14 @@
+# dbt_fivetran_log v2.2.2
+
+[PR #160](https://github.com/fivetran/dbt_fivetran_log/pull/160) includes the following updates:
+
+## Under the Hood
+- Added BigQuery JSON field support for the following model and columns:
+  - `stg_fivetran_platform__log`: `message_data` column. 
+    - Added the `field_conversion` cte to apply the conversion to `message_data` prior to additional transformations.
+- Added the `json_to_string()` macro for BigQuery to convert JSON fields to strings for reliable downstream parsing.
+- Included json versions to the integration tests to ensure json data type compatibility.
+
 # dbt_fivetran_log v2.2.1
 
 [PR #153](https://github.com/fivetran/dbt_fivetran_log/pull/153) includes the following updates:

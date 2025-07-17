@@ -64,10 +64,10 @@ mar_join as (
         destination.destination_name
 
     from latest_mar
-    join connection
+    left join connection
         on latest_mar.connection_name = connection.connection_name
         and latest_mar.destination_id = connection.destination_id
-    join destination on latest_mar.destination_id = destination.destination_id
+    left join destination on latest_mar.destination_id = destination.destination_id
 )
 
 select * from mar_join

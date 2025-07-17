@@ -1,3 +1,10 @@
+# dbt_fivetran_log v2.3.0
+[PR #162](https://github.com/fivetran/dbt_fivetran_log/pull/162) includes the following updates:
+
+## Bug Fixes
+- Updated `fivetran_platform__mar_table_history` to include consumption records not associated with an active connection.
+  - As a result this table may now contain additional records that were previously excluded.
+
 # dbt_fivetran_log v2.2.2
 
 [PR #160](https://github.com/fivetran/dbt_fivetran_log/pull/160) includes the following updates:

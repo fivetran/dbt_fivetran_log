@@ -1,5 +1,5 @@
 name: 'fivetran_log_integration_tests'
-version: '2.2.2'
+version: '2.3.0'
 
 config-version: 2
 profile: 'integration_tests'
@@ -29,6 +29,8 @@ models:
     # +schema: "fivetran_platform_{{ var('directed_schema','dev') }}"
 
 seeds:
+  +docs:
+    show: False
   fivetran_log_integration_tests:
     +column_types:
       _fivetran_synced: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
@@ -77,3 +79,7 @@ clean-targets:         # directories to be removed by `dbt clean`
   - "target"
   - "dbt_packages"
   - "dbt_modules"
+
+flags:
+  send_anonymous_usage_stats: False
+  use_colors: True

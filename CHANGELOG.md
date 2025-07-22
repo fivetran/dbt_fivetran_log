@@ -5,6 +5,16 @@
 - Updated `fivetran_platform__mar_table_history` to include consumption records not associated with an active connection.
   - As a result this table may now contain additional records that were previously excluded.
 
+### Under the Hood - July 2025 Updates
+[PR #161](https://github.com/fivetran/dbt_fivetran_log/pull/161) includes the following updates:
+- Updated conditions in `.github/workflows/auto-release.yml`.
+- Added `.github/workflows/generate-docs.yml`.
+- Added `+docs: show: False` to `integration_tests/dbt_project.yml`.
+- Migrated `flags` (e.g., `send_anonymous_usage_stats`, `use_colors`) from `sample.profiles.yml` to `integration_tests/dbt_project.yml`.
+- Updated `maintainer_pull_request_template.md` with improved checklist.
+- Updated Python image version to `3.10.13` in `pipeline.yml`.
+- Updated `.gitignore` to exclude additional DBT, Python, and system artifacts.
+
 # dbt_fivetran_log v2.2.2
 
 [PR #160](https://github.com/fivetran/dbt_fivetran_log/pull/160) includes the following updates:

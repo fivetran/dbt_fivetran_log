@@ -1,17 +1,3 @@
-{% macro is_incremental_compatible(target) %}
-    {% if target.type in ('databricks') %}
-        {% set re = modules.re %}
-        {% set path_match = target.http_path %}
-        {% set regex_pattern = "sql/protocol" %}
-        {% set match_result = re.search(regex_pattern, path_match) %}
-        {% if match_result %}
-            {{ return(True) }}
-        {% else %}
-            {{ return(False) }}
-        {% endif %}
-    {% elif target.type in ('bigquery','snowflake','postgres','redshift','sqlserver') %}
-        {{ return(True) }}
-    {% else %}
-        {{ return(False) }}
-    {% endif %}
+{% macro is_incremental_compatible() %}
+    {{ return(target.type in ('bigquery','snowflake','postgres','redshift','sqlserver','databricks')) }}
 {% endmacro %}

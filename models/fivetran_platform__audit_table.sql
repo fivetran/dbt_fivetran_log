@@ -1,13 +1,17 @@
 {{ config(
-    materialized='incremental' if is_incremental_compatible(target) else 'table',
-    unique_key='unique_table_sync_key',
-    partition_by={
-        'field': 'sync_start_day',
-        'data_type': 'date'
-    } if target.type == 'bigquery' else ['sync_start_day'],
-    cluster_by = ['sync_start_day'],
-    incremental_strategy='insert_overwrite' if target.type in ('bigquery','spark', 'databricks') else 'delete+insert',
-    file_format='delta'
+    materialized = 'incremental' if is_incremental_compatible() else 'table',
+    unique_key = 'unique_table_sync_key',
+    partition_by = (
+        {'field': 'write_to_table_start_day', 'data_type': 'date'} if target.type == 'bigquery'
+        else ['write_to_table_start_day']
+    ),
+    cluster_by = ['write_to_table_start_day'],
+    incremental_strategy = (
+        'merge' if is_databricks_sql_warehouse()
+        else 'insert_overwrite' if target.type in ('bigquery', 'spark', 'databricks')
+        else 'delete+insert'
+    ),
+    file_format = 'delta'
 ) }}
 
 with base as (
@@ -21,7 +25,7 @@ with base as (
     where event_subtype in ('sync_start', 'sync_end', 'write_to_table_start', 'write_to_table_end', 'records_modified')
 
     {% if is_incremental() %}
-    and cast(created_at as date) > {{ fivetran_log.fivetran_log_lookback(from_date='max(sync_start_day)', interval=7) }}
+    and cast(created_at as date) > {{ fivetran_log.fivetran_log_lookback(from_date='max(write_to_table_start_day)', interval=7) }}
     {% endif %}
 ),
 
@@ -154,7 +158,7 @@ final as (
     select 
         *,
         {{ dbt_utils.generate_surrogate_key(['schema_name','connection_id', 'destination_id', 'table_name', 'write_to_table_start']) }} as unique_table_sync_key, -- for incremental materialization 
-        cast({{ dbt.date_trunc('day', 'sync_start') }} as date) as sync_start_day -- for partitioning
+        cast({{ dbt.date_trunc('day', 'write_to_table_start') }} as date) as write_to_table_start_day -- for partitioning
     from sum_records_modified
 )
 

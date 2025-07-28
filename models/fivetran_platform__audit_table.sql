@@ -2,10 +2,10 @@
     materialized = 'incremental' if is_incremental_compatible() else 'table',
     unique_key = 'unique_table_sync_key',
     partition_by = (
-        {'field': 'write_to_table_start_day', 'data_type': 'date'} if target.type == 'bigquery'
-        else ['write_to_table_start_day']
+        {'field': 'sync_end_day', 'data_type': 'date'} if target.type == 'bigquery'
+        else ['sync_end_day']
     ) if not is_databricks_sql_warehouse() else None,
-    cluster_by = ['write_to_table_start_day'],
+    cluster_by = ['sync_end_day'],
     incremental_strategy = (
         'merge' if is_databricks_sql_warehouse()
         else 'insert_overwrite' if target.type in ('bigquery', 'spark', 'databricks')
@@ -25,7 +25,7 @@ with base as (
     where event_subtype in ('sync_start', 'sync_end', 'write_to_table_start', 'write_to_table_end', 'records_modified')
 
     {% if is_incremental() %}
-    and cast(created_at as date) > {{ fivetran_log.fivetran_log_lookback(from_date='max(write_to_table_start_day)', interval=7) }}
+    and cast(created_at as date) > {{ fivetran_log.fivetran_log_lookback(from_date='max(sync_end_day)', interval=7) }}
     {% endif %}
 ),
 
@@ -158,7 +158,7 @@ final as (
     select 
         *,
         {{ dbt_utils.generate_surrogate_key(['schema_name','connection_id', 'destination_id', 'table_name', 'write_to_table_start']) }} as unique_table_sync_key, -- for incremental materialization 
-        cast({{ dbt.date_trunc('day', 'write_to_table_start') }} as date) as write_to_table_start_day -- for partitioning
+        cast({{ dbt.date_trunc('day', 'sync_end') }} as date) as sync_end_day -- for partitioning
     from sum_records_modified
 )
 

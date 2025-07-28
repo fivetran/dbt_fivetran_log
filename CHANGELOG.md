@@ -1,3 +1,9 @@
+# dbt_fivetran_log v2.2.3
+[PR #163](https://github.com/fivetran/dbt_fivetran_log/pull/163) includes the following updates:
+
+## Feature
+- Incremental support for Databricks SQL-Warehouse. Explain how different from before.
+
 # dbt_fivetran_log v2.2.2
 
 [PR #160](https://github.com/fivetran/dbt_fivetran_log/pull/160) includes the following updates:

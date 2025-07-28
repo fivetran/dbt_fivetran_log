@@ -4,7 +4,8 @@
     partition_by = (
         {'field': 'sync_start_day', 'data_type': 'date'} if target.type == 'bigquery'
         else ['sync_start_day']
-    ) if not is_databricks_sql_warehouse() else None,
+    ) if not is_databricks_sql_warehouse() 
+        else None,
     cluster_by = ['sync_start_day'],
     incremental_strategy = (
         'merge' if is_databricks_sql_warehouse()

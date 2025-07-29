@@ -190,8 +190,8 @@ models:
         description: Total number of rows updated in the table during a sync.
       - name: sum_rows_deleted
         description: Total number of rows deleted from the table during a sync.
-      - name: sync_start_day
-        description: The `sync_start` field truncated to the `day`, used for partitioning with the `insert_overwrite` incremental method.
+      - name: write_to_table_start_day
+        description: The `write_to_table_start` field truncated to the `day`, used for partitioning with the `insert_overwrite` incremental method.
 
   - name: fivetran_platform__schema_changelog
     description: >

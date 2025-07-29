@@ -1,5 +1,5 @@
 # dbt_fivetran_log v2.3.0
-[PR #164](https://github.com/fivetran/dbt_fivetran_log/pull/163 includes the following updates:
+[PR #164](https://github.com/fivetran/dbt_fivetran_log/pull/164) includes the following updates:
 
 ## Schema Data Changes
 **3 total changes • 3 possible breaking changes**

@@ -1,9 +1,9 @@
 {{ config(
-    materialized = 'incremental' if is_incremental_compatible() else 'table',
+    materialized = 'incremental' if fivetran_log.is_incremental_compatible() else 'table',
     unique_key = 'unique_table_sync_key',
     partition_by = (
         {'field': 'write_to_table_start_day', 'data_type': 'date'} if target.type == 'bigquery'
-        else ['write_to_table_start_day'] if target.type == 'databricks' and not is_databricks_sql_warehouse() 
+        else ['write_to_table_start_day'] if target.type == 'databricks' and not fivetran_log.is_databricks_sql_warehouse() 
         else None
     ),
     cluster_by = (
@@ -11,7 +11,7 @@
         else None
     ),
     incremental_strategy = (
-        'merge' if is_databricks_sql_warehouse()
+        'merge' if fivetran_log.is_databricks_sql_warehouse()
         else 'insert_overwrite' if target.type in ('bigquery', 'spark', 'databricks')
         else 'delete+insert'
     ),

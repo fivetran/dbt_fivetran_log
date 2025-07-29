@@ -1,5 +1,5 @@
 {% macro is_databricks_sql_warehouse() %}
-{{ return(adapter.dispatch('is_databricks_sql_warehouse', 'fivetran_platform') ()) }}
+{{ return(adapter.dispatch('is_databricks_sql_warehouse', 'fivetran_log') ()) }}
 {% endmacro %}
 
 

@@ -1,3 +1,4 @@
 {% macro is_incremental_compatible() %}
-    {{ return(target.type in ('bigquery','snowflake','postgres','redshift','sqlserver','databricks')) }}
+    {% set is_compatible_target = target.type in ('bigquery','snowflake','postgres','redshift','sqlserver','databricks') %}
+    {{ return(is_compatible_target) }}
 {% endmacro %}

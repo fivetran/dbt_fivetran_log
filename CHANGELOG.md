@@ -1,8 +1,19 @@
 # dbt_fivetran_log v2.3.0
 [PR #163](https://github.com/fivetran/dbt_fivetran_log/pull/163) includes the following updates:
 
-## Feature
-- Incremental support for Databricks SQL-Warehouse. Explain how different from before.
+## Schema Data Changes
+**3 total changes • 3 possible breaking changes**
+> To prevent potential errors from naming and materialization updates, a `--full-refresh `**is required** after upgrading.
+
+| Data Models | Change Type | Old | New | Notes |
+| --- | --- | --- | --- | --- |
+| [`fivetran_platform__audit_table`](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_table) | Model materialization | table | incremental | Added incremental model support for Databricks SQL Warehouses using the `merge` strategy. Previously, incremental support was limited to Databricks All Purpose Clusters via the `insert_overwrite` strategy. This update extends incremental functionality to SQL Warehouses, enabling more efficient model builds. |
+| [`fivetran_platform__audit_table`](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_table) | New column | | `write_to_table_start_day` | Changed the column partitioned on from `sync_start_day` to the new `write_to_table_start_day`. The previous column could contain null values, which are not ideal for partitioning and may lead to unexpected behavior in incremental models. |
+| [`fivetran_platform__audit_table`](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_table) | Deleted column | `sync_start_day` | | No longer in use given the above. |
+
+## Under the Hood
+- Updated the `is_incremental_compatible()` macro to include Databricks SQL Warehouses.
+- Introduced a new macro, `is_databricks_sql_warehouse()`, to distinguish between Databricks All Purpose Clusters and SQL Warehouses.
 
 # dbt_fivetran_log v2.2.2
 

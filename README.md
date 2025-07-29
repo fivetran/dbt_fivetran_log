@@ -65,9 +65,10 @@ dispatch:
 For models in this package that are materialized incrementally, they are configured to work with the different strategies available to each supported warehouse.
 
 For **BigQuery** and **Databricks All Purpose Cluster runtime** destinations, we have chosen `insert_overwrite` as the default strategy, which benefits from the partitioning capability.
-> For Databricks SQL Warehouse destinations, models are materialized as tables without support for incremental runs.
 
-For **Snowflake**, **Redshift**, and **Postgres** databases, we have chosen `delete+insert` as the default strategy.
+For **Databricks SQL Warehouse** destinations, we have chosen `merge` as the default strategy.
+
+For **Snowflake**, **Redshift**, and **Postgres** destinations, we have chosen `delete+insert` as the default strategy.
 
 > Regardless of strategy, we recommend that users periodically run a `--full-refresh` to ensure a high level of data quality.
 

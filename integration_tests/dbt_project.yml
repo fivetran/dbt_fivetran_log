@@ -10,7 +10,7 @@ dispatch:
 
 vars:
   fivetran_log:
-    fivetran_platform_schema: "fivetran_platform_integration_tests_14"
+    fivetran_platform_schema: "fivetran_platform_integration_tests_22"
     fivetran_platform_account_identifier: "account"
     fivetran_platform_incremental_mar_identifier: "incremental_mar"
     fivetran_platform_connection_identifier: "connection"
@@ -25,7 +25,7 @@ vars:
 
 models:
   fivetran_log:
-    +schema: "{{ 'sqlw_tests_4' if target.name == 'databricks-sql' else 'fivetran_platform_2' }}"
+    +schema: "{{ 'sqlw_tests_4' if target.name == 'databricks-sql' else 'fivetran_platform' }}"
     # +schema: "fivetran_platform_{{ var('directed_schema','dev') }}"
 
 seeds:

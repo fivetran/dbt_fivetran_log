@@ -11,9 +11,37 @@
 | [`fivetran_platform__audit_table`](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_table) | New column | | `write_to_table_start_day` | Changed the column partitioned on from `sync_start_day` to the new `write_to_table_start_day`. The previous column could contain null values, which are not ideal for partitioning and may lead to unexpected behavior in incremental models. |
 | [`fivetran_platform__audit_table`](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_table) | Deleted column | `sync_start_day` | | No longer in use given the above. |
 
+## Bug Fixes
+- Updated `fivetran_platform__mar_table_history` to include consumption records not associated with an active connection.
+  - As a result this table may now contain additional records that were previously excluded.
+
 ## Under the Hood
 - Updated the `is_incremental_compatible()` macro to include Databricks SQL Warehouses.
 - Introduced a new macro, `is_databricks_sql_warehouse()`, to distinguish between Databricks All Purpose Clusters and SQL Warehouses.
+- Updated conditions in `.github/workflows/auto-release.yml`.
+- Added `.github/workflows/generate-docs.yml`.
+- Added `+docs: show: False` to `integration_tests/dbt_project.yml`.
+- Migrated `flags` (e.g., `send_anonymous_usage_stats`, `use_colors`) from `sample.profiles.yml` to `integration_tests/dbt_project.yml`.
+- Updated `maintainer_pull_request_template.md` with improved checklist.
+- Updated Python image version to `3.10.13` in `pipeline.yml`.
+- Updated `.gitignore` to exclude additional DBT, Python, and system artifacts.
+
+# dbt_fivetran_log v2.3.0-a1
+[PR #162](https://github.com/fivetran/dbt_fivetran_log/pull/162) includes the following updates:
+
+## Bug Fixes
+- Updated `fivetran_platform__mar_table_history` to include consumption records not associated with an active connection.
+  - As a result this table may now contain additional records that were previously excluded.
+
+### Under the Hood - July 2025 Updates
+[PR #161](https://github.com/fivetran/dbt_fivetran_log/pull/161) includes the following updates:
+- Updated conditions in `.github/workflows/auto-release.yml`.
+- Added `.github/workflows/generate-docs.yml`.
+- Added `+docs: show: False` to `integration_tests/dbt_project.yml`.
+- Migrated `flags` (e.g., `send_anonymous_usage_stats`, `use_colors`) from `sample.profiles.yml` to `integration_tests/dbt_project.yml`.
+- Updated `maintainer_pull_request_template.md` with improved checklist.
+- Updated Python image version to `3.10.13` in `pipeline.yml`.
+- Updated `.gitignore` to exclude additional DBT, Python, and system artifacts.
 
 # dbt_fivetran_log v2.2.2
 

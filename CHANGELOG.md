@@ -1,5 +1,5 @@
 # dbt_fivetran_log v2.3.0
-[PR #163](https://github.com/fivetran/dbt_fivetran_log/pull/163) includes the following updates:
+[PR #164](https://github.com/fivetran/dbt_fivetran_log/pull/163 includes the following updates:
 
 ## Schema Data Changes
 **3 total changes • 3 possible breaking changes**
@@ -14,6 +14,7 @@
 ## Bug Fixes
 - Updated `fivetran_platform__mar_table_history` to include consumption records not associated with an active connection.
   - As a result this table may now contain additional records that were previously excluded.
+  - For more details, see the corresponding [DECISIONLOG](https://github.com/fivetran/dbt_fivetran_log/blob/main/DECISIONLOG.md#records-without-a-connection_id-in-fivetran_platform__mar_table_history) entry.
 
 ## Under the Hood
 - Updated the `is_incremental_compatible()` macro to include Databricks SQL Warehouses.

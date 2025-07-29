@@ -20,3 +20,8 @@ In the case you have the `transformation_runs` source table but still wish to di
 vars:
   fivetran_platform_using_transformations: false ## Dynamically checks the source at runtime to set as either true or false. May be overridden using this variable if desired.
 ```
+
+## Records without a `connection_id` in `fivetran_platform__mar_table_history`
+Some records in the `fivetran_platform__mar_table_history` model may lack an associated `connection_id`. This can occur for a few reasons. For example, the record may originate from a deleted connection or from HVR sources that do not populate this field.
+
+Previously, we excluded these records under the assumption that they were erroneous. However, we've found cases where these rows provide valuable context, particularly for tracking metadata activity from legacy or nonstandard sources and now include them in the model. While this change will increase the number of rows returned, the added visibility supports more complete auditing and analysis.

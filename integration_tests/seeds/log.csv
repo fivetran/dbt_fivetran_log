@@ -32,3 +32,5 @@ jkLxnPUfQ/9mHaWCmxUQEhul8ZA=,2023-11-09 11:31:31.579000,2023-11-09 15:55:12.5600
 R7UqnKYn6OT04HkUcPNjXA95qqI=,2021-12-10 16:26:29.719,2021-12-10 20:30:53.878,intrinsic_departed,INFO,says actor but not a json,status,,456abc
 D7UqnKYn6OT04HkUcPNjXA95qqp=,2024-11-18 16:26:29.719,2024-11-19 20:30:53.878,aft_gleeful,INFO,"{""total_queries"":15,""total_rows"":4810}",extract_summary,,456abc
 h7UqnKYn6OT04HkUcPNjXA95qlp=,2024-11-19 16:26:29.719,2024-11-19 20:30:53.878,aft_gleeful,INFO,"{""totalQueries"":5,""total_rows"":4810}",extract_summary,,456abc
+D7UqnKYn6OT04HkUcPNjXA95ttI=,2025-12-13 14:26:29.719,2025-12-13 20:30:53.878,this_connection,INFO,"{""table"":""media_insights""}",write_to_table_start,123,456abc
+D7UqnKYn6OT04HkUcPNjXA95ttI=,2025-12-15 14:26:29.719,2025-12-15 20:30:53.878,this_connection,INFO,"{""table"":""media_insights""}",write_to_table_start,123,456abc

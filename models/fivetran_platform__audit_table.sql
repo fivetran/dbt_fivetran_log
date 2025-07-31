@@ -1,5 +1,8 @@
 {{ config(
-    materialized = 'incremental' if fivetran_log.is_incremental_compatible() else 'table',
+    materialized = (
+        'incremental' if fivetran_log.is_incremental_compatible() 
+        else 'table'
+    ),
     unique_key = (
         'unique_table_sync_key' if (
             (target.type in ('postgres', 'redshift', 'snowflake', 'sqlserver'))
@@ -21,7 +24,10 @@
         else 'insert_overwrite' if target.type in ('bigquery', 'spark', 'databricks')
         else 'delete+insert'
     ),
-    file_format = 'delta'
+    file_format = (
+        'delta' if target.type=='databricks'
+        else None
+    )
 ) }}
 
 with base as (

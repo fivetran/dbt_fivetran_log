@@ -18,7 +18,7 @@
 
 ## Under the Hood
 - Updated the `is_incremental_compatible()` macro to include Databricks SQL Warehouses.
-- Introduced a new macro, `is_databricks_sql_warehouse()`, to distinguish between Databricks All Purpose Clusters and SQL Warehouses.
+- Introduced a new macro, `is_databricks_all_purpose_cluster()`, to distinguish between Databricks All Purpose Clusters and SQL Warehouses.
 - Updated conditions in `.github/workflows/auto-release.yml`.
 - Added `.github/workflows/generate-docs.yml`.
 - Added `+docs: show: False` to `integration_tests/dbt_project.yml`.

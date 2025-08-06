@@ -42,7 +42,13 @@ with base as (
     where event_subtype in ('sync_start', 'sync_end', 'write_to_table_start', 'write_to_table_end', 'records_modified')
 
     {% if is_incremental() %}
-    and cast(created_at as date) > {{ fivetran_log.fivetran_log_lookback(from_date='max(write_to_table_start_day)', interval=7) }}
+    and (
+        (cast(created_at as date) > {{ fivetran_log.fivetran_log_lookback(from_date='max(write_to_table_start_day)', datepart='day', interval=7) }})
+        or (cast(created_at as date) > {{ fivetran_log.fivetran_log_lookback(from_date='min(write_to_table_start_day)', datepart='day', interval=7) }}
+            and cast(created_at as date) <= {{ fivetran_log.fivetran_log_lookback(from_date='min(write_to_table_start_day)', datepart='day', interval=1) }})
+        )
+    {% else %}
+    and cast(created_at as date) >= {{ dbt.dateadd(datepart='day', interval=-7, from_date_or_timestamp="current_date") }}
     {% endif %}
 ),
 

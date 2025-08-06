@@ -12,7 +12,7 @@
 | [`fivetran_platform__audit_table`](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_table) | Deleted column | `sync_start_day` | | No longer in use given the above. |
 
 ## Bug Fixes
-- Updated `fivetran_platform__mar_table_history` to include consumption records not associated with an active connection.
+- Updated `fivetran_platform__mar_table_history` to include consumption records do not have an associated active connection and/or destination.
   - As a result this table may now contain additional records that were previously excluded.
   - For more details, see the corresponding [DECISIONLOG](https://github.com/fivetran/dbt_fivetran_log/blob/main/DECISIONLOG.md#records-without-a-connection_id-in-fivetran_platform__mar_table_history) entry.
 

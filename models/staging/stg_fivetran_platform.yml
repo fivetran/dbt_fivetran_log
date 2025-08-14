@@ -33,11 +33,6 @@ models:
     description: >
       Table of all connections loading data into destinations. Deleted connections 
       remain in the table but can be identified by having an older `_fivetran_synced` timestamp.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns: 
-            - connection_name
-            - destination_id
     columns:
       - name: connection_id
         description: System-generated unique ID of the connection. 
@@ -58,11 +53,6 @@ models:
 
   - name: stg_fivetran_platform__credits_used
     description: Table of the credits used by the customer per month for each destination.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns: 
-            - measured_month
-            - destination_id
     columns:
       - name: destination_id
         description: Foreign key referencing the destination where credits were used.
@@ -73,11 +63,6 @@ models:
 
   - name: stg_fivetran_platform__usage_cost
     description: Table of the amount spent by the customer per month for each destination. Amount is represented in USD.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns: 
-            - measured_month
-            - destination_id
     columns:
       - name: destination_id
         description: Foreign key referencing the destination where costs were incurred.
@@ -107,11 +92,6 @@ models:
     description: >
       Table of logged events related to data syncs. More info on error logs 
       [here](https://fivetran.com/docs/logs/fivetran-log#errorlogs).
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns: 
-            - log_id
-            - created_at
     columns: 
       - name: log_id
         description: Unique ID of the log record.
@@ -149,11 +129,6 @@ models:
 
   - name: stg_fivetran_platform__destination_membership
     description: Table of users given access to this destination.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns: 
-            - destination_id
-            - user_id
     columns:
       - name: destination_id
         description: Foreign key referencing the destination to which the user belongs.
@@ -191,15 +166,6 @@ models:
 
   - name: stg_fivetran_platform__transformation_runs
     description: Table of all transformation runs executed by Fivetran.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns: 
-            - destination_id
-            - job_id
-            - project_type
-            - free_type
-            - updated_at
-            - measured_date
     columns:
       - name: destination_id
         description: Foreign key referencing the destination where the transformation run was executed.

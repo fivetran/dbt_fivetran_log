@@ -5,8 +5,8 @@
         href="https://github.com/fivetran/dbt_fivetran_log/blob/main/LICENSE">
         <img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" /></a>
     <a alt="dbt-core">
-        <img src="https://img.shields.io/badge/dbt_Core™_version->=1.3.0_<2.0.0-orange.svg" /></a>
-    <a alt="Maintained?"> 
+        <img src="https://img.shields.io/badge/dbt_Core™_version->=1.3.0_,<2.0.0-orange.svg" /></a>
+    <a alt="Maintained?">
         <img src="https://img.shields.io/badge/Maintained%3F-yes-green.svg" /></a>
     <a alt="PRs">
         <img src="https://img.shields.io/badge/Contributions-welcome-blueviolet" /></a>
@@ -65,9 +65,10 @@ dispatch:
 For models in this package that are materialized incrementally, they are configured to work with the different strategies available to each supported warehouse.
 
 For **BigQuery** and **Databricks All Purpose Cluster runtime** destinations, we have chosen `insert_overwrite` as the default strategy, which benefits from the partitioning capability.
-> For Databricks SQL Warehouse destinations, models are materialized as tables without support for incremental runs.
 
-For **Snowflake**, **Redshift**, and **Postgres** databases, we have chosen `delete+insert` as the default strategy.
+For **Databricks SQL Warehouse** destinations, we have chosen `merge` as the default strategy.
+
+For **Snowflake**, **Redshift**, and **Postgres** destinations, we have chosen `delete+insert` as the default strategy.
 
 > Regardless of strategy, we recommend that users periodically run a `--full-refresh` to ensure a high level of data quality.
 
@@ -77,7 +78,7 @@ Include the following Fivetran Platform package version range in your `packages.
 ```yml
 packages:
   - package: fivetran/fivetran_log
-    version: [">=2.2.0", "<2.3.0"]
+    version: [">=2.3.0", "<2.4.0"]
 ```
 
 > Note that although the source connector is now "Fivetran Platform", the package retains the old name of "fivetran_log".
@@ -134,7 +135,7 @@ vars:
 ### (Optional) Step 6: Orchestrate your models with Fivetran Transformations for dbt Core™
 <details><summary>Expand for details</summary>
 <br>
-    
+
 Fivetran offers the ability for you to orchestrate your dbt project through [Fivetran Transformations for dbt Core™](https://fivetran.com/docs/transformations/dbt). Refer to the linked docs for more information on how to setup your project for orchestration through Fivetran.
 </details>
 

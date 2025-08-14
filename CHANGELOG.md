@@ -1,5 +1,20 @@
 # dbt_fivetran_log v2.3.0
-[PR #167](https://github.com/fivetran/dbt_fivetran_log/pull/167) includes the following updates:
+[PR #164](https://github.com/fivetran/dbt_fivetran_log/pull/164) includes the following updates:
+
+## Schema Data Changes
+**3 total changes • 3 possible breaking changes**
+> To prevent potential errors from naming and materialization updates, a `--full-refresh `**is required** after upgrading.
+
+| Data Models | Change Type | Old | New | Notes |
+| --- | --- | --- | --- | --- |
+| [`fivetran_platform__audit_table`](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_table) | Model materialization (only for Databricks SQL Warehouse runtimes) | table | incremental | Added incremental model support for Databricks SQL Warehouses using the `merge` strategy. Previously, incremental support was limited to Databricks All Purpose Clusters via the `insert_overwrite` strategy. This update extends incremental functionality to SQL Warehouses, enabling more efficient model builds. |
+| [`fivetran_platform__audit_table`](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_table) | New column | | `write_to_table_start_day` | Changed the column partitioned on from `sync_start_day` to the new `write_to_table_start_day`. The previous column could contain null values, which are not ideal for partitioning and may lead to unexpected behavior in incremental models. |
+| [`fivetran_platform__audit_table`](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_table) | Deleted column | `sync_start_day` | | No longer in use given the above. |
+
+## Bug Fixes
+- Updated `fivetran_platform__mar_table_history` to include consumption records do not have an associated active connection and/or destination.
+  - As a result this table may now contain additional records that were previously excluded.
+  - For more details, see the corresponding [DECISIONLOG](https://github.com/fivetran/dbt_fivetran_log/blob/main/DECISIONLOG.md#records-without-a-connection_id-in-fivetran_platform__mar_table_history) entry.
 
 ### dbt Fusion Compatibility Updates
 - Updated package to maintain compatibility with dbt-core versions both before and after v1.10.6, which introduced a breaking change to multi-argument test syntax (e.g., `unique_combination_of_columns`).
@@ -7,6 +22,29 @@
   - Removed all `dbt_utils.unique_combination_of_columns` tests.
   - Removed all accepted_values tests.
   - Moved `loaded_at_field: _fivetran_synced` under the `config:` block in `src_fivetran_log.yml`.
+
+## Under the Hood
+- Updated the `is_incremental_compatible()` macro to include Databricks SQL Warehouses.
+- Introduced a new macro, `is_databricks_all_purpose_cluster()`, to distinguish between Databricks All Purpose Clusters and SQL Warehouses.
+- Updated conditions in `.github/workflows/auto-release.yml`.
+- Added `.github/workflows/generate-docs.yml`.
+
+# dbt_fivetran_log v2.3.0-a1
+[PR #162](https://github.com/fivetran/dbt_fivetran_log/pull/162) includes the following updates:
+
+## Bug Fixes
+- Updated `fivetran_platform__mar_table_history` to include consumption records not associated with an active connection.
+  - As a result this table may now contain additional records that were previously excluded.
+
+### Under the Hood - July 2025 Updates
+[PR #161](https://github.com/fivetran/dbt_fivetran_log/pull/161) includes the following updates:
+- Updated conditions in `.github/workflows/auto-release.yml`.
+- Added `.github/workflows/generate-docs.yml`.
+- Added `+docs: show: False` to `integration_tests/dbt_project.yml`.
+- Migrated `flags` (e.g., `send_anonymous_usage_stats`, `use_colors`) from `sample.profiles.yml` to `integration_tests/dbt_project.yml`.
+- Updated `maintainer_pull_request_template.md` with improved checklist.
+- Updated Python image version to `3.10.13` in `pipeline.yml`.
+- Updated `.gitignore` to exclude additional DBT, Python, and system artifacts.
 
 # dbt_fivetran_log v2.2.2
 

@@ -1,10 +1,10 @@
-{% macro fivetran_log_lookback(from_date, datepart='day', interval=7, safety_date='2010-01-01') %}
+{% macro fivetran_log_lookback(from_date, datepart, interval, safety_date='2010-01-01') %}
 
-{{ adapter.dispatch('fivetran_log_lookback', 'fivetran_log') (from_date, datepart='day', interval=7, safety_date='2010-01-01') }}
+{{ adapter.dispatch('fivetran_log_lookback', 'fivetran_log') (from_date, datepart, interval, safety_date='2010-01-01') }}
 
 {%- endmacro %}
 
-{% macro default__fivetran_log_lookback(from_date, datepart='day', interval=7, safety_date='2010-01-01')  %}
+{% macro default__fivetran_log_lookback(from_date, datepart, interval, safety_date='2010-01-01')  %}
 
     {% set sql_statement %}
         select coalesce({{ from_date }}, {{ "'" ~ safety_date ~ "'" }})

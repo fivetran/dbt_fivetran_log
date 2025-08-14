@@ -5,11 +5,6 @@ models:
   - name: fivetran_platform__connection_status
     description: > 
       Table of connections for each destination, including connection details and sync status.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns: 
-            - connection_id
-            - destination_id     
     columns:
       - name: connection_id
         description: System generated unique ID of the connection.
@@ -46,14 +41,6 @@ models:
     description: >
       Table of monthly active rows (MAR) for each table across connections, destinations, and schemas, per month.
       Read more about MAR definitions and calculations [here](https://fivetran.com/docs/getting-started/consumption-based-pricing).
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns: 
-            - connection_id
-            - destination_id
-            - schema_name
-            - table_name
-            - measured_month
     columns:
       - name: connection_name
         description: Name of the connection loading the table.
@@ -86,11 +73,6 @@ models:
       Table of each destination's usage and active volume per month, including usage per million MAR and MAR per usage. 
       Usage is measured in dollars or credits, depending on the customer's pricing model. 
       Read more about the relationship between usage and MAR [here](https://www.fivetran.com/legal/service-consumption-table).\
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns: 
-            - destination_id
-            - measured_month 
     columns:
       - name: measured_month
         description: Month of the usage/MAR measurement, formatted as YYYY-MM-01.
@@ -127,12 +109,6 @@ models:
     description: >
       Table of each connection's daily history, tracking the number of API calls, schema changes, and records 
       modified since the connection's setup date.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns: 
-            - connection_id
-            - destination_id 
-            - date_day
     columns:
       - name: connection_id
         description: System generated unique ID of the connection.
@@ -197,13 +173,6 @@ models:
     description: >
       Table of schema changes for each connection, including table alterations, table creations,
       schema configuration changes, and schema creations.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns: 
-            - connection_id
-            - destination_id
-            - message_data
-            - created_at
     columns:
       - name: connection_id
         description: System generated unique ID of the connection.
@@ -229,11 +198,6 @@ models:
       Table of user-triggered actions in a Fivetran instance for audit-trail purposes. 
       Helps trace actions to [log events](https://fivetran.com/docs/logs#logeventlist) such as 
       schema changes, sync frequency updates, manual updates, broken connections, etc.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns: 
-            - log_id
-            - occurred_at
     columns:
       - name: date_day
         description: Date on which the user action occurred.

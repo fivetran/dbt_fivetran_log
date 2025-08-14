@@ -16,16 +16,18 @@
   - As a result this table may now contain additional records that were previously excluded.
   - For more details, see the corresponding [DECISIONLOG](https://github.com/fivetran/dbt_fivetran_log/blob/main/DECISIONLOG.md#records-without-a-connection_id-in-fivetran_platform__mar_table_history) entry.
 
+### dbt Fusion Compatibility Updates
+- Updated package to maintain compatibility with dbt-core versions both before and after v1.10.6, which introduced a breaking change to multi-argument test syntax (e.g., `unique_combination_of_columns`).
+- Temporarily removed unsupported tests to avoid errors and ensure smoother upgrades across different dbt-core versions. These tests will be reintroduced once a safe migration path is available.
+  - Removed all `dbt_utils.unique_combination_of_columns` tests.
+  - Removed all accepted_values tests.
+  - Moved `loaded_at_field: _fivetran_synced` under the `config:` block in `src_fivetran_log.yml`.
+
 ## Under the Hood
 - Updated the `is_incremental_compatible()` macro to include Databricks SQL Warehouses.
 - Introduced a new macro, `is_databricks_all_purpose_cluster()`, to distinguish between Databricks All Purpose Clusters and SQL Warehouses.
 - Updated conditions in `.github/workflows/auto-release.yml`.
 - Added `.github/workflows/generate-docs.yml`.
-- Added `+docs: show: False` to `integration_tests/dbt_project.yml`.
-- Migrated `flags` (e.g., `send_anonymous_usage_stats`, `use_colors`) from `sample.profiles.yml` to `integration_tests/dbt_project.yml`.
-- Updated `maintainer_pull_request_template.md` with improved checklist.
-- Updated Python image version to `3.10.13` in `pipeline.yml`.
-- Updated `.gitignore` to exclude additional DBT, Python, and system artifacts.
 
 # dbt_fivetran_log v2.3.0-a1
 [PR #162](https://github.com/fivetran/dbt_fivetran_log/pull/162) includes the following updates:

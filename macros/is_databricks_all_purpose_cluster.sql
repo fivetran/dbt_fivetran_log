@@ -9,7 +9,7 @@
         {% set path_match = target.http_path %}
         {% set regex_pattern = "sql/protocol" %}
         {% set match_result = re.search(regex_pattern, path_match) %}
-        {{ return(True) if match_result else return(False) }}
+        {{ return(True if match_result else False) }}
     {% else %}
         {{ return(False) }}
     {% endif %}

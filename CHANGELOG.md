@@ -1,5 +1,7 @@
 # dbt_fivetran_log v2.3.1
 
+[PR #169](https://github.com/fivetran/dbt_fivetran_log/pull/169) includes the following updates:
+
 ## Bug Fix
 - Ensures that `return()` is only called once in the `is_databricks_all_purpose_cluster()` macro. This resolves the following error that dbt Fusion users may have received: 
 ```

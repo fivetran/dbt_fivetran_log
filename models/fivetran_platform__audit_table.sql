@@ -31,8 +31,6 @@
     )
 ) }}
 
-{{ log('************** Output in model is ' ~ fivetran_log.is_databricks_all_purpose_cluster(), info=True) }}
-
 with base as (
     
     select

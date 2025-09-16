@@ -9,8 +9,10 @@
         {% set path_match = target.http_path %}
         {% set regex_pattern = "sql/protocol" %}
         {% set match_result = re.search(regex_pattern, path_match) %}
+        {{ log('*********** Macro dynamically says: ' ~ True if match_result else False, info=True) }}
         {{ return(True if match_result else False) }}
     {% else %}
+        {{ log('*********** Macro false else statement is returning ' ~ False, info=True) }}
         {{ return(False) }}
     {% endif %}
 {% endmacro %}

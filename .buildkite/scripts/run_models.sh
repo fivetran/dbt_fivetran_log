@@ -38,7 +38,7 @@ cd integration_tests
 dbt deps
 if [ "$db" = "databricks-sql" ]; then
 dbt seed --vars '{fivetran_platform_schema: sqlw_tests_4}' --target "$db" --full-refresh
-dbt compile --vars '{fivetran_platform_schema: sqlw_tests_4}' --target "$db"
+dbt compile --vars '{fivetran_platform_schema: sqlw_tests_4}' --target "$db" --full-refresh
 dbt run --vars '{fivetran_platform_schema: sqlw_tests_4}' --target "$db" --full-refresh
 dbt run --vars '{fivetran_platform_schema: sqlw_tests_4}' --target "$db"
 dbt test --vars '{fivetran_platform_schema: sqlw_tests_4}' --target "$db"
@@ -53,7 +53,7 @@ dbt run --vars '{fivetran_platform_schema: sqlw_tests_4, fivetran_platform__usag
 dbt test --vars '{fivetran_platform_schema: sqlw_tests_4}'  --target "$db"
 else
 dbt seed --target "$db" --full-refresh
-dbt compile --target "$db"
+dbt compile --target "$db" --full-refresh
 dbt run --target "$db" --full-refresh
 dbt run --target "$db"
 dbt test --target "$db"

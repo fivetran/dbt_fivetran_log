@@ -30,3 +30,8 @@ public_models: [
   "fivetran_platform__audit_table",
   "fivetran_platform__mar_table_history"
 ]
+
+defaultVars:
+  fivetran_platform_using_destination_membership: true
+  fivetran_platform_using_user: true
+  fivetran_platform_using_connection: true

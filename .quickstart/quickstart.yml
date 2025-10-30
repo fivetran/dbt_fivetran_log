@@ -10,10 +10,6 @@ table_variables:
     - user
   fivetran_platform_using_connection:
     - connection
-  fivetran_platform__credits_pricing:
-    - credits_used
-  fivetran_platform_using_transformations:
-    - transformation_runs
 
 destination_configurations:
   databricks:

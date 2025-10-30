@@ -1,3 +1,10 @@
+# dbt_fivetran_log v2.3.2-a1
+
+[PR #172](https://github.com/fivetran/dbt_fivetran_log/pull/172) includes the following updates:
+
+## Under the Hood
+- Rolls back additions to the `quickstart.yml` made in [v2.2.1](https://github.com/fivetran/dbt_fivetran_log/releases/tag/v2.2.1). We now rely on the `does_table_exist()` [macro](https://github.com/fivetran/dbt_fivetran_log/blob/main/macros/does_table_exist.sql) to handle missing `credits_used` or `transformation_runs` tables.
+
 # dbt_fivetran_log v2.3.1
 
 [PR #169](https://github.com/fivetran/dbt_fivetran_log/pull/169) includes the following updates:

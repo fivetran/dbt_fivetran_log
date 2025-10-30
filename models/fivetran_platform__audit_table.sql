@@ -84,25 +84,25 @@ sync_timestamps as (
         row_count,
 
         case 
-            when event_subtype = 'write_to_table_start' then 
+            when event_subtype in ('write_to_table_start', 'records_modified') then 
             min(case when event_subtype = 'write_to_table_end' then created_at else null end) 
                 over (partition by connection_id, table_name order by created_at ROWS between CURRENT ROW AND UNBOUNDED FOLLOWING) 
         else null end as write_to_table_end,
 
         case 
-            when event_subtype = 'write_to_table_start' then 
+            when event_subtype in ('write_to_table_start', 'records_modified') then 
         max(case when event_subtype = 'sync_start' then created_at else null end) 
             over (partition by connection_id order by created_at ROWS between UNBOUNDED PRECEDING and CURRENT ROW) 
         else null end as sync_start,
 
         case 
-            when event_subtype = 'write_to_table_start' then 
+            when event_subtype in ('write_to_table_start', 'records_modified') then 
         min(case when event_subtype = 'sync_start' then created_at else null end) 
             over (partition by connection_id order by created_at ROWS between CURRENT ROW AND UNBOUNDED FOLLOWING)
         else null end as next_sync_start,
 
         case 
-            when event_subtype = 'write_to_table_start' then 
+            when event_subtype in ('write_to_table_start', 'records_modified') then 
         min(case when event_subtype = 'sync_end' then created_at else null end) 
             over (partition by connection_id order by created_at ROWS between CURRENT ROW AND UNBOUNDED FOLLOWING) 
         else null end as sync_end -- coalesce with next_sync_start
@@ -117,21 +117,21 @@ row_modifcation_counts as (
         *,
         case when event_subtype = 'write_to_table_start' then
         sum(case when event_subtype = 'records_modified' and operation_type = 'REPLACED_OR_INSERTED' 
-                and created_at > sync_start and created_at < coalesce(sync_end, next_sync_start)
+                and created_at >= sync_start and created_at < coalesce(sync_end, next_sync_start)
                 then row_count else 0  end)
-        over (partition by connection_id, table_name, created_at) else null end as sum_rows_replaced_or_inserted,
+        over (partition by connection_id, table_name, sync_start) else null end as sum_rows_replaced_or_inserted,
 
         case when event_subtype = 'write_to_table_start' then
         sum(case when event_subtype = 'records_modified' and operation_type = 'UPDATED' 
-                and created_at > sync_start and created_at < coalesce(sync_end, next_sync_start)
+                and created_at >= sync_start and created_at < coalesce(sync_end, next_sync_start)
                 then row_count else 0  end)
-        over (partition by connection_id, table_name, created_at) else null end as sum_rows_updated,
+        over (partition by connection_id, table_name, sync_start) else null end as sum_rows_updated,
 
         case when event_subtype = 'write_to_table_start' then
         sum(case when event_subtype = 'records_modified' and operation_type = 'DELETED' 
-                and created_at > sync_start and created_at < coalesce(sync_end, next_sync_start)
+                and created_at >= sync_start and created_at < coalesce(sync_end, next_sync_start)
                 then row_count else 0  end)
-        over (partition by connection_id, table_name, created_at) else null end as sum_rows_deleted
+        over (partition by connection_id, table_name, sync_start) else null end as sum_rows_deleted
 
     from sync_timestamps
     where event_subtype in ('write_to_table_start', 'records_modified')

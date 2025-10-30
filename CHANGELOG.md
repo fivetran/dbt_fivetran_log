@@ -1,3 +1,10 @@
+# dbt_fivetran_log v2.4.0-a1
+
+[PR #174](https://github.com/fivetran/dbt_fivetran_log/pull/174) includes the following updates:
+
+## Under the Hood
+- Optimizes the `fivetran_platform__audit_table` model logic to run in a timelier manner on full refreshes.
+
 # dbt_fivetran_log v2.3.2-a1
 
 [PR #172](https://github.com/fivetran/dbt_fivetran_log/pull/172) includes the following updates:

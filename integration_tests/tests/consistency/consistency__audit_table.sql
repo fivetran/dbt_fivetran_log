@@ -78,6 +78,10 @@ final_verification as (
         on consistency_check.connection_id = verification_staging_setup.connection_id
         and consistency_check.table_name = verification_staging_setup.table_name
     where consistency_check.dev_total != verification_staging_setup.row_count
+    or prod_total != dev_total
+    or prod_sum_rows_replaced_or_inserted != dev_sum_rows_replaced_or_inserted
+    or prod_sum_rows_deleted != dev_sum_rows_deleted
+    or prod_sum_rows_updated != dev_sum_rows_updated
 )
 
 select *

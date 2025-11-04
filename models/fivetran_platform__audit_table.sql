@@ -102,11 +102,41 @@ session_timestamps as (
         min(case when event_subtype = 'sync_start' then created_at else null end) over (partition by connection_id, sync_session_id) as sync_start,
         min(case when event_subtype = 'sync_end' then created_at else null end) over (partition by connection_id order by created_at asc rows between current row and unbounded following) as sync_end,
         min(case when event_subtype = 'sync_start' then created_at else null end) over (partition by connection_id order by created_at asc rows between current row and unbounded following) as next_sync_start,
-        max(case when event_subtype = 'write_to_table_end' then created_at else null end) over (partition by connection_id, table_name, sync_session_id order by created_at asc rows between unbounded preceding and current row) as write_to_table_end,
-        max(case when event_subtype = 'write_to_table_start' then created_at else null end) over (partition by connection_id, table_name, sync_session_id order by created_at asc rows between unbounded preceding and current row) as write_to_table_start,
-        min(case when event_subtype = 'records_modified' then created_at else null end) over (partition by connection_id, table_name, sync_session_id order by created_at asc rows between current row and unbounded following) as next_records_modified
+        {# max(case when event_subtype = 'write_to_table_end' then created_at else null end) over (partition by connection_id, table_name, sync_session_id order by created_at asc rows between unbounded preceding and current row) as write_to_table_end, #}
+        
+        min(case when event_subtype = 'write_to_table_end' then created_at else null end) 
+            over (partition by connection_id, table_name order by created_at ROWS between CURRENT ROW AND UNBOUNDED FOLLOWING) as next_write_to_table_end,
+
+        max(case when event_subtype = 'write_to_table_end' then created_at else null end) 
+            over (partition by connection_id, table_name order by created_at ROWS between UNBOUNDED PRECEDING AND CURRENT ROW) as prev_write_to_table_end,
+
+        min(case when event_subtype = 'records_modified' then created_at else null end) over (partition by connection_id, table_name, sync_session_id order by created_at asc rows between current row and unbounded following) as next_records_modified,
+
+        row_number() over (partition by connection_id, table_name, sync_session_id, event_subtype) as event_group
 
     from sessionize
+),
+
+write_start_timestamps as (
+    
+    select 
+        connection_id,
+        created_at,
+        event_subtype,
+        table_name,
+        sync_session_id,
+        schema_name,
+        operation_type,
+        row_count,
+        sync_start,
+        sync_end,
+        next_sync_start,
+        coalesce(prev_write_to_table_end, next_write_to_table_end) as write_to_table_end,
+        next_records_modified,
+        
+        max(case when event_subtype = 'write_to_table_start' then created_at else null end) over (partition by connection_id, table_name, sync_session_id, event_group rows between unbounded preceding and current row) as write_to_table_start
+        
+    from session_timestamps
 ),
 
 row_modifcation_counts as (
@@ -133,7 +163,7 @@ row_modifcation_counts as (
                 and created_at >= sync_start and created_at < coalesce(sync_end, next_sync_start)
                 then row_count else 0  end) as sum_rows_deleted
 
-    from session_timestamps
+    from write_start_timestamps
     where event_subtype = 'records_modified'
 
     group by
@@ -153,8 +183,8 @@ syncs_with_no_row_modifications as (
         connection_id,
         table_name,
         schema_name,
-        write_to_table_start,
-        write_to_table_end,
+        created_at as write_to_table_start,
+        coalesce(prev_write_to_table_end, next_write_to_table_end) as write_to_table_end,
         sync_start,
         next_sync_start,
         sync_end,
@@ -224,7 +254,7 @@ add_connection_info as (
         sum_rows_updated,
         sum_rows_deleted
 
-    from combine_syncs 
+    from row_modifcation_counts as combine_syncs 
     left join connection
         on connection.connection_id = combine_syncs.connection_id
 ),

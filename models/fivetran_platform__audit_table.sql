@@ -98,7 +98,7 @@ session_timestamps as (
         operation_type,
         row_count,
 
-        min(case when event_subtype = 'sync_start' then created_at else null end) over (partition by connection_id, sync_session_id order by created_at) as sync_start,
+        min(case when event_subtype = 'sync_start' then created_at else null end) over (partition by connection_id, sync_session_id) as sync_start,
 
         -- purposely not including sync_session_id in partition 
         min(case when event_subtype = 'sync_end' then created_at else null end) over (partition by connection_id order by created_at asc rows between current row and unbounded following) as sync_end,
@@ -171,7 +171,7 @@ row_modifcation_counts as (
         connection_id,
         table_name,
         schema_name,
-        write_to_table_start
+        coalesce(write_to_table_start, backup_write_to_table_start)
 ),
 
 connection as (

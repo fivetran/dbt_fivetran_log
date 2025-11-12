@@ -2,8 +2,10 @@
 
 This release includes updates from pre-release versions `2.3.2-a1` and `2.4.0-a1`.
 
-## Under the Hood
+## Feature Update
 - Optimizes the `fivetran_platform__audit_table` model logic to run in a timelier manner on full refreshes. ([PR #174](https://github.com/fivetran/dbt_fivetran_log/pull/174))
+
+## Under the Hood
 - Rolls back additions to the `quickstart.yml` made in [v2.2.1](https://github.com/fivetran/dbt_fivetran_log/releases/tag/v2.2.1). We now rely on the `does_table_exist()` [macro](https://github.com/fivetran/dbt_fivetran_log/blob/main/macros/does_table_exist.sql) to handle missing `credits_used` or `transformation_runs` tables. ([PR #172](https://github.com/fivetran/dbt_fivetran_log/pull/172))
 
 # dbt_fivetran_log v2.4.0-a1

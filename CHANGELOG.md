@@ -1,3 +1,10 @@
+# dbt_fivetran_log v2.5.0
+
+[PR #176](https://github.com/fivetran/dbt_fivetran_log/pull/176) includes the following updates:
+
+## Features
+  - Increases the required dbt version upper limit to v3.0.0
+
 # dbt_fivetran_log v2.4.0
 
 This release includes updates from pre-release versions `2.3.2-a1` and `2.4.0-a1`.

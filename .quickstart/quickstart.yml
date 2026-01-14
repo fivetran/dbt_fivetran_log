@@ -11,6 +11,9 @@ table_variables:
   fivetran_platform_using_connection:
     - connection
 
+  _fivetran_quickstart_account:
+    - account
+
 destination_configurations:
   databricks:
     dispatch:

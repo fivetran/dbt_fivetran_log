@@ -1,4 +1,5 @@
-# Fivetran Platform dbt Package ([Docs](https://fivetran.github.io/dbt_fivetran_log/))
+<!--section="fivetran-log_transformation_model"-->
+# Fivetran Platform dbt Package
 
 <p align="left">
     <a alt="License"
@@ -11,47 +12,80 @@
     <a alt="PRs">
         <img src="https://img.shields.io/badge/Contributions-welcome-blueviolet" /></a>
     <a alt="Fivetran Quickstart Compatible"
-        href="https://fivetran.com/docs/transformations/dbt/quickstart">
+        href="https://fivetran.com/docs/transformations/data-models/quickstart-management#quickstartmanagement">
         <img src="https://img.shields.io/badge/Fivetran_Quickstart_Compatible%3F-yes-green.svg" /></a>
 </p>
 
+This dbt package transforms data from the Fivetran Platform connector into analytics-ready tables.
+
+## Resources
+
+- Number of materialized models¹: 19
+- Connector documentation
+  - [Fivetran Platform connector documentation](https://fivetran.com/docs/logs/fivetran-platform)
+  - [Fivetran Platform ERD](https://fivetran.com/docs/logs/fivetran-platform#schemainformation)
+- dbt package documentation
+  - [GitHub repository](https://github.com/fivetran/dbt_fivetran_log)
+  - [dbt Docs](https://fivetran.github.io/dbt_fivetran_log/#!/overview)
+  - [DAG](https://fivetran.github.io/dbt_fivetran_log/#!/overview?g_v=1)
+  - [Changelog](https://github.com/fivetran/dbt_fivetran_log/blob/main/CHANGELOG.md)
+
 ## What does this dbt package do?
-- Generates a comprehensive data dictionary of your Fivetran Platform connection (previously called Fivetran Log) data via the [dbt docs site](https://fivetran.github.io/dbt_fivetran_log/)
-- Produces staging models in the format described by [this ERD](https://fivetran.com/docs/logs/fivetran-platform#schemainformation) which clean, test, and prepare your Fivetran data from our free [Fivetran Platform connector](https://fivetran.com/docs/logs/fivetran-platform) and generates analysis ready end models.
-- The above mentioned models enable you to better understand how you are spending money in Fivetran according to our [consumption-based pricing model](https://fivetran.com/docs/usage-based-pricing) as well as providing details about the performance and status of your Fivetran connections. This is achieved by:
-    - Displaying consumption data at the table, connection, destination, and account levels.
-    - Providing a history of measured free and paid monthly active rows (MAR), credit consumption, and the relationship between the two.
-    - Creating a history of vital daily events for each connection.
-    - Surfacing an audit log of records inserted, deleted, an updated in each table during connection syncs.
-    - Keeping an audit log of user-triggered actions across your Fivetran instance.
-    - Adds freshness tests to source data.
-      > dbt Core >= 1.9.6 is required to run freshness tests out of the box. See other options [here](https://github.com/fivetran/dbt_fivetran_log/blob/main/CHANGELOG.md#breaking-change-for-dbt-core--196).
+This package enables you to better understand how you are spending money in Fivetran according to our [consumption-based pricing model](https://fivetran.com/docs/usage-based-pricing) and provides details about the performance and status of your Fivetran connections. It creates enriched models with metrics focused on consumption data, monthly active rows (MAR), credit consumption, connection events, schema changes, and audit logs.
 
-<!--section="fivetran_platform_transformation_model"-->
-Refer to the table below for a detailed view of all tables materialized by default within this package. Additionally, check out our [docs site](https://fivetran.github.io/dbt_fivetran_log/#!/overview/fivetran_platform?g_v=1&g_e=seeds) for more details about these tables.
-### Tables
+### Output schema
+Final output tables are generated in the following target schema:
 
-| **Table**                  | **Description**                                                                                                                                               |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [fivetran_platform__connection_status](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__connection_status)        | Each record represents a connection loading data into a destination, enriched with data about the connection's data sync status.                                          |
-| [fivetran_platform__mar_table_history](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__mar_table_history)     | Each record represents a table's free, paid, and total volume for a month, complete with data about its connection and destination.                             |
-| [fivetran_platform__usage_history](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__usage_history)    | Table of each destination's usage and active volume, per month. Includes the usage per million MAR and MAR per usage. Usage either refers to a dollar or credit amount, depending on customer's pricing model. Read more about the relationship between usage and MAR [here](https://www.fivetran.com/legal/service-consumption-table).                             |
-| [fivetran_platform__connection_daily_events](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__connection_daily_events)    | Each record represents a daily measurement of the API calls, schema changes, and record modifications made by a connection, starting from the date on which the connection was set up.                            |
-| [fivetran_platform__schema_changelog](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__schema_changelog)    | Each record represents a schema change (altering/creating tables, creating schemas, and changing schema configurations) made to a connection and contains detailed information about the schema change event.                           |
-| [fivetran_platform__audit_table](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_table)    | Replaces the deprecated [`_fivetran_audit` table](https://fivetran.com/docs/getting-started/system-columns-and-tables#audittables). Each record represents a table being written to during a connection sync. Contains timestamps related to the connection and table-level sync progress and the sum of records inserted/replaced, updated, and deleted in the table.                             |
-| [fivetran_platform__audit_user_activity](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_user_activity)    | Each record represents a user-triggered action in your Fivetran instance. This table is intended for audit-trail purposes, as it can be very helpful when trying to trace a user action to a [log event](https://fivetran.com/docs/logs#logeventlist) such as a schema change, sync frequency update, manual update, broken connection, etc.                             |
+```
+<your_database>.<connector/schema_name>_fivetran_platform
+```
 
-### Materialized Models
-Each Quickstart transformation job run materializes 19 models if all components of this data model are enabled. This count includes all staging, intermediate, and final models materialized as `view`, `table`, or `incremental`.
-<!--section-end-->
+### Final output tables
 
-## How do I use the dbt package?
-### Step 1: Pre-Requisites
+By default, this package materializes the following final tables:
+
+| Table | Description |
+| :---- | :---- |
+| [fivetran_platform__connection_status](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__connection_status) | Provides a comprehensive view of each connection loading data into your destinations, enriched with detailed information about sync status, sync frequency, setup status, and connection health to monitor and troubleshoot your data pipeline performance. |
+| [fivetran_platform__mar_table_history](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__mar_table_history) | Tracks a table's monthly free, paid, and total volume breakdowns, with connection and destination details to analyze your data consumption patterns and costs at the table level over time. |
+| [fivetran_platform__usage_history](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__usage_history) | Summarizes each destination's monthly usage and active volume with calculated metrics for usage per million MAR and MAR per usage unit to track your Fivetran consumption costs and efficiency. Usage represents either dollar or credit amounts depending on your pricing model. Read more about the relationship between usage and MAR [here](https://www.fivetran.com/legal/service-consumption-table). |
+| [fivetran_platform__connection_daily_events](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__connection_daily_events) | Captures daily operational metrics for each connection including API calls made, schema changes implemented, and record modifications processed, starting from the connection setup date to provide insights into connection activity patterns and data processing volumes. |
+| [fivetran_platform__schema_changelog](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__schema_changelog) | Documents all schema changes made to your connections including table alterations, table creations, schema creations, and configuration changes with detailed metadata about each event to track data structure evolution and troubleshoot schema-related issues. |
+| [fivetran_platform__audit_table](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_table) | Replaces the deprecated [`_fivetran_audit` table](https://fivetran.com/docs/getting-started/system-columns-and-tables#audittables) and tracks each table receiving data during connection syncs with comprehensive timestamps for connection and table-level sync progress plus detailed counts of records inserted, replaced, updated, and deleted to monitor data processing and sync performance. |
+| [fivetran_platform__audit_user_activity](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_user_activity) | Records all user-triggered actions within your Fivetran account to provide a comprehensive audit trail that helps you trace user activities to specific [log events](https://fivetran.com/docs/logs#logeventlist) such as schema changes, sync frequency updates, manual syncs, connection failures, and other operational events for compliance and troubleshooting purposes. |
+
+¹ Each Quickstart transformation job run materializes these models if all components of this data model are enabled. This count includes all staging, intermediate, and final models materialized as `view`, `table`, or `incremental`.
+
+---
+
+## Prerequisites
 
 To use this dbt package, you must have the following:
 
 - A Fivetran Platform connection syncing data into your destination.
-- A **BigQuery**, **Snowflake**, **Redshift**, **Postgres**, **Databricks**, or **SQL Server**. destination.
+- A **BigQuery**, **Snowflake**, **Redshift**, **Postgres**, **Databricks**, or **SQL Server** destination.
+
+## How do I use the dbt package?
+You can either add this dbt package in the Fivetran dashboard or import it into your dbt project:
+
+- To add the package in the Fivetran dashboard, follow our [Quickstart guide](https://fivetran.com/docs/transformations/data-models/quickstart-management).
+- To add the package to your dbt project, follow the setup instructions in the dbt package's [README file](https://github.com/fivetran/dbt_fivetran_log/blob/main/README.md#how-do-i-use-the-dbt-package) to use this package.
+
+<!--section-end-->
+
+### Install the Package
+Include the following Fivetran Platform package version range in your `packages.yml`
+> Check [dbt Hub](https://hub.getdbt.com/) for the latest installation instructions, or [read the dbt docs](https://docs.getdbt.com/docs/package-management) for more information on installing packages.
+
+> dbt Core >= 1.9.6 is required to run freshness tests out of the box. See other options [here](https://github.com/fivetran/dbt_fivetran_log/blob/main/CHANGELOG.md#breaking-change-for-dbt-core--196).
+
+```yml
+packages:
+  - package: fivetran/fivetran_log
+    version: [">=2.5.0", "<2.6.0"]
+```
+
+> Note that although the source connector is now "Fivetran Platform", the package retains the old name of "fivetran_log".
 
 #### Databricks Dispatch Configuration
 If you are using a Databricks destination with this package you will need to add the below (or a variation of the below) dispatch configuration within your `dbt_project.yml`. This is required in order for the package to accurately search for macros within the `dbt-labs/spark_utils` then the `dbt-labs/dbt_utils` packages respectively.
@@ -72,18 +106,7 @@ For **Snowflake**, **Redshift**, and **Postgres** destinations, we have chosen `
 
 > Regardless of strategy, we recommend that users periodically run a `--full-refresh` to ensure a high level of data quality.
 
-### Step 2: Installing the Package
-Include the following Fivetran Platform package version range in your `packages.yml`
-> Check [dbt Hub](https://hub.getdbt.com/) for the latest installation instructions, or [read the dbt docs](https://docs.getdbt.com/docs/package-management) for more information on installing packages.
-```yml
-packages:
-  - package: fivetran/fivetran_log
-    version: [">=2.5.0", "<2.6.0"]
-```
-
-> Note that although the source connector is now "Fivetran Platform", the package retains the old name of "fivetran_log".
-
-### Step 3: Define Database and Schema Variables
+### Define Database and Schema Variables
 By default, this package will run using your target database and the `fivetran_log` schema. If this is not where your Fivetran Platform data is (perhaps your fivetran platform schema is `fivetran_platform`), add the following configuration to your root `dbt_project.yml` file:
 
 ```yml
@@ -92,7 +115,7 @@ vars:
     fivetran_platform_schema: your_schema_name # default is fivetran_log
 ```
 
-### Step 4: Disable Models for Non Existent Sources
+### Disable Models for Non Existent Sources
 If you do not leverage Fivetran RBAC, then you will not have the `user` or `destination_membership` source tables. The `user` and `destination_membership` are enabled by default. Therefore in order to switch the default configurations, you must add the following variable(s) to your root `dbt_project.yml` file for the respective source tables you wish to disable:
 
 ```yml
@@ -112,7 +135,7 @@ vars:
     fivetran_platform_using_connection: false # default: true
 ```
 
-### (Optional) Step 5: Additional Configurations
+### (Optional) Additional Configurations
 
 #### Change the Build Schema
 By default this package will build the Fivetran staging models within a schema titled (<target_schema> + `_stg_fivetran_platform`)  and the Fivetran Platform final models within your <target_schema> + `_fivetran_platform` in your target database. If this is not where you would like you Fivetran staging and final models to be written to, add the following configuration to your root `dbt_project.yml` file:
@@ -132,11 +155,11 @@ vars:
     fivetran_platform_<default_table_name>_identifier: your_table_name 
 ```
 
-### (Optional) Step 6: Orchestrate your models with Fivetran Transformations for dbt Core™
+### (Optional) Orchestrate your models with Fivetran Transformations for dbt Core™
 <details><summary>Expand for details</summary>
 <br>
 
-Fivetran offers the ability for you to orchestrate your dbt project through [Fivetran Transformations for dbt Core™](https://fivetran.com/docs/transformations/dbt). Refer to the linked docs for more information on how to setup your project for orchestration through Fivetran.
+Fivetran offers the ability for you to orchestrate your dbt project through [Fivetran Transformations for dbt Core™](https://fivetran.com/docs/transformations/dbt#transformationsfordbtcore). Refer to the linked docs for more information on how to setup your project for orchestration through Fivetran.
 </details>
 
 ## Does this package have dependencies?
@@ -154,14 +177,18 @@ packages:
       version: [">=0.3.0", "<0.4.0"]
 ```
 
+<!--section="fivetran-log_maintenance"-->
 ## How is this package maintained and can I contribute?
+
 ### Package Maintenance
-The Fivetran team maintaining this package **only** maintains the latest version of the package. We highly recommend you stay consistent with the [latest version](https://hub.getdbt.com/fivetran/fivetran_log/latest/) of the package and refer to the [CHANGELOG](https://github.com/fivetran/dbt_fivetran_log/blob/main/CHANGELOG.md) and release notes for more information on changes across versions.
+The Fivetran team maintaining this package only maintains the [latest version](https://hub.getdbt.com/fivetran/fivetran_log/latest/) of the package. We highly recommend you stay consistent with the latest version of the package and refer to the [CHANGELOG](https://github.com/fivetran/dbt_fivetran_log/blob/main/CHANGELOG.md) and release notes for more information on changes across versions.
 
 ### Contributions
-These dbt packages are developed by a small team of analytics engineers at Fivetran. However, the packages are made better by community contributions.
+A small team of analytics engineers at Fivetran develops these dbt packages. However, the packages are made better by community contributions.
 
-We highly encourage and welcome contributions to this package. Check out [this post](https://discourse.getdbt.com/t/contributing-to-a-dbt-package/657) on the best workflow for contributing to a package.
+We highly encourage and welcome contributions to this package. Learn how to contribute to a package in dbt's [Contributing to an external dbt package article](https://discourse.getdbt.com/t/contributing-to-a-dbt-package/657).
+
+<!--section-end-->
 
 ## Are there any resources available?
 - If you encounter any questions or want to reach out for help, see the [GitHub Issue](https://github.com/fivetran/dbt_fivetran_log/issues/new/choose) section to find the right avenue of support for you.

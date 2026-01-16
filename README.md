@@ -22,8 +22,8 @@ This dbt package transforms data from the Fivetran Platform connector into analy
 
 - Number of materialized models¹: 19
 - Connector documentation
-  - [Fivetran Log connector documentation](https://fivetran.com/docs/logs/fivetran-platform)
-  - [Fivetran Log ERD](https://fivetran.com/docs/logs/fivetran-platform#schemainformation)
+  - [Fivetran Platform connector documentation](https://fivetran.com/docs/logs/fivetran-platform)
+  - [Fivetran Platform ERD](https://fivetran.com/docs/logs/fivetran-platform#schemainformation)
 - dbt package documentation
   - [GitHub repository](https://github.com/fivetran/dbt_fivetran_log)
   - [dbt Docs](https://fivetran.github.io/dbt_fivetran_log/#!/overview)
@@ -62,7 +62,7 @@ By default, this package materializes the following final tables:
 
 To use this dbt package, you must have the following:
 
-- At least one Fivetran Fivetran Log connection syncing data into your destination.
+- A Fivetran Platform connection syncing data into your destination.
 - A **BigQuery**, **Snowflake**, **Redshift**, **Postgres**, **Databricks**, or **SQL Server** destination.
 
 ## How do I use the dbt package?

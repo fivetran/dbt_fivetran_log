@@ -1,5 +1,5 @@
 <!--section="fivetran-log_transformation_model"-->
-# Fivetran Log dbt Package
+# Fivetran Platform dbt Package
 
 <p align="left">
     <a alt="License"
@@ -16,7 +16,7 @@
         <img src="https://img.shields.io/badge/Fivetran_Quickstart_Compatible%3F-yes-green.svg" /></a>
 </p>
 
-This dbt package transforms data from Fivetran's Fivetran Log connector into analytics-ready tables.
+This dbt package transforms data from the Fivetran Platform connector into analytics-ready tables.
 
 ## Resources
 
@@ -31,7 +31,7 @@ This dbt package transforms data from Fivetran's Fivetran Log connector into ana
   - [Changelog](https://github.com/fivetran/dbt_fivetran_log/blob/main/CHANGELOG.md)
 
 ## What does this dbt package do?
-This package enables you to better understand how you are spending money in Fivetran according to our consumption-based pricing model and provides details about the performance and status of your Fivetran connections. It creates enriched models with metrics focused on consumption data, monthly active rows (MAR), credit consumption, connection events, schema changes, and audit logs.
+This package enables you to better understand how you are spending money in Fivetran according to our [consumption-based pricing model](https://fivetran.com/docs/usage-based-pricing) and provides details about the performance and status of your Fivetran connections. It creates enriched models with metrics focused on consumption data, monthly active rows (MAR), credit consumption, connection events, schema changes, and audit logs.
 
 ### Output schema
 Final output tables are generated in the following target schema:

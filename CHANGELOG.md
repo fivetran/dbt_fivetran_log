@@ -1,3 +1,8 @@
+# dbt_fivetran_log v2.X.X
+
+## Documentation
+- Updates README with standardized Fivetran formatting.
+
 # dbt_fivetran_log v2.5.0
 
 [PR #176](https://github.com/fivetran/dbt_fivetran_log/pull/176) includes the following updates:

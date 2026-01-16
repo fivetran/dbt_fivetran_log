@@ -33,8 +33,6 @@ This dbt package transforms data from Fivetran's Fivetran Log connector into ana
 ## What does this dbt package do?
 This package enables you to better understand how you are spending money in Fivetran according to our consumption-based pricing model and provides details about the performance and status of your Fivetran connections. It creates enriched models with metrics focused on consumption data, monthly active rows (MAR), credit consumption, connection events, schema changes, and audit logs.
 
-> dbt Core >= 1.9.6 is required to run freshness tests out of the box. See other options [here](https://github.com/fivetran/dbt_fivetran_log/blob/main/CHANGELOG.md#breaking-change-for-dbt-core--196).
-
 ### Output schema
 Final output tables are generated in the following target schema:
 
@@ -78,6 +76,9 @@ You can either add this dbt package in the Fivetran dashboard or import it into 
 ### Install the Package
 Include the following Fivetran Platform package version range in your `packages.yml`
 > Check [dbt Hub](https://hub.getdbt.com/) for the latest installation instructions, or [read the dbt docs](https://docs.getdbt.com/docs/package-management) for more information on installing packages.
+
+> dbt Core >= 1.9.6 is required to run freshness tests out of the box. See other options [here](https://github.com/fivetran/dbt_fivetran_log/blob/main/CHANGELOG.md#breaking-change-for-dbt-core--196).
+
 ```yml
 packages:
   - package: fivetran/fivetran_log

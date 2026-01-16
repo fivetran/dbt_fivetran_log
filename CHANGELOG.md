@@ -1,15 +1,3 @@
-# dbt_fivetran_log v2.6.0
-
-[PR #177](https://github.com/fivetran/dbt_fivetran_log/pull/177) includes the following updates:
-
-## Documentation
-- Updates README with standardized Fivetran formatting.
-
-## Under the Hood
-- In the `quickstart.yml` file:
-  - Adds `table_variables` for relevant sources to prevent missing sources from blocking downstream Quickstart models.
-  - Adds `supported_vars` for Quickstart UI customization.
-
 # dbt_fivetran_log v2.5.0
 
 [PR #176](https://github.com/fivetran/dbt_fivetran_log/pull/176) includes the following updates:

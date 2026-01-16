@@ -75,7 +75,7 @@ You can either add this dbt package in the Fivetran dashboard or import it into 
 
 <!--section-end-->
 
-### Installing the Package
+### Install the Package
 Include the following Fivetran Platform package version range in your `packages.yml`
 > Check [dbt Hub](https://hub.getdbt.com/) for the latest installation instructions, or [read the dbt docs](https://docs.getdbt.com/docs/package-management) for more information on installing packages.
 ```yml

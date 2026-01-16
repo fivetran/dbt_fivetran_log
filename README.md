@@ -37,7 +37,7 @@ This package enables you to better understand how you are spending money in Five
 Final output tables are generated in the following target schema:
 
 ```
-<your_database>.<connector/schema_name>_fivetran_log
+<your_database>.<connector/schema_name>_fivetran_platform
 ```
 
 ### Final output tables

@@ -22,8 +22,8 @@ This dbt package transforms data from Fivetran's Fivetran Log connector into ana
 
 - Number of materialized models¹: 19
 - Connector documentation
-  - [Fivetran Log connector documentation](https://fivetran.com/docs/connectors/applications/fivetran-log)
-  - [Fivetran Log ERD](https://fivetran.com/docs/connectors/applications/fivetran-log#schemainformation)
+  - [Fivetran Log connector documentation](https://fivetran.com/docs/logs/fivetran-platform)
+  - [Fivetran Log ERD](https://fivetran.com/docs/logs/fivetran-platform#schemainformation)
 - dbt package documentation
   - [GitHub repository](https://github.com/fivetran/dbt_fivetran_log)
   - [dbt Docs](https://fivetran.github.io/dbt_fivetran_log/#!/overview)

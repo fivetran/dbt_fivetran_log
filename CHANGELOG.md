@@ -8,6 +8,9 @@
   - **Postgres**: JSON and JSONB
   - **BigQuery**: JSON (already supported)
 
+## Under the Hood
+- Expanded testing of JSON datatypes in the `stg_fivetran_platform__log` model.
+
 # dbt_fivetran_log v2.5.0
 
 [PR #176](https://github.com/fivetran/dbt_fivetran_log/pull/176) includes the following updates:

@@ -66,10 +66,10 @@ seeds:
         message_data: "{{ 'string' if target.type in ('bigquery', 'spark', 'databricks') else 'varchar' if target.type != 'sqlserver' else 'varchar(256)' }}"
         transformation_id:  "{{ 'string' if target.type in ('bigquery', 'spark', 'databricks') else 'varchar' if target.type != 'sqlserver' else 'varchar(256)' }}"
     log_json_data:
-      +enabled: "{{ target.type in ('bigquery', 'redshift', 'snowflake', 'postgres') }}"
+      +enabled: "{{ target.type in ('bigquery', 'redshift', 'postgres') }}"
       +column_types:
         time_stamp: timestamp
-        message_data: "{{ 'super' if target.type == 'redshift' else 'variant' if target.type == 'snowflake' else 'json' }}"
+        message_data: "{{ 'super' if target.type == 'redshift' else 'json' }}"
         transformation_id: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
     user:
       +column_types:

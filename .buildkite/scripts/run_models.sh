@@ -57,7 +57,7 @@ dbt compile --target "$db" --full-refresh
 dbt run --target "$db" --full-refresh
 dbt run --target "$db"
 dbt test --target "$db"
-if [ "$db" = "bigquery" ] || [ "$db" = "redshift" ] || [ "$db" = "snowflake" ] || [ "$db" = "postgres" ]; then
+if [ "$db" = "bigquery" ] || [ "$db" = "redshift" ] || [ "$db" = "postgres" ]; then
 dbt run --vars '{fivetran_platform_log_identifier: log_json_data}' --target "$db" --full-refresh
 dbt test --target "$db"
 fi

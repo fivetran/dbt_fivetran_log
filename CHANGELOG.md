@@ -9,7 +9,7 @@
   - **BigQuery**: JSON (already supported)
 
 ## Under the Hood
-- Expanded testing of JSON datatypes in the `stg_fivetran_platform__log` model.
+- Expands testing of JSON datatypes in the `stg_fivetran_platform__log` model.
 
 # dbt_fivetran_log v2.5.0
 

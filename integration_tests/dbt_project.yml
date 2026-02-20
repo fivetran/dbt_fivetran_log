@@ -65,12 +65,13 @@ seeds:
         time_stamp: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
         message_data: "{{ 'string' if target.type in ('bigquery', 'spark', 'databricks') else 'varchar' if target.type != 'sqlserver' else 'varchar(256)' }}"
         transformation_id:  "{{ 'string' if target.type in ('bigquery', 'spark', 'databricks') else 'varchar' if target.type != 'sqlserver' else 'varchar(256)' }}"
-    log_json_data:
-      +enabled: "{{ target.type in ('bigquery', 'redshift', 'postgres') }}"
-      +column_types:
-        time_stamp: timestamp
-        message_data: "{{ 'super' if target.type == 'redshift' else 'json' }}"
-        transformation_id: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
+    log_json_data: # @docs-ignore
+      +enabled: "{{ target.type in ('bigquery', 'redshift', 'postgres') }}" # @docs-ignore
+      # +enabled: false # @docs-include
+      +column_types: # @docs-ignore
+        time_stamp: timestamp # @docs-ignore
+        message_data: "{{ 'super' if target.type == 'redshift' else 'json' }}" # @docs-ignore
+        transformation_id: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}" # @docs-ignore
     user:
       +column_types:
         created_at: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"

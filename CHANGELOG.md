@@ -1,3 +1,16 @@
+# dbt_fivetran_log v2.5.1
+[PR #180](https://github.com/fivetran/dbt_fivetran_log/pull/180) includes the following updates:
+
+## Feature Update
+- Converts the `message_data` field in the `stg_fivetran_platform__log` model to a string for the following datatypes:
+  - **Snowflake**: VARIANT 
+  - **Redshift**: SUPER  
+  - **Postgres**: JSON and JSONB
+  - **BigQuery**: JSON (already supported)
+
+## Under the Hood
+- Expands testing of JSON datatypes in the `stg_fivetran_platform__log` model.
+
 # dbt_fivetran_log v2.5.0
 
 [PR #176](https://github.com/fivetran/dbt_fivetran_log/pull/176) includes the following updates:

@@ -24,6 +24,9 @@ vars:
     fivetran_platform_transformation_runs_identifier: "transformation_runs"
 
 models:
+  +persist_docs:
+    relation: true
+    columns: true
   fivetran_log:
     +schema: "{{ 'sqlw_tests_4' if target.name == 'databricks-sql' else 'fivetran_platform' }}"
     # +schema: "fivetran_platform_{{ var('directed_schema','dev') }}"

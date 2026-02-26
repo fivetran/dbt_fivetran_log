@@ -45,7 +45,7 @@ integration_tests:
       host: "{{ env_var('CI_DATABRICKS_DBT_HOST') }}"
       http_path: "{{ env_var('CI_DATABRICKS_DBT_HTTP_PATH') }}"
       schema: fivetran_platform_integration_tests
-      threads: 8
+      threads: 1
       token: "{{ env_var('CI_DATABRICKS_DBT_TOKEN') }}"
       type: databricks
     databricks-sql:
@@ -53,7 +53,7 @@ integration_tests:
       host: "{{ env_var('CI_DATABRICKS_DBT_HOST') }}"
       http_path: "{{ env_var('CI_DATABRICKS_SQL_DBT_HTTP_PATH') }}"
       schema: fivetran_platform_sqlw_tests 
-      threads: 8
+      threads: 1
       token: "{{ env_var('CI_DATABRICKS_SQL_DBT_TOKEN') }}"
       type: databricks
     sqlserver:

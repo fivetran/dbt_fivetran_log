@@ -24,8 +24,11 @@ vars:
     fivetran_platform_transformation_runs_identifier: "transformation_runs"
 
 models:
+  +persist_docs:
+    relation: "{{ false if target.type in ('sqlserver') else true }}"
+    columns: "{{ false if target.type in ('sqlserver','databricks') else true }}"
   fivetran_log:
-    +schema: "{{ 'sqlw_tests_4' if target.name == 'databricks-sql' else 'fivetran_platform' }}"
+    +schema: "{{ 'fivetran_platform_sqlw_tests' if target.name == 'databricks-sql' else 'fivetran_platform' }}"
     # +schema: "fivetran_platform_{{ var('directed_schema','dev') }}"
 
 seeds:

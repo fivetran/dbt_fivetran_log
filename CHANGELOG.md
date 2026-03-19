@@ -1,3 +1,14 @@
+# dbt_fivetran_log v2.5.2-a1
+[PR #182](https://github.com/fivetran/dbt_fivetran_log/pull/182) includes the following updates:
+
+## Feature Update
+- Adds the optional `fivetran_platform_lookback_window_months` variable to limit the number of records included in log-based models uniformly. When set to an integer (number of months), only log records within the specified window are included in downstream models. Unset by default. Full log history is included unless configured. See the [README](https://github.com/fivetran/dbt_fivetran_log/blob/main/README.md#limit-the-lookback-window) for configuration details. Affects the following models:
+  - `fivetran_platform__connection_status`
+  - `fivetran_platform__schema_changelog`
+  - `fivetran_platform__audit_user_activity`
+  - `fivetran_platform__connection_daily_events`
+  - `fivetran_platform__audit_table` (**note:** if you set or change this variable, run `dbt run --full-refresh` to ensure this incremental model reflects the updated window)
+
 # dbt_fivetran_log v2.5.1
 [PR #180](https://github.com/fivetran/dbt_fivetran_log/pull/180) includes the following updates:
 

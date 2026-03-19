@@ -69,7 +69,7 @@ Include the following Fivetran Platform package version range in your `packages.
 ```yml
 packages:
   - package: fivetran/fivetran_log
-    version: [">=2.5.0", "<2.6.0"]
+    version: 2.5.2-a1
 ```
 
 > Note that although the source connector is now "Fivetran Platform", the package retains the old name of "fivetran_log".
@@ -134,6 +134,16 @@ models:
     staging:
       +schema: my_new_staging_models_schema # leave blank for just the target_schema
 ```
+
+#### Limit the Lookback Window
+By default, all log-based models include the full history of the source `log` table. If your `log` table is large and you want to limit the number of records included in downstream models, you can set the following variable in your root `dbt_project.yml` to control how far back the models look:
+
+```yml
+vars:
+  fivetran_platform_lookback_window_months: 12 # number of months to look back; unset by default (full scan)
+```
+
+> **Note:** Events older than the lookback window will not appear in log-based models. For example, `last_sync_started_at` in `fivetran_platform__connection_status` may be `null` for connections that have not synced within the window. Increase the value if you need a longer history. This variable does not affect `fivetran_platform__usage_history` or `fivetran_platform__mar_table_history`. If you set or change this variable, we recommend running a `--full-refresh` to ensure `fivetran_platform__audit_table` reflects the updated window.
 
 #### Change the Source Table References
 If an individual source table has a different name than expected (see this projects [dbt_project.yml](https://github.com/fivetran/dbt_fivetran_log/blob/main/dbt_project.yml) variable declarations for expected names), provide the name of the table as it appears in your warehouse to the respective variable as identified below:

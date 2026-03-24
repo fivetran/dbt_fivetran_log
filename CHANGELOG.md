@@ -1,3 +1,9 @@
+# dbt_fivetran_log v2.5.2
+[PR #183](https://github.com/fivetran/dbt_fivetran_log/pull/183) includes the following updates:
+
+## Under the Hood
+- Adds `get_*_columns()` macros for all staging source tables and updates the corresponding staging models to use `fivetran_utils.fill_staging_columns()`. Staging models now handle missing source columns gracefully by filling them with `null` rather than raising an error.
+
 # dbt_fivetran_log v2.5.1
 [PR #180](https://github.com/fivetran/dbt_fivetran_log/pull/180) includes the following updates:
 

@@ -27,4 +27,4 @@ final as (
 )
 
 select * 
-from fields
+from final

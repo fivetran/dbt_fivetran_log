@@ -11,6 +11,13 @@
 
 {% endmacro %}
 
+{% macro redshift__convert_to_json(string) %}
+
+  {# Don't do anything #}
+  {{ return(string) }}
+
+{% endmacro %}
+
 {% macro postgres__convert_to_json(string) %}
 
   case when {{ string }} ~ '^\s*[\{].*[\}]?\s*$' then {{ string }}::jsonb else null::jsonb end

@@ -5,6 +5,17 @@ with base as (
 ),
 
 fields as (
+    select
+        {{
+            fivetran_utils.fill_staging_columns(
+                source_columns=adapter.get_columns_in_relation(source('fivetran_platform', 'account')),
+                staging_columns=get_account_columns()
+            )
+        }}
+    from base
+),
+
+final as (
 
     select
         id as account_id,
@@ -12,8 +23,8 @@ fields as (
         cast(created_at as {{ dbt.type_timestamp() }}) as created_at,
         name as account_name,
         status
-    from base
+    from fields
 )
 
 select * 
-from fields
+from final

@@ -7,6 +7,17 @@ with base as (
 ),
 
 fields as (
+    select
+        {{
+            fivetran_utils.fill_staging_columns(
+                source_columns=adapter.get_columns_in_relation(source('fivetran_platform', 'user')),
+                staging_columns=get_user_columns()
+            )
+        }}
+    from base
+),
+
+final as (
 
     select
         id as user_id,
@@ -17,8 +28,8 @@ fields as (
         given_name as first_name,
         phone,
         verified as is_verified
-    from base
+    from fields
 )
 
 select * 
-from fields
+from final

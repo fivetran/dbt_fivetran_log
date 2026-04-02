@@ -3,6 +3,7 @@
 package-lock.yml
 .dbt/
 dbt_modules/
+dbt_internal_packages/
 dbt_packages/
 logs/
 profiles.yml

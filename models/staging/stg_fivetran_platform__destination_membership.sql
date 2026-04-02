@@ -6,6 +6,17 @@ with base as (
 ),
 
 fields as (
+    select
+        {{
+            fivetran_utils.fill_staging_columns(
+                source_columns=adapter.get_columns_in_relation(source('fivetran_platform', 'destination_membership')),
+                staging_columns=get_destination_membership_columns()
+            )
+        }}
+    from base
+),
+
+final as (
 
     select
         destination_id,
@@ -13,8 +24,8 @@ fields as (
         cast(activated_at as {{ dbt.type_timestamp() }}) as activated_at,
         cast(joined_at as {{ dbt.type_timestamp() }}) as joined_at,
         role as destination_role
-    from base
+    from fields
 )
 
 select * 
-from fields
+from final

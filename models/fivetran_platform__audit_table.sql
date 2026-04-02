@@ -46,29 +46,39 @@ with base as (
     {% endif %}
 ),
 
+parse_init as (
+    select
+        connection_id,
+        created_at,
+        event_subtype,
+        {{ fivetran_log.convert_to_json('message_data') }} as message_data
+
+    from base
+),
+
 parsed as (
     select 
         connection_id,
         created_at,
         event_subtype,
-        {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['table']) }} as table_name,
+        {{ fivetran_log.fivetran_log_json_parse_dev(string='message_data', string_path=['table']) }} as table_name,
 
         case 
-            when event_subtype = 'records_modified' then {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['schema']) }} 
+            when event_subtype = 'records_modified' then {{ fivetran_log.fivetran_log_json_parse_dev(string='message_data', string_path=['schema']) }} 
             else cast(null as {{ dbt.type_string() }})
         end as schema_name,
 
         case 
-            when event_subtype = 'records_modified' then {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['operation_type']) }} 
+            when event_subtype = 'records_modified' then {{ fivetran_log.fivetran_log_json_parse_dev(string='message_data', string_path=['operation_type']) }} 
             else cast(null as {{ dbt.type_string() }})
         end as operation_type,
 
         cast(case 
-            when event_subtype = 'records_modified' then {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['count']) }} 
+            when event_subtype = 'records_modified' then {{ fivetran_log.fivetran_log_json_parse_dev(string='message_data', string_path=['count']) }} 
             else null
         end as {{ dbt.type_bigint() }}) as row_count
 
-    from base
+    from parse_init
 ),
 
 sessionize as (

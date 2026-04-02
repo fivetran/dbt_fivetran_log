@@ -1,3 +1,12 @@
+# dbt_fivetran_log v2.5.3-a1
+
+[PR #184](https://github.com/fivetran/dbt_fivetran_log/pull/184) is a pre-release that includes the following updates:
+
+## Under the Hood
+- Tests out optimizations of `fivetran_platform__audit_table` for smaller Postgres instances.
+  - Creates two new macros: `convert_to_json` and `fivetran_log_json_parse_dev` (a development version of `fivetran_log_json_parse`) to consolidate JSON parsing and casting in Postgres and SQL Server.
+  - Removes regex-based JSON check on the `LOG.message_data` field for Postgres. Postgres has a character limit of 10,485,760. Therefore, `message_data` is very likely not truncated or malformed.
+
 # dbt_fivetran_log v2.5.2
 [PR #183](https://github.com/fivetran/dbt_fivetran_log/pull/183) includes the following updates:
 

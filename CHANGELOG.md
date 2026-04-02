@@ -3,8 +3,8 @@
 [PR #184](https://github.com/fivetran/dbt_fivetran_log/pull/184) includes the following updates:
 
 ## Under the Hood
-- Tests out optimizations of `fivetran_platform__audit_table` for Postgres.
-  - Creates two new macros: `convert_to_json` and `fivetran_log_json_parse_dev` to consolidate JSON parsing in Postgres and SQL Server.
+- Tests out optimizations of `fivetran_platform__audit_table` for smaller Postgres instances.
+  - Creates two new macros: `convert_to_json` and `fivetran_log_json_parse_dev` to consolidate JSON parsing and casting in Postgres and SQL Server.
 
 # dbt_fivetran_log v2.5.2
 [PR #183](https://github.com/fivetran/dbt_fivetran_log/pull/183) includes the following updates:

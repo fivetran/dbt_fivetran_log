@@ -29,6 +29,7 @@
 
 {% macro postgres__fivetran_log_json_parse_dev(string, string_path) %}
 
+  {# Removed regex check from postgres__fivetran_log_json_parse #}
   case when {{ string }} is not null
     then {{ string }} #>> '{ {%- for s in string_path -%}{{ s }}{%- if not loop.last -%},{%- endif -%}{%- endfor -%} }'
     else null end
@@ -37,6 +38,7 @@
 
 {% macro sqlserver__fivetran_log_json_parse_dev(string, string_path) %}
 
+  {# Removed regex check from sqlserver__fivetran_log_json_parse #}
   case when {{ string }} is not null
     then json_value({{ string }}, '$.{%- for s in string_path -%}{{ s }}{%- if not loop.last -%}.{%- endif -%}{%- endfor -%} ')
     else null end

@@ -20,7 +20,8 @@
 
 {% macro postgres__convert_to_json(string) %}
 
-  case when {{ string }} ~ '^\s*[\{].*[\}]?\s*$' then {{ string }}::jsonb else null::jsonb end
+  {# No check #}
+  {{ string }}::jsonb
 
 {% endmacro %}
 

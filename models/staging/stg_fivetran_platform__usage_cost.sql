@@ -6,16 +6,27 @@ with base as (
 ),
 
 fields as (
+    select
+        {{
+            fivetran_utils.fill_staging_columns(
+                source_columns=adapter.get_columns_in_relation(source('fivetran_platform', 'usage_cost')),
+                staging_columns=get_usage_cost_columns()
+            )
+        }}
+    from base
+),
+
+final as (
     
     select 
         destination_id,
         measured_month,
         amount as dollars_spent
-    from base
+    from fields
 )
 
 select * 
-from fields
+from final
 
 {% else %}
 

@@ -51,7 +51,7 @@ parse_init as (
         connection_id,
         created_at,
         event_subtype,
-        {{ convert_to_json('message_data') }} as message_data
+        {{ fivetran_log.convert_to_json('message_data') }} as message_data
 
     from base
 ),

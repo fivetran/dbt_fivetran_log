@@ -1,3 +1,20 @@
+# dbt_fivetran_log v2.5.3-a2
+
+[PR #184](https://github.com/fivetran/dbt_fivetran_log/pull/184) is a pre-release that includes the following updates:
+
+## Feature Update
+- Adds the optional `fivetran_platform_lookback_window_months` variable to limit the number of records included in log-based models uniformly. When set to an integer (number of months), only log records within the specified window are included in downstream models. Unset by default. Full log history is included unless configured. See the [README](https://github.com/fivetran/dbt_fivetran_log/blob/main/README.md#limit-the-lookback-window) for configuration details. Affects the following models:
+  - `fivetran_platform__connection_status`
+  - `fivetran_platform__schema_changelog`
+  - `fivetran_platform__audit_user_activity`
+  - `fivetran_platform__connection_daily_events`
+  - `fivetran_platform__audit_table` (**note:** if you set or change this variable, run `dbt run --full-refresh` to ensure this incremental model reflects the updated window)
+
+## Under the Hood
+- Tests out optimizations of `fivetran_platform__audit_table` for smaller Postgres instances.
+  - Creates two new macros: `convert_to_json` and `fivetran_log_json_parse_dev` (a development version of `fivetran_log_json_parse`) to consolidate JSON parsing and casting in Postgres and SQL Server.
+  - Removes regex-based JSON check on the `LOG.message_data` field for Postgres. Postgres has a character limit of 10,485,760. Therefore, `message_data` is very likely not truncated or malformed.
+
 # dbt_fivetran_log v2.5.3-a1
 
 [PR #184](https://github.com/fivetran/dbt_fivetran_log/pull/184) is a pre-release that includes the following updates:

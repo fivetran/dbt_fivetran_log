@@ -26,3 +26,9 @@ public_models: [
   "fivetran_platform__audit_table",
   "fivetran_platform__mar_table_history"
 ]
+
+supported_vars:
+  fivetran_platform_lookback_window_months:
+    type: integer
+    description: "Number of months of log history to include when building log-based models. When unset, all log history is used. Affects `fivetran_platform__connection_status`, `fivetran_platform__schema_changelog`, `fivetran_platform__audit_user_activity`, `fivetran_platform__connection_daily_events`, and `fivetran_platform__audit_table`."
+    display_name: "Log Lookback Window (Months)"

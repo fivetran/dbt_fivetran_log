@@ -120,8 +120,6 @@ session_timestamps as (
         max(case when event_subtype = 'write_to_table_end' then created_at else null end) 
             over (partition by connection_id, table_name order by created_at ROWS between UNBOUNDED PRECEDING AND CURRENT ROW) as prev_write_to_table_end,
 
-        min(case when event_subtype = 'records_modified' then created_at else null end) over (partition by connection_id, table_name, sync_session_id order by created_at asc rows between current row and unbounded following) as next_records_modified,
-
         row_number() over (partition by connection_id, table_name, sync_session_id, event_subtype order by created_at) as event_group
 
     from sessionize
@@ -142,7 +140,6 @@ write_start_timestamps as (
         sync_end,
         next_sync_start,
         coalesce(prev_write_to_table_end, next_write_to_table_end) as write_to_table_end,
-        next_records_modified,
         
         max(case when event_subtype = 'write_to_table_start' then created_at else null end) over (partition by connection_id, table_name, sync_session_id, event_group order by created_at rows between unbounded preceding and current row) as write_to_table_start,
         max(case when event_subtype = 'write_to_table_start' then created_at else null end) over (partition by connection_id, table_name order by created_at ROWS between UNBOUNDED PRECEDING AND CURRENT ROW) as backup_write_to_table_start

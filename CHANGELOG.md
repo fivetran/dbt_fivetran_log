@@ -2,6 +2,14 @@
 
 [PR #184](https://github.com/fivetran/dbt_fivetran_log/pull/184) is a pre-release that includes the following updates:
 
+## Schema Data Changes
+**3 total changes • 3 possible breaking changes**
+> To prevent potential errors from naming and materialization updates, a `--full-refresh `**is required** after upgrading.
+
+| Data Models | Change Type | Old | New | Notes |
+| --- | --- | --- | --- | --- |
+| [`stg_fivetran_platform__log_tmp`](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.stg_fivetran_platform__log_tmp) | Materializtion | view | table | Intended to optimize downstream model runtime by reducing full table scans. |
+
 ## Feature Update
 - Adds the optional `fivetran_platform_lookback_window_months` variable to limit the number of records included in log-based models uniformly. When set to an integer (number of months), only log records within the specified window are included in downstream models. Unset by default. Full log history is included unless configured. See the [README](https://github.com/fivetran/dbt_fivetran_log/blob/main/README.md#limit-the-lookback-window) for configuration details. Affects the following models:
   - `fivetran_platform__connection_status`

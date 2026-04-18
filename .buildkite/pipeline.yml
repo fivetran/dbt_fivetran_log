@@ -133,7 +133,7 @@ steps:
           limit: 1
     plugins:
       - docker#v3.13.0:
-          image: "python:3.13"
+          image: "python:3.12"
           shell: [ "/bin/bash", "-e", "-c" ]
           environment:
             - "BASH_ENV=/tmp/.bashrc"

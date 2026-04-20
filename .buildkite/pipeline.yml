@@ -1,27 +1,40 @@
+env:
+  RUN_MODELS_URL: "https://raw.githubusercontent.com/fivetran/dbt_package_automations/refs/heads/feature/buildkite-scripts/.buildkite/scripts/run_models.sh"
+
 steps:
   - label: ":postgres: Run Tests - Postgres"
-    key: "run-dbt-postgres"
+    key: "run_dbt_postgres"
+    retry:
+      automatic:
+        - exit_status: -1  # Timeout
+          limit: 1
     plugins:
       - docker#v3.13.0:
-          image: "python:3.10.13"
+          image: "python:3.13"
           shell: [ "/bin/bash", "-e", "-c" ]
           environment:
             - "BASH_ENV=/tmp/.bashrc"
+            - "BUILD_SCHEMA"
             - "CI_POSTGRES_DBT_DBNAME"
             - "CI_POSTGRES_DBT_HOST"
             - "CI_POSTGRES_DBT_PASS"
             - "CI_POSTGRES_DBT_USER"
     commands: |
-      bash .buildkite/scripts/run_models.sh postgres 
+      curl -s "${RUN_MODELS_URL}" | bash -s postgres 
 
   - label: ":snowflake-db: Run Tests - Snowflake"
     key: "run_dbt_snowflake"
+    retry:
+      automatic:
+        - exit_status: -1  # Timeout
+          limit: 1
     plugins:
       - docker#v3.13.0:
-          image: "python:3.10.13"
+          image: "python:3.13"
           shell: [ "/bin/bash", "-e", "-c" ]
           environment:
             - "BASH_ENV=/tmp/.bashrc"
+            - "BUILD_SCHEMA"
             - "CI_SNOWFLAKE_DBT_ACCOUNT"
             - "CI_SNOWFLAKE_DBT_DATABASE"
             - "CI_SNOWFLAKE_DBT_PASS"
@@ -29,76 +42,105 @@ steps:
             - "CI_SNOWFLAKE_DBT_USER"
             - "CI_SNOWFLAKE_DBT_WAREHOUSE"
     commands: |
-      bash .buildkite/scripts/run_models.sh snowflake
+      curl -s "${RUN_MODELS_URL}" | bash -s snowflake
 
   - label: ":gcloud: Run Tests - BigQuery"
     key: "run_dbt_bigquery"
+    retry:
+      automatic:
+        - exit_status: -1  # Timeout
+          limit: 1
     plugins:
       - docker#v3.13.0:
-          image: "python:3.10.13"
+          image: "python:3.13"
           shell: [ "/bin/bash", "-e", "-c" ]
           environment:
             - "BASH_ENV=/tmp/.bashrc"
+            - "BUILD_SCHEMA"
             - "GCLOUD_SERVICE_KEY"
     commands: |
-      bash .buildkite/scripts/run_models.sh bigquery
+      curl -s "${RUN_MODELS_URL}" | bash -s bigquery
 
   - label: ":amazon-redshift: Run Tests - Redshift"
     key: "run_dbt_redshift"
+    concurrency: 3
+    concurrency_group: "warehouse/redshift"
+    retry:
+      automatic:
+        - exit_status: -1  # Timeout
+          limit: 1
     plugins:
       - docker#v3.13.0:
-          image: "python:3.10.13"
+          image: "python:3.13"
           shell: [ "/bin/bash", "-e", "-c" ]
           environment:
             - "BASH_ENV=/tmp/.bashrc"
+            - "BUILD_SCHEMA"
             - "CI_REDSHIFT_DBT_DBNAME"
             - "CI_REDSHIFT_DBT_HOST"
             - "CI_REDSHIFT_DBT_PASS"
             - "CI_REDSHIFT_DBT_USER"
     commands: |
-      bash .buildkite/scripts/run_models.sh redshift
+      curl -s "${RUN_MODELS_URL}" | bash -s redshift
 
   - label: ":databricks: Run Tests - Databricks"
     key: "run_dbt_databricks"
+    retry:
+      automatic:
+        - exit_status: -1  # Timeout
+          limit: 1
     plugins:
       - docker#v3.13.0:
-          image: "python:3.10.13"
+          image: "python:3.13"
           shell: [ "/bin/bash", "-e", "-c" ]
           environment:
             - "BASH_ENV=/tmp/.bashrc"
+            - "BUILD_SCHEMA"
             - "CI_DATABRICKS_DBT_HOST"
             - "CI_DATABRICKS_DBT_HTTP_PATH"
             - "CI_DATABRICKS_DBT_TOKEN"
             - "CI_DATABRICKS_DBT_CATALOG"
     commands: |
-      bash .buildkite/scripts/run_models.sh databricks
+      curl -s "${RUN_MODELS_URL}" | bash -s databricks
 
   - label: ":databricks: :database: Run Tests - Databricks SQL Warehouse"
     key: "run_dbt_databricks_sql"
+    concurrency: 2
+    concurrency_group: "warehouse/databricks_sql"
+    retry:
+      automatic:
+        - exit_status: -1  # Timeout
+          limit: 1
     plugins:
       - docker#v3.13.0:
-          image: "python:3.10.13"
+          image: "python:3.13"
           shell: [ "/bin/bash", "-e", "-c" ]
           environment:
             - "BASH_ENV=/tmp/.bashrc"
+            - "BUILD_SCHEMA"
             - "CI_DATABRICKS_DBT_HOST"
             - "CI_DATABRICKS_SQL_DBT_HTTP_PATH"
             - "CI_DATABRICKS_SQL_DBT_TOKEN"
             - "CI_DATABRICKS_DBT_CATALOG"
     commands: |
-      bash .buildkite/scripts/run_models.sh databricks-sql
+      curl -s "${RUN_MODELS_URL}" | bash -s databricks-sql
 
   - label: ":azure: Run Tests - SQLServer"
     key: "run_dbt_sqlserver"
+    retry:
+      automatic:
+        - exit_status: -1  # Timeout
+          limit: 1
     plugins:
       - docker#v3.13.0:
-          image: "python:3.10.13"
+          image: "python:3.10" # sqlserver requires Python 3.10 due to pyodbc dependency
           shell: [ "/bin/bash", "-e", "-c" ]
           environment:
             - "BASH_ENV=/tmp/.bashrc"
+            - "BUILD_SCHEMA"
             - "CI_SQLSERVER_DBT_SERVER"
             - "CI_SQLSERVER_DBT_DATABASE"
             - "CI_SQLSERVER_DBT_USER"
             - "CI_SQLSERVER_DBT_PASS"
     commands: |
-      bash .buildkite/scripts/run_models.sh sqlserver
+      curl -s "${RUN_MODELS_URL}" | bash -s sqlserver

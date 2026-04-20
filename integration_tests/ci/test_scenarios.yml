@@ -1,0 +1,30 @@
+schema_variable_name: "fivetran_platform_schema"
+default_include_incremental: false
+
+test_scenarios:
+  - name: "log json data identifier"
+    vars:
+      fivetran_platform_log_identifier: "log_json_data"
+    include_incremental: false
+    warehouses: ["bigquery", "redshift", "postgres"]
+  
+  - name: "usage pricing enabled connection disabled"
+    vars:
+      fivetran_platform__usage_pricing: true
+      fivetran_platform_using_connection: false
+    include_incremental: false
+  
+  - name: "credits pricing disabled usage pricing enabled transformations enabled"
+    vars:
+      fivetran_platform__credits_pricing: false
+      fivetran_platform__usage_pricing: true
+      fivetran_platform_using_transformations: true
+    include_incremental: false
+  
+  - name: "minimal features enabled"
+    vars:
+      fivetran_platform__usage_pricing: false
+      fivetran_platform_using_destination_membership: false
+      fivetran_platform_using_user: false
+      fivetran_platform_using_transformations: false
+    include_incremental: false

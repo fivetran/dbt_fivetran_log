@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Post-checkout hook to configure and load centralized pipeline (runs after checkout)
+set -euo pipefail
+
+echo "Generating pipeline..."
+
+# Download pre-command script for environment setup
+curl -fsSL \
+  https://raw.githubusercontent.com/fivetran/dbt_package_automations/feature/centralized-bk/.buildkite/scripts/setup_vars.sh \
+  -o .buildkite/hooks/pre-command
+
+# Always runs: postgres, snowflake, bigquery, redshift, databricks
+# Optional flags: INCLUDE_DATABRICKS_SQL=true, INCLUDE_SQLSERVER=true
+curl -fsSL \
+  https://raw.githubusercontent.com/fivetran/dbt_package_automations/feature/centralized-bk/.buildkite/scripts/dynamic_pipeline.sh \
+  | INCLUDE_DATABRICKS_SQL=false INCLUDE_SQLSERVER=false bash
+
+echo "Pipeline generated."

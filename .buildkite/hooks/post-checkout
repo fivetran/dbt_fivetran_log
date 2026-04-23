@@ -14,6 +14,6 @@ curl -fsSL \
 # Optional flags: INCLUDE_DATABRICKS_SQL=true, INCLUDE_SQLSERVER=true
 curl -fsSL \
   https://raw.githubusercontent.com/fivetran/dbt_package_automations/feature/centralized-bk/.buildkite/scripts/dynamic_pipeline.sh \
-  | INCLUDE_DATABRICKS_SQL=false INCLUDE_SQLSERVER=false bash
+  | INCLUDE_DATABRICKS_SQL=true INCLUDE_SQLSERVER=true bash
 
 echo "Pipeline generated."

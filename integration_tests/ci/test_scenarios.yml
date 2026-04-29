@@ -1,5 +1,7 @@
 schema_variable_name: "fivetran_platform_schema"
 default_include_incremental: false
+include_databricks_sql: true
+include_sqlserver: true
 
 test_scenarios:
   - name: "log json data"

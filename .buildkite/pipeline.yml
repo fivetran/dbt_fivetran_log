@@ -1,7 +1,0 @@
-steps:
-  - label: ":building_construction: Setup CI Tests"
-    key: "super_run"
-    commands: |
-      set -e
-      curl -fsSL https://raw.githubusercontent.com/fivetran/dbt_package_automations/test/superscript/.buildkite/scripts/SUPER_RUN.sh -o SUPER_RUN.sh
-      bash SUPER_RUN.sh

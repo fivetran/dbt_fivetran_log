@@ -1,5 +1,6 @@
 {{ config(
     materialized = 'incremental',
+    full_refresh = false,
     unique_key = (
         'unique_table_sync_key' if (
             (target.type in ('postgres', 'redshift', 'snowflake', 'sqlserver'))

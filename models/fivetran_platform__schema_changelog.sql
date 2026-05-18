@@ -1,7 +1,7 @@
 {{ config(
     materialized = 'incremental',
     unique_key = (
-        'schema_change_key' if (
+        'unique_schema_change_key' if (
             (target.type in ('postgres', 'redshift', 'snowflake', 'sqlserver'))
             or (target.type=='databricks' and not fivetran_log.is_databricks_all_purpose_cluster())
             )
@@ -19,6 +19,7 @@
     incremental_strategy = (
         'merge' if (target.type=='databricks' and not fivetran_log.is_databricks_all_purpose_cluster())
         else 'insert_overwrite' if target.type in ('bigquery', 'spark', 'databricks')
+        else 'merge' if target.type == 'snowflake'
         else 'delete+insert' if fivetran_log.is_incremental_compatible()
         else None
     ),
@@ -78,7 +79,7 @@ final as (
         when event_subtype = 'create_schema' or event_subtype = 'create_table' then {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['schema']) }}
         else null end as schema_name,
 
-        {{ dbt_utils.generate_surrogate_key(['connection_id', 'created_at', 'event_subtype', 'message_data']) }} as schema_change_key,
+        {{ dbt_utils.generate_surrogate_key(['connection_id', 'created_at', 'event_subtype', 'message_data']) }} as unique_schema_change_key,
         cast({{ dbt.date_trunc('day', 'created_at') }} as date) as schema_change_day
 
     from add_connection_info

@@ -19,6 +19,7 @@
     incremental_strategy = (
         'merge' if (target.type=='databricks' and not fivetran_log.is_databricks_all_purpose_cluster())
         else 'insert_overwrite' if target.type in ('bigquery', 'spark', 'databricks')
+        else 'merge' if target.type == 'snowflake'
         else 'delete+insert' if fivetran_log.is_incremental_compatible()
         else None
     ),

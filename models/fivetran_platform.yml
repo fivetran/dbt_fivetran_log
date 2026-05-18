@@ -174,7 +174,7 @@ models:
       Table of schema changes for each connection, including table alterations, table creations,
       schema configuration changes, and schema creations.
     columns:
-      - name: schema_change_key
+      - name: unique_schema_change_key
         description: Primary key of the table, hashed on `connection_id`, `created_at`, `event_subtype`, and `message_data`.
         tests:
           - unique

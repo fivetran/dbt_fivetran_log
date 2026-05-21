@@ -1,4 +1,6 @@
-# dbt_fivetran_log v2.5.2
+# dbt_fivetran_log v2.6.0
+[PR #XXX](https://github.com/fivetran/dbt_fivetran_log/pull/XXX) includes the following updates:
+
 [PR #183](https://github.com/fivetran/dbt_fivetran_log/pull/183) includes the following updates:
 
 ## Under the Hood

@@ -24,5 +24,6 @@ public_models: [
   "fivetran_platform__connection_status",
   "fivetran_platform__usage_history",
   "fivetran_platform__audit_table",
-  "fivetran_platform__mar_table_history"
+  "fivetran_platform__mar_table_history",
+  "fivetran_platform__transformation_run_log"
 ]

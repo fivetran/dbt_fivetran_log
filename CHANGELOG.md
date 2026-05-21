@@ -1,3 +1,13 @@
+# dbt_fivetran_log v2.6.0
+[PR #XXX](https://github.com/fivetran/dbt_fivetran_log/pull/XXX) includes the following updates:
+
+## Schema/Data Change
+**1 total change • 0 possible breaking changes**
+
+| Data Model(s) | Change type | Old | New | Notes |
+| ------------- | ----------- | --- | --- | ----- |
+| [fivetran_platform__transformation_run_log](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__transformation_run_log) | New model | N/A | See docs | Adds a new end model that surfaces transformation run events from the Fivetran log, including run timestamps, duration in seconds and HH:MM:SS format, per-step model success and failure counts, and overall run status. Requires the `transformation_runs` source table and is enabled via the `fivetran_platform_using_transformations` variable. |
+
 # dbt_fivetran_log v2.5.2
 [PR #183](https://github.com/fivetran/dbt_fivetran_log/pull/183) includes the following updates:
 

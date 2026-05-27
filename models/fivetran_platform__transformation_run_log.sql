@@ -185,8 +185,8 @@ final as (
         right('00' + cast(duration_seconds % 60 as varchar(10)), 2) as duration,
         {% else %}
         lpad(cast(floor(duration_seconds / 3600.0) as {{ dbt.type_string() }}), 2, '0') || ':' ||
-        lpad(cast(floor(mod(duration_seconds, 3600) / 60.0) as {{ dbt.type_string() }}), 2, '0') || ':' ||
-        lpad(cast(mod(duration_seconds, 60) as {{ dbt.type_string() }}), 2, '0') as duration,
+        lpad(cast(floor(mod(cast(duration_seconds as {{ dbt.type_int() }}), 3600) / 60.0) as {{ dbt.type_string() }}), 2, '0') || ':' ||
+        lpad(cast(mod(cast(duration_seconds as {{ dbt.type_int() }}), 60) as {{ dbt.type_string() }}), 2, '0') as duration,
         {% endif %}
         destination_id,
         destination_name,

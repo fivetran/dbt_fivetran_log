@@ -134,16 +134,26 @@ job_destinations as (
 
 ),
 
-connection_aggregates as (
+distinct_connection_ids as (
 
-    select
+    select distinct
         connection_ids_unnested.transformation_id,
-        {{ fivetran_utils.string_agg("distinct cast(connection_ids_unnested.connection_id as " ~ dbt.type_string() ~ ")", "', '") }} as connection_ids,
-        {{ fivetran_utils.string_agg("distinct cast(connection.connection_name as " ~ dbt.type_string() ~ ")", "', '") }} as connection_names
+        cast(connection_ids_unnested.connection_id as {{ dbt.type_string() }}) as connection_id,
+        cast(connection.connection_name as {{ dbt.type_string() }}) as connection_name
     from connection_ids_unnested
     left join connection
         on connection.connection_id = connection_ids_unnested.connection_id
-    group by 1
+
+),
+
+connection_aggregates as (
+
+    select
+        transformation_id,
+        {{ fivetran_utils.string_agg("connection_id", "', '") }} as connection_ids,
+        {{ fivetran_utils.string_agg("connection_name", "', '") }} as connection_names
+    from distinct_connection_ids
+    group by transformation_id
 
 ),
 

@@ -211,6 +211,10 @@ models:
         description: Foreign key referencing the destination associated with the transformation.
       - name: destination_name
         description: Name of the destination associated with the transformation.
+      - name: connection_ids
+        description: Comma-separated list of connection IDs scheduled to trigger this transformation.
+      - name: connection_names
+        description: Comma-separated list of connection names scheduled to trigger this transformation.
       - name: transformation_name
         description: User-defined name of the transformation.
       - name: transformation_id

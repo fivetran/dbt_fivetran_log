@@ -45,76 +45,14 @@ transformation_logs as (
         cast({{ fivetran_log.fivetran_log_json_parse(string="message_data", string_path=["result", "stepResults", 0, "successfulModelRuns"]) }} as {{ dbt.type_int() }}) as successful_model_runs,
         cast({{ fivetran_log.fivetran_log_json_parse(string="message_data", string_path=["result", "stepResults", 0, "failedModelRuns"]) }} as {{ dbt.type_int() }}) as failed_model_runs
     from log
-    where event_subtype in ('transformation_succeed', 'transformation_failed')
+    where event_subtype like 'transformation%'
+        and event_subtype != 'transformation_start'
+    --transformation failure and success events capture start/end datetimes so the start event is redundant
 ),
 
 connection_ids_unnested as (
 
-    {% if target.type == 'snowflake' %}
-    select
-        transformation_logs.transformation_id,
-        flattened_integration.value::varchar as connection_id
-    from transformation_logs,
-    lateral flatten(input => try_parse_json(transformation_logs.full_run_log):schedule:integrations) flattened_integration
-
-    {% elif target.type == 'bigquery' %}
-    select
-        transformation_logs.transformation_id,
-        connection_id
-    from transformation_logs
-    cross join unnest(json_extract_string_array(transformation_logs.full_run_log, '$.schedule.integrations')) as connection_id
-
-    {% elif target.type == 'redshift' %}
-    select
-        transformation_logs.transformation_id,
-        json_extract_array_element_text(
-            json_extract_path_text(transformation_logs.full_run_log, 'schedule', 'integrations'),
-            numbers.n,
-            true
-        ) as connection_id
-    from transformation_logs
-    cross join (
-        select 0 as n union all select 1 union all select 2 union all select 3
-        union all select 4 union all select 5 union all select 6 union all select 7
-        union all select 8 union all select 9
-    ) numbers
-    where numbers.n < json_array_length(
-        json_extract_path_text(transformation_logs.full_run_log, 'schedule', 'integrations'), true
-    )
-    and json_extract_array_element_text(
-        json_extract_path_text(transformation_logs.full_run_log, 'schedule', 'integrations'),
-        numbers.n,
-        true
-    ) != ''
-
-    {% elif target.type == 'sqlserver' %}
-    select
-        transformation_logs.transformation_id,
-        integration_values.[value] as connection_id
-    from transformation_logs
-    cross apply openjson(json_query(transformation_logs.full_run_log, '$.schedule.integrations')) integration_values
-
-    {% elif target.type in ('spark', 'databricks') %}
-    select
-        transformation_logs.transformation_id,
-        connection_id
-    from transformation_logs
-    lateral view explode(
-        from_json(
-            get_json_object(transformation_logs.full_run_log, '$.schedule.integrations'),
-            'array<string>'
-        )
-    ) as connection_id
-
-    {% else %}
-    select
-        transformation_logs.transformation_id,
-        connection_id_raw as connection_id
-    from transformation_logs
-    cross join lateral jsonb_array_elements_text(
-        (transformation_logs.full_run_log::jsonb) -> 'schedule' -> 'integrations'
-    ) as unnested_integrations(connection_id_raw)
-    {% endif %}
+    {{ fivetran_log.fivetran_log_connection_ids_unnested() }}
 
 ),
 

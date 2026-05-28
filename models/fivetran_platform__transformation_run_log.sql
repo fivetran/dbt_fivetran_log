@@ -35,7 +35,6 @@ connection as (
 transformation_logs as (
 
     select
-        event_subtype,
         message_data as full_run_log,
         {{ fivetran_log.fivetran_log_json_parse(string="message_data", string_path=["id"]) }} as transformation_id,
         cast({{ fivetran_log.fivetran_log_json_parse(string="message_data", string_path=["startTime"]) }} as {{ dbt.type_timestamp() }}) as started_at,
@@ -46,10 +45,7 @@ transformation_logs as (
         cast({{ fivetran_log.fivetran_log_json_parse(string="message_data", string_path=["result", "stepResults", 0, "successfulModelRuns"]) }} as {{ dbt.type_int() }}) as successful_model_runs,
         cast({{ fivetran_log.fivetran_log_json_parse(string="message_data", string_path=["result", "stepResults", 0, "failedModelRuns"]) }} as {{ dbt.type_int() }}) as failed_model_runs
     from log
-    where event_subtype like '%transformation%'
-        and event_subtype != 'transformation_start'
-        --start time is already captured in the succeed/failed events, so this event is redundant
-
+    where event_subtype in ('transformation_succeed', 'transformation_failed')
 ),
 
 connection_ids_unnested as (
@@ -168,7 +164,6 @@ with_duration as (
         transformation_logs.step_success,
         transformation_logs.successful_model_runs,
         transformation_logs.failed_model_runs,
-        transformation_logs.event_subtype,
         transformation_logs.full_run_log,
         job_destinations.destination_id,
         job_destinations.destination_name,
@@ -215,7 +210,6 @@ final as (
                 then 'transformation_partially_succeeded'
             else 'transformation_failed'
         end as transformation_status,
-        event_subtype,
         full_run_log
     from with_duration
 
@@ -246,7 +240,6 @@ select
     cast(null as {{ dbt.type_int() }}) as successful_model_runs,
     cast(null as {{ dbt.type_int() }}) as failed_model_runs,
     cast(null as {{ dbt.type_string() }}) as transformation_status,
-    cast(null as {{ dbt.type_string() }}) as event_subtype,
     cast(null as {{ dbt.type_string() }}) as full_run_log
 
     {% if target.type not in ('sqlserver') %}

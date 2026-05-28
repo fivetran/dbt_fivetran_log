@@ -62,10 +62,10 @@ job_destinations as (
     select distinct
         transformation_runs.job_id,
         transformation_runs.destination_id,
-        destination.destination_name
+        destinations.destination_name
     from transformation_runs
     left join destinations
-        on destination.destination_id = transformation_runs.destination_id
+        on destinations.destination_id = transformation_runs.destination_id
 
 ),
 
@@ -74,10 +74,10 @@ distinct_connection_ids as (
     select distinct
         connection_ids_unnested.transformation_id,
         cast(connection_ids_unnested.connection_id as {{ dbt.type_string() }}) as connection_id,
-        cast(connection.connection_name as {{ dbt.type_string() }}) as connection_name
+        cast(connections.connection_name as {{ dbt.type_string() }}) as connection_name
     from connection_ids_unnested
     left join connections
-        on connection.connection_id = connection_ids_unnested.connection_id
+        on connections.connection_id = connection_ids_unnested.connection_id
 
 ),
 

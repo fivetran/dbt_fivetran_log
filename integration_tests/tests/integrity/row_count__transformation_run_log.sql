@@ -17,7 +17,7 @@ staging_model as (
         {{ fivetran_log.fivetran_log_json_parse(string="message_data", string_path=["id"]) }} as transformation_id,
         count(*) as row_count
     from {{ ref('stg_fivetran_platform__log') }}
-    where event_subtype like '%transformation%'
+    where event_subtype like 'transformation%'
         and event_subtype != 'transformation_start'
     group by 1
 )

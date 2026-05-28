@@ -4,7 +4,7 @@
 -- depends_on: {{ ref('stg_fivetran_platform__connection') }}
 {% if var('fivetran_platform_using_transformations', does_table_exist('transformation_runs')) %}
 
-with log as (
+with logs as (
 
     select *
     from {{ ref('stg_fivetran_platform__log') }}
@@ -18,14 +18,14 @@ transformation_runs as (
 
 ),
 
-destination as (
+destinations as (
 
     select *
     from {{ ref('stg_fivetran_platform__destination') }}
 
 ),
 
-connection as (
+connections as (
 
     select *
     from {{ ref('stg_fivetran_platform__connection') }}
@@ -35,6 +35,7 @@ connection as (
 transformation_logs as (
 
     select
+        event_subtype,
         message_data as full_run_log,
         {{ fivetran_log.fivetran_log_json_parse(string="message_data", string_path=["id"]) }} as transformation_id,
         cast({{ fivetran_log.fivetran_log_json_parse(string="message_data", string_path=["startTime"]) }} as {{ dbt.type_timestamp() }}) as started_at,
@@ -44,7 +45,7 @@ transformation_logs as (
         {{ fivetran_log.fivetran_log_json_parse(string="message_data", string_path=["result", "stepResults", 0, "success"]) }} as step_success,
         cast({{ fivetran_log.fivetran_log_json_parse(string="message_data", string_path=["result", "stepResults", 0, "successfulModelRuns"]) }} as {{ dbt.type_int() }}) as successful_model_runs,
         cast({{ fivetran_log.fivetran_log_json_parse(string="message_data", string_path=["result", "stepResults", 0, "failedModelRuns"]) }} as {{ dbt.type_int() }}) as failed_model_runs
-    from log
+    from logs
     where event_subtype like 'transformation%'
         and event_subtype != 'transformation_start'
     --transformation failure and success events capture start/end datetimes so the start event is redundant
@@ -63,7 +64,7 @@ job_destinations as (
         transformation_runs.destination_id,
         destination.destination_name
     from transformation_runs
-    left join destination
+    left join destinations
         on destination.destination_id = transformation_runs.destination_id
 
 ),
@@ -75,7 +76,7 @@ distinct_connection_ids as (
         cast(connection_ids_unnested.connection_id as {{ dbt.type_string() }}) as connection_id,
         cast(connection.connection_name as {{ dbt.type_string() }}) as connection_name
     from connection_ids_unnested
-    left join connection
+    left join connections
         on connection.connection_id = connection_ids_unnested.connection_id
 
 ),

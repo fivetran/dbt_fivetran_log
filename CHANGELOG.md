@@ -1,3 +1,17 @@
+# dbt_fivetran_log v2.6.0
+[PR #XXX](https://github.com/fivetran/dbt_fivetran_log/pull/XXX) includes the following updates:
+
+## Schema/Data Change
+**2 total changes • 0 possible breaking changes**
+
+| Data Model(s) | Change type | Old | New | Notes |
+| ------------- | ----------- | --- | --- | ----- |
+| fivetran_platform__errors_and_warnings | New field/model | N/A | New model | Adds a final model that unions error and warning events from the `log` (standard connections) and `connector_sdk_log` (Connector SDK connections) tables, enriched with `connection_name`. Excludes `INFO`-level events and preserves each source's raw severity values. |
+| stg_fivetran_platform__connector_sdk_log | New field/model | N/A | New model | Adds a staging model for the new `connector_sdk_log` source table, which captures logged events emitted by Connector SDK connections. |
+
+## Feature Update
+- Adds the `fivetran_platform_using_connector_sdk_log` variable (default `true`) to enable or disable the `connector_sdk_log` source and its downstream logic. Set this to `false` if your destination does not contain the `connector_sdk_log` table.
+
 # dbt_fivetran_log v2.5.2
 [PR #183](https://github.com/fivetran/dbt_fivetran_log/pull/183) includes the following updates:
 

@@ -10,6 +10,8 @@ table_variables:
     - user
   fivetran_platform_using_connection:
     - connection
+  fivetran_platform_using_connector_sdk_log:
+    - connector_sdk_log
 
 destination_configurations:
   databricks:
@@ -24,5 +26,6 @@ public_models: [
   "fivetran_platform__connection_status",
   "fivetran_platform__usage_history",
   "fivetran_platform__audit_table",
-  "fivetran_platform__mar_table_history"
+  "fivetran_platform__mar_table_history",
+  "fivetran_platform__errors_and_warnings"
 ]

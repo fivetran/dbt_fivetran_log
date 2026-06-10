@@ -25,3 +25,16 @@ vars:
 Some records in the `fivetran_platform__mar_table_history` model may lack an associated `connection_id`. This can occur for a few reasons. For example, the record may originate from a deleted connection or from HVR sources that do not populate this field.
 
 Previously, we excluded these records under the assumption that they were erroneous. However, we've found cases where these rows provide valuable context, particularly for tracking metadata activity from legacy or nonstandard sources and now include them in the model. While this change will increase the number of rows returned, the added visibility supports more complete auditing and analysis.
+
+## Severity values in `fivetran_platform__errors_and_warnings`
+The `fivetran_platform__errors_and_warnings` model unions error and warning events from two sources: the `log` table (standard connections) and the `connector_sdk_log` table (Connector SDK connections). Both sources report `WARNING` and `SEVERE`, while `ERROR` is reported only by the `connector_sdk_log` source. We pass each source's `severity_level` through as its raw value rather than normalizing or remapping it, so each event reflects exactly what its source reported. The `connector_type` column (`standard_connector` or `connector_sdk`) identifies which source a row came from.
+
+We exclude `INFO`-level events from this model since its purpose is to surface errors and warnings. The filter uses an explicit allow-list (`warning`, `error`, `severe`) rather than simply excluding `INFO`, so non-severity `event_type` values from the `log` table (such as `TRANSFORMATION`) are also excluded.
+
+## Connector SDK log source
+Not all customers have the `connector_sdk_log` source table, as it is only populated for accounts using the Fivetran Connector SDK. This source and its downstream logic are controlled by the `fivetran_platform_using_connector_sdk_log` variable, which defaults to `true`. If your destination does not contain the `connector_sdk_log` table, set this variable to `false` in your root `dbt_project.yml` to disable the source and exclude Connector SDK events from `fivetran_platform__errors_and_warnings`:
+
+```yml
+vars:
+  fivetran_platform_using_connector_sdk_log: false ## Default is true. Set to false if the connector_sdk_log source table is not present in your destination.
+```

@@ -1,8 +1,4 @@
--- depends_on: {{ ref('stg_fivetran_platform__log') }}
--- depends_on: {{ ref('stg_fivetran_platform__transformation_runs') }}
--- depends_on: {{ ref('stg_fivetran_platform__destination') }}
--- depends_on: {{ ref('stg_fivetran_platform__connection') }}
-{% if var('fivetran_platform_using_transformations', does_table_exist('transformation_runs')) %}
+{{ config(enabled=var('fivetran_platform_using_transformations', true))}} 
 
 with logs as (
 
@@ -59,13 +55,16 @@ connection_ids_unnested as (
 
 job_destinations as (
 
-    select distinct
+    select
         transformation_runs.job_id,
         transformation_runs.destination_id,
-        destinations.destination_name
+        max(transformation_runs.job_name) as job_name,
+        max(transformation_runs.project_type) as project_type,
+        max(destinations.destination_name) as destination_name
     from transformation_runs
     left join destinations
         on destinations.destination_id = transformation_runs.destination_id
+    group by transformation_runs.job_id, transformation_runs.destination_id
 
 ),
 
@@ -92,6 +91,23 @@ connection_aggregates as (
 
 ),
 
+job_connections as (
+
+    select
+        job_destinations.job_id,
+        job_destinations.destination_id,
+        job_destinations.destination_name,
+        cast(connections.connection_id as {{ dbt.type_string() }}) as fallback_connection_id,
+        cast(connections.connection_name as {{ dbt.type_string() }}) as fallback_connection_name
+    from job_destinations
+    left join connections
+        on job_destinations.project_type = 'QUICKSTART'
+        and job_destinations.job_name like '%/%'
+        and connections.connection_name = {{ dbt.split_part(string_text='job_destinations.job_name', delimiter_text="'/'", part_number=2) }}
+        and connections.destination_id = job_destinations.destination_id
+
+),
+
 with_duration as (
 
     select
@@ -104,14 +120,14 @@ with_duration as (
         transformation_logs.successful_model_runs,
         transformation_logs.failed_model_runs,
         transformation_logs.full_run_log,
-        job_destinations.destination_id,
-        job_destinations.destination_name,
-        connection_aggregates.connection_ids,
-        connection_aggregates.connection_names,
+        job_connections.destination_id,
+        job_connections.destination_name,
+        coalesce(connection_aggregates.connection_ids, job_connections.fallback_connection_id) as connection_ids,
+        coalesce(connection_aggregates.connection_names, job_connections.fallback_connection_name) as connection_names,
         {{ dbt.datediff('started_at', 'ended_at', 'second') }} as duration_seconds
     from transformation_logs
-    left join job_destinations
-        on job_destinations.job_id = transformation_logs.transformation_id
+    left join job_connections
+        on job_connections.job_id = transformation_logs.transformation_id
     left join connection_aggregates
         on connection_aggregates.transformation_id = transformation_logs.transformation_id
 
@@ -156,33 +172,3 @@ final as (
 
 select *
 from final
-
-{% else %}
-
-select
-
-    {% if target.type in ('sqlserver') %}
-    top 0
-    {% endif %}
-
-    cast(null as {{ dbt.type_timestamp() }}) as started_at,
-    cast(null as {{ dbt.type_timestamp() }}) as ended_at,
-    cast(null as {{ dbt.type_int() }}) as duration_seconds,
-    cast(null as {{ dbt.type_string() }}) as duration,
-    cast(null as {{ dbt.type_string() }}) as destination_id,
-    cast(null as {{ dbt.type_string() }}) as destination_name,
-    cast(null as {{ dbt.type_string() }}) as connection_ids,
-    cast(null as {{ dbt.type_string() }}) as connection_names,
-    cast(null as {{ dbt.type_string() }}) as transformation_name,
-    cast(null as {{ dbt.type_string() }}) as transformation_id,
-    cast(null as {{ dbt.type_string() }}) as transformation_type,
-    cast(null as {{ dbt.type_int() }}) as successful_model_runs,
-    cast(null as {{ dbt.type_int() }}) as failed_model_runs,
-    cast(null as {{ dbt.type_string() }}) as transformation_status,
-    cast(null as {{ dbt.type_string() }}) as full_run_log
-
-    {% if target.type not in ('sqlserver') %}
-    limit {{ '1' if target.type == 'redshift' else '0' }}
-    {% endif %}
-
-{% endif %}

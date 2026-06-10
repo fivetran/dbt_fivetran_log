@@ -25,3 +25,13 @@ vars:
 Some records in the `fivetran_platform__mar_table_history` model may lack an associated `connection_id`. This can occur for a few reasons. For example, the record may originate from a deleted connection or from HVR sources that do not populate this field.
 
 Previously, we excluded these records under the assumption that they were erroneous. However, we've found cases where these rows provide valuable context, particularly for tracking metadata activity from legacy or nonstandard sources and now include them in the model. While this change will increase the number of rows returned, the added visibility supports more complete auditing and analysis.
+
+## Connection recovery in `fivetran_platform__transformation_run_log`
+The `connection_ids` and `connection_names` fields are primarily derived from the `schedule.integrations` array in the run log. This array is only populated for integrated schedules, so the majority of transformation runs (custom and cron schedules) leave it empty.
+
+For QUICKSTART transformations, the `job_name` in `transformation_runs` reliably follows the `<connector type>/<connection name>` format. When `schedule.integrations` is empty, we recover the single connection by parsing the connection name from `job_name` and matching it to a connection in the same destination. This is a best-effort, single-connection recovery: QUICKSTART runs that target multiple connections always populate `schedule.integrations`, so they are unaffected. The fallback is scoped to QUICKSTART only, since other transformation types (such as DBT_CORE) use user-defined names that do not follow this format.
+
+## Null `started_at` for older transformation runs
+The `started_at` and `ended_at` fields in `fivetran_platform__transformation_run_log` are parsed from the top-level `startTime` and `endTime` keys in the run log. Older transformation run events do not include these top-level keys; instead, the timestamps are nested under `result.stepResults[0]`. For those older runs, `started_at` (and therefore `duration`) may be null, even though the run did capture a start time.
+
+We have chosen not to address this for now, since it only affects older/stale data. If customers report null `started_at` or `duration` values, we can coalesce the top-level keys with the nested `result.stepResults[0].startTime` and `result.stepResults[0].endTime` values to recover them.

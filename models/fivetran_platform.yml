@@ -212,15 +212,19 @@ models:
       - name: destination_name
         description: Name of the destination associated with the transformation.
       - name: connection_ids
-        description: Comma-separated list of connection IDs scheduled to trigger this transformation.
+        description: >
+          Comma-separated list of connection IDs scheduled to trigger this transformation. For QUICKSTART
+          transformations without a scheduled connection, the single connection parsed from the transformation name.
       - name: connection_names
-        description: Comma-separated list of connection names scheduled to trigger this transformation.
+        description: >
+          Comma-separated list of connection names scheduled to trigger this transformation. For QUICKSTART
+          transformations without a scheduled connection, the single connection parsed from the transformation name.
       - name: transformation_name
         description: User-defined name of the transformation.
       - name: transformation_id
         description: System-generated unique ID of the transformation job, parsed from the log message.
       - name: transformation_type
-        description: The type of transformation (e.g., DBT).
+        description: The type of transformation (e.g., DBT_CORE, QUICKSTART).
       - name: successful_model_runs
         description: Number of models that ran successfully in this transformation execution.
       - name: failed_model_runs
@@ -229,8 +233,6 @@ models:
         description: >
           Outcome of the transformation run. Possible values are `transformation_succeeded`,
           `transformation_partially_succeeded`, and `transformation_failed`.
-      - name: event_subtype
-        description: The log event subtype associated with this transformation run record.
       - name: full_run_log
         description: The raw JSON message data from the log event.
 

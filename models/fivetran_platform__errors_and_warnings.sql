@@ -8,8 +8,10 @@ with log_events as (
         message_data as message,
         'standard_connector' as connector_type
     from {{ ref('stg_fivetran_platform__log') }}
-    -- limit to error and warning severities; excludes INFO and non-severity event types (e.g. TRANSFORMATION)
+    -- limit to connector error and warning severities. excludes INFO, and excludes events not attributable to a
+    -- connection (connection_id is null), such as transformation job dbt run logs, which are not connector events.
     where lower(event_type) in ('warning', 'error', 'severe')
+        and connection_id is not null
 ),
 
 {% if var('fivetran_platform_using_connector_sdk_log', true) -%}
@@ -24,6 +26,7 @@ connector_sdk_events as (
         'connector_sdk' as connector_type
     from {{ ref('stg_fivetran_platform__connector_sdk_log') }}
     where lower(level) in ('warning', 'error', 'severe')
+        and connection_id is not null
 ),
 {%- endif %}
 

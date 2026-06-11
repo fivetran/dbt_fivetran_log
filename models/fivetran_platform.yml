@@ -238,9 +238,8 @@ models:
 
   - name: fivetran_platform__errors_and_warnings
     description: >
-      Table of error and warning events across both standard Fivetran connections (from the `log` table) and
-      Connector SDK connections (from the `connector_sdk_log` table). Excludes `INFO`-level events. The
-      Connector SDK events are only included when the `fivetran_platform_using_connector_sdk_log` variable is enabled.
+      Table of connector error and warning events across both standard Fivetran connections (from the `log` table) and
+      Connector SDK connections (from the `connector_sdk_log` table).
     columns:
       - name: connection_id
         description: Foreign key referencing the connection that emitted the event.

@@ -19,6 +19,7 @@ staging_model as (
         count(*) as row_count
     from {{ ref('stg_fivetran_platform__log') }}
     where lower(event_type) in ('warning', 'error', 'severe')
+        and connection_id is not null
 
     {% if var('fivetran_platform_using_connector_sdk_log', true) %}
     union all
@@ -27,6 +28,7 @@ staging_model as (
         count(*) as row_count
     from {{ ref('stg_fivetran_platform__connector_sdk_log') }}
     where lower(level) in ('warning', 'error', 'severe')
+        and connection_id is not null
     {% endif %}
 )
 

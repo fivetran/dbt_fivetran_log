@@ -211,6 +211,10 @@ models:
         description: Foreign key referencing the destination associated with the transformation.
       - name: destination_name
         description: Name of the destination associated with the transformation.
+      - name: project_type
+        description: Type of transformation project (e.g., `DBT_CORE`, `QUICKSTART`).
+      - name: free_type
+        description: Indicates the type of free model run, or `PAID` for paid model runs.
       - name: connection_ids
         description: >
           Comma-separated list of connection IDs scheduled to trigger this transformation. For QUICKSTART

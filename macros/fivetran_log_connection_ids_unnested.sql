@@ -37,7 +37,11 @@
 {% endmacro %}
 
 {% macro redshift__fivetran_log_connection_ids_unnested() %}
-
+{# Redshift has no native lateral unnest for JSON arrays, so we iterate array indices with a generated
+   numbers table. The digit cross join below produces 0-99, capping connections per transformation job
+   at 100. Jobs referencing more than 100 connections have the overflow silently dropped. As of 06/2026
+   the largest observed Redshift job referenced 32 connections, so 100 leaves comfortable headroom. If
+   this cap is ever hit, extend the generator (e.g. add a hundreds digit). See DECISIONLOG.md. #}
     select
         transformation_logs.transformation_id,
         json_extract_array_element_text(
@@ -47,9 +51,15 @@
         ) as connection_id
     from transformation_logs
     cross join (
-        select 0 as n union all select 1 union all select 2 union all select 3
-        union all select 4 union all select 5 union all select 6 union all select 7
-        union all select 8 union all select 9
+        select (tens.n * 10 + ones.n) as n
+        from (
+            select 0 as n union all select 1 union all select 2 union all select 3 union all select 4
+            union all select 5 union all select 6 union all select 7 union all select 8 union all select 9
+        ) tens
+        cross join (
+            select 0 as n union all select 1 union all select 2 union all select 3 union all select 4
+            union all select 5 union all select 6 union all select 7 union all select 8 union all select 9
+        ) ones
     ) numbers
     where numbers.n < json_array_length(
         json_extract_path_text(transformation_logs.full_run_log, 'schedule', 'integrations'), true

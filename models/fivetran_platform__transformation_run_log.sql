@@ -195,7 +195,8 @@ final as (
                 and successful_model_runs > 0
                 and failed_model_runs > 0
                 then 'transformation_partially_succeeded'
-            else 'transformation_failed'
+            when step_success = 'false' then 'transformation_failed'
+            else 'unknown'
         end as transformation_status,
         full_run_log
     from with_duration

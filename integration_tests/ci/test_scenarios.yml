@@ -1,0 +1,46 @@
+# Only set if not using default adapter ranges
+# dbt_adapter_versions:
+#   snowflake: ">=1.3.0,<2.0.0"
+#   bigquery: ">=1.3.0,<2.0.0"
+#   postgres: ">=1.3.0,<2.0.0"
+#   redshift: ">=1.3.0,<2.0.0"
+#   databricks: ">=1.6.0,<2.0.0"
+
+schema_variable_name: "fivetran_platform_schema"
+
+include_databricks_sql: true
+include_sqlserver: true
+include_dbt_compile: true
+
+test_scenarios:
+  - name: "Default"
+    vars: {}
+    include_incremental: false
+
+  - name: "log json data"
+    vars:
+      fivetran_platform_log_identifier: "log_json_data"
+    include_incremental: false
+    warehouses: ["bigquery", "redshift", "postgres"]
+
+  - name: "usage pricing enabled"
+    vars:
+      fivetran_platform__usage_pricing: true
+      fivetran_platform_using_connection: false
+    include_incremental: false
+
+  - name: "usage pricing with transformations"
+    vars:
+      fivetran_platform__credits_pricing: false
+      fivetran_platform__usage_pricing: true
+      fivetran_platform_using_transformations: true
+    include_incremental: false
+
+  - name: "minimal features"
+    vars:
+      fivetran_platform__usage_pricing: false
+      fivetran_platform_using_destination_membership: false
+      fivetran_platform_using_user: false
+      fivetran_platform_using_transformations: false
+      fivetran_platform_using_connector_sdk_log: false
+    include_incremental: false

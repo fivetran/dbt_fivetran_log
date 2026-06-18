@@ -1,4 +1,15 @@
 # dbt_fivetran_log v2.6.0
+[PR #193](https://github.com/fivetran/dbt_fivetran_log/pull/193) includes the following updates:
+
+## Schema/Data Change
+**1 total change • 0 possible breaking changes**
+
+| Data Model(s) | Change type | Old | New | Notes |
+| ------------- | ----------- | --- | --- | ----- |
+| [fivetran_platform__transformation_run_log](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__transformation_run_log) | New model | N/A | See docs | Adds a new end model that surfaces transformation run events from the Fivetran log, including run timestamps, duration in seconds and HH:MM:SS format, per-step model success and failure counts, and overall run status. Requires the `transformation_runs` source table and is enabled via the `fivetran_platform_using_transformations` variable. |
+
+## Under the Hood
+- Creates `fivetran_log_connection_ids_unnested` macro for warehouse-specific JSON array unnesting logic in `fivetran_platform__transformation_run_log` model.
 [PR #196](https://github.com/fivetran/dbt_fivetran_log/pull/196) includes the following updates:
 
 ## Schema/Data Change

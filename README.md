@@ -5,7 +5,7 @@ This dbt package transforms data from the Fivetran Platform connector into analy
 
 ## Resources
 
-- Number of materialized models¹: 19
+- Number of materialized models¹: 22
 - Connector documentation
   - [Fivetran Platform connector documentation](https://fivetran.com/docs/logs/fivetran-platform)
   - [Fivetran Platform ERD](https://fivetran.com/docs/logs/fivetran-platform#schemainformation)
@@ -40,6 +40,7 @@ By default, this package materializes the following final tables:
 | [fivetran_platform__schema_changelog](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__schema_changelog) | Documents all schema changes made to your connections including table alterations, table creations, schema creations, and configuration changes with detailed metadata about each event to track data structure evolution and troubleshoot schema-related issues. |
 | [fivetran_platform__audit_table](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_table) | Replaces the deprecated [`_fivetran_audit` table](https://fivetran.com/docs/getting-started/system-columns-and-tables#audittables) and tracks each table receiving data during connection syncs with comprehensive timestamps for connection and table-level sync progress plus detailed counts of records inserted, replaced, updated, and deleted to monitor data processing and sync performance. |
 | [fivetran_platform__audit_user_activity](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_user_activity) | Records all user-triggered actions within your Fivetran account to provide a comprehensive audit trail that helps you trace user activities to specific [log events](https://fivetran.com/docs/logs#logeventlist) such as schema changes, sync frequency updates, manual syncs, connection failures, and other operational events for compliance and troubleshooting purposes. |
+| [fivetran_platform__transformation_run_log](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__transformation_run_log) | Surfaces each transformation run event from the Fivetran log, including start and end timestamps, formatted duration, per-step model success and failure counts, and overall transformation status to monitor and troubleshoot your transformation pipeline performance. Requires the `transformation_runs` source table. |
 | [fivetran_platform__errors_and_warnings](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__errors_and_warnings) | Consolidates error and warning events from both standard connections and Connector SDK connections into a single feed, enriched with connection details, so you can monitor and triage the severity of issues across your data pipelines. Excludes `INFO`-level events. |
 
 ¹ Each Quickstart transformation job run materializes these models if all components of this data model are enabled. This count includes all staging, intermediate, and final models materialized as `view`, `table`, or `incremental`.

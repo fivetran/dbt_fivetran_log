@@ -34,3 +34,5 @@ D7UqnKYn6OT04HkUcPNjXA95qqp=,2024-11-18 16:26:29.719,2024-11-19 20:30:53.878,aft
 h7UqnKYn6OT04HkUcPNjXA95qlp=,2024-11-19 16:26:29.719,2024-11-19 20:30:53.878,aft_gleeful,INFO,"{""totalQueries"":5,""total_rows"":4810}",extract_summary,,456abc
 D7UqnKYn6OT04HkUcPNjXA95ttI=,2025-12-13 14:26:29.719,2025-12-13 20:30:53.878,this_connection,INFO,"{""table"":""media_insights""}",write_to_table_start,123,456abc
 D7UqnKYn6OT04HkUcPNjXA95ttI=,2025-12-15 14:26:29.719,2025-12-15 20:30:53.878,this_connection,INFO,"{""table"":""media_insights""}",write_to_table_start,123,456abc
+WaRnAfTgLeEfUl0000000000000=,2024-11-20 10:00:00.000,2024-11-20 12:00:00.000,aft_gleeful,WARNING,"{""type"":""table_excluded_by_system"",""message"":""schema.table has been excluded by system. Reason: Not queryable""}",warning,,syncaft1
+SeVeReAfTgLeEfUl000000000000=,2024-11-20 11:00:00.000,2024-11-20 12:30:00.000,aft_gleeful,SEVERE,"{""message"":""Sync failed due to an authentication error""}",sync_failed,,syncaft2

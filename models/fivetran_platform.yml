@@ -282,3 +282,27 @@ models:
         description: The details of the event in a JSON-like string format.
       - name: log_id
         description: Unique ID of the log record.
+
+  - name: fivetran_platform__errors_and_warnings
+    description: >
+      Table of connector error and warning events across both standard Fivetran connections (from the `log` table) and
+      Connector SDK connections (from the `connector_sdk_log` table).
+    columns:
+      - name: connection_id
+        description: Foreign key referencing the connection that emitted the event.
+      - name: connection_name
+        description: Name of the connection that emitted the event. May be null if the connection is no longer present in the `connection` table.
+      - name: event_time
+        description: Timestamp when the event was logged.
+      - name: severity_level
+        description: >
+          Raw severity of the event as reported by the source, passed through without normalization. Both sources
+          report `WARNING` and `SEVERE`; `ERROR` is reported only by the `connector_sdk_log` source.
+      - name: message
+        description: The details of the event. For standard connections this is the JSON-like `message_data` string; for Connector SDK connections this is the plain-text log message.
+      - name: connector_type
+        description: >
+          Indicates which source the event originated from. Possible values are `standard_connector` (from the `log` table)
+          and `connector_sdk` (from the `connector_sdk_log` table).
+      - name: sync_id
+        description: Identifies which sync the event is associated with.

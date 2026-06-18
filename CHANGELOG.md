@@ -10,6 +10,18 @@
 
 ## Under the Hood
 - Creates `fivetran_log_connection_ids_unnested` macro for warehouse-specific JSON array unnesting logic in `fivetran_platform__transformation_run_log` model.
+[PR #196](https://github.com/fivetran/dbt_fivetran_log/pull/196) includes the following updates:
+
+## Schema/Data Change
+**2 total changes • 0 possible breaking changes**
+
+| Data Model(s) | Change type | Old | New | Notes |
+| ------------- | ----------- | --- | --- | ----- |
+| fivetran_platform__errors_and_warnings | New model | |  | Unions error and warning events from the `log` (standard connections) and `connector_sdk_log` (Connector SDK connections) tables, enriched with `connection_name`. |
+| stg_fivetran_platform__connector_sdk_log | New model |  |  | Staging model for the new `connector_sdk_log` source table. |
+
+## Feature Update
+- Adds the `fivetran_platform_using_connector_sdk_log` variable (default `true`) to enable or disable the `connector_sdk_log` source and its downstream logic. Set this to `false` if your destination does not contain the `connector_sdk_log` table.
 
 # dbt_fivetran_log v2.5.2
 [PR #183](https://github.com/fivetran/dbt_fivetran_log/pull/183) includes the following updates:

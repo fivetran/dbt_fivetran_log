@@ -164,6 +164,43 @@ models:
       - name: is_verified
         description: Boolean indicating whether the user has verified their email address.
 
+  - name: stg_fivetran_platform__audit_trail
+    description: >
+      Table of user actions performed within your Fivetran account, including what was changed and how.
+      This table is only available on the Enterprise plan and above.
+    columns:
+      - name: unique_audit_trail_key
+        description: Surrogate key hashed on `audit_trail_id` and `captured_at` to uniquely identify each audit trail event.
+        tests:
+          - unique
+          - not_null
+      - name: audit_trail_id
+        description: Identifier of the audit trail event.
+      - name: captured_at
+        description: Timestamp when the action was performed.
+      - name: user_id
+        description: Foreign key referencing the `user` who performed the action.
+      - name: action
+        description: The type of operation performed. Possible values include `CREATE`, `EDIT`, and `DELETE`.
+      - name: interaction_method
+        description: How the action was performed. Possible values include `WEB_UI`, `API`, and `SYSTEM`.
+      - name: primary_resource_type
+        description: >
+          The main type of resource affected by the action (e.g., `ACCOUNT`, `DESTINATION`, `CONNECTION`,
+          `TEAM`, `USER`, `TRANSFORMATION`, `ROLE`, `EXTERNAL_LOG_SERVICE`).
+      - name: primary_resource_id
+        description: Identifier of the primary resource affected by the action.
+      - name: secondary_resource_type
+        description: The type of secondary resource affected by the action, if applicable.
+      - name: secondary_resource_id
+        description: Identifier of the secondary resource affected by the action, if applicable.
+      - name: old_values
+        description: JSON-like string of the resource's attributes before the action.
+      - name: new_values
+        description: JSON-like string of the resource's attributes after the action.
+      - name: _fivetran_synced
+        description: Timestamp when the record was last synced.
+
   - name: stg_fivetran_platform__transformation_runs
     description: Table of all transformation runs executed by Fivetran.
     columns:

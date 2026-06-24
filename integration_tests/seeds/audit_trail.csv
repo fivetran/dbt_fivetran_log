@@ -1,0 +1,5 @@
+id,captured_at,user_id,action,interaction_method,primary_resource_type,primary_resource_id,secondary_resource_type,secondary_resource_id,old_values,new_values,_fivetran_synced
+aud_1aZ8kQ,2024-12-01 10:15:03.120,barista_fibula,CREATE,WEB_UI,CONNECTION,this_connection,DESTINATION,ups_trampoline,"{}","{""connection_name"":""this_connection""}",2024-12-01 12:00:00.000
+aud_2bY7lR,2024-12-02 14:22:47.880,backlog_jack,EDIT,API,CONNECTION,this_connection,,,"{""paused"":true}","{""paused"":false}",2024-12-02 15:00:00.000
+aud_3cX6mS,2024-12-03 09:05:11.450,barista_fibula,EDIT,WEB_UI,USER,backlog_jack,,,"{""role"":""Account Reviewer""}","{""role"":""Account Administrator""}",2024-12-03 10:00:00.000
+aud_4dW5nT,2024-12-04 18:40:59.000,backlog_jack,DELETE,SYSTEM,DESTINATION,ups_trampoline,,,"{""name"":""s_test""}","{}",2024-12-04 19:00:00.000

@@ -1,5 +1,5 @@
 name: 'fivetran_log_integration_tests'
-version: '2.5.2'
+version: '2.6.0'
 
 config-version: 2
 profile: 'integration_tests'
@@ -84,6 +84,12 @@ seeds:
     transformation_runs:
       +column_types:
         _fivetran_synced: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
+    audit_trail:
+      +column_types:
+        _fivetran_synced: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
+        captured_at: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
+        old_values: "{{ 'string' if target.type in ('bigquery', 'spark', 'databricks') else 'varchar' if target.type != 'sqlserver' else 'varchar(256)' }}"
+        new_values: "{{ 'string' if target.type in ('bigquery', 'spark', 'databricks') else 'varchar' if target.type != 'sqlserver' else 'varchar(256)' }}"
     usage_cost:
       +column_types:
         _fivetran_synced: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"

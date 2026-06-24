@@ -5,7 +5,7 @@ This dbt package transforms data from the Fivetran Platform connector into analy
 
 ## Resources
 
-- Number of materialized models¹: 19
+- Number of materialized models¹: 23
 - Connector documentation
   - [Fivetran Platform connector documentation](https://fivetran.com/docs/logs/fivetran-platform)
   - [Fivetran Platform ERD](https://fivetran.com/docs/logs/fivetran-platform#schemainformation)
@@ -69,7 +69,7 @@ Include the following Fivetran Platform package version range in your `packages.
 ```yml
 packages:
   - package: fivetran/fivetran_log
-    version: [">=2.5.0", "<2.6.0"]
+    version: [">=2.6.0", "<2.7.0"]
 ```
 
 > Note that although the source connector is now "Fivetran Platform", the package retains the old name of "fivetran_log".
@@ -109,6 +109,13 @@ If you do not leverage Fivetran RBAC, then you will not have the `user` or `dest
 vars:
     fivetran_platform_using_destination_membership: false # Default is true. This will disable only the destination membership logic
     fivetran_platform_using_user: false # Default is true. This will disable only the user logic
+```
+
+The `audit_trail` source table is only available on the Enterprise plan and above. By default, the `stg_fivetran_platform__audit_trail` model is enabled only if the `audit_trail` table is present in your schema. You may explicitly enable or disable the model by adding the following variable to your root `dbt_project.yml` file:
+
+```yml
+vars:
+    fivetran_platform_using_audit_trail: true # By default, this is enabled only when the audit_trail source table exists
 ```
 
 #### Leveraging `CONNECTION` vs `CONNECTOR`  

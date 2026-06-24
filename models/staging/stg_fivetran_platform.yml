@@ -110,6 +110,26 @@ models:
       - name: transformation_id
         description: Foreign key referencing the transformation if the event is related to a transformation run.
 
+  - name: stg_fivetran_platform__connector_sdk_log
+    description: >
+      Table of logged events emitted by Connector SDK connections. Only populated for accounts
+      that use the Fivetran Connector SDK.
+    columns:
+      - name: connector_sdk_log_id
+        description: Unique ID of the Connector SDK log record.
+      - name: sync_id
+        description: Identifies which sync the event is associated with.
+      - name: connection_id
+        description: Foreign key referencing the connection that emitted the log event.
+      - name: created_at
+        description: Timestamp when the event was logged.
+      - name: level
+        description: Severity level of the log event. Possible values include `INFO`, `WARNING`, `SEVERE`, and `ERROR`.
+      - name: message
+        description: The details of the logged event.
+      - name: message_origin
+        description: The origin of the log message within the Connector SDK connection.
+
   - name: stg_fivetran_platform__account
     description: Table of information about this Fivetran account.
     columns:

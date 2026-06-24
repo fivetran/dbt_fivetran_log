@@ -20,6 +20,7 @@ vars:
     fivetran_platform_destination_identifier: "destination"
     fivetran_platform_destination_membership_identifier: "destination_membership"
     fivetran_platform_log_identifier: "log"
+    fivetran_platform_connector_sdk_log_identifier: "connector_sdk_log"
     fivetran_platform_user_identifier: "user"
     fivetran_platform_transformation_runs_identifier: "transformation_runs"
 
@@ -28,7 +29,8 @@ models:
     relation: "{{ false if target.type in ('sqlserver') else true }}"
     columns: "{{ false if target.type in ('sqlserver','databricks') else true }}"
   fivetran_log:
-    +schema: "fivetran_platform_{{ var('directed_schema','dev') }}"
+    +schema: "{{ 'fivetran_platform_sqlw_tests' if target.name == 'databricks-sql' else 'fivetran_platform' }}"
+   # +schema: "fivetran_platform_{{ var('directed_schema','dev') }}"
 
 seeds:
   +docs:
@@ -73,6 +75,11 @@ seeds:
         time_stamp: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
         message_data: "{{ 'string' if target.type in ('bigquery', 'spark', 'databricks') else 'varchar' if target.type != 'sqlserver' else 'varchar(256)' }}"
         transformation_id:  "{{ 'string' if target.type in ('bigquery', 'spark', 'databricks') else 'varchar' if target.type != 'sqlserver' else 'varchar(256)' }}"
+    connector_sdk_log:
+      +column_types:
+        _fivetran_synced: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
+        event_time: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
+        message: "{{ 'string' if target.type in ('bigquery', 'spark', 'databricks') else 'varchar' if target.type != 'sqlserver' else 'varchar(256)' }}"
     log_json_data:
       +enabled: "{{ target.type in ('bigquery', 'redshift', 'postgres') }}" # @docs-ignore
       # +enabled: false # @docs-include
@@ -83,6 +90,9 @@ seeds:
         transformation_id: "{{ 'string' if target.type == 'bigquery' else 'varchar' }}"
     transformation_runs:
       +column_types:
+        measured_date: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
+        updated_at: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
+        model_runs: "{{ 'int64' if target.type == 'bigquery' else 'bigint' }}"
         _fivetran_synced: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
     audit_trail:
       +column_types:

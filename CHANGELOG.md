@@ -1,5 +1,6 @@
 # dbt_fivetran_log v2.6.0
-[PR #193](https://github.com/fivetran/dbt_fivetran_log/pull/193) includes the following update:
+
+[PR #197](https://github.com/fivetran/dbt_fivetran_log/pull/197) includes the following update:
 
 ## Schema/Data Change
 **1 total change • 0 possible breaking changes**
@@ -7,6 +8,26 @@
 | Data Model(s) | Change type | Old | New | Notes |
 | ------------- | ----------- | --- | --- | ----- |
 | [stg_fivetran_platform__audit_trail](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.stg_fivetran_platform__audit_trail) | New staging model |  |  | Records user actions performed within your Fivetran account (what was changed, by whom, and how). Only available for customers on the Enterprise plan and above. |
+
+[PR #193](https://github.com/fivetran/dbt_fivetran_log/pull/193) includes the following updates:
+
+| [fivetran_platform__transformation_run_log](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__transformation_run_log) | New model | N/A | See docs | Adds a new end model that surfaces transformation run events from the Fivetran log, including run timestamps, duration in seconds and HH:MM:SS format, per-step model success and failure counts, and overall run status. Requires the `transformation_runs` source table and is enabled via the `fivetran_platform_using_transformations` variable. |
+
+## Under the Hood
+- Creates `fivetran_log_connection_ids_unnested` macro for warehouse-specific JSON array unnesting logic in `fivetran_platform__transformation_run_log` model.
+
+[PR #196](https://github.com/fivetran/dbt_fivetran_log/pull/196) includes the following updates:
+
+## Schema/Data Change
+**2 total changes • 0 possible breaking changes**
+
+| Data Model(s) | Change type | Old | New | Notes |
+| ------------- | ----------- | --- | --- | ----- |
+| fivetran_platform__errors_and_warnings | New model | |  | Unions error and warning events from the `log` (standard connections) and `connector_sdk_log` (Connector SDK connections) tables, enriched with `connection_name`. |
+| stg_fivetran_platform__connector_sdk_log | New model |  |  | Staging model for the new `connector_sdk_log` source table. |
+
+## Feature Update
+- Adds the `fivetran_platform_using_connector_sdk_log` variable (default `true`) to enable or disable the `connector_sdk_log` source and its downstream logic. Set this to `false` if your destination does not contain the `connector_sdk_log` table.
 
 # dbt_fivetran_log v2.5.2
 [PR #183](https://github.com/fivetran/dbt_fivetran_log/pull/183) includes the following updates:

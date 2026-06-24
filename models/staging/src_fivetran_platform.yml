@@ -180,6 +180,32 @@ sources:
           - name: _fivetran_synced
             description: Timestamp when the record was last synced.
 
+      - name: connector_sdk_log
+        identifier: "{{ var('fivetran_platform_connector_sdk_log_identifier', 'connector_sdk_log')}}"
+        description: >
+          Table of logged events emitted by Connector SDK connections. Only populated for accounts
+          that use the Fivetran Connector SDK.
+        config:
+          enabled: "{{ var('fivetran_platform_using_connector_sdk_log', true) }}"
+          freshness: null
+        columns:
+          - name: id
+            description: Unique ID of the Connector SDK log record.
+          - name: event_time
+            description: Timestamp when the event was logged.
+          - name: connection_id
+            description: Foreign key referencing the connection that emitted the log event.
+          - name: level
+            description: Severity level of the log event. Possible values include `INFO`, `WARNING`, `SEVERE`, and `ERROR`.
+          - name: message
+            description: The details of the logged event.
+          - name: message_origin
+            description: The origin of the log message within the Connector SDK connection.
+          - name: sync_id
+            description: Identifies which sync the event is associated with.
+          - name: _fivetran_synced
+            description: Timestamp when the record was last synced.
+
       - name: account
         identifier: "{{ var('fivetran_platform_account_identifier', 'account')}}"
         description: Table of information about this Fivetran account.

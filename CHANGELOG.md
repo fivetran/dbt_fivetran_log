@@ -2,10 +2,11 @@
 [PR #193](https://github.com/fivetran/dbt_fivetran_log/pull/193) includes the following update:
 
 ## Schema/Data Change
-**1 total change • 0 possible breaking changes**
+**2 total changes • 0 possible breaking changes**
 
 | Data Model(s) | Change type | Old | New | Notes |
 | ------------- | ----------- | --- | --- | ----- |
+| [fivetran_platform__audit_trail_enriched](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_trail_enriched) | New final model |  |  | Enriches each audit trail event with the names of the primary and secondary resources involved (resolved for `CONNECTION`, `DESTINATION`, `ACCOUNT`, and `USER` resources) and the details of the user who performed the action. Only available for customers on the Enterprise plan and above. |
 | [stg_fivetran_platform__audit_trail](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.stg_fivetran_platform__audit_trail) | New staging model |  |  | Records user actions performed within your Fivetran account (what was changed, by whom, and how). Only available for customers on the Enterprise plan and above. |
 
 # dbt_fivetran_log v2.5.2

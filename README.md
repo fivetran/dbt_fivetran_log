@@ -40,6 +40,7 @@ By default, this package materializes the following final tables:
 | [fivetran_platform__schema_changelog](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__schema_changelog) | Documents all schema changes made to your connections including table alterations, table creations, schema creations, and configuration changes with detailed metadata about each event to track data structure evolution and troubleshoot schema-related issues. |
 | [fivetran_platform__audit_table](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_table) | Replaces the deprecated [`_fivetran_audit` table](https://fivetran.com/docs/getting-started/system-columns-and-tables#audittables) and tracks each table receiving data during connection syncs with comprehensive timestamps for connection and table-level sync progress plus detailed counts of records inserted, replaced, updated, and deleted to monitor data processing and sync performance. |
 | [fivetran_platform__audit_user_activity](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_user_activity) | Records all user-triggered actions within your Fivetran account to provide a comprehensive audit trail that helps you trace user activities to specific [log events](https://fivetran.com/docs/logs#logeventlist) such as schema changes, sync frequency updates, manual syncs, connection failures, and other operational events for compliance and troubleshooting purposes. |
+| [fivetran_platform__audit_trail_enriched](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_trail_enriched) | Enriches each account-level audit trail event with the human-readable names of the primary and secondary resources involved (resolved for `CONNECTION`, `DESTINATION`, `ACCOUNT`, and `USER` resources) and the details of the user who performed the action, so you can audit who changed what without manually resolving resource IDs. Only available for customers on the Enterprise plan and above. |
 
 ¹ Each Quickstart transformation job run materializes these models if all components of this data model are enabled. This count includes all staging, intermediate, and final models materialized as `view`, `table`, or `incremental`.
 
@@ -111,11 +112,11 @@ vars:
     fivetran_platform_using_user: false # Default is true. This will disable only the user logic
 ```
 
-The `audit_trail` source table is only available on the Enterprise plan and above. By default, the `stg_fivetran_platform__audit_trail` model is enabled only if the `audit_trail` table is present in your schema. You may explicitly enable or disable the model by adding the following variable to your root `dbt_project.yml` file:
+The `audit_trail` source table is only available on the Enterprise plan and above. It powers the `stg_fivetran_platform__audit_trail` and `fivetran_platform__audit_trail_enriched` models. By default, the `stg_fivetran_platform__audit_trail` model is enabled only if the `audit_trail` table is present in your schema, and Quickstart automatically skips both models when the source table is absent. For core dbt users, the `fivetran_platform__audit_trail_enriched` model is enabled by default. You may explicitly enable or disable both models by adding the following variable to your root `dbt_project.yml` file:
 
 ```yml
 vars:
-    fivetran_platform_using_audit_trail: true # By default, this is enabled only when the audit_trail source table exists
+    fivetran_platform_using_audit_trail: true # Disable by setting to false if you do not have the audit_trail source table
 ```
 
 #### Leveraging `CONNECTION` vs `CONNECTOR`  

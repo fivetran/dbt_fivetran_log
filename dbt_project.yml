@@ -21,6 +21,7 @@ vars:
     destination: "{{ source('fivetran_platform', 'destination') }}"
     destination_membership: "{{ source('fivetran_platform', 'destination_membership') }}"
     log: "{{ source('fivetran_platform', 'log') }}"
+    connector_sdk_log: "{{ source('fivetran_platform', 'connector_sdk_log') }}"
     user: "{{ source('fivetran_platform', 'user') }}"
     usage_cost: "{{ source('fivetran_platform', 'usage_cost') }}"
     transformation_runs: "{{ source('fivetran_platform','transformation_runs') }}"

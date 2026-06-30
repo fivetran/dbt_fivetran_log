@@ -50,3 +50,6 @@ Not all customers have the `connector_sdk_log` source table, as it is only popul
 vars:
   fivetran_platform_using_connector_sdk_log: false ## Default is true. Set to false if the connector_sdk_log source table is not present in your destination.
 ```
+
+## Resolving connection names in `fivetran_platform__audit_trail_enriched`
+The `audit_trail` source identifies connections by `connection_id`, but `stg_fivetran_platform__connection` is unique on `(connection_name, destination_id)`, so one `connection_id` can span multiple rows (e.g. after a rename or move). We deduplicate the connection lookup to the active, most recently set up record per `connection_id` to avoid fanning out audit events. A connection therefore resolves to its current name; no history is lost, as renames are still captured in `old_values`/`new_values`.

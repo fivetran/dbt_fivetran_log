@@ -8,10 +8,21 @@ with audit_trail as (
 
 connection as (
 
+    -- dedupe to one row per connection_id (not unique in staging) so the join doesn't fan out audit events
     select
         connection_id,
         connection_name
-    from {{ ref('stg_fivetran_platform__connection') }}
+    from (
+        select
+            connection_id,
+            connection_name,
+            row_number() over (
+                partition by connection_id
+                order by is_deleted asc, set_up_at desc
+            ) as nth_connection_record
+        from {{ ref('stg_fivetran_platform__connection') }}
+    ) deduped
+    where nth_connection_record = 1
 ),
 
 destination as (

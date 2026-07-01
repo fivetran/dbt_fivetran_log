@@ -283,6 +283,63 @@ models:
       - name: log_id
         description: Unique ID of the log record.
 
+  - name: fivetran_platform__audit_trail_enriched
+    description: >
+      Table of user actions performed within your Fivetran account, enriched with the human-readable
+      names of the resources involved and the user who performed each action. Each event references a
+      primary resource (the container, e.g. an `ACCOUNT`) and an optional secondary resource (the member,
+      e.g. a `USER` added to a `TEAM`). This model resolves both resource references to their names when
+      the resource type is a `CONNECTION`, `DESTINATION`, `USER`, or `ACCOUNT`. This table is only
+      available on the Enterprise plan and above.
+    columns:
+      - name: unique_audit_trail_key
+        description: Surrogate key hashed on `audit_trail_id` and `captured_at` to uniquely identify each audit trail event.
+        tests:
+          - unique
+          - not_null
+      - name: audit_trail_id
+        description: Identifier of the audit trail event.
+      - name: captured_at
+        description: Timestamp when the action was performed.
+      - name: user_id
+        description: Foreign key referencing the `user` who performed the action.
+      - name: actor_email
+        description: Account email of the user who performed the action. Only available when the `user` source table is enabled.
+      - name: actor_first_name
+        description: Given name of the user who performed the action. Only available when the `user` source table is enabled.
+      - name: actor_last_name
+        description: Surname of the user who performed the action. Only available when the `user` source table is enabled.
+      - name: action
+        description: The type of operation performed. Possible values include `CREATE`, `EDIT`, and `DELETE`.
+      - name: interaction_method
+        description: How the action was performed. Possible values include `WEB_UI`, `API`, and `SYSTEM`.
+      - name: primary_resource_type
+        description: >
+          The main type of resource (the container) affected by the action (e.g., `ACCOUNT`, `DESTINATION`, `CONNECTION`,
+          `TEAM`, `USER`, `TRANSFORMATION`, `ROLE`, `EXTERNAL_LOG_SERVICE`).
+      - name: primary_resource_id
+        description: Identifier of the primary resource affected by the action.
+      - name: primary_resource_name
+        description: >
+          Name of the primary resource, resolved from `primary_resource_id` when `primary_resource_type` is a
+          `CONNECTION`, `DESTINATION`, `ACCOUNT`, or `USER` (the user's email). Null for resource types without a
+          name lookup or when the resource no longer exists.
+      - name: secondary_resource_type
+        description: The type of secondary resource (the member) affected by the action, if applicable.
+      - name: secondary_resource_id
+        description: Identifier of the secondary resource affected by the action, if applicable.
+      - name: secondary_resource_name
+        description: >
+          Name of the secondary resource, resolved from `secondary_resource_id` when `secondary_resource_type` is a
+          `CONNECTION`, `DESTINATION`, `ACCOUNT`, or `USER` (the user's email). Null for resource types without a
+          name lookup or when the resource no longer exists.
+      - name: old_values
+        description: JSON-like string of the resource's attributes before the action.
+      - name: new_values
+        description: JSON-like string of the resource's attributes after the action.
+      - name: _fivetran_synced
+        description: Timestamp when the record was last synced.
+
   - name: fivetran_platform__errors_and_warnings
     description: >
       Table of connector error and warning events across both standard Fivetran connections (from the `log` table) and

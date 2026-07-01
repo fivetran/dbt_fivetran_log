@@ -10,6 +10,8 @@ table_variables:
     - user
   fivetran_platform_using_connection:
     - connection
+  fivetran_platform_using_audit_trail:
+    - audit_trail
   fivetran_platform_using_transformations:
     - transformation_runs
   fivetran_platform_using_connector_sdk_log:
@@ -28,7 +30,8 @@ public_models: [
   "fivetran_platform__connection_status",
   "fivetran_platform__usage_history",
   "fivetran_platform__audit_table",
+  "fivetran_platform__audit_trail_enriched",
   "fivetran_platform__mar_table_history",
-  "fivetran_platform__transformation_run_log"
+  "fivetran_platform__transformation_run_log",
   "fivetran_platform__errors_and_warnings"
 ]

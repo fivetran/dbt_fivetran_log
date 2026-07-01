@@ -94,6 +94,12 @@ seeds:
         updated_at: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
         model_runs: "{{ 'int64' if target.type == 'bigquery' else 'bigint' }}"
         _fivetran_synced: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
+    audit_trail:
+      +column_types:
+        _fivetran_synced: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
+        captured_at: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"
+        old_values: "{{ 'string' if target.type in ('bigquery', 'spark', 'databricks') else 'varchar' if target.type != 'sqlserver' else 'varchar(256)' }}"
+        new_values: "{{ 'string' if target.type in ('bigquery', 'spark', 'databricks') else 'varchar' if target.type != 'sqlserver' else 'varchar(256)' }}"
     usage_cost:
       +column_types:
         _fivetran_synced: "{{ 'datetime2' if target.type == 'sqlserver' else 'timestamp' }}"

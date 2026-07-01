@@ -25,3 +25,4 @@ vars:
     user: "{{ source('fivetran_platform', 'user') }}"
     usage_cost: "{{ source('fivetran_platform', 'usage_cost') }}"
     transformation_runs: "{{ source('fivetran_platform','transformation_runs') }}"
+    audit_trail: "{{ source('fivetran_platform','audit_trail') }}"

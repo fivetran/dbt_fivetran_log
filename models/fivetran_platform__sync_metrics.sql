@@ -58,7 +58,7 @@ connection as (
             *,
             row_number() over (
                 partition by connection_id
-                order by case when is_deleted then 1 else 0 end asc, set_up_at desc
+                order by is_deleted asc, set_up_at desc
             ) as nth_connection_record
         from {{ ref('stg_fivetran_platform__connection') }}
     ) deduped

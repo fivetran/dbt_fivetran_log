@@ -31,6 +31,7 @@ connections as (
 transformation_logs as (
 
     select
+        log_id,
         event_subtype,
         message_data as full_run_log,
         {{ fivetran_log.fivetran_log_json_parse(string="message_data", string_path=["id"]) }} as transformation_id,
@@ -139,6 +140,7 @@ job_connections as (
 with_duration as (
 
     select
+        transformation_logs.log_id,
         transformation_logs.started_at,
         transformation_logs.ended_at,
         transformation_logs.transformation_id,
@@ -166,6 +168,7 @@ with_duration as (
 final as (
 
     select
+        log_id,
         started_at,
         ended_at,
         duration_seconds,

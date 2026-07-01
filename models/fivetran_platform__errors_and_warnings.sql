@@ -42,15 +42,28 @@ unioned as (
 
 connection as (
 
+    -- dedupe to one row per connection_id to avoid fanning out events on the join below.
     select
         connection_id,
         connection_name
-    from {{ ref('stg_fivetran_platform__connection') }}
+    from (
+        select
+            connection_id,
+            connection_name,
+            row_number() over (partition by connection_id order by connection_name) as connection_row
+        from {{ ref('stg_fivetran_platform__connection') }}
+    ) deduped
+    where connection_row = 1
 ),
 
 final as (
 
     select
+        {{ dbt_utils.generate_surrogate_key([
+            'unioned.connection_id',
+            'unioned.sync_id',
+            'unioned.event_time'
+        ]) }} as unique_error_warning_key,
         unioned.connection_id,
         connection.connection_name,
         unioned.event_time,

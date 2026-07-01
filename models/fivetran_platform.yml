@@ -363,3 +363,51 @@ models:
           and `connector_sdk` (from the `connector_sdk_log` table).
       - name: sync_id
         description: Identifies which sync the event is associated with.
+
+  - name: fivetran_platform__sync_metrics
+    description: >
+      Table of completed syncs, with one record per `sync_stats` log event. Combines each sync's
+      extract, process, and load timing and volume statistics with its total duration and the total
+      number of records modified, enriched with connection and destination context.
+    columns:
+      - name: unique_sync_key
+        description: Primary key of the model, hashed on `connection_id`, `sync_id`, and `sync_completed_at`.
+        tests:
+          - unique
+          - not_null
+      - name: log_id
+        description: ID of the `sync_stats` log record.
+      - name: sync_id
+        description: System-generated ID of the sync.
+      - name: connection_id
+        description: System-generated unique ID of the connection that ran the sync.
+      - name: connection_name
+        description: Name of the connection that ran the sync.
+      - name: connector_type
+        description: The kind of connector (e.g. Google Sheets, Webhooks).
+      - name: destination_id
+        description: Foreign key referencing the destination receiving data from the connection.
+      - name: destination_name
+        description: Name of the destination receiving data from the connection.
+      - name: sync_completed_at
+        description: Timestamp when the sync completed and the `sync_stats` event was logged.
+      - name: date_day
+        description: The `sync_completed_at` timestamp truncated to the day.
+      - name: day_of_week
+        description: Weekday name of `date_day` (e.g. Monday, Tuesday).
+      - name: extract_time_s
+        description: Time spent extracting data from the source during the sync, in seconds.
+      - name: extract_volume_mb
+        description: Volume of data extracted from the source during the sync, in megabytes.
+      - name: process_time_s
+        description: Time spent processing data during the sync, in seconds.
+      - name: process_volume_mb
+        description: Volume of data processed during the sync, in megabytes.
+      - name: load_time_s
+        description: Time spent loading data into the destination during the sync, in seconds.
+      - name: load_volume_mb
+        description: Volume of data loaded into the destination during the sync, in megabytes.
+      - name: total_time_s
+        description: Total duration of the sync, in seconds.
+      - name: row_count
+        description: Total number of records modified during the sync, summed across all `records_modified` events sharing the same `sync_id`.

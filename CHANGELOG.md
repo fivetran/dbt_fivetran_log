@@ -1,5 +1,14 @@
 # dbt_fivetran_log v2.6.0
 
+[PR #198](https://github.com/fivetran/dbt_fivetran_log/pull/198) includes the following update:
+
+## Schema/Data Change
+**1 total change • 0 possible breaking changes**
+
+| Data Model(s) | Change type | Old | New | Notes |
+| ------------- | ----------- | --- | --- | ----- |
+| [fivetran_platform__sync_metrics](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__sync_metrics) | New model |  |  | Returns one record per completed sync (`sync_stats` log event), combining each sync's extract, process, and load timing and volume statistics with its total duration (`total_time_s`) and total records modified (`row_count`), enriched with connection and destination details. |
+
 [PR #197](https://github.com/fivetran/dbt_fivetran_log/pull/197) includes the following updates:
 
 ## Schema/Data Change

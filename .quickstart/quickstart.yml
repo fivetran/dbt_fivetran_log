@@ -33,5 +33,6 @@ public_models: [
   "fivetran_platform__audit_trail_enriched",
   "fivetran_platform__mar_table_history",
   "fivetran_platform__transformation_run_log",
-  "fivetran_platform__errors_and_warnings"
+  "fivetran_platform__errors_and_warnings",
+  "fivetran_platform__sync_metrics"
 ]

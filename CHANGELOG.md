@@ -1,48 +1,24 @@
 # dbt_fivetran_log v2.6.0
 
-[PR #198](https://github.com/fivetran/dbt_fivetran_log/pull/198) includes the following update:
+[PR #194](https://github.com/fivetran/dbt_fivetran_log/pull/194) includes the following updates:
 
 ## Schema/Data Change
-**1 total change • 0 possible breaking changes**
+**6 total changes • 0 possible breaking changes**
 
 | Data Model(s) | Change type | Old | New | Notes |
 | ------------- | ----------- | --- | --- | ----- |
 | [fivetran_platform__sync_metrics](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__sync_metrics) | New model |  |  | Returns one record per completed sync (`sync_stats` log event), combining each sync's extract, process, and load timing and volume statistics with its total duration (`total_time_s`) and total records modified (`row_count`), enriched with connection and destination details. |
-
-[PR #197](https://github.com/fivetran/dbt_fivetran_log/pull/197) includes the following updates:
-
-## Schema/Data Change
-**2 total changes • 0 possible breaking changes**
-
-| Data Model(s) | Change type | Old | New | Notes |
-| ------------- | ----------- | --- | --- | ----- |
-| [fivetran_platform__audit_trail_enriched](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_trail_enriched) | New final model |  |  | Enriches each audit trail event with the names of the primary and secondary resources involved (resolved for `CONNECTION`, `DESTINATION`, `ACCOUNT`, and `USER` resources) and the details of the user who performed the action. Only available for customers on the Enterprise plan and above. |
+| [fivetran_platform__audit_trail_enriched](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_trail_enriched) | New model |  |  | Enriches each audit trail event with the names of the primary and secondary resources involved (resolved for `CONNECTION`, `DESTINATION`, `ACCOUNT`, and `USER` resources) and the details of the user who performed the action. Only available for customers on the Enterprise plan and above. |
+| [fivetran_platform__transformation_run_log](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__transformation_run_log) | New model |  |  | Surfaces transformation run events from the Fivetran log, including run timestamps, duration in seconds and HH:MM:SS format, per-step model success and failure counts, and overall run status. Requires the `transformation_runs` source table and is enabled via the `fivetran_platform_using_transformations` variable. |
+| [fivetran_platform__errors_and_warnings](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__errors_and_warnings) | New model |  |  | Unions error and warning events from the `log` (standard connections) and `connector_sdk_log` (Connector SDK connections) tables, enriched with `connection_name`. |
 | [stg_fivetran_platform__audit_trail](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.stg_fivetran_platform__audit_trail) | New staging model |  |  | Records user actions performed within your Fivetran account (what was changed, by whom, and how). Only available for customers on the Enterprise plan and above. |
-
-[PR #193](https://github.com/fivetran/dbt_fivetran_log/pull/193) includes the following updates:
-
-## Schema/Data Change
-**1 total change • 0 possible breaking changes**
-
-| Data Model(s) | Change type | Old | New | Notes |
-| ------------- | ----------- | --- | --- | ----- |
-| [fivetran_platform__transformation_run_log](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__transformation_run_log) | New model | N/A | See docs | Adds a new end model that surfaces transformation run events from the Fivetran log, including run timestamps, duration in seconds and HH:MM:SS format, per-step model success and failure counts, and overall run status. Requires the `transformation_runs` source table and is enabled via the `fivetran_platform_using_transformations` variable. |
-
-## Under the Hood
-- Creates `fivetran_log_connection_ids_unnested` macro for warehouse-specific JSON array unnesting logic in `fivetran_platform__transformation_run_log` model.
-
-[PR #196](https://github.com/fivetran/dbt_fivetran_log/pull/196) includes the following updates:
-
-## Schema/Data Change
-**2 total changes • 0 possible breaking changes**
-
-| Data Model(s) | Change type | Old | New | Notes |
-| ------------- | ----------- | --- | --- | ----- |
-| fivetran_platform__errors_and_warnings | New model | |  | Unions error and warning events from the `log` (standard connections) and `connector_sdk_log` (Connector SDK connections) tables, enriched with `connection_name`. |
-| stg_fivetran_platform__connector_sdk_log | New model |  |  | Staging model for the new `connector_sdk_log` source table. |
+| [stg_fivetran_platform__connector_sdk_log](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.stg_fivetran_platform__connector_sdk_log) | New staging model |  |  | Staging model for the new `connector_sdk_log` source table. |
 
 ## Feature Update
 - Adds the `fivetran_platform_using_connector_sdk_log` variable (default `true`) to enable or disable the `connector_sdk_log` source and its downstream logic. Set this to `false` if your destination does not contain the `connector_sdk_log` table.
+
+## Under the Hood
+- Creates `fivetran_log_connection_ids_unnested` macro for warehouse-specific JSON array unnesting logic in `fivetran_platform__transformation_run_log` model.
 
 # dbt_fivetran_log v2.5.2
 [PR #183](https://github.com/fivetran/dbt_fivetran_log/pull/183) includes the following updates:

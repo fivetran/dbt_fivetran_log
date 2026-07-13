@@ -5,7 +5,7 @@ This dbt package transforms data from the Fivetran Platform connector into analy
 
 ## Resources
 
-- Number of materialized models¹: 23
+- Number of materialized models¹: 26
 - Connector documentation
   - [Fivetran Platform connector documentation](https://fivetran.com/docs/logs/fivetran-platform)
   - [Fivetran Platform ERD](https://fivetran.com/docs/logs/fivetran-platform#schemainformation)

@@ -23,6 +23,7 @@ vars:
     fivetran_platform_connector_sdk_log_identifier: "connector_sdk_log"
     fivetran_platform_user_identifier: "user"
     fivetran_platform_transformation_runs_identifier: "transformation_runs"
+    fivetran_platform_audit_trail_identifier: "audit_trail"
 
 models:
   +persist_docs:

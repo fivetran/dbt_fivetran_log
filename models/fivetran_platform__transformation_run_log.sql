@@ -23,8 +23,22 @@ destinations as (
 
 connections as (
 
-    select *
-    from {{ ref('stg_fivetran_platform__connection') }}
+    select
+        connection_id,
+        connection_name,
+        destination_id
+    from (
+        select
+            connection_id,
+            connection_name,
+            destination_id,
+            row_number() over (
+                partition by connection_id
+                order by is_deleted asc, set_up_at desc
+            ) as nth_connection_record
+        from {{ ref('stg_fivetran_platform__connection') }}
+    ) deduped
+    where nth_connection_record = 1
 
 ),
 

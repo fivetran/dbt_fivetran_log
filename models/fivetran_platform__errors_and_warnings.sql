@@ -1,6 +1,7 @@
 with log_events as (
 
     select
+        log_id as event_id,
         connection_id,
         sync_id,
         created_at as event_time,
@@ -8,8 +9,7 @@ with log_events as (
         message_data as message,
         'standard_connector' as connector_type
     from {{ ref('stg_fivetran_platform__log') }}
-    -- limit to connector error and warning severities. excludes INFO, and excludes events not attributable to a
-    -- connection (connection_id is null), such as transformation job dbt run logs, which are not connector events.
+    -- Excludes events not attributable to a connection (connection_id is null), such as transformation job dbt run logs, which are not connector events.
     where lower(event_type) in ('warning', 'error', 'severe')
         and connection_id is not null
 ),
@@ -18,6 +18,7 @@ with log_events as (
 connector_sdk_events as (
 
     select
+        connector_sdk_log_id as event_id,
         connection_id,
         sync_id,
         created_at as event_time,
@@ -60,6 +61,7 @@ final as (
 
     select
         {{ dbt_utils.generate_surrogate_key([
+            'unioned.event_id',
             'unioned.connection_id',
             'unioned.sync_id',
             'unioned.event_time'

@@ -16,6 +16,7 @@
 
 ## Feature Update
 - Adds the `fivetran_platform_using_connector_sdk_log` variable (default `true`) to enable or disable the `connector_sdk_log` source and its downstream logic. Set this to `false` if your destination does not contain the `connector_sdk_log` table.
+- Adds the optional `fivetran_platform_lookback_window_months` variable to limit the number of months of log records included in log-based models. When set to an integer, only log records within that window are included downstream. Unset by default — all log history is included unless configured. See the [README](https://github.com/fivetran/dbt_fivetran_log/blob/main/README.md#limit-the-lookback-window) for details. Affects `fivetran_platform__connection_status`, `fivetran_platform__schema_changelog`, `fivetran_platform__audit_user_activity`, `fivetran_platform__connection_daily_events`, and `fivetran_platform__audit_table` (**note:** if you set or change this variable, run `dbt run --full-refresh` to ensure the incremental model reflects the updated window).
 
 ## Under the Hood
 - Creates `fivetran_log_connection_ids_unnested` macro for warehouse-specific JSON array unnesting logic in `fivetran_platform__transformation_run_log` model.

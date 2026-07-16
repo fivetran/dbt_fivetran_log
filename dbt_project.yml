@@ -29,3 +29,7 @@ vars:
     usage_cost: "{{ source('fivetran_platform', 'usage_cost') }}"
     transformation_runs: "{{ source('fivetran_platform','transformation_runs') }}"
     audit_trail: "{{ source('fivetran_platform','audit_trail') }}"
+    fivetran_platform_event_high_variance_percent: 0.2
+    fivetran_platform_event_low_variance_percent: 0.2
+    fivetran_platform_records_modified_high_variance_percent: 0.2
+    fivetran_platform_records_modified_low_variance_percent: 0.2

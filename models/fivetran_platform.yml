@@ -421,3 +421,101 @@ models:
         description: Total duration of the sync, in seconds.
       - name: row_count
         description: Total number of records modified during the sync, summed across all `records_modified` events sharing the same `sync_id`.
+
+  - name: fivetran_platform__connection_event_variance
+    description: >
+      Table of daily event volume per connection and event subtype, with one record per
+      connection, event subtype, and day. Each record is compared against the average event
+      volume for that connection, event subtype, and weekday, and flagged when the day's volume
+      falls outside the configurable variance band. The high and low sides of the band are set by
+      the `fivetran_platform_event_high_variance_percent` and `fivetran_platform_event_low_variance_percent`
+      variables (both default to `0.2`, or ±20%).
+    columns:
+      - name: connection_event_day_key
+        description: Primary key of the model, hashed on `connection_id`, `event_subtype`, and `date_day`.
+        tests:
+          - unique
+          - not_null
+      - name: date_day
+        description: The day (from the log record's timestamp truncated to the day) the events were logged.
+      - name: day_of_week
+        description: Weekday name of `date_day` (e.g. Monday, Tuesday). The seasonality unit the averages are grouped by.
+      - name: connection_id
+        description: System-generated unique ID of the connection that logged the events.
+      - name: event_subtype
+        description: The subtype of the logged event (e.g. sync_start, records_modified, api_call).
+      - name: total_events
+        description: Number of log records for this connection, event subtype, and day.
+      - name: average_event_count
+        description: Rounded average of `total_events` across all days sharing this connection, event subtype, and weekday.
+      - name: high_event_variance_value
+        description: >
+          Upper bound of the variance band, calculated as `average_event_count` plus
+          `average_event_count` times `fivetran_platform_event_high_variance_percent`. A `total_events`
+          value above this is flagged as `event_variance`.
+      - name: low_event_variance_value
+        description: >
+          Lower bound of the variance band, calculated as `average_event_count` minus
+          `average_event_count` times `fivetran_platform_event_low_variance_percent`. A `total_events`
+          value below this is flagged as `event_variance`.
+      - name: high_event_variance_increment
+        description: The size of the upper variance band, calculated as `average_event_count` times `fivetran_platform_event_high_variance_percent`.
+      - name: low_event_variance_increment
+        description: The size of the lower variance band, calculated as `average_event_count` times `fivetran_platform_event_low_variance_percent`.
+      - name: standard_deviation
+        description: Rounded population standard deviation of `total_events` across all days sharing this connection, event subtype, and weekday.
+      - name: event_variance_flag
+        description: >
+          Set to `event_variance` when `total_events` is above `high_event_variance_value` or below
+          `low_event_variance_value`, otherwise `standard`.
+
+  - name: fivetran_platform__records_modified_variance
+    description: >
+      Table of individual `records_modified` log events, with one record per record modification
+      event (excluding the internal `fivetran_audit` table). Each event's row count is compared
+      against the average number of rows modified for that connection, table, operation type, and
+      weekday, and flagged when it falls outside the configurable variance band. The high and low
+      sides of the band are set by the `fivetran_platform_records_modified_high_variance_percent` and
+      `fivetran_platform_records_modified_low_variance_percent` variables (both default to `0.2`, or ±20%).
+    columns:
+      - name: records_modified_variance_key
+        description: Primary key of the model, hashed on `connection_id`, `log_id`, `table_name`, and `operation_type`.
+        tests:
+          - unique
+          - not_null
+      - name: date_day
+        description: The `created_at` timestamp truncated to the day.
+      - name: day_of_week
+        description: Weekday name of `created_at` (e.g. Monday, Tuesday). The seasonality unit the averages are grouped by.
+      - name: created_at
+        description: Timestamp when the record modification event was logged.
+      - name: connection_id
+        description: System-generated unique ID of the connection that modified the records.
+      - name: table_name
+        description: Name of the table whose records were modified.
+      - name: operation_type
+        description: Type of record modification (e.g. REPLACED_OR_INSERTED, UPDATED, DELETED).
+      - name: rows_modified
+        description: Number of rows modified by this event, parsed from the log record's `count` value.
+      - name: average_rows_modified
+        description: Rounded average of `rows_modified` across all events sharing this connection, table, operation type, and weekday.
+      - name: high_variance_value
+        description: >
+          Upper bound of the variance band, calculated as `average_rows_modified` plus
+          `average_rows_modified` times `fivetran_platform_records_modified_high_variance_percent`. A
+          `rows_modified` value above this is flagged as `variance`.
+      - name: low_variance_value
+        description: >
+          Lower bound of the variance band, calculated as `average_rows_modified` minus
+          `average_rows_modified` times `fivetran_platform_records_modified_low_variance_percent`. A
+          `rows_modified` value below this is flagged as `variance`.
+      - name: high_variance_increment
+        description: The size of the upper variance band, calculated as `average_rows_modified` times `fivetran_platform_records_modified_high_variance_percent`.
+      - name: low_variance_increment
+        description: The size of the lower variance band, calculated as `average_rows_modified` times `fivetran_platform_records_modified_low_variance_percent`.
+      - name: standard_deviation
+        description: Rounded population standard deviation of `rows_modified` across all events sharing this connection, table, operation type, and weekday (0 when only one event exists).
+      - name: variance_flag
+        description: >
+          Set to `variance` when `rows_modified` is above `high_variance_value` or below
+          `low_variance_value`, otherwise `standard`.

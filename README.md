@@ -44,6 +44,8 @@ By default, this package materializes the following final tables:
 | [fivetran_platform__transformation_run_log](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__transformation_run_log) | Surfaces each transformation run event from the Fivetran log, including start and end timestamps, formatted duration, per-step model success and failure counts, and overall transformation status to monitor and troubleshoot your transformation pipeline performance. Requires the `transformation_runs` source table. |
 | [fivetran_platform__errors_and_warnings](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__errors_and_warnings) | Consolidates error and warning events from both standard connections and Connector SDK connections into a single feed, enriched with connection details, so you can monitor and triage the severity of issues across your data pipelines. |
 | [fivetran_platform__sync_metrics](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__sync_metrics) | Captures one record per completed sync, combining each sync's extract, process, load timing and volume statistics with its total duration and total records modified, enriched with connection and destination details to analyze sync performance and throughput over time. |
+| [fivetran_platform__connection_event_variance](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__connection_event_variance) | Captures daily event volume per connection and event subtype, comparing each day against the average volume for that connection, event subtype, and weekday, and flagging days that fall outside a configurable variance band to help you spot unusual spikes or drops in connection activity. |
+| [fivetran_platform__records_modified_variance](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__records_modified_variance) | Captures each record modification event per connection and table, comparing the number of rows modified against the average for that connection, table, operation type, and weekday, and flagging events that fall outside a configurable variance band to help you spot unusual spikes or drops in data volume. |
 
 ¹ Each Quickstart transformation job run materializes these models if all components of this data model are enabled. This count includes all staging, intermediate, and final models materialized as `view`, `table`, or `incremental`.
 
@@ -161,6 +163,20 @@ vars:
     fivetran_platform_lookback_window_months: 6 # only include the last 6 months of log history
 ```
 This affects the following models: `fivetran_platform__connection_status`, `fivetran_platform__schema_changelog`, `fivetran_platform__audit_user_activity`, `fivetran_platform__connection_daily_events`, and `fivetran_platform__audit_table`. If you set or change this variable, run `dbt run --full-refresh` to ensure the `fivetran_platform__audit_table` incremental model reflects the updated window.
+
+#### Set the Event Variance Band
+The `fivetran_platform__connection_event_variance` model flags any day whose event volume falls outside a band around the average volume for that connection, event subtype, and weekday. By default the band is ±20%. To set your own thresholds, override either or both of the following variables (as decimals, where `0.2` = 20%):
+```yml
+vars:
+    fivetran_platform_event_high_variance_percent: 0.3 # flag days more than 30% above the weekday average
+    fivetran_platform_event_low_variance_percent: 0.15 # flag days more than 15% below the weekday average
+```
+The `fivetran_platform__records_modified_variance` model works the same way for record modification volume, comparing each event's rows modified against the average for that connection, table, operation type, and weekday. Set its band with these variables (also ±20% by default):
+```yml
+vars:
+    fivetran_platform_records_modified_high_variance_percent: 0.3 # flag events more than 30% above the average rows modified
+    fivetran_platform_records_modified_low_variance_percent: 0.15 # flag events more than 15% below the average rows modified
+```
 
 ### (Optional) Orchestrate your models with Fivetran Transformations for dbt Core™
 <details><summary>Expand for details</summary>

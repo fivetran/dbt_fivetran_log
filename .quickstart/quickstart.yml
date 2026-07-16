@@ -34,7 +34,9 @@ public_models: [
   "fivetran_platform__mar_table_history",
   "fivetran_platform__transformation_run_log",
   "fivetran_platform__errors_and_warnings",
-  "fivetran_platform__sync_metrics"
+  "fivetran_platform__sync_metrics",
+  "fivetran_platform__connection_event_variance",
+  "fivetran_platform__records_modified_variance"
 ]
 
 supported_vars:
@@ -42,3 +44,19 @@ supported_vars:
     type: integer
     description: "Number of months of log history to include when building log-based models. When unset, all log history is used. Affects `fivetran_platform__connection_status`, `fivetran_platform__schema_changelog`, `fivetran_platform__audit_user_activity`, `fivetran_platform__connection_daily_events`, and `fivetran_platform__audit_table`."
     display_name: "Log Lookback Window (Months)"
+  fivetran_platform_event_high_variance_percent:
+    type: float
+    description: "Percentage above a connection's average weekday event volume before a day is flagged as `event_variance` in `fivetran_platform__connection_event_variance`. Defaults to 0.2 (20%)."
+    display_name: "High Event Variance Percent"
+  fivetran_platform_event_low_variance_percent:
+    type: float
+    description: "Percentage below a connection's average weekday event volume before a day is flagged as `event_variance` in `fivetran_platform__connection_event_variance`. Defaults to 0.2 (20%)."
+    display_name: "Low Event Variance Percent"
+  fivetran_platform_records_modified_high_variance_percent:
+    type: float
+    description: "Percentage above the average rows modified (per connection, table, operation type, and weekday) before a record modification event is flagged as `variance` in `fivetran_platform__records_modified_variance`. Defaults to 0.2 (20%)."
+    display_name: "High Records Modified Variance Percent"
+  fivetran_platform_records_modified_low_variance_percent:
+    type: float
+    description: "Percentage below the average rows modified (per connection, table, operation type, and weekday) before a record modification event is flagged as `variance` in `fivetran_platform__records_modified_variance`. Defaults to 0.2 (20%)."
+    display_name: "Low Records Modified Variance Percent"

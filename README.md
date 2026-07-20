@@ -154,6 +154,14 @@ vars:
     fivetran_platform_<default_table_name>_identifier: your_table_name 
 ```
 
+#### Limit the Lookback Window
+By default, log-based models include all available log history. To limit the number of months of log records included, set the `fivetran_platform_lookback_window_months` variable to an integer number of months:
+```yml
+vars:
+    fivetran_platform_lookback_window_months: 6 # only include the last 6 months of log history
+```
+This affects the following models: `fivetran_platform__connection_status`, `fivetran_platform__schema_changelog`, `fivetran_platform__audit_user_activity`, `fivetran_platform__connection_daily_events`, and `fivetran_platform__audit_table`. If you set or change this variable, run `dbt run --full-refresh` to ensure the `fivetran_platform__audit_table` incremental model reflects the updated window.
+
 ### (Optional) Orchestrate your models with Fivetran Transformations for dbt Core™
 <details><summary>Expand for details</summary>
 <br>

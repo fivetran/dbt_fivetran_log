@@ -15,6 +15,9 @@
 | [stg_fivetran_platform__connector_sdk_log](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.stg_fivetran_platform__connector_sdk_log) | New staging model |  |  | Staging model for the new `connector_sdk_log` source table. |
 | [stg_fivetran_platform__log_tmp](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.stg_fivetran_platform__log_tmp) | Materialization | view | table | Now materialized as a table to support the `fivetran_platform_lookback_window_months` filter. |
 
+## Bug Fix
+- Fixes SQL Server JSON array-index paths in the `fivetran_log_json_parse` macro.
+
 ## Feature Update
 - Adds the `fivetran_platform_using_connector_sdk_log` variable (default `true`) to enable or disable the `connector_sdk_log` source and its downstream logic. Set this to `false` if your destination does not contain the `connector_sdk_log` table.
 

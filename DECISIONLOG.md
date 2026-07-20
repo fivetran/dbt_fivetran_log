@@ -38,6 +38,7 @@ The `connection_ids` and `connection_names` fields are derived by unnesting the 
 The `started_at` and `ended_at` fields in `fivetran_platform__transformation_run_log` are parsed from the top-level `startTime` and `endTime` keys in the run log. Older transformation run events do not include these top-level keys; instead, the timestamps are nested under `result.stepResults[0]`. For those older runs, `started_at` (and therefore `duration`) may be null, even though the run did capture a start time.
 
 We have chosen not to address this for now, since it only affects older/stale data. If customers report null `started_at` or `duration` values, we can coalesce the top-level keys with the nested `result.stepResults[0].startTime` and `result.stepResults[0].endTime` values to recover them.
+
 ## Severity values in `fivetran_platform__errors_and_warnings`
 The `fivetran_platform__errors_and_warnings` model unions error and warning events from two sources: the `log` table (standard connections) and the `connector_sdk_log` table (Connector SDK connections). Both sources report `WARNING` and `SEVERE`, while `ERROR` is reported only by the `connector_sdk_log` source. We pass each source's `severity_level` through as its raw value rather than normalizing or remapping it, so each event reflects exactly what its source reported. The `connector_type` column (`standard_connector` or `connector_sdk`) identifies which source a row came from.
 

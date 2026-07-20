@@ -351,7 +351,7 @@ models:
       Connector SDK connections (from the `connector_sdk_log` table).
     columns:
       - name: unique_error_warning_key
-        description: Surrogate key hashed on `connection_id`, `sync_id`, and `event_time` to uniquely identify each error or warning event.
+        description: Surrogate key hashed on `event_id`, `connection_id`, `sync_id`, and `event_time` to uniquely identify each error or warning event.
         tests:
           - unique
           - not_null

@@ -38,7 +38,7 @@
 {% macro sqlserver__fivetran_log_json_parse(string, string_path) %}
 
   case when isjson({{ string }}) = 1 -- check if json string is valid
-    then json_value({{ string }}, '$.{%- for s in string_path -%}{{ s }}{%- if not loop.last -%}.{%- endif -%}{%- endfor -%} ')
+    then json_value({{ string }}, '${%- for s in string_path -%}{%- if s is number -%}[{{ s }}]{%- else -%}.{{ s }}{%- endif -%}{%- endfor -%}')
     else null end
 
 {% endmacro %}

@@ -2,8 +2,8 @@
 
 [PR #194](https://github.com/fivetran/dbt_fivetran_log/pull/194) includes the following updates:
 
-## Schema/Data Change
-**6 total changes • 0 possible breaking changes**
+## Schema/Data Change (--full-refresh required after upgrading)
+**7 total changes • 0 possible breaking changes**
 
 | Data Model(s) | Change type | Old | New | Notes |
 | ------------- | ----------- | --- | --- | ----- |
@@ -13,6 +13,7 @@
 | [fivetran_platform__errors_and_warnings](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__errors_and_warnings) | New model |  |  | Unions error and warning events from the `log` (standard connections) and `connector_sdk_log` (Connector SDK connections) tables, enriched with `connection_name`. |
 | [stg_fivetran_platform__audit_trail](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.stg_fivetran_platform__audit_trail) | New staging model |  |  | Records user actions performed within your Fivetran account (what was changed, by whom, and how). Only available for customers on the Enterprise plan and above. |
 | [stg_fivetran_platform__connector_sdk_log](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.stg_fivetran_platform__connector_sdk_log) | New staging model |  |  | Staging model for the new `connector_sdk_log` source table. |
+| [stg_fivetran_platform__log_tmp](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.stg_fivetran_platform__log_tmp) | Materialization | view | table | Now materialized as a table to support the `fivetran_platform_lookback_window_months` filter. |
 
 ## Feature Update
 - Adds the `fivetran_platform_using_connector_sdk_log` variable (default `true`) to enable or disable the `connector_sdk_log` source and its downstream logic. Set this to `false` if your destination does not contain the `connector_sdk_log` table.

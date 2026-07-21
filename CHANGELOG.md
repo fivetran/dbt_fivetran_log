@@ -1,6 +1,6 @@
 # dbt_fivetran_log v2.6.0
 
-[PR #194](https://github.com/fivetran/dbt_fivetran_log/pull/194) includes the following updates:
+[PR #201](https://github.com/fivetran/dbt_fivetran_log/pull/201) includes the following updates:
 
 ## Schema/Data Change (--full-refresh required after upgrading)
 **7 total changes • 0 possible breaking changes**

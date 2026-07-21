@@ -42,5 +42,8 @@ final as (
     from field_conversion
 )
 
-select * 
+select *
 from final
+{% if var('fivetran_platform_lookback_window_months', none) is not none %}
+where created_at >= cast({{ dbt.dateadd('month', -var('fivetran_platform_lookback_window_months', none), dbt.current_timestamp()) }} as {{ dbt.type_timestamp() }})
+{% endif %}

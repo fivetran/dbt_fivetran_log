@@ -155,12 +155,16 @@ vars:
 ```
 
 #### Limit the Lookback Window
-By default, log-based models include all available log history. To limit the number of months of log records included, set the `fivetran_platform_lookback_window_months` variable to an integer number of months:
+By default, log-based models scan all available log history from the source `log` table. On large tables, this can increase query costs. To limit the scan window, set the `fivetran_platform_lookback_window_months` variable to an integer number of months:
 ```yml
 vars:
-    fivetran_platform_lookback_window_months: 6 # only include the last 6 months of log history
+    fivetran_platform_lookback_window_months: 6 # scan only the last 6 months of log history
 ```
-This affects the following models: `fivetran_platform__connection_status`, `fivetran_platform__schema_changelog`, `fivetran_platform__audit_user_activity`, `fivetran_platform__connection_daily_events`, and `fivetran_platform__audit_table`. If you set or change this variable, run `dbt run --full-refresh` to ensure the `fivetran_platform__audit_table` incremental model reflects the updated window.
+This filter is applied in `stg_fivetran_platform__log` and recalculates on every run from the current run time — it is not a one-time initial load boundary. The staging table always reflects the last N months from the most recent run.
+
+Incremental downstream models accumulate history over time on regular runs. However, a `--full-refresh` of any downstream incremental is bounded by N months of history. Run `dbt run --full-refresh` after setting or changing this variable to ensure all models reflect the updated window.
+
+This affects the following models: `fivetran_platform__connection_status`, `fivetran_platform__schema_changelog`, `fivetran_platform__audit_user_activity`, `fivetran_platform__connection_daily_events`, and `fivetran_platform__audit_table`.
 
 ### (Optional) Orchestrate your models with Fivetran Transformations for dbt Core™
 <details><summary>Expand for details</summary>

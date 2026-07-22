@@ -199,11 +199,16 @@ models:
       transformation execution, including run timestamps, duration, per-step model counts, and outcome.
       Only populated when the `transformation_runs` source table exists.
     columns:
-      - name: log_id
-        description: Unique ID of the log record that captured the transformation run event.
+      - name: unique_transformation_run_key
+        description: >
+          Surrogate key hashed on `log_id`, `transformation_id`, `started_at`, and `ended_at` to uniquely identify
+          each transformation run event. The source `log_id` is not unique on its own, as a single log record can
+          capture multiple distinct transformation runs.
         tests:
           - unique
           - not_null
+      - name: log_id
+        description: ID of the log record that captured the transformation run event. Not unique on its own.
       - name: started_at
         description: Timestamp when the transformation run started.
       - name: ended_at

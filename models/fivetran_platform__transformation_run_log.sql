@@ -182,6 +182,12 @@ with_duration as (
 final as (
 
     select
+        {{ dbt_utils.generate_surrogate_key([
+            'log_id',
+            'transformation_id',
+            'started_at',
+            'ended_at'
+        ]) }} as unique_transformation_run_key,
         log_id,
         started_at,
         ended_at,

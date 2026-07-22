@@ -44,6 +44,6 @@ final as (
 
 select *
 from final
-{% if var('fivetran_platform_lookback_window_months', none) is not none %}
-where created_at >= cast({{ dbt.dateadd('month', -var('fivetran_platform_lookback_window_months', none), dbt.current_timestamp()) }} as {{ dbt.type_timestamp() }})
+{% if var('fivetran_platform_log_start_date', none) is not none %}
+where cast(created_at as date) >= cast('{{ var('fivetran_platform_log_start_date') }}' as date)
 {% endif %}

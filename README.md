@@ -155,14 +155,14 @@ vars:
 ```
 
 #### Limit the Lookback Window
-By default, log-based models scan all available log history from the source `log` table. On large tables, this can increase query costs. To limit the scan window, set the `fivetran_platform_lookback_window_months` variable to an integer number of months:
+By default, log-based models scan all available log history from the source `log` table. On large tables, this can increase query costs. To limit the scan window, set the `fivetran_platform_log_start_date` variable to the earliest date you want to include (in `YYYY-MM-DD` format):
 ```yml
 vars:
-    fivetran_platform_lookback_window_months: 6 # scan only the last 6 months of log history
+    fivetran_platform_log_start_date: '2024-01-01' # scan only log history on or after this date
 ```
-This filter is applied in `stg_fivetran_platform__log` and recalculates on every run from the current run time — it is not a one-time initial load boundary. The staging table always reflects the last N months from the most recent run.
+This filter is applied in `stg_fivetran_platform__log`. Because it is a fixed date rather than a rolling window, the boundary does not move over time — a `--full-refresh` always reloads from the same start date, so historical data is never lost.
 
-Incremental downstream models accumulate history over time on regular runs. However, a `--full-refresh` of any downstream incremental is bounded by N months of history. Run `dbt run --full-refresh` after setting or changing this variable to ensure all models reflect the updated window.
+Incremental downstream models accumulate history over time on regular runs, and their `--full-refresh` output is bounded by the start date you set. As these models grow, you can periodically move `fivetran_platform_log_start_date` forward to keep the full-refresh scan (and the staging table) manageable. Run `dbt run --full-refresh` after setting or changing this variable to ensure all models reflect the updated window.
 
 This affects the following models: `fivetran_platform__connection_status`, `fivetran_platform__schema_changelog`, `fivetran_platform__audit_user_activity`, `fivetran_platform__connection_daily_events`, and `fivetran_platform__audit_table`.
 

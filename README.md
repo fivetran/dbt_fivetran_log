@@ -155,7 +155,7 @@ vars:
 ```
 
 #### Limit the Lookback Window
-By default, log-based models scan all available log history from the source `log` table. On large tables, this can increase query costs. To limit the scan window, set the `fivetran_platform_log_start_date` variable to the earliest date you want to include (in `YYYY-MM-DD` format):
+By default, log-based models scan all available log history from the source `log` table. On large tables, this can increase query costs and/or run times. To limit the scan window, set the `fivetran_platform_log_start_date` variable to the earliest date you want to include (in `YYYY-MM-DD` format):
 ```yml
 vars:
     fivetran_platform_log_start_date: '2024-01-01' # scan only log history on or after this date

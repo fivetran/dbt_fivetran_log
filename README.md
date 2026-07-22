@@ -154,6 +154,18 @@ vars:
     fivetran_platform_<default_table_name>_identifier: your_table_name 
 ```
 
+#### Limit the Lookback Window
+By default, log-based models scan all available log history from the source `log` table. On large tables, this can increase query costs and/or run times. To limit the scan window, set the `fivetran_platform_log_start_date` variable to the earliest date you want to include (in `YYYY-MM-DD` format):
+```yml
+vars:
+    fivetran_platform_log_start_date: '2024-01-01' # scan only log history on or after this date
+```
+This filter is applied in `stg_fivetran_platform__log`. Because it is a fixed date rather than a rolling window, the boundary does not move over time — a `--full-refresh` always reloads from the same start date, so historical data is never lost.
+
+Incremental downstream models accumulate history over time on regular runs, and their `--full-refresh` output is bounded by the start date you set. As these models grow, you can periodically move `fivetran_platform_log_start_date` forward to keep the full-refresh scan (and the staging table) manageable. Run `dbt run --full-refresh` after setting or changing this variable to ensure all models reflect the updated window.
+
+This affects the following models: `fivetran_platform__connection_status`, `fivetran_platform__schema_changelog`, `fivetran_platform__audit_user_activity`, `fivetran_platform__connection_daily_events`, and `fivetran_platform__audit_table`.
+
 ### (Optional) Orchestrate your models with Fivetran Transformations for dbt Core™
 <details><summary>Expand for details</summary>
 <br>

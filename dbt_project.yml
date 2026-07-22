@@ -10,6 +10,10 @@ models:
     staging:
       +schema: stg_fivetran_platform
       +materialized: view
+      stg_fivetran_platform__log:
+        +materialized: table
+      tmp:
+        +materialized: view
 
 vars:
   fivetran_log:

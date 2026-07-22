@@ -1,9 +1,9 @@
 # dbt_fivetran_log v2.6.0
 
-[PR #194](https://github.com/fivetran/dbt_fivetran_log/pull/194) includes the following updates:
+[PR #201](https://github.com/fivetran/dbt_fivetran_log/pull/201) includes the following updates:
 
-## Schema/Data Change
-**6 total changes • 0 possible breaking changes**
+## Schema/Data Change (--full-refresh required after upgrading)
+**7 total changes • 0 possible breaking changes**
 
 | Data Model(s) | Change type | Old | New | Notes |
 | ------------- | ----------- | --- | --- | ----- |
@@ -13,9 +13,15 @@
 | [fivetran_platform__errors_and_warnings](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__errors_and_warnings) | New model |  |  | Unions error and warning events from the `log` (standard connections) and `connector_sdk_log` (Connector SDK connections) tables, enriched with `connection_name`. |
 | [stg_fivetran_platform__audit_trail](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.stg_fivetran_platform__audit_trail) | New staging model |  |  | Records user actions performed within your Fivetran account (what was changed, by whom, and how). Only available for customers on the Enterprise plan and above. |
 | [stg_fivetran_platform__connector_sdk_log](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.stg_fivetran_platform__connector_sdk_log) | New staging model |  |  | Staging model for the new `connector_sdk_log` source table. |
+| [stg_fivetran_platform__log](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.stg_fivetran_platform__log) | Materialization | view | table | Now materialized as a table to apply the `fivetran_platform_log_start_date` filter after column transformations, reducing source scan costs on downstream models for large log tables. |
+
+## Bug Fix
+- Fixes SQL Server JSON array-index paths in the `fivetran_log_json_parse` macro.
 
 ## Feature Update
 - Adds the `fivetran_platform_using_connector_sdk_log` variable (default `true`) to enable or disable the `connector_sdk_log` source and its downstream logic. Set this to `false` if your destination does not contain the `connector_sdk_log` table.
+
+- Adds the optional `fivetran_platform_log_start_date` variable to control how much source log data is scanned/loaded. When set to a date (`YYYY-MM-DD`), `stg_fivetran_platform__log` filters to log records on or after that date. As downstream incremental models grow, you can periodically move the start date forward to keep full-refresh scans manageable. See the [README](https://github.com/fivetran/dbt_fivetran_log/blob/main/README.md#limit-the-lookback-window) for details. Affects `fivetran_platform__connection_status`, `fivetran_platform__schema_changelog`, `fivetran_platform__audit_user_activity`, `fivetran_platform__connection_daily_events`, and `fivetran_platform__audit_table` (**note:** run `dbt run --full-refresh` after setting or changing this variable).
 
 ## Under the Hood
 - Creates `fivetran_log_connection_ids_unnested` macro for warehouse-specific JSON array unnesting logic in `fivetran_platform__transformation_run_log` model.

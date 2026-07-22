@@ -36,3 +36,9 @@ public_models: [
   "fivetran_platform__errors_and_warnings",
   "fivetran_platform__sync_metrics"
 ]
+
+supported_vars:
+  fivetran_platform_log_start_date:
+    type: string
+    description: "Earliest date (YYYY-MM-DD) of log history to include when building log-based models. When unset, all log history is used. Because it is a fixed date, a full refresh always reloads from this start date and never loses history. Affects `fivetran_platform__connection_status`, `fivetran_platform__schema_changelog`, `fivetran_platform__audit_user_activity`, `fivetran_platform__connection_daily_events`, and `fivetran_platform__audit_table`."
+    display_name: "Log Start Date"

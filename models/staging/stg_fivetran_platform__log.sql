@@ -42,5 +42,8 @@ final as (
     from field_conversion
 )
 
-select * 
+select *
 from final
+{% if var('fivetran_platform_log_start_date', none) is not none %}
+where cast(created_at as date) >= cast('{{ var('fivetran_platform_log_start_date') }}' as date)
+{% endif %}

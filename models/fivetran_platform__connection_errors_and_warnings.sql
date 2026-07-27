@@ -7,7 +7,8 @@ with log_events as (
         created_at as event_time,
         event_type as severity_level,
         message_data as message,
-        'standard_connector' as connector_type
+        {{ '0' if target.type == 'sqlserver' else 'false' }} as is_custom_connector
+        -- standard connector
     from {{ ref('stg_fivetran_platform__log') }}
     -- Excludes events not attributable to a connection (connection_id is null), such as transformation job dbt run logs, which are not connector events.
     where lower(event_type) in ('warning', 'error', 'severe')
@@ -24,7 +25,8 @@ connector_sdk_events as (
         created_at as event_time,
         level as severity_level,
         message,
-        'connector_sdk' as connector_type
+        {{ '1' if target.type == 'sqlserver' else 'true' }} as is_custom_connector
+        -- connector sdk
     from {{ ref('stg_fivetran_platform__connector_sdk_log') }}
     where lower(level) in ('warning', 'error', 'severe')
         and connection_id is not null
@@ -33,12 +35,24 @@ connector_sdk_events as (
 
 unioned as (
 
-    select * from log_events
+    select * 
+    from log_events
 
     {% if var('fivetran_platform_using_connector_sdk_log', true) -%}
     union all
-    select * from connector_sdk_events
+    
+    select * 
+    from connector_sdk_events
     {%- endif %}
+),
+
+connection_ranked as (
+
+    select
+        connection_id,
+        connection_name,
+        row_number() over (partition by connection_id order by connection_name) as connection_row
+    from {{ ref('stg_fivetran_platform__connection') }}
 ),
 
 connection as (
@@ -47,13 +61,7 @@ connection as (
     select
         connection_id,
         connection_name
-    from (
-        select
-            connection_id,
-            connection_name,
-            row_number() over (partition by connection_id order by connection_name) as connection_row
-        from {{ ref('stg_fivetran_platform__connection') }}
-    ) deduped
+    from connection_ranked
     where connection_row = 1
 ),
 
@@ -71,7 +79,7 @@ final as (
         unioned.event_time,
         unioned.severity_level,
         unioned.message,
-        unioned.connector_type,
+        unioned.is_custom_connector,
         unioned.sync_id
     from unioned
     left join connection

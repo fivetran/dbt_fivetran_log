@@ -116,13 +116,19 @@ vars:
     fivetran_platform_using_connector_sdk_log: false # Default is true. This will disable the connector_sdk_log source and exclude Connector SDK events from fivetran_platform__errors_and_warnings
 ```
 
-The `audit_trail` source table is only available on the Enterprise plan and above. It powers the `stg_fivetran_platform__audit_trail` and `fivetran_platform__audit_trail_enriched` models. By default, the `stg_fivetran_platform__audit_trail` model is enabled only if the `audit_trail` table is present in your schema, and Quickstart automatically skips both models when the source table is absent. For core dbt users, the `fivetran_platform__audit_trail_enriched` model is enabled by default. You may explicitly enable or disable both models by adding the following variable to your root `dbt_project.yml` file:
+The `audit_trail` source table is only available on the Enterprise plan and above. It powers the `stg_fivetran_platform__audit_trail` and `fivetran_platform__audit_trail_enriched` models. Both models are disabled by default. Quickstart automatically enables them when the `audit_trail` table is present in your schema. For core dbt users, you must explicitly enable both models by adding the following variable to your root `dbt_project.yml` file:
 
 ```yml
 vars:
-    fivetran_platform_using_audit_trail: true # Disable by setting to false if you do not have the audit_trail source table
+    fivetran_platform_using_audit_trail: true # Default is false. Set to true only if you have the audit_trail source table
 ```
+## Connector SDK log source
+Not all customers have the `connector_sdk_log` source table, as it is only populated for accounts using the Fivetran Connector SDK. This source and its downstream logic are controlled by the `fivetran_platform_using_connector_sdk_log` variable, which defaults to `true`. If your destination does not contain the `connector_sdk_log` table, set this variable to `false` in your root `dbt_project.yml` to disable the source and exclude Connector SDK events from `fivetran_platform__errors_and_warnings`:
 
+```yml
+vars:
+  fivetran_platform_using_connector_sdk_log: false ## Default is true. Set to false if the connector_sdk_log source table is not present in your destination.
+```
 #### Leveraging `CONNECTION` vs `CONNECTOR`  
 In Q1 2025, the `CONNECTOR` source table was deprecated and replaced by `CONNECTION`, and `CONNECTION` is now the default source.
 
@@ -158,13 +164,18 @@ vars:
 By default, log-based models scan all available log history from the source `log` table. On large tables, this can increase query costs and/or run times. To limit the scan window, set the `fivetran_platform_log_start_date` variable to the earliest date you want to include (in `YYYY-MM-DD` format):
 ```yml
 vars:
-    fivetran_platform_log_start_date: '2024-01-01' # scan only log history on or after this date
+    fivetran_platform_log_start_date: '2024-01-01' # scan only log history on and after this date
 ```
 This filter is applied in `stg_fivetran_platform__log`. Because it is a fixed date rather than a rolling window, the boundary does not move over time — a `--full-refresh` always reloads from the same start date, so historical data is never lost.
 
 Incremental downstream models accumulate history over time on regular runs, and their `--full-refresh` output is bounded by the start date you set. As these models grow, you can periodically move `fivetran_platform_log_start_date` forward to keep the full-refresh scan (and the staging table) manageable. Run `dbt run --full-refresh` after setting or changing this variable to ensure all models reflect the updated window.
 
-This affects the following models: `fivetran_platform__connection_status`, `fivetran_platform__schema_changelog`, `fivetran_platform__audit_user_activity`, `fivetran_platform__connection_daily_events`, and `fivetran_platform__audit_table`.
+This affects the following models: 
+  `fivetran_platform__connection_status` 
+  `fivetran_platform__schema_changelog` 
+  `fivetran_platform__audit_user_activity` 
+  `fivetran_platform__connection_daily_events`
+  `fivetran_platform__audit_table`.
 
 ### (Optional) Orchestrate your models with Fivetran Transformations for dbt Core™
 <details><summary>Expand for details</summary>

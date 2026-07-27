@@ -1,3 +1,5 @@
+{{ config(materialized='table' if var('fivetran_platform_log_start_date', none) is not none else 'view') }}
+
 {% set source_columns_in_relation = adapter.get_columns_in_relation(ref('stg_fivetran_platform__log_tmp')) %}
 
 with base as (

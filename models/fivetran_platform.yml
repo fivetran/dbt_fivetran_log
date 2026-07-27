@@ -222,7 +222,7 @@ models:
       - name: destination_name
         description: Name of the destination associated with the transformation.
       - name: project_type
-        description: Type of transformation project (e.g., `DBT_CORE`, `QUICKSTART`).
+        description: Type of transformation project (e.g., `DBT_CORE`, `QUICKSTART`). dbt transformations not associated with a connection (cron scheduled) will have an expected null connection_id.
       - name: free_type
         description: Indicates the type of free model run, or `PAID` for paid model runs.
       - name: connection_ids
@@ -326,7 +326,7 @@ models:
       - name: primary_resource_type
         description: >
           The main type of resource (the container) affected by the action (e.g., `ACCOUNT`, `DESTINATION`, `CONNECTION`,
-          `TEAM`, `USER`, `TRANSFORMATION`, `ROLE`, `EXTERNAL_LOG_SERVICE`).
+          `TEAM`, `USER`, `TRANSFORMATION`, `ROLE`, `EXTERNAL_LOG_SERVICE`). 'TEAM' resource type is not currently brought in at the connector level, so this resouce type will always be null.
       - name: primary_resource_id
         description: Identifier of the primary resource affected by the action.
       - name: primary_resource_name

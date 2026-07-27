@@ -44,3 +44,8 @@ test_scenarios:
       fivetran_platform_using_transformations: false
       fivetran_platform_using_connector_sdk_log: false
     include_incremental: false
+
+  - name: "audit trail enabled"
+    vars:
+      fivetran_platform_using_audit_trail: true
+    include_incremental: false

@@ -1,4 +1,4 @@
-{{ config(enabled=var('fivetran_platform_using_connector_sdk_log', true)) }}
+{{ config(enabled=var('fivetran_platform_using_connector_sdk_log', False)) }}
 
 with base as (
 

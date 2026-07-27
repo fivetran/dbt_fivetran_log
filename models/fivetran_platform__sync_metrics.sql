@@ -45,6 +45,17 @@ records_modified as (
     group by sync_id
 ),
 
+connection_ranked as (
+
+    select
+        *,
+        row_number() over (
+            partition by connection_id
+            order by is_deleted asc, set_up_at desc
+        ) as nth_connection_record
+    from {{ ref('stg_fivetran_platform__connection') }}
+),
+
 -- dedupe to one row per connection_id, preferring the active, most-recent record
 connection as (
 
@@ -53,15 +64,7 @@ connection as (
         connection_name,
         connector_type,
         destination_id
-    from (
-        select
-            *,
-            row_number() over (
-                partition by connection_id
-                order by is_deleted asc, set_up_at desc
-            ) as nth_connection_record
-        from {{ ref('stg_fivetran_platform__connection') }}
-    ) deduped
+    from connection_ranked
     where nth_connection_record = 1
 ),
 

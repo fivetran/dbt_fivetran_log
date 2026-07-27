@@ -277,6 +277,7 @@ sources:
           Table of user actions performed within your Fivetran account, including what was changed and how.
           This table is only available on the Enterprise plan and above.
         config:
+          enabled: "{{ var('fivetran_platform_using_audit_trail', false) }}"
           freshness: null
         columns:
           - name: id

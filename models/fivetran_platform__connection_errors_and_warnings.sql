@@ -15,7 +15,7 @@ with log_events as (
         and connection_id is not null
 ),
 
-{% if var('fivetran_platform_using_connector_sdk_log', true) -%}
+{% if var('fivetran_platform_using_connector_sdk_log', false) -%}
 connector_sdk_events as (
 
     select
@@ -38,7 +38,7 @@ unioned as (
     select * 
     from log_events
 
-    {% if var('fivetran_platform_using_connector_sdk_log', true) -%}
+    {% if var('fivetran_platform_using_connector_sdk_log', false) -%}
     union all
     
     select * 
@@ -51,13 +51,16 @@ connection_ranked as (
     select
         connection_id,
         connection_name,
-        row_number() over (partition by connection_id order by connection_name) as connection_row
+        row_number() over (
+            partition by connection_id
+            order by is_deleted asc, set_up_at desc
+        ) as connection_row
     from {{ ref('stg_fivetran_platform__connection') }}
 ),
 
 connection as (
 
-    -- dedupe to one row per connection_id to avoid fanning out events on the join below.
+    -- dedupe to one row per connection_id, preferring the active, most-recent record,
     select
         connection_id,
         connection_name

@@ -49,3 +49,8 @@ test_scenarios:
     vars:
       fivetran_platform_using_audit_trail: true
     include_incremental: false
+
+  - name: "connector sdk log enabled"
+    vars:
+      fivetran_platform_using_connector_sdk_log: true
+    include_incremental: false

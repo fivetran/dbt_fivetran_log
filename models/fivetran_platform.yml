@@ -350,7 +350,7 @@ models:
       - name: _fivetran_synced
         description: Timestamp when the record was last synced.
 
-  - name: fivetran_platform__errors_and_warnings
+  - name: fivetran_platform__connection_errors_and_warnings
     description: >
       Table of connector error and warning events across both standard Fivetran connections (from the `log` table) and
       Connector SDK connections (from the `connector_sdk_log` table).
@@ -372,10 +372,10 @@ models:
           report `WARNING` and `SEVERE`; `ERROR` is reported only by the `connector_sdk_log` source.
       - name: message
         description: The details of the event. For standard connections this is the JSON-like `message_data` string; for Connector SDK connections this is the plain-text log message.
-      - name: connector_type
+      - name: is_custom_connector
         description: >
-          Indicates which source the event originated from. Possible values are `standard_connector` (from the `log` table)
-          and `connector_sdk` (from the `connector_sdk_log` table).
+          Boolean indicating which source the event originated from. `false` for standard connections (from the `log`
+          table) and `true` for Connector SDK connections (from the `connector_sdk_log` table).
       - name: sync_id
         description: Identifies which sync the event is associated with.
 
@@ -424,5 +424,5 @@ models:
         description: Volume of data loaded into the destination during the sync, in megabytes.
       - name: total_time_s
         description: Total duration of the sync, in seconds.
-      - name: row_count
+      - name: rows_modified_count
         description: Total number of records modified during the sync, summed across all `records_modified` events sharing the same `sync_id`.

@@ -95,7 +95,7 @@ joined as (
         sync_stats.load_time_s,
         sync_stats.load_volume_mb,
         sync_stats.total_time_s,
-        records_modified.row_count
+        records_modified.row_count as rows_modified_count
 
     from sync_stats
     left join records_modified

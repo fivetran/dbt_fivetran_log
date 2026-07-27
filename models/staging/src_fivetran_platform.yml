@@ -186,7 +186,7 @@ sources:
           Table of logged events emitted by Connector SDK connections. Only populated for accounts
           that use the Fivetran Connector SDK.
         config:
-          enabled: "{{ var('fivetran_platform_using_connector_sdk_log', true) }}"
+          enabled: "{{ var('fivetran_platform_using_connector_sdk_log', false) }}"
           freshness: null
         columns:
           - name: id

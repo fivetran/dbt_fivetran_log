@@ -363,7 +363,7 @@ models:
       - name: connection_id
         description: Foreign key referencing the connection that emitted the event.
       - name: connection_name
-        description: Name of the connection that emitted the event. May be null if the connection is no longer present in the `connection` table.
+        description: Name of the connection that emitted the event. May be null if the connection is no longer present in the `connection` table. This model does include deleted connections.
       - name: event_time
         description: Timestamp when the event was logged.
       - name: severity_level

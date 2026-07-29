@@ -163,6 +163,7 @@ with_duration as (
         transformation_logs.ended_at,
         transformation_logs.transformation_id,
         transformation_logs.transformation_name,
+        transformation_logs.event_subtype,
         transformation_logs.transformation_type,
         transformation_logs.step_success,
         transformation_logs.successful_model_runs,
@@ -223,7 +224,7 @@ final as (
                 and failed_model_runs > 0
                 then 'transformation_partially_succeeded'
             when step_success = 'false' then 'transformation_failed'
-            else 'unknown'
+            else event_subtype 
         end as transformation_status,
         full_run_log
     from with_duration

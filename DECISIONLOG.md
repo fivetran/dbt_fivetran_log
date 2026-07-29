@@ -12,7 +12,7 @@ vars:
 ```
 
 ## Transformation Runs
-Not all customers have the `transformation_runs` source table, particularly if they are not using Fivetran Transformations. Therefore, we leverage a new variable `fivetran_platform_using_transformations`, which automatically checks for the table. If it exists, the variable is set to True, which then persists the `transformation_runs` source table and related models and downstream fields. If the table doesn't exist, the staging `stg_fivetran_platform__transformation_runs` model will persist as an empty model and respective downstream fields will be null. 
+Not all customers have the `transformation_runs` source table, particularly if they are not using Fivetran Transformations. Therefore, we leverage `fivetran_platform_using_transformations` variable, which automatically checks for the table. If the table exists, the variable is set to True, which then persists the `transformation_runs` source table and related models and downstream fields. If the table doesn't exist, the staging `stg_fivetran_platform__transformation_runs` model will persist as an empty model and respective downstream fields will be null. 
 
 In the case you have the `transformation_runs` source table but still wish to disable it to prevent it from being populated in the package, you may set `fivetran_platform_using_transformations` to False in your project.yml:
 
@@ -20,6 +20,8 @@ In the case you have the `transformation_runs` source table but still wish to di
 vars:
   fivetran_platform_using_transformations: false ## Dynamically checks the source at runtime to set as either true or false. May be overridden using this variable if desired.
 ```
+
+The `fivetran_platform__transformation_run_log` model is the exception to the runtime check. Where the staging model has no fixed default and falls back to `does_table_exist('transformation_runs')`, this model defaults to `False` outright and only builds when you explicitly set `fivetran_platform_using_transformations` to True. Quickstart sets this for you when the `transformation_runs` table is present in your schema. We chose an explicit opt-in here because the model reads transformation events from the `log` table, which are only present for accounts actively running Fivetran Transformations, so the presence of the `transformation_runs` table alone is not a reliable signal that the model returns useful rows.
 
 ## Records without a `connection_id` in `fivetran_platform__mar_table_history`
 Some records in the `fivetran_platform__mar_table_history` model may lack an associated `connection_id`. This can occur for a few reasons. For example, the record may originate from a deleted connection or from HVR sources that do not populate this field.

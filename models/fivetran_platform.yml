@@ -197,7 +197,8 @@ models:
     description: >
       Table of transformation run events from the Fivetran log. Each record represents a single
       transformation execution, including run timestamps, duration, per-step model counts, and outcome.
-      Only populated when the `transformation_runs` source table exists.
+      Requires the `transformation_runs` source table. Disabled by default; set the
+      `fivetran_platform_using_transformations` variable to `true` to build this model.
     columns:
       - name: unique_transformation_run_key
         description: >

@@ -1,4 +1,4 @@
-{{ config(enabled=var('fivetran_platform_using_transformations', true))}} 
+{{ config(enabled=var('fivetran_platform_using_transformations', false))}}
 
 with logs as (
 

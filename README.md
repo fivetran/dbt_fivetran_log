@@ -41,7 +41,7 @@ By default, this package materializes the following final tables:
 | [fivetran_platform__audit_table](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_table) | Replaces the deprecated [`_fivetran_audit` table](https://fivetran.com/docs/getting-started/system-columns-and-tables#audittables) and tracks each table receiving data during connection syncs with comprehensive timestamps for connection and table-level sync progress plus detailed counts of records inserted, replaced, updated, and deleted to monitor data processing and sync performance. |
 | [fivetran_platform__audit_user_activity](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_user_activity) | Records all user-triggered actions within your Fivetran account to provide a comprehensive audit trail that helps you trace user activities to specific [log events](https://fivetran.com/docs/logs#logeventlist) such as schema changes, sync frequency updates, manual syncs, connection failures, and other operational events for compliance and troubleshooting purposes. |
 | [fivetran_platform__audit_trail_enriched](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_trail_enriched) | Enriches each account-level audit trail event with the human-readable names of the primary and secondary resources involved (resolved for `CONNECTION`, `DESTINATION`, `ACCOUNT`, and `USER` resources) and the details of the user who performed the action, so you can audit who changed what without manually resolving resource IDs. Only available for customers on the Enterprise plan and above. |
-| [fivetran_platform__transformation_run_log](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__transformation_run_log) | Surfaces each transformation run event from the Fivetran log, including start and end timestamps, formatted duration, per-step model success and failure counts, and overall transformation status to monitor and troubleshoot your transformation pipeline performance. Requires the `transformation_runs` source table. |
+| [fivetran_platform__transformation_run_log](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__transformation_run_log) | Surfaces each transformation run event from the Fivetran log, including start and end timestamps, formatted duration, per-step model success and failure counts, and overall transformation status to monitor and troubleshoot your transformation pipeline performance. Requires the `transformation_runs` source table. Disabled by default; set `fivetran_platform_using_transformations` to `true` to build it. |
 | [fivetran_platform__connection_errors_and_warnings](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__connection_errors_and_warnings) | Consolidates error and warning events from both standard connections and Connector SDK connections into a single feed, enriched with connection details, so you can monitor and triage the severity of issues across your data pipelines. |
 | [fivetran_platform__sync_metrics](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__sync_metrics) | Captures one record per completed sync, combining each sync's extract, process, load timing and volume statistics with its total duration and total records modified, enriched with connection and destination details to analyze sync performance and throughput over time. |
 
@@ -107,27 +107,28 @@ vars:
 ```
 
 ### Disable Models for Non Existent Sources
-If you do not leverage Fivetran RBAC, then you will not have the `user` or `destination_membership` source tables. The `user` and `destination_membership` are enabled by default. Therefore in order to switch the default configurations, you must add the following variable(s) to your root `dbt_project.yml` file for the respective source tables you wish to disable:
+Not every account has every source table. Quickstart automatically detects which tables are present in your schema and enables or disables the related models for you. If you run this package in your own dbt project, add the relevant variable(s) below to your root `dbt_project.yml` file:
 
 ```yml
 vars:
-    fivetran_platform_using_destination_membership: false # Default is true. This will disable only the destination membership logic
-    fivetran_platform_using_user: false # Default is true. This will disable only the user logic
-```
-
-The `audit_trail` source table is only available on the Enterprise plan and above. It powers the `stg_fivetran_platform__audit_trail` and `fivetran_platform__audit_trail_enriched` models. Both models are disabled by default. Quickstart automatically enables them when the `audit_trail` table is present in your schema. For core dbt users, you must explicitly enable both models by adding the following variable to your root `dbt_project.yml` file:
-
-```yml
-vars:
+    fivetran_platform_using_destination_membership: false # Default is true. Disables only the destination membership logic
+    fivetran_platform_using_user: false # Default is true. Disables only the user logic
     fivetran_platform_using_audit_trail: true # Default is false. Set to true only if you have the audit_trail source table
+    fivetran_platform_using_connector_sdk_log: true # Default is false. Set to true only if you have the connector_sdk_log source table
+    fivetran_platform_using_transformations: true # Default is false for fivetran_platform__transformation_run_log. Set to true to build it
 ```
-## Connector SDK log source
-Not all customers have the `connector_sdk_log` source table, as it is only populated for accounts using the Fivetran Connector SDK. This source and its downstream logic are controlled by the `fivetran_platform_using_connector_sdk_log` variable, which defaults to `false`. Quickstart automatically enables the source when the `connector_sdk_log` table is present in your schema. For core dbt users, if your destination contains the `connector_sdk_log` table, set this variable to `true` in your root `dbt_project.yml` to enable the source and include Connector SDK events in `fivetran_platform__connection_errors_and_warnings`:
 
-```yml
-vars:
-  fivetran_platform_using_connector_sdk_log: true ## Default is false. Set to true only if the connector_sdk_log source table is present in your destination.
-```
+- `destination_membership` and `user` require Fivetran RBAC. Both are enabled by default, so disable them if you do not use RBAC.
+- `audit_trail` is only available on the Enterprise plan and above. It powers the `stg_fivetran_platform__audit_trail` and `fivetran_platform__audit_trail_enriched` models, which are disabled by default.
+- `connector_sdk_log` is only populated for accounts using the Fivetran Connector SDK. Enabling it includes Connector SDK events in `fivetran_platform__connection_errors_and_warnings`.
+- `transformation_runs` is only populated for accounts using Fivetran Transformations. This variable resolves differently in each layer when you leave it unset:
+    - `stg_fivetran_platform__transformation_runs` has no fixed default. It checks your schema for the `transformation_runs` table at runtime. If the table exists, the staging model and the `paid_model_runs`, `free_model_runs`, and `total_model_runs` fields in `fivetran_platform__usage_history` are populated. If it does not, the staging model builds empty and those fields are null.
+    - `fivetran_platform__transformation_run_log` defaults to `false` and does not build. The runtime check does not apply here, so set this variable to `true` to build the model.
+
+  Setting the variable explicitly overrides both layers. `true` requires the `transformation_runs` table to exist, and `false` disables the staging model and its downstream fields even when the table does exist.
+
+> **Note:** We plan to remove the `does_table_exist()` runtime check in a future release so that every variable in this section has a fixed default. This affects the three variables that currently fall back to the check when unset: `fivetran_platform_using_transformations`, `fivetran_platform__usage_pricing`, and `fivetran_platform__credits_pricing`. To avoid a change in behavior when that release ships, set the variables you rely on explicitly in your root `dbt_project.yml` rather than depending on the runtime check.
+
 #### Leveraging `CONNECTION` vs `CONNECTOR`  
 In Q1 2025, the `CONNECTOR` source table was deprecated and replaced by `CONNECTION`, and `CONNECTION` is now the default source.
 
@@ -174,7 +175,7 @@ This affects the following models:
   `fivetran_platform__schema_changelog` 
   `fivetran_platform__audit_user_activity` 
   `fivetran_platform__connection_daily_events`
-  `fivetran_platform__audit_table`.
+  `fivetran_platform__audit_table`
 
 ### (Optional) Orchestrate your models with Fivetran Transformations for dbt Core™
 <details><summary>Expand for details</summary>

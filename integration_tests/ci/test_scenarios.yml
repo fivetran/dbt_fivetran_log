@@ -54,3 +54,12 @@ test_scenarios:
     vars:
       fivetran_platform_using_connector_sdk_log: true
     include_incremental: false
+
+  - name: "audit table with log start date"
+    vars:
+      # the log seed holds two sync sessions for this_connection, on 2021-12-09 and 2021-12-10.
+      # this start date drops the 2021-12-09 session (and the two 2021-02 records) so
+      # fivetran_platform__audit_table is still populated but visibly narrowed by the filter.
+      # it also materializes stg_fivetran_platform__log as a table instead of a view.
+      fivetran_platform_log_start_date: '2021-12-10'
+    include_incremental: false

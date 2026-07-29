@@ -77,6 +77,7 @@ final as (
             'unioned.sync_id',
             'unioned.event_time'
         ]) }} as unique_error_warning_key,
+        unioned.event_id,
         unioned.connection_id,
         connection.connection_name,
         unioned.event_time,

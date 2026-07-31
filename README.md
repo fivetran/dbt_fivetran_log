@@ -121,11 +121,9 @@ vars:
 - `destination_membership` and `user` require Fivetran RBAC. Both are enabled by default, so disable them if you do not use RBAC.
 - `audit_trail` is only available on the Enterprise plan and above. It powers the `stg_fivetran_platform__audit_trail` and `fivetran_platform__audit_trail_enriched` models, which are disabled by default.
 - `connector_sdk_log` is only populated for accounts using the Fivetran Connector SDK. Enabling it includes Connector SDK events in `fivetran_platform__connection_errors_and_warnings`.
-- `transformation_runs` is only populated for accounts using Fivetran Transformations. This variable resolves differently in each layer when you leave it unset:
+- `transformation_runs` is only populated for accounts using Fivetran Transformations. Setting this variable explicitly overrides both layers of the package: `true` requires the `transformation_runs` table to exist, and `false` disables the staging model and its downstream fields even when the table does exist. When you leave it unset, each layer resolves the variable differently:
     - `stg_fivetran_platform__transformation_runs` has no fixed default. It checks your schema for the `transformation_runs` table at runtime. If the table exists, the staging model and the `paid_model_runs`, `free_model_runs`, and `total_model_runs` fields in `fivetran_platform__usage_history` are populated. If it does not, the staging model builds empty and those fields are null.
     - `fivetran_platform__transformation_run_log` defaults to `false` and does not build. The runtime check does not apply here, so set this variable to `true` to build the model.
-
-  Setting the variable explicitly overrides both layers. `true` requires the `transformation_runs` table to exist, and `false` disables the staging model and its downstream fields even when the table does exist.
 
 > **Note:** We plan to remove the `does_table_exist()` runtime check in a future release so that every variable in this section has a fixed default. This affects the three variables that currently fall back to the check when unset: `fivetran_platform_using_transformations`, `fivetran_platform__usage_pricing`, and `fivetran_platform__credits_pricing`. To avoid a change in behavior when that release ships, set the variables you rely on explicitly in your root `dbt_project.yml` rather than depending on the runtime check.
 
@@ -170,12 +168,18 @@ This filter is applied in `stg_fivetran_platform__log`. Because it is a fixed da
 
 Incremental downstream models accumulate history over time on regular runs, and their `--full-refresh` output is bounded by the start date you set. As these models grow, you can periodically move `fivetran_platform_log_start_date` forward to keep the full-refresh scan (and the staging table) manageable. Run `dbt run --full-refresh` after setting or changing this variable to ensure all models reflect the updated window.
 
-This affects the following models: 
-  `fivetran_platform__connection_status` 
-  `fivetran_platform__schema_changelog` 
-  `fivetran_platform__audit_user_activity` 
-  `fivetran_platform__connection_daily_events`
-  `fivetran_platform__audit_table`
+This affects the following models:
+
+- `fivetran_platform__connection_status`
+- `fivetran_platform__schema_changelog`
+- `fivetran_platform__audit_user_activity`
+- `fivetran_platform__connection_daily_events`
+- `fivetran_platform__audit_table`
+- `fivetran_platform__sync_metrics`
+- `fivetran_platform__connection_errors_and_warnings`
+- `fivetran_platform__transformation_run_log`
+
+The remaining final models do not read from the `log` table, so they are unaffected: `fivetran_platform__mar_table_history`, `fivetran_platform__usage_history`, and `fivetran_platform__audit_trail_enriched`.
 
 ### (Optional) Orchestrate your models with Fivetran Transformations for dbt Core™
 <details><summary>Expand for details</summary>

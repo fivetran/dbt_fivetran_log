@@ -46,3 +46,10 @@ We exclude events that are not attributable to a connection (where `connection_i
 
 ## Resolving connection names in `fivetran_platform__audit_trail_enriched`
 The `audit_trail` source identifies connections by `connection_id`, but `stg_fivetran_platform__connection` is unique on `(connection_name, destination_id)`, so one `connection_id` can span multiple rows (e.g. after a rename or move). We deduplicate the connection lookup to the active, most recently set up record per `connection_id` to avoid fanning out audit events. A connection therefore resolves to its current name; no history is lost, as renames are still captured in `old_values`/`new_values`.
+
+## Variable materialization of `stg_fivetran_platform__log`
+Staging models in this package are materialized as views. `stg_fivetran_platform__log` is the exception: it materializes as a table when you set `fivetran_platform_log_start_date`, and stays a view when the variable is unset.
+
+The start date filter is applied at the end of the staging model, after the column transformations. As a view, that filter is inlined into each downstream model at run time, so every end model still scans the full log history and the variable saves nothing. A table applies the filter once and persists only the narrowed window. We keep the materialization conditional so users who do not limit the scan window avoid the added storage and build time.
+
+Because the table reflects whichever start date was in effect when it was last built, run `dbt run --full-refresh` after setting or changing the variable.

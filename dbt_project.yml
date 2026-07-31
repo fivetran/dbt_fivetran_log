@@ -1,6 +1,6 @@
 config-version: 2
 name: 'fivetran_log'
-version: '2.5.2'
+version: '2.6.0'
 require-dbt-version: [">=1.3.0", "<3.0.0"]
 
 models:
@@ -21,6 +21,8 @@ vars:
     destination: "{{ source('fivetran_platform', 'destination') }}"
     destination_membership: "{{ source('fivetran_platform', 'destination_membership') }}"
     log: "{{ source('fivetran_platform', 'log') }}"
+    connector_sdk_log: "{{ source('fivetran_platform', 'connector_sdk_log') }}"
     user: "{{ source('fivetran_platform', 'user') }}"
     usage_cost: "{{ source('fivetran_platform', 'usage_cost') }}"
     transformation_runs: "{{ source('fivetran_platform','transformation_runs') }}"
+    audit_trail: "{{ source('fivetran_platform','audit_trail') }}"

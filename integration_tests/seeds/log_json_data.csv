@@ -32,3 +32,5 @@ jkLxnPUfQ/9mHaWCmxUQEhul8ZA=,2023-11-09 11:31:31.579000,2023-11-09 15:55:12.5600
 R7UqnKYn6OT04HkUcPNjXA95qqI=,2021-12-10 16:26:29.719,2021-12-10 20:30:53.878,who_connection,INFO,,,,456abc
 D7UqnKYn6OT04HkUcPNjXA95qqp=,2024-11-18 16:26:29.719,2024-11-19 20:30:53.878,why_connection,INFO,"{""total_queries"":15,""total_rows"":4810}",extract_summary,,456abc
 h7UqnKYn6OT04HkUcPNjXA95qlp=,2024-11-19 16:26:29.719,2024-11-19 20:30:53.878,why_connection,INFO,"{""totalQueries"":5,""total_rows"":4810}",extract_summary,,456abc
+syncStatThisConn001=,2021-12-09 14:27:01.000,2021-12-09 20:30:54.000,this_connection,INFO,"{""extract_time_s"":12.5,""extract_volume_mb"":3.2,""process_time_s"":4.1,""process_volume_mb"":2.0,""load_time_s"":6.3,""load_volume_mb"":2.9,""total_time_s"":22.9}",sync_stats,,456abc
+syncStatAftGleeful01=,2024-11-19 16:27:01.000,2024-11-19 20:30:54.000,aft_gleeful,INFO,"{""extract_time_s"":8.0,""extract_volume_mb"":1.5,""process_time_s"":2.0,""process_volume_mb"":1.0,""load_time_s"":3.0,""load_volume_mb"":1.2,""total_time_s"":13.0}",sync_stats,,789xyz

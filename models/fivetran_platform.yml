@@ -166,6 +166,10 @@ models:
         description: Total number of rows updated in the table during a sync.
       - name: sum_rows_deleted
         description: Total number of rows deleted from the table during a sync.
+      - name: rows_loaded
+        description: >
+          Total number of rows written to the table during a sync, calculated as the sum of
+          `sum_rows_replaced_or_inserted`, `sum_rows_updated`, and `sum_rows_deleted`.
       - name: write_to_table_start_day
         description: The `write_to_table_start` field truncated to the `day`, used for partitioning with the `insert_overwrite` incremental method.
 
@@ -382,9 +386,11 @@ models:
 
   - name: fivetran_platform__sync_metrics
     description: >
-      Table of completed syncs, with one record per `sync_stats` log event. Combines each sync's
-      extract, process, and load timing and volume statistics with its total duration and the total
-      number of records modified, enriched with connection and destination context.
+      Table of completed syncs, with one record per `sync_id` that logged a `sync_end` event. Combines
+      each sync's final status with its extract, process, and load timing and volume statistics, the
+      number of rows extracted from the source, and the total number of records modified, enriched with
+      connection and destination context. Not every connection emits a `sync_stats` log event; syncs
+      without one still appear here, but their timing and volume metrics are null.
     columns:
       - name: unique_sync_key
         description: Primary key of the model, hashed on `connection_id`, `sync_id`, and `sync_completed_at`.
@@ -392,7 +398,7 @@ models:
           - unique
           - not_null
       - name: log_id
-        description: ID of the `sync_stats` log record.
+        description: ID of the `sync_stats` log record. Null for syncs with no `sync_stats` event.
       - name: sync_id
         description: System-generated ID of the sync.
       - name: connection_id
@@ -406,24 +412,32 @@ models:
       - name: destination_name
         description: Name of the destination receiving data from the connection.
       - name: sync_completed_at
-        description: Timestamp when the sync completed and the `sync_stats` event was logged.
+        description: Timestamp of the last log event recorded for the sync.
       - name: date_day
         description: The `sync_completed_at` timestamp truncated to the day.
       - name: day_of_week
         description: Weekday name of `date_day` (e.g. Monday, Tuesday).
+      - name: sync_status
+        description: >
+          Final status of the sync, taken from the `status` field of its `sync_end` event. One of
+          `SUCCESSFUL`, `FAILURE`, `FAILURE_WITH_TASK`, `RESCHEDULED`, or `CANCELED`.
       - name: extract_time_s
-        description: Time spent extracting data from the source during the sync, in seconds.
+        description: Time spent extracting data from the source during the sync, in seconds. Null for syncs with no `sync_stats` event.
       - name: extract_volume_mb
-        description: Volume of data extracted from the source during the sync, in megabytes.
+        description: Volume of data extracted from the source during the sync, in megabytes. Null for syncs with no `sync_stats` event.
       - name: process_time_s
-        description: Time spent processing data during the sync, in seconds.
+        description: Time spent processing data during the sync, in seconds. Null for syncs with no `sync_stats` event.
       - name: process_volume_mb
-        description: Volume of data processed during the sync, in megabytes.
+        description: Volume of data processed during the sync, in megabytes. Null for syncs with no `sync_stats` event.
       - name: load_time_s
-        description: Time spent loading data into the destination during the sync, in seconds.
+        description: Time spent loading data into the destination during the sync, in seconds. Null for syncs with no `sync_stats` event.
       - name: load_volume_mb
-        description: Volume of data loaded into the destination during the sync, in megabytes.
+        description: Volume of data loaded into the destination during the sync, in megabytes. Null for syncs with no `sync_stats` event.
       - name: total_time_s
-        description: Total duration of the sync, in seconds.
-      - name: rows_modified_count
+        description: Total duration of the sync, in seconds. Null for syncs with no `sync_stats` event.
+      - name: total_extracted_rows
+        description: >
+          Total number of rows extracted from the source during the sync, taken from the `total_rows`
+          field of the sync's `extract_summary` event. Null for syncs with no `extract_summary` event.
+      - name: total_loaded_rows
         description: Total number of records modified during the sync, summed across all `records_modified` events sharing the same `sync_id`.

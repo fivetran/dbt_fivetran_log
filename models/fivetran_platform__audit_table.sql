@@ -36,7 +36,7 @@ with base as (
     select
         connection_id,
         created_at,
-        event_subtype, 
+        event_subtype,
         replace(message_data, 'operationType', 'operation_type') as message_data
     from {{ ref('stg_fivetran_platform__log') }}
     where event_subtype in ('sync_start', 'sync_end', 'write_to_table_start', 'write_to_table_end', 'records_modified')
@@ -195,7 +195,8 @@ add_connection_info as (
         sync_end,
         sum_rows_replaced_or_inserted,
         sum_rows_updated,
-        sum_rows_deleted
+        sum_rows_deleted, 
+        sum_rows_replaced_or_inserted + sum_rows_updated + sum_rows_deleted as rows_loaded
 
     from row_modifcation_counts 
     left join connection

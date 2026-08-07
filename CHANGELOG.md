@@ -1,3 +1,11 @@
+# dbt_fivetran_log v2.5.3
+
+[PR #203](https://github.com/fivetran/dbt_fivetran_log/pull/203) includes the following updates:
+
+## Feature Updates
+- Adds DuckDB as a supported destination.
+
+
 # dbt_fivetran_log v2.5.2
 [PR #183](https://github.com/fivetran/dbt_fivetran_log/pull/183) includes the following updates:
 

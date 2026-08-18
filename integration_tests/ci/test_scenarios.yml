@@ -10,6 +10,7 @@ schema_variable_name: "fivetran_platform_schema"
 
 include_databricks_sql: true
 include_sqlserver: true
+include_duckdb: true
 include_dbt_compile: true
 
 test_scenarios:

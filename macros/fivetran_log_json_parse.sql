@@ -42,3 +42,11 @@
     else null end
 
 {% endmacro %}
+
+{% macro duckdb__fivetran_log_json_parse(string, string_path) %}
+
+  case when json_valid({{ string }}) -- check if json string is valid
+    then json_extract_string({{ string }}, '$.{%- for s in string_path -%}{{ s }}{%- if not loop.last -%}.{%- endif -%}{%- endfor -%}')
+    else null end
+
+{% endmacro %}

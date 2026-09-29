@@ -39,7 +39,7 @@ with base as (
         event_subtype,
         replace(message_data, 'operationType', 'operation_type') as message_data
     from {{ ref('stg_fivetran_platform__log') }}
-    where event_subtype in ('sync_start', 'sync_end', 'write_to_table_start', 'write_to_table_end', 'records_modified')
+    where event_subtype in ('sync_start', 'sync_end', 'write_to_table_start', 'write_to_table_end', 'records_modified', 'records_extracted')
 
     {% if is_incremental() %}
     and cast(created_at as date) > {{ fivetran_log.fivetran_log_lookback(from_date='max(write_to_table_start_day)', interval=7) }}
@@ -47,24 +47,24 @@ with base as (
 ),
 
 parsed as (
-    select 
+    select
         connection_id,
         created_at,
         event_subtype,
         {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['table']) }} as table_name,
 
-        case 
-            when event_subtype = 'records_modified' then {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['schema']) }} 
+        case
+            when event_subtype in ('records_modified', 'records_extracted') then {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['schema']) }}
             else cast(null as {{ dbt.type_string() }})
         end as schema_name,
 
-        case 
-            when event_subtype = 'records_modified' then {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['operation_type']) }} 
+        case
+            when event_subtype = 'records_modified' then {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['operation_type']) }}
             else cast(null as {{ dbt.type_string() }})
         end as operation_type,
 
-        cast(case 
-            when event_subtype = 'records_modified' then {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['count']) }} 
+        cast(case
+            when event_subtype in ('records_modified', 'records_extracted') then {{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['count']) }}
             else null
         end as {{ dbt.type_bigint() }}) as row_count
 
@@ -135,8 +135,11 @@ write_start_timestamps as (
         next_records_modified,
         
         max(case when event_subtype = 'write_to_table_start' then created_at else null end) over (partition by connection_id, table_name, sync_session_id, event_group order by created_at rows between unbounded preceding and current row) as write_to_table_start,
-        max(case when event_subtype = 'write_to_table_start' then created_at else null end) over (partition by connection_id, table_name order by created_at ROWS between UNBOUNDED PRECEDING AND CURRENT ROW) as backup_write_to_table_start
-    
+        max(case when event_subtype = 'write_to_table_start' then created_at else null end) over (partition by connection_id, table_name order by created_at ROWS between UNBOUNDED PRECEDING AND CURRENT ROW) as backup_write_to_table_start,
+
+        -- records_extracted can fire before the table's write_to_table_start, so look ahead within the same sync
+        min(case when event_subtype = 'write_to_table_start' then created_at else null end) over (partition by connection_id, table_name, sync_session_id order by created_at rows between current row and unbounded following) as next_write_to_table_start
+
     from session_timestamps
 ),
 
@@ -146,7 +149,10 @@ row_modifcation_counts as (
         connection_id,
         table_name,
         schema_name,
-        coalesce(write_to_table_start, backup_write_to_table_start) as write_to_table_start,
+        case when event_subtype = 'records_extracted'
+            then coalesce(write_to_table_start, next_write_to_table_start, backup_write_to_table_start)
+            else coalesce(write_to_table_start, backup_write_to_table_start)
+        end as write_to_table_start,
         min(write_to_table_end) as write_to_table_end,
         min(sync_start) as sync_start,
         min(next_sync_start) as next_sync_start,
@@ -160,18 +166,29 @@ row_modifcation_counts as (
                 and created_at >= sync_start and created_at < coalesce(sync_end, next_sync_start)
                 then row_count else 0  end) as sum_rows_updated,
 
-        sum(case when event_subtype = 'records_modified' and operation_type = 'DELETED' 
+        sum(case when event_subtype = 'records_modified' and operation_type = 'DELETED'
                 and created_at >= sync_start and created_at < coalesce(sync_end, next_sync_start)
-                then row_count else 0  end) as sum_rows_deleted
+                then row_count else 0  end) as sum_rows_deleted,
+
+        sum(case when event_subtype = 'records_extracted'
+                and created_at >= sync_start and created_at < coalesce(sync_end, next_sync_start)
+                then row_count else 0  end) as rows_extracted,
+
+        sum(case when event_subtype = 'records_modified'
+                and created_at >= sync_start and created_at < coalesce(sync_end, next_sync_start)
+                then row_count else 0  end) as rows_loaded
 
     from write_start_timestamps
-    where event_subtype = 'records_modified'
+    where event_subtype in ('records_modified', 'records_extracted')
 
     group by
         connection_id,
         table_name,
         schema_name,
-        coalesce(write_to_table_start, backup_write_to_table_start)
+        case when event_subtype = 'records_extracted'
+            then coalesce(write_to_table_start, next_write_to_table_start, backup_write_to_table_start)
+            else coalesce(write_to_table_start, backup_write_to_table_start)
+        end
 ),
 
 connection as (
@@ -195,8 +212,9 @@ add_connection_info as (
         sync_end,
         sum_rows_replaced_or_inserted,
         sum_rows_updated,
-        sum_rows_deleted, 
-        sum_rows_replaced_or_inserted + sum_rows_updated + sum_rows_deleted as rows_loaded
+        sum_rows_deleted,
+        rows_extracted,
+        rows_loaded
 
     from row_modifcation_counts 
     left join connection

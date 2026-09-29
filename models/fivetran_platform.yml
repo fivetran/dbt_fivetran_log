@@ -166,10 +166,14 @@ models:
         description: Total number of rows updated in the table during a sync.
       - name: sum_rows_deleted
         description: Total number of rows deleted from the table during a sync.
+      - name: rows_extracted
+        description: >
+          Total number of rows extracted from the source for the table during a sync, summed from
+          the `count` of each `records_extracted` log event.
       - name: rows_loaded
         description: >
-          Total number of rows written to the table during a sync, calculated as the sum of
-          `sum_rows_replaced_or_inserted`, `sum_rows_updated`, and `sum_rows_deleted`.
+          Total number of rows written to the table during a sync, summed from the `count` of each
+          `records_modified` log event.
       - name: write_to_table_start_day
         description: The `write_to_table_start` field truncated to the `day`, used for partitioning with the `insert_overwrite` incremental method.
 

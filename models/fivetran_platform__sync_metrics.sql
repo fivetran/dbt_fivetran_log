@@ -1,6 +1,11 @@
 with log as (
 
-    select *
+    select
+        *,
+        row_number() over (
+            partition by sync_id, event_subtype
+            order by created_at desc
+        ) as nth_event_subtype_record
     from {{ ref('stg_fivetran_platform__log') }}
 ),
 
@@ -13,7 +18,7 @@ sync as (
         max(created_at) as sync_completed_at,
         sum(case when event_subtype = 'sync_end' then 1 else 0 end) as sync_end_events,
 
-        max(case when event_subtype = 'sync_end'
+        max(case when event_subtype = 'sync_end' and nth_event_subtype_record = 1
             then cast({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['status']) }} as {{ dbt.type_string() }})
             else null end) as sync_status
 

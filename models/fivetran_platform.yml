@@ -390,11 +390,10 @@ models:
 
   - name: fivetran_platform__sync_metrics
     description: >
-      Table of completed syncs, with one record per `sync_id` that logged a `sync_end` event. Combines
-      each sync's final status with its extract, process, and load timing and volume statistics, the
-      number of rows extracted from the source, and the total number of records modified, enriched with
-      connection and destination context. Not every connection emits a `sync_stats` log event; syncs
-      without one still appear here, but their timing and volume metrics are null.
+      One record per completed sync (a `sync_id` with a `sync_end` event), with its final status, row
+      counts, and connection and destination details. Extract, process, and load timing and volume come
+      from the `sync_stats` event. They're null when a connection doesn't emit one, and timing may differ
+      from the Fivetran dashboard by a few seconds due to rounding.
     columns:
       - name: unique_sync_key
         description: Primary key of the model, hashed on `connection_id`, `sync_id`, and `sync_completed_at`.
@@ -424,7 +423,8 @@ models:
       - name: sync_status
         description: >
           Final status of the sync, taken from the `status` field of its `sync_end` event. One of
-          `SUCCESSFUL`, `FAILURE`, `FAILURE_WITH_TASK`, `RESCHEDULED`, or `CANCELED`.
+          `SUCCESSFUL`, `FAILURE`, `FAILURE_WITH_TASK`, `RESCHEDULED`, or `CANCELED`. When a sync logs
+          more than one `sync_end` event, the status comes from the latest one.
       - name: extract_time_s
         description: Time spent extracting data from the source during the sync, in seconds. Null for syncs with no `sync_stats` event.
       - name: extract_volume_mb

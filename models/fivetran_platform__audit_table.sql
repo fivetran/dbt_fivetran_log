@@ -112,7 +112,8 @@ session_timestamps as (
 
         min(case when event_subtype = 'records_modified' then created_at else null end) over (partition by connection_id, table_name, sync_session_id order by created_at asc rows between current row and unbounded following) as next_records_modified,
 
-        row_number() over (partition by connection_id, table_name, sync_session_id, event_subtype order by created_at) as event_group
+        -- schema_name keeps same-named tables in different schemas from sharing (and shuffling) a write-cycle sequence
+        row_number() over (partition by connection_id, table_name, sync_session_id, schema_name, event_subtype order by created_at) as event_group
 
     from sessionize
 ),
@@ -131,7 +132,12 @@ write_start_timestamps as (
         sync_start,
         sync_end,
         next_sync_start,
-        coalesce(prev_write_to_table_end, next_write_to_table_end) as write_to_table_end,
+        -- records_extracted fires before its write cycle, so the backward window would return the previous sync's write_to_table_end
+        case
+            when event_subtype = 'records_extracted' and next_write_to_table_end <= coalesce(sync_end, next_sync_start)
+                then next_write_to_table_end
+            else coalesce(prev_write_to_table_end, next_write_to_table_end)
+        end as write_to_table_end,
         next_records_modified,
         
         max(case when event_subtype = 'write_to_table_start' then created_at else null end) over (partition by connection_id, table_name, sync_session_id, event_group order by created_at rows between unbounded preceding and current row) as write_to_table_start,

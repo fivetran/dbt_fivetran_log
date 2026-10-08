@@ -56,3 +56,5 @@ Because the table reflects whichever start date was in effect when it was last b
 
 ## `rows_extracted` attribution in `fivetran_platform__audit_table`
 When a sync writes a table in several write cycles, `records_extracted` events don't map to a single cycle. The `rows_extracted` total for the sync is correct, but the split across cycle rows is approximate, and `write_to_table_end` may come before `write_to_table_start` on those rows.
+
+The same limit applies when a connection has tables with the same name in different schemas. Write events don't record a schema, so we can't tell which write cycle belongs to which schema. Each schema gets its own row with correct row counts, but the schemas share the same `write_to_table_start` and `write_to_table_end` values.

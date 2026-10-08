@@ -53,3 +53,8 @@ Staging models in this package are materialized as views. `stg_fivetran_platform
 The start date filter is applied at the end of the staging model, after the column transformations. As a view, that filter is inlined into each downstream model at run time, so every end model still scans the full log history and the variable saves nothing. A table applies the filter once and persists only the narrowed window. We keep the materialization conditional so users who do not limit the scan window avoid the added storage and build time.
 
 Because the table reflects whichever start date was in effect when it was last built, run `dbt run --full-refresh` after setting or changing the variable.
+
+## `rows_extracted` attribution in `fivetran_platform__audit_table`
+When a sync writes a table in several write cycles, `records_extracted` events don't map to a single cycle. The `rows_extracted` total for the sync is correct, but the split across cycle rows is approximate, and `write_to_table_end` may come before `write_to_table_start` on those rows.
+
+The same limit applies when a connection has tables with the same name in different schemas. Write events don't record a schema, so we can't tell which write cycle belongs to which schema. Each schema gets its own row with correct row counts, but the schemas share the same `write_to_table_start` and `write_to_table_end` values.

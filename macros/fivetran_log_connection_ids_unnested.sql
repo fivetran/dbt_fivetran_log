@@ -82,6 +82,20 @@
 
 {% endmacro %}
 
+{% macro duckdb__fivetran_log_connection_ids_unnested() %}
+
+    select
+        transformation_logs.transformation_id,
+        connection_id
+    from transformation_logs
+    cross join unnest(
+        case when json_valid(transformation_logs.full_run_log)
+            then json_extract_string(transformation_logs.full_run_log, '$.schedule.integrations[*]')
+        end
+    ) as unnested_integrations(connection_id)
+
+{% endmacro %}
+
 {% macro spark__fivetran_log_connection_ids_unnested() %}
 {# databricks and spark #}
     select

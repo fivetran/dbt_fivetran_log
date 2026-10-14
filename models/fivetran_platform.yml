@@ -369,6 +369,10 @@ models:
         tests:
           - unique
           - not_null
+      - name: event_id
+        description: >
+          Identifier of the event in its source table. The `log_id` from the `log` table for standard connections,
+          or the `connector_sdk_log_id` from the `connector_sdk_log` table for Connector SDK connections.
       - name: connection_id
         description: Foreign key referencing the connection that emitted the event.
       - name: connection_name

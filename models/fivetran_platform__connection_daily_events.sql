@@ -44,7 +44,10 @@ agg_log_events as (
             ) as count_events
 
     from log_events
-    group by connection_id, date_day, event_subtype
+    group by connection_id, date_day,
+        case
+            when event_subtype in ('create_table', 'alter_table', 'create_schema', 'change_schema_config') then 'schema_change'
+            else event_subtype end
 ),
 
 pivot_out_events as (

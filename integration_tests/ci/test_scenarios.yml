@@ -12,6 +12,7 @@ include_databricks_sql: true
 include_sqlserver: true
 include_duckdb: true
 include_dbt_compile: true
+test_branch: "sqlserver-inline-deps"  # TEMP: testing solution_analytics SQL Server CI change - do not merge
 
 test_scenarios:
   - name: "Default"

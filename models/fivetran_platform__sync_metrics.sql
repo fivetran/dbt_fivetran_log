@@ -78,7 +78,7 @@ extract_summary as (
 
     select
         sync_id,
-        sum(cast({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['total_rows']) }} as {{ dbt.type_bigint() }})) as total_extracted_rows
+        max(cast({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['total_rows']) }} as {{ dbt.type_bigint() }})) as total_extracted_rows
 
     from log
     where event_subtype = 'extract_summary'

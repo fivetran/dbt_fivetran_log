@@ -2,7 +2,7 @@
 
 [PR #194](https://github.com/fivetran/dbt_fivetran_log/pull/194) includes the following updates:
 
-## Schema/Data Change (--full-refresh required after upgrading)
+## Schema/Data Changes (--full-refresh required after upgrading)
 **9 total changes • 0 possible breaking changes**
 
 | Data Model(s) | Change type | Old | New | Notes |
@@ -17,7 +17,7 @@
 | fivetran_platform__audit_table | New fields |  | `rows_extracted`<br>`rows_loaded` | Adds `rows_extracted`, the rows extracted from the source for the table during the sync, and `rows_loaded`, the insert, update, and delete operations on the table during the sync. `rows_loaded` counts operations, not distinct rows. |
 | fivetran_platform__audit_table | Changed model |  |  | Tracks same-named tables in different schemas separately. Before, their write events could mix, so a record could show another schema's write times and row counts. Existing records for these tables may change. |
 
-## Feature Update
+## Feature Updates
 - Adds the `fivetran_platform_using_connector_sdk_log` variable (default `false`) to enable or disable the `connector_sdk_log` source and its downstream logic. Set this to `true` to enable the `connector_sdk_log` table. See the [README](https://github.com/fivetran/dbt_fivetran_log/blob/main/README.md#disable-models-for-non-existent-sources) for details.
 - Adds the `fivetran_platform_using_audit_trail` variable (default `false`) to enable or disable the `audit_trail` source and its downstream logic. Set this to `true` to enable the `audit_trail` table. The `audit_trail` table is only available on the Enterprise plan and above. See the [README](https://github.com/fivetran/dbt_fivetran_log/blob/main/README.md#disable-models-for-non-existent-sources) for details.
 - Adds the optional `fivetran_platform_log_start_date` variable to control how much source log data is scanned/loaded. When set to a date (`YYYY-MM-DD`), `stg_fivetran_platform__log` filters to log records on or after that date. As downstream incremental models grow, you can periodically move the start date forward to keep full-refresh scans manageable. See the [README](https://github.com/fivetran/dbt_fivetran_log/blob/main/README.md#limit-the-lookback-window) for details. Affects `fivetran_platform__connection_status`, `fivetran_platform__schema_changelog`, `fivetran_platform__audit_user_activity`, `fivetran_platform__connection_daily_events`, `fivetran_platform__audit_table`, `fivetran_platform__sync_metrics`, `fivetran_platform__connection_errors_and_warnings`, and `fivetran_platform__transformation_run_log` (**note:** run `dbt run --full-refresh` after setting or changing this variable).

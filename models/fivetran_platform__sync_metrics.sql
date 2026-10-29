@@ -20,7 +20,11 @@ sync as (
 
         max(case when event_subtype = 'sync_end' and nth_event_subtype_record = 1
             then cast({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['status']) }} as {{ dbt.type_string() }})
-            else null end) as sync_status
+            else null end) as sync_status,
+
+        max(case when event_subtype = 'sync_start' and nth_event_subtype_record = 1
+            then cast({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['sync_type']) }} as {{ dbt.type_string() }})
+            else null end) as sync_type
 
     from log
     where sync_id is not null
@@ -34,7 +38,8 @@ completed_syncs as (
         sync_id,
         connection_id,
         sync_completed_at,
-        sync_status
+        sync_status,
+        sync_type
 
     from sync
     where sync_end_events > 0
@@ -63,7 +68,6 @@ sync_stats as (
         log_id,
         sync_id,
         cast({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['extract_time_s']) }} as {{ dbt.type_float() }}) as extract_time_s,
-        cast({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['extract_volume_mb']) }} as {{ dbt.type_float() }}) as extract_volume_mb,
         cast({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['process_time_s']) }} as {{ dbt.type_float() }}) as process_time_s,
         cast({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['process_volume_mb']) }} as {{ dbt.type_float() }}) as process_volume_mb,
         cast({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['load_time_s']) }} as {{ dbt.type_float() }}) as load_time_s,
@@ -74,11 +78,15 @@ sync_stats as (
     where nth_sync_stats_record = 1
 ),
 
+-- each extract_summary event carries a running total, so take the max
 extract_summary as (
 
     select
         sync_id,
-        max(cast({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['total_rows']) }} as {{ dbt.type_bigint() }})) as total_extracted_rows
+        max(cast({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['total_rows']) }} as {{ dbt.type_bigint() }})) as total_extracted_rows,
+        max(cast({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['total_queries']) }} as {{ dbt.type_bigint() }})) as total_queries,
+        -- total_size is in bytes; convert to MB to match other stats
+        max(cast({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['total_size']) }} as {{ dbt.type_float() }})) / (1024 * 1024) as extract_volume_mb
 
     from log
     where event_subtype = 'extract_summary'
@@ -86,7 +94,7 @@ extract_summary as (
     group by sync_id
 ),
 
--- total records modified per sync, to pair row counts with each sync's duration
+-- each records_modified event carries the count for one flush, so sum them
 records_modified as (
 
     select
@@ -149,14 +157,16 @@ joined as (
         {% endif -%}
 
         completed_syncs.sync_status,
+        completed_syncs.sync_type,
         sync_stats.extract_time_s,
-        sync_stats.extract_volume_mb,
+        extract_summary.extract_volume_mb,
         sync_stats.process_time_s,
         sync_stats.process_volume_mb,
         sync_stats.load_time_s,
         sync_stats.load_volume_mb,
         sync_stats.total_time_s,
         extract_summary.total_extracted_rows,
+        extract_summary.total_queries,
         records_modified.row_count as total_loaded_rows
 
     from completed_syncs

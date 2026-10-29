@@ -7,11 +7,13 @@ with log_events as (
         created_at as event_time,
         event_type as severity_level,
         message_data as message,
+        cast(null as {{ dbt.type_string() }}) as message_origin,
         {{ '0' if target.type == 'sqlserver' else 'false' }} as is_custom_connector
         -- standard connector
     from {{ ref('stg_fivetran_platform__log') }}
     -- Excludes events not attributable to a connection (connection_id is null), such as transformation job dbt run logs, which are not connector events.
-    where lower(event_type) in ('warning', 'error', 'severe')
+    -- exclude routine levels instead of listing problem levels, so new levels still come through
+    where lower(event_type) not in ('info', 'debug', 'fine')
         and connection_id is not null
 ),
 
@@ -25,10 +27,11 @@ connector_sdk_events as (
         created_at as event_time,
         level as severity_level,
         message,
+        message_origin,
         {{ '1' if target.type == 'sqlserver' else 'true' }} as is_custom_connector
         -- connector sdk
     from {{ ref('stg_fivetran_platform__connector_sdk_log') }}
-    where lower(level) in ('warning', 'error', 'severe')
+    where lower(level) not in ('info', 'debug', 'fine')
         and connection_id is not null
 ),
 {%- endif %}
@@ -83,6 +86,7 @@ final as (
         unioned.event_time,
         unioned.severity_level,
         unioned.message,
+        unioned.message_origin,
         unioned.is_custom_connector,
         unioned.sync_id
     from unioned

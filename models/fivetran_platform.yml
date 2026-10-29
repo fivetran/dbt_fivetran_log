@@ -136,7 +136,7 @@ models:
       from the deprecated `fivetran_audit`, which reported pre-duplicate data loads.
     columns:
       - name: unique_table_sync_key
-        description: Primary key of the table, hashed on `schema_name`, `connection_id`, `destination_id`, `table_name`, and `unique_table_sync_key`.
+        description: Primary key of the table, hashed on `schema_name`, `connection_id`, `destination_id`, `table_name`, and `write_to_table_start`.
         tests:
           - unique
           - not_null
@@ -172,8 +172,8 @@ models:
           the `count` of each `records_extracted` log event.
       - name: rows_loaded
         description: >
-          Total number of rows written to the table during a sync, summed from the `count` of each
-          `records_modified` log event.
+          Total number of insert, update, and delete operations on the table during a sync, summed
+          from the `count` of each `records_modified` log event. Counts operations, not distinct rows.
       - name: write_to_table_start_day
         description: The `write_to_table_start` field truncated to the `day`, used for partitioning with the `insert_overwrite` incremental method.
 
@@ -254,8 +254,10 @@ models:
         description: Number of models that failed in this transformation execution.
       - name: transformation_status
         description: >
-          Outcome of the transformation run. Possible values are `transformation_succeeded`,
-          `transformation_partially_succeeded`, and `transformation_failed`.
+          Outcome of the transformation run, based on the first step's `success` value. Usually
+          `transformation_succeeded`, `transformation_partially_succeeded`, or `transformation_failed`.
+          When the log event has no step result, this is the raw event subtype instead, such as
+          `transformation_failed`.
       - name: full_run_log
         description: The raw JSON message data from the log event.
 
@@ -381,10 +383,16 @@ models:
         description: Timestamp when the event was logged.
       - name: severity_level
         description: >
-          Raw severity of the event as reported by the source, passed through without normalization. Both sources
-          report `WARNING` and `SEVERE`; `ERROR` is reported only by the `connector_sdk_log` source.
+          Raw severity of the event as reported by the source, passed through without normalization. Includes every
+          level except `INFO`, `DEBUG`, and `FINE`. Both sources report `WARNING` and `SEVERE`; `ERROR` and `CRITICAL`
+          are reported only by the `connector_sdk_log` source.
       - name: message
         description: The details of the event. For standard connections this is the JSON-like `message_data` string; for Connector SDK connections this is the plain-text log message.
+      - name: message_origin
+        description: >
+          Where a Connector SDK log message came from. `connector_sdk` for messages from your connector
+          code, including warnings from the Python packages it uses. `library` for messages from the
+          Connector SDK library. Null for standard connections.
       - name: is_custom_connector
         description: >
           Boolean indicating which source the event originated from. `false` for standard connections (from the `log`
@@ -395,9 +403,10 @@ models:
   - name: fivetran_platform__sync_metrics
     description: >
       One record per completed sync (a `sync_id` with a `sync_end` event), with its final status, row
-      counts, and connection and destination details. Extract, process, and load timing and volume come
-      from the `sync_stats` event. They're null when a connection doesn't emit one, and timing may differ
-      from the Fivetran dashboard by a few seconds due to rounding.
+      counts, and connection and destination details. Timing and process and load volume come from the
+      `sync_stats` event. They're null when a connection doesn't emit one, and timing may differ from the
+      Fivetran dashboard by a few seconds due to rounding. Extract volume, query, and row counts come from
+      the `extract_summary` and `records_modified` events.
     columns:
       - name: unique_sync_key
         description: Primary key of the model, hashed on `connection_id`, `sync_id`, and `sync_completed_at`.
@@ -429,10 +438,17 @@ models:
           Final status of the sync, taken from the `status` field of its `sync_end` event. One of
           `SUCCESSFUL`, `FAILURE`, `FAILURE_WITH_TASK`, `RESCHEDULED`, or `CANCELED`. When a sync logs
           more than one `sync_end` event, the status comes from the latest one.
+      - name: sync_type
+        description: >
+          Type of sync, taken from the `sync_type` field of its `sync_start` event (e.g. `INCREMENTAL`,
+          `HISTORICAL`). Fivetran began logging this field in September 2026, so it's null for earlier syncs.
       - name: extract_time_s
         description: Time spent extracting data from the source during the sync, in seconds. Null for syncs with no `sync_stats` event.
       - name: extract_volume_mb
-        description: Volume of data extracted from the source during the sync, in megabytes. Null for syncs with no `sync_stats` event.
+        description: >
+          Volume of data extracted from the source during the sync, in megabytes. Converted from the highest
+          `total_size` value (in bytes) across the sync's `extract_summary` events. Null for syncs that skip
+          every table.
       - name: process_time_s
         description: Time spent processing data during the sync, in seconds. Null for syncs with no `sync_stats` event.
       - name: process_volume_mb
@@ -445,7 +461,16 @@ models:
         description: Total duration of the sync, in seconds. Null for syncs with no `sync_stats` event.
       - name: total_extracted_rows
         description: >
-          Total number of rows extracted from the source during the sync, taken from the `total_rows`
-          field of the sync's `extract_summary` event. Null for syncs with no `extract_summary` event.
+          Total number of rows extracted from the source during the sync. Each `extract_summary` event
+          carries a running total, so this is the highest `total_rows` value across the sync's events.
+          Null for syncs that skip every table.
+      - name: total_queries
+        description: >
+          Total number of queries run against the source during the sync. Each `extract_summary` event
+          carries a running total, so this is the highest `total_queries` value across the sync's events.
+          Null for syncs that skip every table.
       - name: total_loaded_rows
-        description: Total number of records modified during the sync, summed across all `records_modified` events sharing the same `sync_id`.
+        description: >
+          Total number of insert, update, and delete operations during the sync, summed across its
+          `records_modified` events. Counts operations, not distinct rows. Null for syncs that skip
+          every table.

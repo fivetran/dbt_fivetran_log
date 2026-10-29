@@ -1,3 +1,27 @@
+# dbt_fivetran_log v2.6.0
+
+[PR #194](https://github.com/fivetran/dbt_fivetran_log/pull/194) includes the following updates:
+
+## Schema/Data Change (--full-refresh required after upgrading)
+**9 total changes • 0 possible breaking changes**
+
+| Data Model(s) | Change type | Old | New | Notes |
+| ------------- | ----------- | --- | --- | ----- |
+| fivetran_platform__sync_metrics | New model |  |  | Returns one record per completed sync with its status, sync type, timing, volume, queries, rows extracted, and rows loaded, plus connection and destination details. `total_loaded_rows` counts insert, update, and delete operations, not distinct rows. Timing and process and load volume are null when a connection doesn't emit a `sync_stats` event. Extract volume, queries, and row counts are null when a sync skips every table. |
+| fivetran_platform__audit_trail_enriched | New model |  |  | Enriches each audit trail event with the names of the primary and secondary resources involved (resolved for `CONNECTION`, `DESTINATION`, `ACCOUNT`, and `USER` resources) and the details of the user who performed the action. Only available for customers on the Enterprise plan and above, and disabled by default. Set the `fivetran_platform_using_audit_trail` variable to `true` to enable it. |
+| fivetran_platform__transformation_run_log | New model |  |  | Surfaces transformation run events from the Fivetran log, including run timestamps, duration in HH:MM:SS format, per-step model success and failure counts, and overall run status. Requires the `transformation_runs` source table, and is disabled by default. Set the `fivetran_platform_using_transformations` variable to `true` to enable it. |
+| fivetran_platform__connection_errors_and_warnings | New model |  |  | Unions error and warning events from the `log` (standard connections) and `connector_sdk_log` (Connector SDK connections) tables, enriched with `connection_name`. |
+| stg_fivetran_platform__audit_trail | New staging model |  |  | Records user actions performed within your Fivetran account (what was changed, by whom, and how). Only available for customers on the Enterprise plan and above, and disabled by default. Set the `fivetran_platform_using_audit_trail` variable to `true` to enable it. |
+| stg_fivetran_platform__connector_sdk_log | New staging model |  |  | Staging model for the new `connector_sdk_log` source table. |
+| stg_fivetran_platform__log | Materialization | view | table (only when `fivetran_platform_log_start_date` is set) | Materializes as a table when the `fivetran_platform_log_start_date` variable is set. Date filter applies after column transformations, reducing source scan costs on downstream models for large log tables. Remains a view when the variable is unset. |
+| fivetran_platform__audit_table | New fields |  | `rows_extracted`<br>`rows_loaded` | Adds `rows_extracted`, the rows extracted from the source for the table during the sync, and `rows_loaded`, the insert, update, and delete operations on the table during the sync. `rows_loaded` counts operations, not distinct rows. |
+| fivetran_platform__audit_table | Changed model |  |  | Tracks same-named tables in different schemas separately. Before, their write events could mix, so a record could show another schema's write times and row counts. Existing records for these tables may change. |
+
+## Feature Update
+- Adds the `fivetran_platform_using_connector_sdk_log` variable (default `false`) to enable or disable the `connector_sdk_log` source and its downstream logic. Set this to `true` to enable the `connector_sdk_log` table. See the [README](https://github.com/fivetran/dbt_fivetran_log/blob/main/README.md#disable-models-for-non-existent-sources) for details.
+- Adds the `fivetran_platform_using_audit_trail` variable (default `false`) to enable or disable the `audit_trail` source and its downstream logic. Set this to `true` to enable the `audit_trail` table. The `audit_trail` table is only available on the Enterprise plan and above. See the [README](https://github.com/fivetran/dbt_fivetran_log/blob/main/README.md#disable-models-for-non-existent-sources) for details.
+- Adds the optional `fivetran_platform_log_start_date` variable to control how much source log data is scanned/loaded. When set to a date (`YYYY-MM-DD`), `stg_fivetran_platform__log` filters to log records on or after that date. As downstream incremental models grow, you can periodically move the start date forward to keep full-refresh scans manageable. See the [README](https://github.com/fivetran/dbt_fivetran_log/blob/main/README.md#limit-the-lookback-window) for details. Affects `fivetran_platform__connection_status`, `fivetran_platform__schema_changelog`, `fivetran_platform__audit_user_activity`, `fivetran_platform__connection_daily_events`, `fivetran_platform__audit_table`, `fivetran_platform__sync_metrics`, `fivetran_platform__connection_errors_and_warnings`, and `fivetran_platform__transformation_run_log` (**note:** run `dbt run --full-refresh` after setting or changing this variable).
+
 # dbt_fivetran_log v2.5.3
 
 [PR #203](https://github.com/fivetran/dbt_fivetran_log/pull/203) includes the following updates:

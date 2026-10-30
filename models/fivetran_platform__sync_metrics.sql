@@ -15,12 +15,22 @@ sync as (
     select
         sync_id,
         connection_id,
-        max(created_at) as sync_completed_at,
+        min(case when event_subtype = 'sync_start' then created_at else null end) as sync_started_at,
+        max(case when event_subtype = 'sync_end' then created_at else null end) as sync_completed_at,
         sum(case when event_subtype = 'sync_end' then 1 else 0 end) as sync_end_events,
+
+        -- load_volume_b is in bytes; convert to MB to match the UI
+        max(case when event_subtype = 'sync_end'
+            then cast({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['load_volume_b']) }} as {{ dbt.type_float() }})
+            else null end) / (1024 * 1024) as load_volume_mb,
 
         max(case when event_subtype = 'sync_end' and nth_event_subtype_record = 1
             then cast({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['status']) }} as {{ dbt.type_string() }})
             else null end) as sync_status,
+
+        max(case when event_subtype = 'sync_end' and nth_event_subtype_record = 1
+            then cast({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['reason']) }} as {{ dbt.type_string() }})
+            else null end) as sync_reason,
 
         max(case when event_subtype = 'sync_start' and nth_event_subtype_record = 1
             then cast({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['sync_type']) }} as {{ dbt.type_string() }})
@@ -37,9 +47,12 @@ completed_syncs as (
     select
         sync_id,
         connection_id,
+        sync_started_at,
         sync_completed_at,
         sync_status,
-        sync_type
+        sync_reason,
+        sync_type,
+        load_volume_mb
 
     from sync
     where sync_end_events > 0
@@ -70,9 +83,7 @@ sync_stats as (
         cast({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['extract_time_s']) }} as {{ dbt.type_float() }}) as extract_time_s,
         cast({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['process_time_s']) }} as {{ dbt.type_float() }}) as process_time_s,
         cast({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['process_volume_mb']) }} as {{ dbt.type_float() }}) as process_volume_mb,
-        cast({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['load_time_s']) }} as {{ dbt.type_float() }}) as load_time_s,
-        cast({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['load_volume_mb']) }} as {{ dbt.type_float() }}) as load_volume_mb,
-        cast({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['total_time_s']) }} as {{ dbt.type_float() }}) as total_time_s
+        cast({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['load_time_s']) }} as {{ dbt.type_float() }}) as load_time_s
 
     from sync_stats_ranked
     where nth_sync_stats_record = 1
@@ -85,7 +96,7 @@ extract_summary as (
         sync_id,
         max(cast({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['total_rows']) }} as {{ dbt.type_bigint() }})) as total_extracted_rows,
         max(cast({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['total_queries']) }} as {{ dbt.type_bigint() }})) as total_queries,
-        -- total_size is in bytes; convert to MB to match other stats
+        -- total_size is in bytes; convert to MB to match the UI
         max(cast({{ fivetran_log.fivetran_log_json_parse(string='message_data', string_path=['total_size']) }} as {{ dbt.type_float() }})) / (1024 * 1024) as extract_volume_mb
 
     from log
@@ -147,6 +158,7 @@ joined as (
         connection.connector_type,
         connection.destination_id,
         destination.destination_name,
+        completed_syncs.sync_started_at,
         completed_syncs.sync_completed_at,
         cast({{ dbt.date_trunc('day', 'completed_syncs.sync_completed_at') }} as date) as date_day,
 
@@ -157,14 +169,16 @@ joined as (
         {% endif -%}
 
         completed_syncs.sync_status,
+        completed_syncs.sync_reason,
         completed_syncs.sync_type,
         sync_stats.extract_time_s,
         extract_summary.extract_volume_mb,
         sync_stats.process_time_s,
         sync_stats.process_volume_mb,
         sync_stats.load_time_s,
-        sync_stats.load_volume_mb,
-        sync_stats.total_time_s,
+        completed_syncs.load_volume_mb,
+        -- datediff in seconds counts boundaries crossed, so measure in milliseconds and round down to whole elapsed seconds
+        floor({{ dbt.datediff('completed_syncs.sync_started_at', 'completed_syncs.sync_completed_at', 'millisecond') }} / 1000) as total_time_s,
         extract_summary.total_extracted_rows,
         extract_summary.total_queries,
         records_modified.row_count as total_loaded_rows

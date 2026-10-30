@@ -128,7 +128,10 @@ models:
       - name: message
         description: The details of the logged event.
       - name: message_origin
-        description: The origin of the log message within the Connector SDK connection.
+        description: >
+          Where a Connector SDK log message came from. `connector_sdk` for messages from your connector
+          code, including warnings from the Python packages it uses. `library` for messages from the
+          Connector SDK library.
 
   - name: stg_fivetran_platform__account
     description: Table of information about this Fivetran account.

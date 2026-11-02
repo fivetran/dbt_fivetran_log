@@ -178,7 +178,11 @@ joined as (
         sync_stats.load_time_s,
         completed_syncs.load_volume_mb,
         -- datediff in seconds counts boundaries crossed, so measure in milliseconds and round down to whole elapsed seconds
+        {% if target.type == 'sqlserver' -%}
+        floor(datediff_big(millisecond, completed_syncs.sync_started_at, completed_syncs.sync_completed_at) / 1000) as total_time_s,
+        {% else -%}
         floor({{ dbt.datediff('completed_syncs.sync_started_at', 'completed_syncs.sync_completed_at', 'millisecond') }} / 1000) as total_time_s,
+        {% endif -%}
         extract_summary.total_extracted_rows,
         extract_summary.total_queries,
         records_modified.row_count as total_loaded_rows

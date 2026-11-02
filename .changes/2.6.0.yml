@@ -6,21 +6,21 @@ schema_data_changes:
   - models:
     - '[fivetran_platform__sync_metrics](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__sync_metrics)'
     change_type: New model
-    notes: Returns one record per completed sync with start/end times, status,
-      reason, sync type, duration, volume, queries, rows extracted, and
-      rows loaded, plus connection and destination details. `total_loaded_rows` counts
-      insert, update, and delete operations, not distinct rows. Rows can include a mix of populated
+    notes: Returns one record per completed sync with start/end times, status, reason,
+      sync type, duration, volume, queries, rows extracted, and rows loaded, plus
+      connection and destination details. `total_loaded_rows` counts insert, update,
+      and delete operations, not distinct rows. Rows can include a mix of populated
       and null values because operations are tied to different events
   - models:
     - '[fivetran_platform__audit_trail_enriched](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_trail_enriched)'
     change_type: New model
     notes: Enriches each audit trail event with the names of the primary and secondary
-      resources involved (a `CONNECTION`, `DESTINATION`, `ACCOUNT`, or
-      `USER` resources) and the details of the user who performed the action. Only
-      available for customers on the Enterprise plan and above. Requires the `audit_trail` 
-      source table, and is disabled by default. Set the `fivetran_platform_using_audit_trail` 
-      variable to `true` to enable it. Quickstart sets this variable automatically. 
-      Applicable only if you run the package in a self-managed dbt project.
+      resources involved (a `CONNECTION`, `DESTINATION`, `ACCOUNT`, or `USER` resources)
+      and the details of the user who performed the action. Only available for customers
+      on the Enterprise plan and above. Requires the `audit_trail` source table, and
+      is disabled by default. Set the `fivetran_platform_using_audit_trail` variable
+      to `true` to enable it. Quickstart sets this variable automatically. Applicable
+      only if you run the package in a self-managed dbt project.
   - models:
     - '[fivetran_platform__transformation_run_log](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__transformation_run_log)'
     change_type: New model
@@ -28,7 +28,7 @@ schema_data_changes:
       timestamps, duration in HH:MM:SS format, per-step model success and failure
       counts, and overall run status. Requires the `transformation_runs` source table,
       and is disabled by default. Set the `fivetran_platform_using_transformations`
-      variable to `true` to enable it. Quickstart sets this variable automatically. 
+      variable to `true` to enable it. Quickstart sets this variable automatically.
       Applicable only if you run the package in a self-managed dbt project.
   - models:
     - '[fivetran_platform__connection_errors_and_warnings](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__connection_errors_and_warnings)'
@@ -56,8 +56,8 @@ schema_data_changes:
     notes: Records user actions performed within your Fivetran account (what was changed,
       by whom, and how). Only available for customers on the Enterprise plan and above,
       and disabled by default. Set the `fivetran_platform_using_audit_trail` variable
-      to `true` to enable it. Quickstart sets this variable automatically. 
-      Applicable only if you run the package in a self-managed dbt project.
+      to `true` to enable it. Quickstart sets this variable automatically. Applicable
+      only if you run the package in a self-managed dbt project.
   - models:
     - '[stg_fivetran_platform__connector_sdk_log](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.stg_fivetran_platform__connector_sdk_log)'
     change_type: New staging model

@@ -15,11 +15,11 @@ schema_data_changes:
     - '[fivetran_platform__audit_trail_enriched](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_trail_enriched)'
     change_type: New model
     notes: Enriches each audit trail event with the names of the primary and secondary
-      resources involved (a `CONNECTION`, `DESTINATION`, `ACCOUNT`, or `USER`)
-      and the details of the user who performed the action. Only available for customers
+      resources involved (a `CONNECTION`, `DESTINATION`, `ACCOUNT`, or `USER`) and
+      the details of the user who performed the action. Only available for customers
       on the Enterprise plan and above. Requires the `audit_trail` source table, and
-      is dynamically enabled in Quickstart while disabled by default otherwise. 
-      Self-managed dbt projects can enable by setting the `fivetran_platform_using_audit_trail`
+      is dynamically enabled in Quickstart while disabled by default otherwise. Self-managed
+      dbt projects can enable by setting the `fivetran_platform_using_audit_trail`
       variable to `true`.
   - models:
     - '[fivetran_platform__transformation_run_log](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__transformation_run_log)'
@@ -27,8 +27,8 @@ schema_data_changes:
     notes: Surfaces transformation run events from the Fivetran log, including run
       timestamps, duration in HH:MM:SS format, per-step model success and failure
       counts, and overall run status. Requires the `transformation_runs` source table,
-      is dynamically enabled in Quickstart while disabled by default otherwise. 
-      Self-managed dbt projects can enable by setting the `fivetran_platform_using_transformations`
+      is dynamically enabled in Quickstart while disabled by default otherwise. Self-managed
+      dbt projects can enable by setting the `fivetran_platform_using_transformations`
       variable to `true`.
   - models:
     - '[fivetran_platform__connection_errors_and_warnings](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__connection_errors_and_warnings)'
@@ -55,8 +55,8 @@ schema_data_changes:
     change_type: New staging model
     notes: Records user actions performed within your Fivetran account (what was changed,
       by whom, and how). Only available for customers on the Enterprise plan and above,
-      is dynamically enabled in Quickstart while disabled by default otherwise. 
-      Self-managed dbt projects can enable by setting the `fivetran_platform_using_audit_trail`
+      is dynamically enabled in Quickstart while disabled by default otherwise. Self-managed
+      dbt projects can enable by setting the `fivetran_platform_using_audit_trail`
       variable to `true`.
   - models:
     - '[stg_fivetran_platform__connector_sdk_log](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.stg_fivetran_platform__connector_sdk_log)'

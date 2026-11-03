@@ -1,0 +1,5 @@
+id,event_time,_fivetran_synced,connection_id,level,message,message_origin,sync_id
+aGktalz7uFZbVYKR7zlDeUd4nSM=,2024-08-13 13:34:03.343,2024-08-16 21:11:07.065,legislative_lazy,INFO,Sync started,connector_sdk,sdk789
+bf7EVPLOIMhuOs45jlXWN3lutVEc=,2024-08-13 13:35:05.555,2024-08-16 21:48:51.493,legislative_lazy,WARNING,Rate limit approaching for endpoint /v1/records,connector_sdk,sdk789
+cfJktL6p9gQE83WaCPdevLs9FXU=,2024-08-13 14:27:00.504,2024-08-16 20:30:53.959,paint_wedges,SEVERE,Failed to fetch data: connection timed out,connector_sdk,sdk790
+df7UkkDoGwEVnG7M2tFQFy7FSoDM=,2024-08-13 14:30:52.433,2024-08-16 20:35:53.957,paint_wedges,ERROR,Schema detection failed for table orders,connector_sdk,sdk790

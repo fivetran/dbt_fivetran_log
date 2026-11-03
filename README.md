@@ -5,7 +5,7 @@ This dbt package transforms data from the Fivetran Platform connector into analy
 
 ## Resources
 
-- Number of materialized models¹: 19
+- Number of materialized models¹: 26
 - Connector documentation
   - [Fivetran Platform connector documentation](https://fivetran.com/docs/logs/fivetran-platform)
   - [Fivetran Platform ERD](https://fivetran.com/docs/logs/fivetran-platform#schemainformation)
@@ -18,7 +18,7 @@ This dbt package transforms data from the Fivetran Platform connector into analy
   - `>=1.3.0, <3.0.0`
 
 ## What does this dbt package do?
-This package enables you to better understand how you are spending money in Fivetran according to our [consumption-based pricing model](https://fivetran.com/docs/usage-based-pricing) and provides details about the performance and status of your Fivetran connections. It creates enriched models with metrics focused on consumption data, monthly active rows (MAR), credit consumption, connection events, schema changes, and audit logs.
+This package enables you to better understand how you are spending money in Fivetran according to our [consumption-based pricing model](https://fivetran.com/docs/usage-based-pricing) and provides details about the performance and status of your Fivetran connections. It creates enriched models with metrics focused on consumption data, monthly active rows (MAR), credit consumption, connection events, schema changes, and audit logs. You can also track the duration and volume of each sync, the outcome of each transformation run, and connection errors and warnings in one place.
 
 ### Output schema
 Final output tables are generated in the following target schema:
@@ -38,8 +38,12 @@ By default, this package materializes the following final tables:
 | [fivetran_platform__usage_history](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__usage_history) | Summarizes each destination's monthly usage and active volume with calculated metrics for usage per million MAR and MAR per usage unit to track your Fivetran consumption costs and efficiency. Usage represents either dollar or credit amounts depending on your pricing model. Read more about the relationship between usage and MAR [here](https://www.fivetran.com/legal/service-consumption-table). |
 | [fivetran_platform__connection_daily_events](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__connection_daily_events) | Captures daily operational metrics for each connection including API calls made, schema changes implemented, and record modifications processed, starting from the connection setup date to provide insights into connection activity patterns and data processing volumes. |
 | [fivetran_platform__schema_changelog](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__schema_changelog) | Documents all schema changes made to your connections including table alterations, table creations, schema creations, and configuration changes with detailed metadata about each event to track data structure evolution and troubleshoot schema-related issues. |
-| [fivetran_platform__audit_table](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_table) | Replaces the deprecated [`_fivetran_audit` table](https://fivetran.com/docs/getting-started/system-columns-and-tables#audittables) and tracks each table receiving data during connection syncs with comprehensive timestamps for connection and table-level sync progress plus detailed counts of records inserted, replaced, updated, and deleted to monitor data processing and sync performance. |
+| [fivetran_platform__audit_table](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_table) | Replaces the deprecated [`_fivetran_audit` table](https://fivetran.com/docs/getting-started/system-columns-and-tables#audittables) and tracks each table receiving data during connection syncs with comprehensive timestamps for connection and table-level sync progress plus detailed counts of records inserted, replaced, updated, and deleted, and rows extracted and loaded, to monitor data processing and sync performance. |
 | [fivetran_platform__audit_user_activity](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_user_activity) | Records all user-triggered actions within your Fivetran account to provide a comprehensive audit trail that helps you trace user activities to specific [log events](https://fivetran.com/docs/logs#logeventlist) such as schema changes, sync frequency updates, manual syncs, connection failures, and other operational events for compliance and troubleshooting purposes. |
+| [fivetran_platform__audit_trail_enriched](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__audit_trail_enriched) | Enriches each account-level audit trail event with the human-readable names of the primary and secondary resources involved (a `CONNECTION`, `DESTINATION`, `ACCOUNT`, or `USER`) and the details of the user who performed the action, so you can audit who changed what without manually resolving resource IDs. Only available for customers on the Enterprise plan and above. Requires the `audit_trail` source table.  |
+| [fivetran_platform__transformation_run_log](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__transformation_run_log) | Surfaces each transformation run event from the Fivetran log, including start and end timestamps, formatted duration, per-step model success and failure counts, and overall transformation status to monitor and troubleshoot your transformation pipeline performance. Requires the `transformation_runs` source table. |
+| [fivetran_platform__connection_errors_and_warnings](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__connection_errors_and_warnings) | Consolidates error and warning events from both standard connections and Connector SDK connections into a single feed, enriched with connection details, so you can monitor and triage the severity of issues across your data pipelines. |
+| [fivetran_platform__sync_metrics](https://fivetran.github.io/dbt_fivetran_log/#!/model/model.fivetran_log.fivetran_platform__sync_metrics) | Captures one record per completed sync, combining each sync's final status and sync type with its extract, process, and load timing and volume, total duration, query count, and total rows extracted and loaded, enriched with connection and destination details to analyze sync performance and throughput over time. Extract, process, and load time and process volume come from the `sync_stats` log event, and are null when a sync has no `sync_stats` event or the event doesn't include that value. Total duration and load volume come from other events, so they can be populated even when these fields are null. |
 
 ¹ Each Quickstart transformation job run materializes these models if all components of this data model are enabled. This count includes all staging, intermediate, and final models materialized as `view`, `table`, or `incremental`.
 
@@ -50,7 +54,7 @@ By default, this package materializes the following final tables:
 To use this dbt package, you must have the following:
 
 - A Fivetran Platform connection syncing data into your destination.
-- A **BigQuery**, **Snowflake**, **Redshift**, **Postgres**, **Databricks**, or **SQL Server** destination.
+- A **BigQuery**, **Snowflake**, **Redshift**, **PostgreSQL**, **Databricks**, **DuckDB**, or **SQL Server** destination.
 
 ## How do I use the dbt package?
 You can either add this dbt package in the Fivetran dashboard or import it into your dbt project:
@@ -69,7 +73,7 @@ Include the following Fivetran Platform package version range in your `packages.
 ```yml
 packages:
   - package: fivetran/fivetran_log
-    version: [">=2.5.0", "<2.6.0"]
+    version: [">=2.6.0", "<2.7.0"]
 ```
 
 > Note that although the source connector is now "Fivetran Platform", the package retains the old name of "fivetran_log".
@@ -103,13 +107,21 @@ vars:
 ```
 
 ### Disable Models for Non Existent Sources
-If you do not leverage Fivetran RBAC, then you will not have the `user` or `destination_membership` source tables. The `user` and `destination_membership` are enabled by default. Therefore in order to switch the default configurations, you must add the following variable(s) to your root `dbt_project.yml` file for the respective source tables you wish to disable:
+Not every account has every source table. Quickstart automatically detects which tables are present in your schema and enables or disables the related models for you. If you run this package in your own dbt project, add the relevant variable(s) below to your root `dbt_project.yml` file:
 
 ```yml
 vars:
-    fivetran_platform_using_destination_membership: false # Default is true. This will disable only the destination membership logic
-    fivetran_platform_using_user: false # Default is true. This will disable only the user logic
+    fivetran_platform_using_destination_membership: false # True by default. Disables only the destination membership logic
+    fivetran_platform_using_user: false # True by default. Disables only the user logic
+    fivetran_platform_using_audit_trail: true # False by default. Set to true only if you have the audit_trail source table
+    fivetran_platform_using_connector_sdk_log: true # False by default. Set to true only if you have the connector_sdk_log source table
+    fivetran_platform_using_transformations: true # False by default for fivetran_platform__transformation_run_log. Set to true to build 
 ```
+
+- `destination_membership` and `user` require Fivetran [role-based access control (RBAC)](https://fivetran.com/docs/using-fivetran/fivetran-dashboard/account-settings/role-based-access-control). Both are enabled by default, so disable them if you do not use RBAC.
+- `audit_trail` is only available on the Enterprise plan and above. It powers the `stg_fivetran_platform__audit_trail` and `fivetran_platform__audit_trail_enriched` models, which are disabled by default.
+- `connector_sdk_log` is only populated for accounts using the Fivetran Connector SDK. Enabling it includes Connector SDK events in `fivetran_platform__connection_errors_and_warnings`.
+- `transformation_runs` is only populated for accounts using Fivetran Transformations. When you leave the variable unset, the staging model checks your schema for the table at runtime, but `fivetran_platform__transformation_run_log` doesn't build unless you set the variable to `true`. We plan to remove the runtime check in a future release. For details, see the [Transformation Runs](https://github.com/fivetran/dbt_fivetran_log/blob/main/DECISIONLOG.md#transformation-runs) entry in the DECISIONLOG.
 
 #### Leveraging `CONNECTION` vs `CONNECTOR`  
 In Q1 2025, the `CONNECTOR` source table was deprecated and replaced by `CONNECTION`, and `CONNECTION` is now the default source.
@@ -141,6 +153,29 @@ If an individual source table has a different name than expected (see this proje
 vars:
     fivetran_platform_<default_table_name>_identifier: your_table_name 
 ```
+
+#### Limit the Lookback Window
+By default, log-based models scan all available log history from the source `log` table. On large tables, this can increase query costs and/or run times. To limit the scan window, set the `fivetran_platform_log_start_date` variable to the earliest date you want to include (in `YYYY-MM-DD` format):
+```yml
+vars:
+    fivetran_platform_log_start_date: '2024-01-01' # scan only log history on and after this date
+```
+This filter is applied in `stg_fivetran_platform__log`. Because it is a fixed date rather than a rolling window, the boundary does not move over time — a `--full-refresh` always reloads from the same start date, so historical data is never lost.
+
+Incremental downstream models accumulate history over time on regular runs, and their `--full-refresh` output is bounded by the start date you set. As these models grow, you can periodically move `fivetran_platform_log_start_date` forward to keep the full-refresh scan (and the staging table) manageable. Run `dbt run --full-refresh` after setting or changing this variable to ensure all models reflect the updated window.
+
+This affects the following models:
+
+- `fivetran_platform__connection_status`
+- `fivetran_platform__schema_changelog`
+- `fivetran_platform__audit_user_activity`
+- `fivetran_platform__connection_daily_events`
+- `fivetran_platform__audit_table`
+- `fivetran_platform__sync_metrics`
+- `fivetran_platform__connection_errors_and_warnings`
+- `fivetran_platform__transformation_run_log`
+
+The remaining final models do not read from the `log` table, so they are unaffected: `fivetran_platform__mar_table_history`, `fivetran_platform__usage_history`, and `fivetran_platform__audit_trail_enriched`.
 
 ### (Optional) Orchestrate your models with Fivetran Transformations for dbt Core™
 <details><summary>Expand for details</summary>

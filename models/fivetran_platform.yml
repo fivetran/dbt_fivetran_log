@@ -136,7 +136,7 @@ models:
       from the deprecated `fivetran_audit`, which reported pre-duplicate data loads.
     columns:
       - name: unique_table_sync_key
-        description: Primary key of the table, hashed on `schema_name`, `connection_id`, `destination_id`, `table_name`, and `unique_table_sync_key`.
+        description: Primary key of the table, hashed on `schema_name`, `connection_id`, `destination_id`, `table_name`, and `write_to_table_start`.
         tests:
           - unique
           - not_null
@@ -166,6 +166,14 @@ models:
         description: Total number of rows updated in the table during a sync.
       - name: sum_rows_deleted
         description: Total number of rows deleted from the table during a sync.
+      - name: rows_extracted
+        description: >
+          Total number of rows extracted from the source for the table during a sync, summed from
+          the `count` of each `records_extracted` log event.
+      - name: rows_loaded
+        description: >
+          Total number of insert, update, and delete operations on the table during a sync, summed
+          from the `count` of each `records_modified` log event. Counts operations, not distinct rows.
       - name: write_to_table_start_day
         description: The `write_to_table_start` field truncated to the `day`, used for partitioning with the `insert_overwrite` incremental method.
 
@@ -192,6 +200,66 @@ models:
         description: Name of the table if it was altered or created. 
       - name: schema_name
         description: Name of the schema if it was created. 
+
+  - name: fivetran_platform__transformation_run_log
+    description: >
+      Table of transformation run events from the Fivetran log. Each record represents a single
+      transformation execution, including run timestamps, duration, per-step model counts, and outcome.
+      Requires the `transformation_runs` source table. Disabled by default; set the
+      `fivetran_platform_using_transformations` variable to `true` to build this model.
+    columns:
+      - name: unique_transformation_run_key
+        description: >
+          Surrogate key hashed on `log_id`, `transformation_id`, `started_at`, and `ended_at` to uniquely identify
+          each transformation run event. The source `log_id` is not unique on its own, as a single log record can
+          capture multiple distinct transformation runs.
+        tests:
+          - unique
+          - not_null
+      - name: log_id
+        description: ID of the log record that captured the transformation run event. Not unique on its own.
+      - name: started_at
+        description: Timestamp when the transformation run started.
+      - name: ended_at
+        description: Timestamp when the transformation run ended.
+      - name: duration_seconds
+        description: Total run duration in seconds.
+      - name: duration
+        description: Total run duration formatted as HH:MM:SS.
+      - name: destination_id
+        description: Foreign key referencing the destination associated with the transformation.
+      - name: destination_name
+        description: Name of the destination associated with the transformation.
+      - name: project_type
+        description: Type of transformation project (e.g., `DBT_CORE`, `QUICKSTART`).
+      - name: free_type
+        description: Indicates the type of free model run, or `PAID` for paid model runs.
+      - name: connection_ids
+        description: >
+          Comma-separated list of connection IDs scheduled to trigger this transformation. For QUICKSTART
+          transformations without a scheduled connection, the single connection parsed from the transformation name.
+      - name: connection_names
+        description: >
+          Comma-separated list of connection names scheduled to trigger this transformation. For QUICKSTART
+          transformations without a scheduled connection, the single connection parsed from the transformation name.
+      - name: transformation_name
+        description: User-defined name of the transformation.
+      - name: transformation_id
+        description: System-generated unique ID of the transformation job, parsed from the log message.
+      - name: transformation_type
+        description: The type of transformation (e.g., DBT_CORE, QUICKSTART).
+      - name: successful_model_runs
+        description: Number of models that ran successfully in this transformation execution.
+      - name: failed_model_runs
+        description: Number of models that failed in this transformation execution.
+      - name: transformation_status
+        description: >
+          Outcome of the transformation run, based on the first step's `success` value. Usually
+          `transformation_succeeded`, `transformation_partially_succeeded`, or `transformation_failed`.
+          When the log event has no step result, this is the raw event subtype instead, such as
+          `transformation_failed`.
+      - name: full_run_log
+        description: The raw JSON message data from the log event.
 
   - name: fivetran_platform__audit_user_activity
     description: >
@@ -235,3 +303,194 @@ models:
         description: The details of the event in a JSON-like string format.
       - name: log_id
         description: Unique ID of the log record.
+
+  - name: fivetran_platform__audit_trail_enriched
+    description: >
+      Table of user actions performed within your Fivetran account, enriched with the human-readable
+      names of the resources involved and the user who performed each action. Each event references a
+      primary resource (the container, e.g. an `ACCOUNT`) and an optional secondary resource (the member,
+      e.g. a `USER` added to a `TEAM`). This model resolves both resource references to their names when
+      the resource type is a `CONNECTION`, `DESTINATION`, `USER`, or `ACCOUNT`. This table is only
+      available on the Enterprise plan and above.
+    columns:
+      - name: unique_audit_trail_key
+        description: Surrogate key hashed on `audit_trail_id` and `captured_at` to uniquely identify each audit trail event.
+        tests:
+          - unique
+          - not_null
+      - name: audit_trail_id
+        description: Identifier of the audit trail event.
+      - name: captured_at
+        description: Timestamp when the action was performed.
+      - name: user_id
+        description: Foreign key referencing the `user` who performed the action.
+      - name: actor_email
+        description: Account email of the user who performed the action. Only available when the `user` source table is enabled.
+      - name: actor_first_name
+        description: Given name of the user who performed the action. Only available when the `user` source table is enabled.
+      - name: actor_last_name
+        description: Surname of the user who performed the action. Only available when the `user` source table is enabled.
+      - name: action
+        description: The type of operation performed. Possible values include `CREATE`, `EDIT`, and `DELETE`.
+      - name: interaction_method
+        description: How the action was performed. Possible values include `WEB_UI`, `API`, and `SYSTEM`.
+      - name: primary_resource_type
+        description: >
+          The main type of resource (the container) affected by the action (e.g., `ACCOUNT`, `DESTINATION`, `CONNECTION`,
+          `TEAM`, `USER`, `TRANSFORMATION`, `ROLE`, `EXTERNAL_LOG_SERVICE`, `PRIVATE_LINK`, `PROXY_AGENT`). The connector doesn't include team data, so `primary_resource_name` is null when the type is `TEAM`.
+      - name: primary_resource_id
+        description: Identifier of the primary resource affected by the action.
+      - name: primary_resource_name
+        description: >
+          Name of the primary resource, resolved from `primary_resource_id` when `primary_resource_type` is a
+          `CONNECTION`, `DESTINATION`, `ACCOUNT`, or `USER` (the user's email). Null for resource types without a
+          name lookup or when the resource no longer exists.
+      - name: secondary_resource_type
+        description: The type of secondary resource (the member) affected by the action, if applicable.
+      - name: secondary_resource_id
+        description: Identifier of the secondary resource affected by the action, if applicable.
+      - name: secondary_resource_name
+        description: >
+          Name of the secondary resource, resolved from `secondary_resource_id` when `secondary_resource_type` is a
+          `CONNECTION`, `DESTINATION`, `ACCOUNT`, or `USER` (the user's email). Null for resource types without a
+          name lookup or when the resource no longer exists.
+      - name: old_values
+        description: JSON-like string of the resource's attributes before the action.
+      - name: new_values
+        description: JSON-like string of the resource's attributes after the action.
+      - name: _fivetran_synced
+        description: Timestamp when the record was last synced.
+
+  - name: fivetran_platform__connection_errors_and_warnings
+    description: >
+      Table of connector error and warning events across both standard Fivetran connections (from the `log` table) and
+      Connector SDK connections (from the `connector_sdk_log` table).
+    columns:
+      - name: unique_error_warning_key
+        description: Surrogate key hashed on `event_id`, `connection_id`, `sync_id`, and `event_time` to uniquely identify each error or warning event.
+        tests:
+          - unique
+          - not_null
+      - name: event_id
+        description: >
+          Identifier of the event in its source table. The `log_id` from the `log` table for standard connections,
+          or the `connector_sdk_log_id` from the `connector_sdk_log` table for Connector SDK connections.
+      - name: connection_id
+        description: Foreign key referencing the connection that emitted the event.
+      - name: connection_name
+        description: Name of the connection that emitted the event. May be null if the connection is no longer present in the `connection` table. This model does include deleted connections.
+      - name: event_time
+        description: Timestamp when the event was logged.
+      - name: severity_level
+        description: >
+          Raw severity of the event as reported by the source, passed through without normalization. Includes every
+          level except `INFO`, `DEBUG`, and `FINE`. Both sources report `WARNING` and `SEVERE`; `ERROR` and `CRITICAL`
+          are reported only by the `connector_sdk_log` source.
+      - name: message
+        description: The details of the event. For standard connections this is the JSON-like `message_data` string; for Connector SDK connections this is the plain-text log message.
+      - name: message_origin
+        description: >
+          Where a Connector SDK log message came from. `connector_sdk` for messages from your connector
+          code, including warnings from the Python packages it uses. `library` for messages from the
+          Connector SDK library. Null for standard connections.
+      - name: is_custom_connector
+        description: >
+          Boolean indicating which source the event originated from. `false` for standard connections (from the `log`
+          table) and `true` for Connector SDK connections (from the `connector_sdk_log` table).
+      - name: sync_id
+        description: Identifies which sync the event is associated with.
+
+  - name: fivetran_platform__sync_metrics
+    description: >
+      One record per completed sync (a `sync_id` with a `sync_end` event), with its start and end times,
+      final status, volume and row counts, and connection and destination details. Total duration, status,
+      and load volume come from the `sync_start` and `sync_end` events. Extract volume, query, and row counts
+      come from the `extract_summary` and `records_modified` events. Extract, process, and load time and
+      process volume come from the `sync_stats` event. They're null when a sync has no `sync_stats` event or
+      the event doesn't include that value. Because total duration and load volume come from other events,
+      they can be populated even when these fields are null.
+    columns:
+      - name: unique_sync_key
+        description: Primary key of the model, hashed on `connection_id`, `sync_id`, and `sync_completed_at`.
+        tests:
+          - unique
+          - not_null
+      - name: log_id
+        description: ID of the `sync_stats` log record. Null for syncs with no `sync_stats` event.
+      - name: sync_id
+        description: System-generated ID of the sync.
+      - name: connection_id
+        description: System-generated unique ID of the connection that ran the sync.
+      - name: connection_name
+        description: Name of the connection that ran the sync.
+      - name: connector_type
+        description: The kind of connector (e.g. Google Sheets, Webhooks).
+      - name: destination_id
+        description: Foreign key referencing the destination receiving data from the connection.
+      - name: destination_name
+        description: Name of the destination receiving data from the connection.
+      - name: sync_started_at
+        description: Timestamp of the sync's `sync_start` event. Null when the `sync_start` event falls before the `fivetran_platform_log_start_date` filter.
+      - name: sync_completed_at
+        description: Timestamp of the sync's latest `sync_end` event.
+      - name: date_day
+        description: The `sync_completed_at` timestamp truncated to the day.
+      - name: day_of_week
+        description: Weekday name of `date_day` (e.g. Monday, Tuesday).
+      - name: sync_status
+        description: >
+          Final status of the sync, taken from the `status` field of its `sync_end` event. One of
+          `SUCCESSFUL`, `FAILURE`, `FAILURE_WITH_TASK`, `RESCHEDULED`, or `CANCELED`. When a sync logs
+          more than one `sync_end` event, the status comes from the latest one.
+      - name: sync_reason
+        description: >
+          Why the sync failed, was canceled, or was rescheduled, taken from the `reason` field of its latest
+          `sync_end` event. Null when that event has no reason, which includes every successful sync.
+      - name: sync_type
+        description: >
+          Type of sync, taken from the `sync_type` field of its `sync_start` event (e.g. `INCREMENTAL`,
+          `HISTORICAL`). Fivetran began logging this field in September 2026, so it's null for earlier syncs.
+      - name: extract_time_s
+        description: Time spent extracting data from the source during the sync, in seconds. Null for syncs with no `sync_stats` event.
+      - name: extract_volume_mb
+        description: >
+          Volume of data extracted from the source during the sync, in megabytes. Each `extract_summary` event
+          carries a running total, so this is the highest `total_size` value across the sync's events,
+          converted from bytes. Null for syncs that skip every table.
+      - name: process_time_s
+        description: >
+          Time spent processing data during the sync, in seconds. Null when the sync has no `sync_stats` event
+          or the event doesn't include this value.
+      - name: process_volume_mb
+        description: >
+          Volume of data processed during the sync, in megabytes. Null when the sync has no `sync_stats` event
+          or the event doesn't include this value.
+      - name: load_time_s
+        description: >
+          Time spent loading data into the destination during the sync, in seconds. Null when the sync has no
+          `sync_stats` event or the event doesn't include this value.
+      - name: load_volume_mb
+        description: >
+          Volume of data loaded into the destination during the sync, in megabytes, converted from the
+          `load_volume_b` field (in bytes) of its `sync_end` event. Null when that event has no `load_volume_b`.
+          Because it comes from `sync_end`, not `sync_stats`, it can be populated even when `process_volume_mb` is null.
+      - name: total_time_s
+        description: >
+          Total duration of the sync, in seconds, from `sync_started_at` to `sync_completed_at`. Null when
+          `sync_started_at` is null. Because it comes from `sync_start` and `sync_end`, not `sync_stats`, it can
+          be populated even when `extract_time_s`, `process_time_s`, and `load_time_s` are null.
+      - name: total_extracted_rows
+        description: >
+          Total number of rows extracted from the source during the sync. Each `extract_summary` event
+          carries a running total, so this is the highest `total_rows` value across the sync's events.
+          Null for syncs that skip every table.
+      - name: total_queries
+        description: >
+          Total number of queries run against the source during the sync. Each `extract_summary` event
+          carries a running total, so this is the highest `total_queries` value across the sync's events.
+          Null for syncs that skip every table.
+      - name: total_loaded_rows
+        description: >
+          Total number of insert, update, and delete operations during the sync, summed across its
+          `records_modified` events. Counts operations, not distinct rows. Null for syncs that skip
+          every table.

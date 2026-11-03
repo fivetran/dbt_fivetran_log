@@ -180,6 +180,32 @@ sources:
           - name: _fivetran_synced
             description: Timestamp when the record was last synced.
 
+      - name: connector_sdk_log
+        identifier: "{{ var('fivetran_platform_connector_sdk_log_identifier', 'connector_sdk_log')}}"
+        description: >
+          Table of logged events emitted by Connector SDK connections. Only populated for accounts
+          that use the Fivetran Connector SDK.
+        config:
+          enabled: "{{ var('fivetran_platform_using_connector_sdk_log', false) }}"
+          freshness: null
+        columns:
+          - name: id
+            description: Unique ID of the Connector SDK log record.
+          - name: event_time
+            description: Timestamp when the event was logged.
+          - name: connection_id
+            description: Foreign key referencing the connection that emitted the log event.
+          - name: level
+            description: Severity level of the log event. Possible values include `INFO`, `WARNING`, `SEVERE`, and `ERROR`.
+          - name: message
+            description: The details of the logged event.
+          - name: message_origin
+            description: The origin of the log message within the Connector SDK connection.
+          - name: sync_id
+            description: Identifies which sync the event is associated with.
+          - name: _fivetran_synced
+            description: Timestamp when the record was last synced.
+
       - name: account
         identifier: "{{ var('fivetran_platform_account_identifier', 'account')}}"
         description: Table of information about this Fivetran account.
@@ -242,6 +268,42 @@ sources:
             description: Phone number associated with the user.
           - name: verified 
             description: Boolean indicating whether the user has verified their email address.
+          - name: _fivetran_synced
+            description: Timestamp when the record was last synced.
+
+      - name: audit_trail
+        identifier: "{{ var('fivetran_platform_audit_trail_identifier', 'audit_trail') }}"
+        description: >
+          Table of user actions performed within your Fivetran account, including what was changed and how.
+          This table is only available on the Enterprise plan and above.
+        config:
+          enabled: "{{ var('fivetran_platform_using_audit_trail', false) }}"
+          freshness: null
+        columns:
+          - name: id
+            description: Unique identifier of the audit trail event.
+          - name: captured_at
+            description: Timestamp when the action was performed.
+          - name: user_id
+            description: Foreign key referencing the `user` who performed the action.
+          - name: action
+            description: The type of operation performed. Possible values include `CREATE`, `EDIT`, and `DELETE`.
+          - name: interaction_method
+            description: How the action was performed. Possible values include `WEB_UI`, `API`, and `SYSTEM`.
+          - name: primary_resource_type
+            description: >
+              The main type of resource affected by the action (e.g., `ACCOUNT`, `DESTINATION`, `CONNECTION`,
+              `TEAM`, `USER`, `TRANSFORMATION`, `ROLE`, `EXTERNAL_LOG_SERVICE`).
+          - name: primary_resource_id
+            description: Identifier of the primary resource affected by the action.
+          - name: secondary_resource_type
+            description: The type of secondary resource affected by the action, if applicable.
+          - name: secondary_resource_id
+            description: Identifier of the secondary resource affected by the action, if applicable.
+          - name: old_values
+            description: JSON-like string of the resource's attributes before the action.
+          - name: new_values
+            description: JSON-like string of the resource's attributes after the action.
           - name: _fivetran_synced
             description: Timestamp when the record was last synced.
 

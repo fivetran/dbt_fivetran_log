@@ -10,6 +10,12 @@ table_variables:
     - user
   fivetran_platform_using_connection:
     - connection
+  fivetran_platform_using_audit_trail:
+    - audit_trail
+  fivetran_platform_using_transformations:
+    - transformation_runs
+  fivetran_platform_using_connector_sdk_log:
+    - connector_sdk_log
 
 destination_configurations:
   databricks:
@@ -24,5 +30,15 @@ public_models: [
   "fivetran_platform__connection_status",
   "fivetran_platform__usage_history",
   "fivetran_platform__audit_table",
-  "fivetran_platform__mar_table_history"
+  "fivetran_platform__audit_trail_enriched",
+  "fivetran_platform__mar_table_history",
+  "fivetran_platform__transformation_run_log",
+  "fivetran_platform__connection_errors_and_warnings",
+  "fivetran_platform__sync_metrics"
 ]
+
+supported_vars:
+  fivetran_platform_log_start_date:
+    type: string
+    description: "Earliest date (YYYY-MM-DD) of log history to include when building log-based models. When unset, all log history is used. Because it is a fixed date, a full refresh always reloads from this start date and never loses history. Affects all models except fivetran_platform__mar_table_history, fivetran_platform__usage_history, and fivetran_platform__audit_trail_enriched."
+    display_name: "Log Start Date"

@@ -1,5 +1,7 @@
 # dbt_fivetran_log v2.6.1
 
+[PR #208](https://github.com/fivetran/dbt_fivetran_log/pull/208) includes the following updates:
+
 ## Under the Hood
 - Updates `integration_tests/dbt_project.yml` to ensure that the `fivetran_platform__transformation_run_log` and `fivetran_platform__audit_trail_enriched` models are generated in the docs and picked up by Quickstart.
 

@@ -1,5 +1,5 @@
 name: 'fivetran_log_integration_tests'
-version: '2.6.0'
+version: '2.6.1'
 
 config-version: 2
 profile: 'integration_tests'
@@ -24,6 +24,9 @@ vars:
     fivetran_platform_user_identifier: "user"
     fivetran_platform_transformation_runs_identifier: "transformation_runs"
     fivetran_platform_audit_trail_identifier: "audit_trail"
+
+    # fivetran_platform_using_transformations: true  # @docs-include
+    # fivetran_platform_using_audit_trail: true  # @docs-include
 
 models:
   +persist_docs:

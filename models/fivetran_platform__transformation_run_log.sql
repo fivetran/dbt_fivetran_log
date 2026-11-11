@@ -104,8 +104,8 @@ connection_aggregates as (
 
     select
         transformation_id,
-        {{ fivetran_utils.string_agg("connection_id", "', '") }} as connection_ids,
-        {{ fivetran_utils.string_agg("connection_name", "', '") }} as connection_names
+        {{ dbt.listagg("connection_id", "', '") }} as connection_ids,
+        {{ dbt.listagg("connection_name", "', '") }} as connection_names
     from distinct_connection_ids
     group by transformation_id
 

@@ -42,7 +42,7 @@ with base as (
     where event_subtype in ('sync_start', 'sync_end', 'write_to_table_start', 'write_to_table_end', 'records_modified', 'records_extracted')
 
     {% if is_incremental() %}
-    and cast(created_at as date) > {{ fivetran_log.fivetran_log_lookback(from_date='max(write_to_table_start_day)', interval=7) }}
+    and cast(created_at as date) > {{ fivetran_utils.lookback(from_date='max(write_to_table_start_day)', interval=7) }}
     {% endif %}
 ),
 

@@ -6,5 +6,6 @@ bug_fixes:
     built without `distinct` also keep duplicate values on Databricks now, which matches the other
     warehouses. Output on other warehouses doesn't change.
 under_the_hood:
+- description: Replaces `fivetran_utils.json_parse` with dbt's built-in `dbt.json_parse`.
 - description: Replaces `fivetran_utils.fivetran_date_spine` with `dbt_utils.date_spine`, which now includes
     the same SQL Server logic. Output doesn't change.

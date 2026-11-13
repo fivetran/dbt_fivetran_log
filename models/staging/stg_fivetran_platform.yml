@@ -5,6 +5,17 @@ models:
     description: >
       Table of monthly active row (MAR) measurements recorded per table and date.
       Each measurement is cumulative for the month and includes all MAR types (paid, free, etc.).
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - connection_name
+              - destination_id
+              - schema_name
+              - table_name
+              - measured_date
+              - free_type
+              - sync_type
     columns:
       - name: connection_name
         description: Name of the measured connection. Coalesced with the DEPRECATED fields `connector_name` and `connector_id`.
@@ -33,6 +44,12 @@ models:
     description: >
       Table of all connections loading data into destinations. Deleted connections 
       remain in the table but can be identified by having an older `_fivetran_synced` timestamp.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - connection_name
+              - destination_id
     columns:
       - name: connection_id
         description: System-generated unique ID of the connection. 
@@ -53,6 +70,12 @@ models:
 
   - name: stg_fivetran_platform__credits_used
     description: Table of the credits used by the customer per month for each destination.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - destination_id
+              - measured_month
     columns:
       - name: destination_id
         description: Foreign key referencing the destination where credits were used.
@@ -63,6 +86,12 @@ models:
 
   - name: stg_fivetran_platform__usage_cost
     description: Table of the amount spent by the customer per month for each destination. Amount is represented in USD.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - destination_id
+              - measured_month
     columns:
       - name: destination_id
         description: Foreign key referencing the destination where costs were incurred.
@@ -92,6 +121,12 @@ models:
     description: >
       Table of logged events related to data syncs. More info on error logs 
       [here](https://fivetran.com/docs/logs/fivetran-log#errorlogs).
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - log_id
+              - created_at
     columns: 
       - name: log_id
         description: Unique ID of the log record.
@@ -114,6 +149,11 @@ models:
     description: >
       Table of logged events emitted by Connector SDK connections. Only populated for accounts
       that use the Fivetran Connector SDK.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - connector_sdk_log_id
     columns:
       - name: connector_sdk_log_id
         description: Unique ID of the Connector SDK log record.
@@ -152,6 +192,12 @@ models:
 
   - name: stg_fivetran_platform__destination_membership
     description: Table of users given access to this destination.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - destination_id
+              - user_id
     columns:
       - name: destination_id
         description: Foreign key referencing the destination to which the user belongs.
@@ -226,6 +272,16 @@ models:
 
   - name: stg_fivetran_platform__transformation_runs
     description: Table of all transformation runs executed by Fivetran.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - destination_id
+              - job_id
+              - project_type
+              - free_type
+              - updated_at
+              - measured_date
     columns:
       - name: destination_id
         description: Foreign key referencing the destination where the transformation run was executed.

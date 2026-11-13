@@ -1,7 +1,6 @@
 version: 2.6.1
 pr_number: 208
 under_the_hood:
-- Updates `integration_tests/dbt_project.yml` to ensure that the `fivetran_platform__transformation_run_log`
-  and `fivetran_platform__audit_trail_enriched` models are generated in the docs and
-  picked up by Quickstart.
+- Updates `integration_tests/dbt_project.yml` to ensure that the `fivetran_platform__transformation_run_log` and `fivetran_platform__audit_trail_enriched` models are generated in the docs and picked up by Quickstart.
+- description: Adds `dbt_utils.unique_combination_of_columns` tests to the staging and end models. The tests use the `arguments` syntax introduced in dbt v1.10, which the new v1.11.0 minimum supports.
 date: '2026-11-03'

@@ -1,3 +1,10 @@
+# dbt_fivetran_log v2.6.2
+
+[PR #211](https://github.com/fivetran/dbt_fivetran_log/pull/211) includes the following updates:
+
+## Bug Fixes
+- Casts the `'2000-01-01'` literal in the `coalesce` within `fivetran_platform__connection_status` to `{{ dbt.type_timestamp() }}`, so all arguments share a type. This resolves the `dbt0209` function argument type mismatch reported by dbt Fusion `--static-analysis strict`. No change to model output.
+
 # dbt_fivetran_log v2.6.1
 
 [PR #208](https://github.com/fivetran/dbt_fivetran_log/pull/208) includes the following updates:

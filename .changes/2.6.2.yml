@@ -1,0 +1,8 @@
+version: 2.6.2
+pr_number: 211
+bug_fixes:
+- Casts the `'2000-01-01'` literal in the `coalesce` within `fivetran_platform__connection_status`
+  to `{{ dbt.type_timestamp() }}`, so all arguments share a type. This resolves the
+  `dbt0209` function argument type mismatch reported by dbt Fusion `--static-analysis
+  strict`. No change to model output.
+date: '2026-11-16'

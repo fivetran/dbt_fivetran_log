@@ -165,7 +165,7 @@ models:
     columns:
       - name: unique_table_sync_key
         description: Primary key of the table, hashed on `schema_name`, `connection_id`, `destination_id`, `table_name`, and `write_to_table_start`.
-        tests:
+        data_tests:
           - unique
           - not_null
       - name: connection_id
@@ -249,7 +249,7 @@ models:
           Surrogate key hashed on `log_id`, `transformation_id`, `started_at`, and `ended_at` to uniquely identify
           each transformation run event. The source `log_id` is not unique on its own, as a single log record can
           capture multiple distinct transformation runs.
-        tests:
+        data_tests:
           - unique
           - not_null
       - name: log_id
@@ -357,7 +357,7 @@ models:
     columns:
       - name: unique_audit_trail_key
         description: Surrogate key hashed on `audit_trail_id` and `captured_at` to uniquely identify each audit trail event.
-        tests:
+        data_tests:
           - unique
           - not_null
       - name: audit_trail_id
@@ -410,7 +410,7 @@ models:
     columns:
       - name: unique_error_warning_key
         description: Surrogate key hashed on `event_id`, `connection_id`, `sync_id`, and `event_time` to uniquely identify each error or warning event.
-        tests:
+        data_tests:
           - unique
           - not_null
       - name: event_id
@@ -454,7 +454,7 @@ models:
     columns:
       - name: unique_sync_key
         description: Primary key of the model, hashed on `connection_id`, `sync_id`, and `sync_completed_at`.
-        tests:
+        data_tests:
           - unique
           - not_null
       - name: log_id

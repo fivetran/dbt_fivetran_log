@@ -105,7 +105,7 @@ models:
     columns:
       - name: destination_id
         description: Unique ID of the destination.
-        tests:
+        data_tests:
           - unique
           - not_null
       - name: account_id
@@ -178,7 +178,7 @@ models:
     columns:
       - name: account_id
         description: Unique ID of the account.
-        tests:
+        data_tests:
           - unique
           - not_null
       - name: country
@@ -215,7 +215,7 @@ models:
     columns:
       - name: user_id
         description: Unique ID of the user's account.
-        tests:
+        data_tests:
           - unique
           - not_null
       - name: created_at
@@ -240,7 +240,7 @@ models:
     columns:
       - name: unique_audit_trail_key
         description: Surrogate key hashed on `audit_trail_id` and `captured_at` to uniquely identify each audit trail event.
-        tests:
+        data_tests:
           - unique
           - not_null
       - name: audit_trail_id

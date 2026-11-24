@@ -5,6 +5,13 @@ models:
   - name: fivetran_platform__connection_status
     description: > 
       Table of connections for each destination, including connection details and sync status.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - connection_id
+              - connection_name
+              - destination_id
     columns:
       - name: connection_id
         description: System generated unique ID of the connection.
@@ -41,6 +48,15 @@ models:
     description: >
       Table of monthly active rows (MAR) for each table across connections, destinations, and schemas, per month.
       Read more about MAR definitions and calculations [here](https://fivetran.com/docs/getting-started/consumption-based-pricing).
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - connection_name
+              - destination_id
+              - schema_name
+              - table_name
+              - measured_month
     columns:
       - name: connection_name
         description: Name of the connection loading the table.
@@ -73,6 +89,12 @@ models:
       Table of each destination's usage and active volume per month, including usage per million MAR and MAR per usage. 
       Usage is measured in dollars or credits, depending on the customer's pricing model. 
       Read more about the relationship between usage and MAR [here](https://www.fivetran.com/legal/service-consumption-table).\
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - destination_id
+              - measured_month
     columns:
       - name: measured_month
         description: Month of the usage/MAR measurement, formatted as YYYY-MM-01.
@@ -109,6 +131,13 @@ models:
     description: >
       Table of each connection's daily history, tracking the number of API calls, schema changes, and records 
       modified since the connection's setup date.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - connection_id
+              - destination_id
+              - date_day
     columns:
       - name: connection_id
         description: System generated unique ID of the connection.
@@ -137,7 +166,7 @@ models:
     columns:
       - name: unique_table_sync_key
         description: Primary key of the table, hashed on `schema_name`, `connection_id`, `destination_id`, `table_name`, and `write_to_table_start`.
-        tests:
+        data_tests:
           - unique
           - not_null
       - name: connection_id
@@ -181,6 +210,14 @@ models:
     description: >
       Table of schema changes for each connection, including table alterations, table creations,
       schema configuration changes, and schema creations.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - connection_id
+              - destination_id
+              - message_data
+              - created_at
     columns:
       - name: connection_id
         description: System generated unique ID of the connection.
@@ -213,7 +250,7 @@ models:
           Surrogate key hashed on `log_id`, `transformation_id`, `started_at`, and `ended_at` to uniquely identify
           each transformation run event. The source `log_id` is not unique on its own, as a single log record can
           capture multiple distinct transformation runs.
-        tests:
+        data_tests:
           - unique
           - not_null
       - name: log_id
@@ -266,6 +303,12 @@ models:
       Table of user-triggered actions in a Fivetran instance for audit-trail purposes. 
       Helps trace actions to [log events](https://fivetran.com/docs/logs#logeventlist) such as 
       schema changes, sync frequency updates, manual updates, broken connections, etc.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - log_id
+              - occurred_at
     columns:
       - name: date_day
         description: Date on which the user action occurred.
@@ -315,7 +358,7 @@ models:
     columns:
       - name: unique_audit_trail_key
         description: Surrogate key hashed on `audit_trail_id` and `captured_at` to uniquely identify each audit trail event.
-        tests:
+        data_tests:
           - unique
           - not_null
       - name: audit_trail_id
@@ -368,7 +411,7 @@ models:
     columns:
       - name: unique_error_warning_key
         description: Surrogate key hashed on `event_id`, `connection_id`, `sync_id`, and `event_time` to uniquely identify each error or warning event.
-        tests:
+        data_tests:
           - unique
           - not_null
       - name: event_id
@@ -412,7 +455,7 @@ models:
     columns:
       - name: unique_sync_key
         description: Primary key of the model, hashed on `connection_id`, `sync_id`, and `sync_completed_at`.
-        tests:
+        data_tests:
           - unique
           - not_null
       - name: log_id

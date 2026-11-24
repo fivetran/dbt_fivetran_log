@@ -168,7 +168,7 @@ connection_recent_logs as (
     left join connection_log 
         on connection_log.connection_id = connection_health_status.connection_id
         -- limiting relevance to since the last successful sync completion (if there has been one)
-        and connection_log.created_at > coalesce(connection_health_status.last_sync_completed_at, connection_health_status.last_priority_first_sync_completed_at, '2000-01-01') 
+        and connection_log.created_at > coalesce(connection_health_status.last_sync_completed_at, connection_health_status.last_priority_first_sync_completed_at, cast('2000-01-01' as {{ dbt.type_timestamp() }})) 
         -- only looking at errors and warnings (excluding syncs - both normal and priority first)
         and connection_log.event_type != 'INFO' 
         -- need to explicitly avoid priority first statuses because they are of event_type WARNING

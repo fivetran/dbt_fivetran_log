@@ -154,6 +154,7 @@ models:
           arguments:
             combination_of_columns:
               - connector_sdk_log_id
+              - created_at
     columns:
       - name: connector_sdk_log_id
         description: Unique ID of the Connector SDK log record.
@@ -280,7 +281,6 @@ models:
               - job_id
               - project_type
               - free_type
-              - updated_at
               - measured_date
     columns:
       - name: destination_id

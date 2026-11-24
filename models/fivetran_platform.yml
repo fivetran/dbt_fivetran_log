@@ -10,6 +10,7 @@ models:
           arguments:
             combination_of_columns:
               - connection_id
+              - connection_name
               - destination_id
     columns:
       - name: connection_id
